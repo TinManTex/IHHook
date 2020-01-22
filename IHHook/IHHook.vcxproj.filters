@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\MinHook">
+      <UniqueIdentifier>{d6b367a8-6910-4f5c-8f85-9a275a95fcf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MinHook\hde">
+      <UniqueIdentifier>{695a28a2-a381-4c57-8927-423232e0616e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\spdlog">
+      <UniqueIdentifier>{948694bd-0951-41aa-bf12-07fb40577e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lua">
+      <UniqueIdentifier>{05ec5997-f94c-4940-8531-963977d23b9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\winapi">
+      <UniqueIdentifier>{78cf4a43-5f5f-416d-bbaf-b48727346c4c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="spdlog\tweakme.h">
+      <Filter>Source Files\spdlog</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IHHook.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\buffer.h">
+      <Filter>Source Files\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\MinHook.h">
+      <Filter>Source Files\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\trampoline.h">
+      <Filter>Source Files\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\hde\hde32.h">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\hde\hde64.h">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\hde\pstdint.h">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\hde\table32.h">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="MinHook\hde\table64.h">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="HookMacros.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lua.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\luaconf.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lualib.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lauxlib.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lauxlib_Addresses.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lua_Addresses.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lualib_Addresses.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="winapi\wutils.hpp">
+      <Filter>Source Files\winapi</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DInputProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_CityHash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MinHook\trampoline.c">
+      <Filter>Source Files\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="MinHook\buffer.c">
+      <Filter>Source Files\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="MinHook\hook.c">
+      <Filter>Source Files\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="MinHook\hde\hde32.c">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="MinHook\hde\hde64.c">
+      <Filter>Source Files\MinHook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="PipeServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Lua_Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lualib_CreateHooks.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lauxlib_CreateHooks.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lua_CreateHooks.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lauxlib.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lapi.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lobject.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\ldo.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="winapi\wutils.cpp">
+      <Filter>Source Files\winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="winapi\winapi.cpp">
+      <Filter>Source Files\winapi</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Lua.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IHHook.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

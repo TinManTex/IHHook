@@ -1,0 +1,220 @@
+#include "stdafx.h"
+#include "spdlog/spdlog.h"
+#include "IHHook.h"
+#pragma comment(lib,"Version.lib") // CheckVersion
+#include <stack>
+
+extern HMODULE thisModule;
+
+namespace IHHook {
+	//IN/SIDE: IHHook::exeName
+	bool CheckVersion(const DWORD checkVersion[])
+	{
+		spdlog::debug("CheckVersion");
+
+		std::wstring gameDir = GetGameDir();
+		std::wstring exeDir = gameDir + exeName;
+		spdlog::debug( L"exeDir: {}", exeDir.c_str());
+		LPTSTR lpszFilePath = new TCHAR[MAX_PATH];
+		std::wcscpy(lpszFilePath, exeDir.c_str());
+
+		DWORD dwDummy;
+		DWORD dwFVISize = GetFileVersionInfoSize(lpszFilePath, &dwDummy);
+
+		LPBYTE lpVersionInfo = new BYTE[dwFVISize];
+
+		GetFileVersionInfo(lpszFilePath, 0, dwFVISize, lpVersionInfo);		
+		
+		delete[] lpszFilePath;
+
+		UINT uLen;
+		VS_FIXEDFILEINFO *lpFfi;
+
+		VerQueryValue(lpVersionInfo, L"\\", (LPVOID *)&lpFfi, &uLen);
+
+		DWORD dwFileVersionMS = lpFfi->dwFileVersionMS;
+		DWORD dwFileVersionLS = lpFfi->dwFileVersionLS;
+
+		delete[] lpVersionInfo;
+
+		spdlog::debug( "Higher: {}", dwFileVersionMS);
+		spdlog::debug( "Lower: {}", dwFileVersionLS);
+
+		DWORD exeVersion[4] = {
+			HIWORD(dwFileVersionMS),
+			LOWORD(dwFileVersionMS),
+			HIWORD(dwFileVersionLS),
+			LOWORD(dwFileVersionLS)
+		};
+
+		for (int i = 0; i < 4; i++) {
+			if (checkVersion[i] != exeVersion[i]) {
+				return false;
+			}
+		}
+		
+		return true;
+	}//CheckVersion
+
+	//IN/SIDE: ourModule
+	std::wstring GetGameDir()
+	{
+		//tex user having unicode path might be trouble, but on a quick test lua is hinky with utf16
+		TCHAR path_buffer[_MAX_PATH];
+		GetModuleFileName(thisModule, path_buffer, _MAX_PATH);
+
+		TCHAR drive[_MAX_DRIVE];
+		TCHAR dir[_MAX_DIR];
+		TCHAR fname[_MAX_FNAME];
+		TCHAR ext[_MAX_EXT];
+		_wsplitpath(path_buffer, drive, dir, fname, ext);
+
+		std::wstring path = std::wstring(drive) + std::wstring(dir);
+
+		return path;
+
+	}//GetGameDir
+
+	//KLUDGE till I can shift to relative paths in lua
+	std::string GetGameDirA() {
+		//tex user having unicode path might be trouble, but on a quick test lua is hinky with utf16
+		CHAR path_buffer[_MAX_PATH];
+		GetModuleFileNameA(thisModule, path_buffer, sizeof(path_buffer));
+
+		CHAR drive[_MAX_DRIVE];
+		CHAR dir[_MAX_DIR];
+		CHAR fname[_MAX_FNAME];
+		CHAR ext[_MAX_EXT];
+		_splitpath(path_buffer, drive, dir, fname, ext);
+
+		std::string path = std::string(drive) + std::string(dir);
+
+		return path;
+
+	}//GetGameDirA
+
+	int StartProcess(LPCWSTR lpApplicationPath, LPWSTR lpCommandLine)
+	{
+		spdlog::debug( "StartProcess");
+		spdlog::debug( L"lpApplicationPath: {}", lpApplicationPath);
+		spdlog::debug( L"lpCommandLine: {}", lpCommandLine);
+
+		// additional information
+		STARTUPINFO startupInfo;
+		PROCESS_INFORMATION processInfo;
+		// set the size of the structures
+		ZeroMemory(&startupInfo, sizeof(startupInfo));
+		startupInfo.cb = sizeof(startupInfo);
+		ZeroMemory(&processInfo, sizeof(processInfo));
+
+		int succeeded = CreateProcess(lpApplicationPath,   // the path
+			lpCommandLine,        // Command line
+			NULL,           // Process handle not inheritable
+			NULL,           // Thread handle not inheritable
+			FALSE,          // Set handle inheritance to FALSE
+			0,              // No creation flags
+			NULL,           // Use parent's environment block
+			NULL,           // Use parent's starting directory 
+			&startupInfo,            // Pointer to STARTUPINFO structure
+			&processInfo             // Pointer to PROCESS_INFORMATION structure (removed extra parentheses)
+		);
+		// Close process and thread handles. 
+		CloseHandle(processInfo.hProcess);
+		CloseHandle(processInfo.hThread);
+
+		//tex TODO log errors with GetLastError, GetExitCodeProcess
+
+		return succeeded;
+	}//StartProcess
+
+	std::vector<std::string> GetFolderNames(std::string folder) {
+		spdlog::debug("GetFolderNames");//DEBUGNOW
+
+		std::vector<std::string> names;
+		std::string search_path = folder + "/*.*";
+		WIN32_FIND_DATAA fd;
+		HANDLE hFind = FindFirstFileA(search_path.c_str(), &fd);
+		if (hFind != INVALID_HANDLE_VALUE) {
+			do {
+				if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+					//GOTCHA: FindFirstFileA also returns '.' and  '..'
+					std::string name = fd.cFileName;
+					std::size_t found = name.find(".");
+					if (found == std::string::npos) {
+						names.push_back(fd.cFileName);
+						spdlog::trace(fd.cFileName);
+					}
+				}//if FILE_ATTRIBUTE_DIRECTORY
+			} while (FindNextFileA(hFind, &fd));
+			FindClose(hFind);
+		}//if !INVALID_HANDLE_VALUE
+		return names;
+	}//GetFolderNames
+
+	std::vector<std::string> GetFileNames(std::string folder) {
+		spdlog::trace("GetFileNames");
+
+		std::vector<std::string> names;
+		std::string search_path = folder + "/*.*";
+		WIN32_FIND_DATAA fd;
+		HANDLE hFind = FindFirstFileA(search_path.c_str(), &fd);
+		if (hFind != INVALID_HANDLE_VALUE) {
+			do {
+				// read all (real) files in current folder
+				// delete '!' to read other 2 default folder . and ..
+				if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+					names.push_back(fd.cFileName);
+					spdlog::trace(fd.cFileName);
+				}//if !FILE_ATTRIBUTE_DIRECTORY
+			} while (FindNextFileA(hFind, &fd));
+			FindClose(hFind);
+		}//if !INVALID_HANDLE_VALUE
+		return names;
+	}//GetFileNames
+
+	//use std::vector<std::string> files;
+	//bool success = ListFiles("C:\\somepath", "*", files);//DEBUGNOW wide
+	bool ListFiles(std::string path, std::string mask, std::vector<std::string>& files) {
+		HANDLE hFind = INVALID_HANDLE_VALUE;
+		WIN32_FIND_DATAA ffd;
+		std::string spec;
+		std::stack<std::string> directories;
+
+		directories.push(path);
+		files.clear();
+
+		while (!directories.empty()) {
+			path = directories.top();
+			spec = path + "\\" + mask;
+			directories.pop();
+
+			hFind = FindFirstFileA(spec.c_str(), &ffd);
+			if (hFind == INVALID_HANDLE_VALUE) {
+				return false;
+			}
+
+			do {
+				//wcscmp wide
+				if (strcmp(ffd.cFileName, ".") != 0 &&
+					strcmp(ffd.cFileName, "..") != 0) {
+					if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+						directories.push(path + "\\" + ffd.cFileName);
+					}
+					else {
+						files.push_back(path + "\\" + ffd.cFileName);
+					}
+				}
+			} while (FindNextFileA(hFind, &ffd) != 0);
+
+			if (GetLastError() != ERROR_NO_MORE_FILES) {
+				FindClose(hFind);
+				return false;
+			}
+
+			FindClose(hFind);
+			hFind = INVALID_HANDLE_VALUE;
+		}
+
+		return true;
+	}//Listfiles
+}//IHHook

@@ -1,0 +1,11 @@
+IHHook changelog
+
+r3 - 2020-01-22
+Pipe server
+
+r2 - 2020-01-13
+Most of the lua api hooked and get a lua C module (winapi) kinda working.
+
+r1 - 2020-01-05
+Basic lua hooks and some IH extensions
+
