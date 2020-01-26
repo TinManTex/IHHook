@@ -19,19 +19,19 @@
     <Filter Include="Source Files\MinHook\hde">
       <UniqueIdentifier>{695a28a2-a381-4c57-8927-423232e0616e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\spdlog">
-      <UniqueIdentifier>{948694bd-0951-41aa-bf12-07fb40577e18}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\lua">
       <UniqueIdentifier>{05ec5997-f94c-4940-8531-963977d23b9b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\winapi">
       <UniqueIdentifier>{78cf4a43-5f5f-416d-bbaf-b48727346c4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MinHook\spdlog">
+      <UniqueIdentifier>{948694bd-0951-41aa-bf12-07fb40577e18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="spdlog\tweakme.h">
-      <Filter>Source Files\spdlog</Filter>
+      <Filter>Source Files\MinHook\spdlog</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Source Files</Filter>
@@ -159,6 +159,12 @@
       <Filter>Source Files\winapi</Filter>
     </ClCompile>
     <ClCompile Include="Hooks_Lua.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RawInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IHHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -36,6 +36,9 @@ namespace IHHook {
 
 	static const size_t BaseAddr = 0x140000000; // from ImageBase field in the EXE
 
+	DWORD WINAPI Initialize(LPVOID lpParameter);
+	void Shutdown();
+
 //tex create hooks // called from DLLMain
 	void CreateHooks_CityHash(size_t RealBaseAddr);
 	void CreateHooks_LuaIHH(size_t RealBaseAddr);
@@ -49,11 +52,17 @@ namespace IHHook {
 	int StartProcess(LPCWSTR lpApplicationPath, LPWSTR lpCommandLine);
 	std::vector<std::string> GetFolderNames(std::string folder);
 	std::vector<std::string> GetFileNames(std::string folder);
-	bool ListFiles(std::string path, std::string mask, std::vector<std::string>& files);
+	bool ListFiles(std::string path, std::string mask, std::vector<std::string>& files);	
+	void GetAllWindowsFromProcessID(DWORD dwProcessID, std::vector <HWND> &vhWnds);
+	HWND GetMainWindow();
 
 	//PipeServer
 	void StartPipeServer();
 	void QueueMessageOut(std::string message);
 	extern std::queue<std::string> messagesIn;
 	extern std::mutex inMutex;
-}
+
+	//RawInput
+	void InitializeInput();
+	void HookWndProc(HWND hWnd);
+}//namespace IHHook

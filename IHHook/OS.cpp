@@ -37,8 +37,8 @@ namespace IHHook {
 
 		delete[] lpVersionInfo;
 
-		spdlog::debug( "Higher: {}", dwFileVersionMS);
-		spdlog::debug( "Lower: {}", dwFileVersionLS);
+		//spdlog::debug( "Higher: {}", dwFileVersionMS);
+		//spdlog::debug( "Lower: {}", dwFileVersionLS);
 
 		DWORD exeVersion[4] = {
 			HIWORD(dwFileVersionMS),
@@ -46,6 +46,14 @@ namespace IHHook {
 			HIWORD(dwFileVersionLS),
 			LOWORD(dwFileVersionLS)
 		};
+
+		std::string exeVersionStr =
+			std::to_string(exeVersion[0]) + "," +
+			std::to_string(exeVersion[1]) + "," +
+			std::to_string(exeVersion[2]) + "," +
+			std::to_string(exeVersion[3]);
+
+		spdlog::info("mgsv exe version: {}", exeVersionStr);
 
 		for (int i = 0; i < 4; i++) {
 			if (checkVersion[i] != exeVersion[i]) {
@@ -95,9 +103,9 @@ namespace IHHook {
 
 	int StartProcess(LPCWSTR lpApplicationPath, LPWSTR lpCommandLine)
 	{
-		spdlog::debug( "StartProcess");
-		spdlog::debug( L"lpApplicationPath: {}", lpApplicationPath);
-		spdlog::debug( L"lpCommandLine: {}", lpCommandLine);
+		spdlog::info("StartProcess");
+		spdlog::info(L"lpApplicationPath: {}", lpApplicationPath);
+		spdlog::info(L"lpCommandLine: {}", lpCommandLine);
 
 		// additional information
 		STARTUPINFO startupInfo;
@@ -217,4 +225,50 @@ namespace IHHook {
 
 		return true;
 	}//Listfiles
+
+	//DEBUG
+	void GetAllWindowsFromProcessID(DWORD dwProcessID, std::vector <HWND> &vhWnds) {
+		// find all hWnds (vhWnds) associated with a process id (dwProcessID)
+		HWND hCurWnd = NULL;
+		do {
+			hCurWnd = FindWindowEx(NULL, hCurWnd, NULL, NULL);
+			DWORD dwWindowProcessID = 0;
+			GetWindowThreadProcessId(hCurWnd, &dwWindowProcessID);
+			if (dwWindowProcessID == dwProcessID) {
+				vhWnds.push_back(hCurWnd);  // add the found hCurWnd to the vector
+
+				//DEBUGNOW
+				std::wstring title(GetWindowTextLength(hCurWnd) + 1, L'\0');
+				GetWindowTextW(hCurWnd, &title[0], title.size()); //note: C++11 only
+
+				wprintf(L"Found hWnd %d:%s\n", hCurWnd, title.c_str());
+			}
+		} while (hCurWnd != NULL);
+	}
+
+	//tex ASSUMPTION: Based on running GetAllWindowsFromProcessID, MGSV only has one window (well two if I compile IHHook to open a console while debugging).
+	//Don't want to test for the MGSV window title since I don't know if it's localized or not
+	//Also would fail if any other funky 3rd party programs that like to inject their own windows
+	HWND GetMainWindow() {
+		// find all hWnds (vhWnds) associated with a process id (dwProcessID)
+		HWND hWnd = NULL;
+		DWORD dwProcessID = GetCurrentProcessId();
+
+		do {
+			hWnd = FindWindowEx(NULL, hWnd, NULL, NULL);
+			DWORD dwWindowProcessID = 0;
+			GetWindowThreadProcessId(hWnd, &dwWindowProcessID);
+			if (dwWindowProcessID == dwProcessID) {
+				std::wstring title(GetWindowTextLength(hWnd) + 1, L'\0');
+				GetWindowTextW(hWnd, &title[0], title.size());
+				if (title != L"IHHook") {
+					return hWnd;
+				}
+
+				wprintf(L"Found hWnd %d:%s\n", hWnd, title.c_str());
+			}
+		} while (hWnd != NULL);
+
+		return NULL;
+	}
 }//IHHook

@@ -69,7 +69,7 @@ namespace IHHook {
 		// with that client, and this loop is free to wait for the
 		// next client connect request. It is an infinite loop.
 		for (;;) {
-			spdlog::info("Pipe Server: Main thread awaiting client connection on {}", lpszPipenameIn);
+			spdlog::info("Pipe Server: Creating pipe: {}", lpszPipenameIn);
 			hPipeIn = CreateNamedPipe(
 				lpszPipenameIn,           // pipe name 
 				PIPE_ACCESS_INBOUND,      // read/write access 
@@ -87,7 +87,7 @@ namespace IHHook {
 				return -1;
 			}
 
-			spdlog::info("Pipe Server: Main thread awaiting client connection on {}", lpszPipenameOut);
+			spdlog::info("Pipe Server: Creating pipe: {}", lpszPipenameOut);
 			hPipeOut = CreateNamedPipe(
 				lpszPipenameOut,          // pipe name 
 				PIPE_ACCESS_OUTBOUND,      // read/write access
@@ -108,15 +108,16 @@ namespace IHHook {
 			// Wait for the client to connect; if it succeeds, 
 			// the function returns a nonzero value. If the function
 			// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
-
+			spdlog::info("Pipe Server: Main thread awaiting client connection on {}", lpszPipenameIn);
 			bool fConnectedIn = ConnectNamedPipe(hPipeIn, NULL) ?
 				TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
-			bool fConnectedOut = ConnectNamedPipe(hPipeIn, NULL) ?
+			spdlog::info("Pipe Server: Main thread awaiting client connection on {}", lpszPipenameOut);
+			bool fConnectedOut = ConnectNamedPipe(hPipeOut, NULL) ?
 				TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
 			if (fConnectedIn && fConnectedOut) {
-				spdlog::info("Client connected, creating a processing thread.");
+				spdlog::info("Pipe Server: Client connected, creating a processing thread.");
 
 				// Create a thread for this client. 
 				hThread = CreateThread(
@@ -174,13 +175,13 @@ namespace IHHook {
 
 		if (lpvParam == NULL) {
 			spdlog::error("\nERROR - Pipe Server Failure:");
-			spdlog::error("   InstanceThread got an unexpected NULL value in lpvParam.");
-			spdlog::error("   InstanceThread exitting.");
+			spdlog::error("   PipeOutThread got an unexpected NULL value in lpvParam.");
+			spdlog::error("   PipeOutThread exitting.");
 			return (DWORD)-1;
 		}
 
 		// Print verbose messages. In production code, this should be for debugging only.
-		spdlog::info("InstanceThread created, receiving and processing messages.");
+		spdlog::info("PipeOutThread created, receiving and processing messages.");
 
 		hPipeOut = (HANDLE)lpvParam;
 
@@ -217,7 +218,7 @@ namespace IHHook {
 		DisconnectNamedPipe(hPipeOut);
 		CloseHandle(hPipeOut);
 
-		spdlog::info("InstanceThread exiting.");
+		spdlog::info("PipeOutThread exiting.");
 		return 1;
 	}//PipeOutThread
 
@@ -243,8 +244,8 @@ namespace IHHook {
 
 		if (lpvParam == NULL) {
 			spdlog::error("\nERROR - Pipe Server Failure:");
-			spdlog::error("   InstanceThread got an unexpected NULL value in lpvParam.");
-			spdlog::error("   InstanceThread exitting.");
+			spdlog::error("   PipeInThread got an unexpected NULL value in lpvParam.");
+			spdlog::error("   PipeInThread exitting.");
 			if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
 			if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
 			return (DWORD)-1;
@@ -252,22 +253,22 @@ namespace IHHook {
 
 		if (pchRequest == NULL) {
 			spdlog::error("ERROR - Pipe Server Failure:");
-			spdlog::error("   InstanceThread got an unexpected NULL heap allocation.");
-			spdlog::error("   InstanceThread exitting.");
+			spdlog::error("   PipeInThread got an unexpected NULL heap allocation.");
+			spdlog::error("   PipeInThread exitting.");
 			if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
 			return (DWORD)-1;
 		}
 
 		if (pchReply == NULL) {
-			printf("\nERROR - Pipe Server Failure:\n");
-			printf("   InstanceThread got an unexpected NULL heap allocation.\n");
-			printf("   InstanceThread exitting.\n");
+			spdlog::error("ERROR - Pipe Server Failure:");
+			spdlog::error("   PipeInThread got an unexpected NULL heap allocation.");
+			spdlog::error("    exitting.");
 			if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
 			return (DWORD)-1;
 		}
 
 		// Print verbose messages. In production code, this should be for debugging only.
-		spdlog::info("InstanceThread created, receiving and processing messages.");
+		spdlog::info("PipeInThread created, receiving and processing messages.");
 
 		hPipeIn = (HANDLE)lpvParam;
 
@@ -299,10 +300,10 @@ namespace IHHook {
 
 			if (!fSuccess /*|| cbBytesRead == 0*/) {//DEBUGNOW
 				if (GetLastError() == ERROR_BROKEN_PIPE) {
-					spdlog::warn("InstanceThread: client disconnected.");
+					spdlog::warn("PipeInThread: client disconnected.");
 					break;
 				} else {
-					spdlog::error("InstanceThread ReadFile failed, GLE={}.", GetLastError());
+					spdlog::error("PipeInThread ReadFile failed, GLE={}.", GetLastError());
 					break;
 				}
 			} else {
@@ -319,7 +320,7 @@ namespace IHHook {
 		HeapFree(hHeap, 0, pchRequest);
 		HeapFree(hHeap, 0, pchReply);
 
-		spdlog::info("InstanceThread exiting.");
+		spdlog::info("PipeInThread exiting.");
 		return 1;
 	}//PipeInThread
 }//namespace IHHoook

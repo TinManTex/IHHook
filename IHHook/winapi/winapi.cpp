@@ -2139,7 +2139,7 @@ static int l_make_pipe_server(lua_State *L) {
 // @section Directories
 
 /// the short path name of a directory or file.
-// thisW is always in ASCII, 8.3 format. thisW function will create the
+// this is always in ASCII, 8.3 format. this function will create the
 // file first if it does not exist; the result can be used to open
 // files with unicode names (see @{testshort.lua})
 // @param path multibyte encoded file path

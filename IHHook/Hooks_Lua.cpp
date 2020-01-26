@@ -68,9 +68,19 @@ namespace IHHook {
 
 		//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 		ReplaceStubedOutLua(L);
+
+
+
+		//DEBUGNOW TODO figure out the earliest point the main window is done being created
+		//DWORD pid = GetCurrentProcessId();
+		//std::vector <HWND> vhWnds;
+		//IHHook::GetAllWindowsFromProcessID(pid, vhWnds);
+		InitializeInput();
+		HWND hWnd = GetMainWindow();
+		HookWndProc(hWnd);
 	}//lua_newstateHook
 
-	//tex: divert to use our panic, which wraps the requested panic
+	//tex: divert to use our panic, which wraps the requested panic //DEBUGNOW test by creating an error in a non pcall function lua side.
 	lua_CFunction lua_atpanicHook(lua_State *L, lua_CFunction panicf) {
 		foxPanic = panicf;
 		lua_CFunction oldPanicFunc = lua_atpanic(L, OnPanic);
@@ -78,13 +88,13 @@ namespace IHHook {
 	}//lua_atpanicDetour
 
 	//tex: caller DLLMain
-	//IN/SIDE: BaseAddr
+	//IN/SIDE: IHHook::BaseAddr
 	void CreateHooks_LuaIHH(size_t RealBaseAddr) {
 		DeleteFile(luaLogNamePrev.c_str());
 		CopyFile(luaLogName.c_str(), luaLogNamePrev.c_str(), false);
 		DeleteFile(luaLogName.c_str());
 
-		luaLog = spdlog::basic_logger_mt("lua", luaLogName);//DEBUGNOW mt vs st
+		luaLog = spdlog::basic_logger_st("lua", luaLogName);//tex st/single threaded since we want to preserver order, it's better performance, and we wont be logging from different threads
 		luaLog->set_pattern("|%H:%M:%S:%e|%l: %v");
 
 		CreateHooks_Lua(BaseAddr, RealBaseAddr);
@@ -307,7 +317,7 @@ namespace IHHook {
 	static int l_GetPipeInMessages(lua_State* L) {
 		if (!messagesIn.empty()) {
 			std::unique_lock<std::mutex> inLock(inMutex);
-			int size = messagesIn.size();
+			int size = (int)messagesIn.size();
 			if (size > 0) {
 				lua_createtable(L, size, 0);
 				int index = 0;
@@ -345,7 +355,7 @@ namespace IHHook {
 
 	// < IHH module
 
-	//tex TODO better module name, will likely break out into IHH<module name> as the amount of functions expands
+	//tex TODO better module name, will likely break out into IHH<module name> as the amount of functions expands, but would have to change if IHH checks in IH
 	static int luaopen_ihh(lua_State *L) {
 		spdlog::debug("luaopen_ihh");
 

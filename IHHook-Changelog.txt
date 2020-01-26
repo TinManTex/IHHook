@@ -1,5 +1,10 @@
 IHHook changelog
 
+r4 - 2020-01-27
+IHHook inited via a thread rather than directly in dllmain, still not 'the way', but better.
+After trying a few different types of input it seems like MGSV is using RawInput.
+So added a basic rough out of RawInput processing and blocking.
+
 r3 - 2020-01-22
 Pipe server
 
