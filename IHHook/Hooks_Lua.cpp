@@ -34,13 +34,13 @@ namespace IHHook {
 	extern void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr);
 
 	//tex actual detoured functions
-	//GOTCHA: you want to call the original function immediately (ie before logging) or you'll get an exception?
 
 	//tex there seems to be other calls to newstate that don't have lua libraries added, might be good to log calls to this and see if/when it's used)
 	//not really doing much with this hook since I shifted to luaL_openlibs as the lua setup func
+	//DEBUGNOW why does this crash unless you call the original function immediately?
 	lua_State* __fastcall lua_newstateHook(lua_Alloc f, void *ud) {
 		lua_State* L = lua_newstate(f, ud);
-		spdlog::debug("lua_newstateHook");
+		spdlog::debug(__func__);
 
 		lua = L;//tex save reference to local
 
@@ -50,8 +50,8 @@ namespace IHHook {
 	//tex may be better to hook the fox engine OpenLuawhatever that calls newstate and sets up the lua libraries
 	//but don't know fox OpenLuas return type
 	void __fastcall luaL_openlibsHook(lua_State *L) {
+		spdlog::debug(__func__);
 		luaL_openlibs(L);
-		spdlog::debug("luaL_openlibsHook");
 
 #ifdef _DEBUG
 		TestHooks_Lua(L);
@@ -69,8 +69,6 @@ namespace IHHook {
 		//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 		ReplaceStubedOutLua(L);
 
-
-
 		//DEBUGNOW TODO figure out the earliest point the main window is done being created
 		//DWORD pid = GetCurrentProcessId();
 		//std::vector <HWND> vhWnds;
@@ -78,6 +76,8 @@ namespace IHHook {
 		InitializeInput();
 		HWND hWnd = GetMainWindow();
 		HookWndProc(hWnd);
+
+		spdlog::debug("luaL_openlibsHook complete");
 	}//lua_newstateHook
 
 	//tex: divert to use our panic, which wraps the requested panic //DEBUGNOW test by creating an error in a non pcall function lua side.
@@ -90,6 +90,9 @@ namespace IHHook {
 	//tex: caller DLLMain
 	//IN/SIDE: IHHook::BaseAddr
 	void CreateHooks_LuaIHH(size_t RealBaseAddr) {
+		spdlog::debug(__func__);
+
+		//tex create ih_log
 		DeleteFile(luaLogNamePrev.c_str());
 		CopyFile(luaLogName.c_str(), luaLogNamePrev.c_str(), false);
 		DeleteFile(luaLogName.c_str());
@@ -101,10 +104,10 @@ namespace IHHook {
 		CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 		CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-		CREATEDETOURB(lua_newstate)
+		//DEBUGNOW CREATEDETOURB(lua_newstate)
 		CREATEDETOURB(luaL_openlibs)
 		CREATEDETOURB(lua_atpanic)
-		ENABLEHOOK(lua_newstate)
+		//DEBUGNOW ENABLEHOOK(lua_newstate)
 		ENABLEHOOK(luaL_openlibs)
 		ENABLEHOOK(lua_atpanic)
 	}//CreateHooks_Lua
@@ -219,7 +222,7 @@ namespace IHHook {
 	//tex DEBUGNOW find a good spot in exection to call it
 	void TestHooks_Lua_PostNewState(lua_State * L) {
 		//tex cant be in newstate or following functions (luaL_openlibs) or it will recurse
-		spdlog::debug("luaL_newstate");
+		spdlog::debug(__func__);
 		lua_State *nL = luaL_newstate();
 		if (nL != NULL) {
 			spdlog::debug("lua_close");
@@ -231,7 +234,7 @@ namespace IHHook {
 
 	//tex lua doesnt have any explicit unicode support, so forgoing a more general starprocess function via lua for hardcoding to ihext
 	static int l_StartIHExt(lua_State *L) {
-		spdlog::debug("l_startihext");
+		spdlog::debug(__func__);
 
 		std::wstring gameDir = GetGameDir();
 		std::wstring exeDir = gameDir + L"mod\\IHExt.exe";
@@ -253,7 +256,7 @@ namespace IHHook {
 	//log(int level, char * message)
 	//OUT/SIDE: luaLog
 	static int l_Log(lua_State *L) {
-		//spdlog::trace("l_log");
+		//spdlog::trace(__func__ );
 
 		int level = static_cast<int>(lua_tointeger(L, 1));
 		const char * message = lua_tostring(L, -1);
@@ -269,7 +272,7 @@ namespace IHHook {
 	}//l_log
 
 	static int l_GetModFilesList(lua_State *L) {
-		spdlog::trace("l_getmodfiles");
+		spdlog::trace(__func__);
 		std::vector<std::string> fullFileNames;
 		std::string modDir = IHHook::GetGameDirA() + "mod";
 		bool success = IHHook::ListFiles(modDir, "*", fullFileNames);
@@ -294,7 +297,7 @@ namespace IHHook {
 	//By default spdlog is very lazy with it's flush, which really helps performance wise
 	//But often when you're debugging or developing stuff you want to read log updates near real time
 	//spdlog does have a periodic flush, but can only be used on thread safe loggers (ihh is using st which isn't).
-	static int l_SetLogFlushLevel(lua_State *L) {
+	static int l_Log_SetFlushLevel(lua_State *L) {
 		int level = static_cast<int>(lua_tointeger(L, 1));
 		if (level < 0 || level > spdlog::level::off) {
 			spdlog::warn("l_setlogflushlevel: level outside range");
@@ -303,7 +306,12 @@ namespace IHHook {
 
 		spdlog::flush_on(static_cast<spdlog::level::level_enum>(level));
 		return 1;
-	}//l_setlogflushlevel
+	}//l_Log_SetFlushLevel
+
+	static int l_Log_Flush(lua_State *L) {
+		luaLog->flush();
+		return 1;
+	}//l_Log_Flush
 
 	static int l_QueuePipeOutMessage(lua_State* L) {
 		const char * message = lua_tostring(L, -1);
@@ -357,12 +365,13 @@ namespace IHHook {
 
 	//tex TODO better module name, will likely break out into IHH<module name> as the amount of functions expands, but would have to change if IHH checks in IH
 	static int luaopen_ihh(lua_State *L) {
-		spdlog::debug("luaopen_ihh");
+		spdlog::debug(__func__);
 
 		luaL_Reg ihh_funcs[] = {
 			{ "StartIHExt", l_StartIHExt },
 			{ "Log", l_Log },
-			{ "SetLogFlushLevel", l_SetLogFlushLevel},
+			{ "Log_SetFlushLevel", l_Log_SetFlushLevel},
+			{ "Log_Flush", l_Log_Flush},
 			{ "GetModFilesList", l_GetModFilesList},
 			{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 			{ "GetPipeInMessages", l_GetPipeInMessages },
