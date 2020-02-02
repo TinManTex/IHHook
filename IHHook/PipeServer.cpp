@@ -1,6 +1,3 @@
-//DEBUGNOW
-#undef UNICODE
-
 #include "stdafx.h"
 #include <strsafe.h>
 #include "spdlog/spdlog.h"
@@ -69,7 +66,7 @@ namespace IHHook {
 		// with that client, and this loop is free to wait for the
 		// next client connect request. It is an infinite loop.
 		for (;;) {
-			spdlog::info("Pipe Server: Creating pipe: {}", lpszPipenameIn);
+			spdlog::info(L"Pipe Server: Creating pipe: {}", lpszPipenameIn);
 			hPipeIn = CreateNamedPipe(
 				lpszPipenameIn,           // pipe name 
 				PIPE_ACCESS_INBOUND,      // read/write access 
@@ -87,7 +84,7 @@ namespace IHHook {
 				return -1;
 			}
 
-			spdlog::info("Pipe Server: Creating pipe: {}", lpszPipenameOut);
+			spdlog::info(L"Pipe Server: Creating pipe: {}", lpszPipenameOut);
 			hPipeOut = CreateNamedPipe(
 				lpszPipenameOut,          // pipe name 
 				PIPE_ACCESS_OUTBOUND,      // read/write access
@@ -108,11 +105,11 @@ namespace IHHook {
 			// Wait for the client to connect; if it succeeds, 
 			// the function returns a nonzero value. If the function
 			// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
-			spdlog::info("Pipe Server: Main thread awaiting client connection on {}", lpszPipenameIn);
+			spdlog::info(L"Pipe Server: Main thread awaiting client connection on {}", lpszPipenameIn);
 			bool fConnectedIn = ConnectNamedPipe(hPipeIn, NULL) ?
 				TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
-			spdlog::info("Pipe Server: Main thread awaiting client connection on {}", lpszPipenameOut);
+			spdlog::info(L"Pipe Server: Main thread awaiting client connection on {}", lpszPipenameOut);
 			bool fConnectedOut = ConnectNamedPipe(hPipeOut, NULL) ?
 				TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
@@ -174,7 +171,7 @@ namespace IHHook {
 		// thread fails.
 
 		if (lpvParam == NULL) {
-			spdlog::error("\nERROR - Pipe Server Failure:");
+			spdlog::error("ERROR - Pipe Server Failure:");
 			spdlog::error("   PipeOutThread got an unexpected NULL value in lpvParam.");
 			spdlog::error("   PipeOutThread exitting.");
 			return (DWORD)-1;
@@ -225,8 +222,7 @@ namespace IHHook {
 	//tex just processes In pipe
 	DWORD WINAPI PipeInThread(LPVOID lpvParam) {
 		HANDLE hHeap = GetProcessHeap();
-		TCHAR* pchRequest = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
-		TCHAR* pchReply = (TCHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(TCHAR));
+		CHAR* pchRequest = (CHAR*)HeapAlloc(hHeap, 0, BUFSIZE * sizeof(CHAR));
 
 		DWORD cbBytesRead = 0;
 		DWORD cbReplyBytes = 0;
@@ -243,10 +239,9 @@ namespace IHHook {
 		// thread fails.
 
 		if (lpvParam == NULL) {
-			spdlog::error("\nERROR - Pipe Server Failure:");
+			spdlog::error("ERROR - Pipe Server Failure:");
 			spdlog::error("   PipeInThread got an unexpected NULL value in lpvParam.");
 			spdlog::error("   PipeInThread exitting.");
-			if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
 			if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
 			return (DWORD)-1;
 		}
@@ -255,15 +250,6 @@ namespace IHHook {
 			spdlog::error("ERROR - Pipe Server Failure:");
 			spdlog::error("   PipeInThread got an unexpected NULL heap allocation.");
 			spdlog::error("   PipeInThread exitting.");
-			if (pchReply != NULL) HeapFree(hHeap, 0, pchReply);
-			return (DWORD)-1;
-		}
-
-		if (pchReply == NULL) {
-			spdlog::error("ERROR - Pipe Server Failure:");
-			spdlog::error("   PipeInThread got an unexpected NULL heap allocation.");
-			spdlog::error("    exitting.");
-			if (pchRequest != NULL) HeapFree(hHeap, 0, pchRequest);
 			return (DWORD)-1;
 		}
 
@@ -307,7 +293,7 @@ namespace IHHook {
 					break;
 				}
 			} else {
-				std::basic_string<TCHAR> message;
+				std::string message;
 				message.insert(message.end(), pchRequest, pchRequest + cbBytesRead);
 				spdlog::trace("Client Request String:\"{}\"", message);
 				QueueMessageIn(message);
@@ -318,10 +304,8 @@ namespace IHHook {
 		CloseHandle(hPipeIn);
 
 		HeapFree(hHeap, 0, pchRequest);
-		HeapFree(hHeap, 0, pchReply);
 
 		spdlog::info("PipeInThread exiting.");
 		return 1;
 	}//PipeInThread
 }//namespace IHHoook
-#define UNICODE
