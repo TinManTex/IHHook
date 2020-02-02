@@ -27,7 +27,7 @@
 //NOTE: if you run cityhook with IH mod you'll end up picking up a bunch of IH stuff running through cityhash
 
 namespace IHHook {
-	static const int Version = 3;
+	static const int Version = 4; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 1 }; //tex: version checking game exe
 	static const std::wstring exeName = L"mgsvtpp.exe";
 
