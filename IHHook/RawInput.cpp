@@ -50,25 +50,25 @@ namespace IHHook {
 		DoActions(vKey, buttonEvent);
 
 #ifdef _DEBUG
-		WCHAR wcTextBuffer[512];
-		UINT keyChar = MapVirtualKey(pRaw->data.keyboard.VKey, MAPVK_VK_TO_CHAR);
+		//WCHAR wcTextBuffer[512];
+		//UINT keyChar = MapVirtualKey(pRaw->data.keyboard.VKey, MAPVK_VK_TO_CHAR);
 
-		wsprintf(wcTextBuffer,
-			TEXT("Type=%d\nDevice=0x%x\nMakeCode=0x%x\nFlags=0x%x\nReserved=0x%x\nExtraInformation=0x%x\nMessage=0x%x\nVKey=0x%x\nEvent=0x%x\nkeyChar=0x%x\n\n"),
-			/// device header
-			pRaw->header.dwType,
-			// device handle, pass this to GetRawInputDeviceInfo
-			pRaw->header.hDevice,
+		//wsprintf(wcTextBuffer,
+		//	TEXT("Type=%d\nDevice=0x%x\nMakeCode=0x%x\nFlags=0x%x\nReserved=0x%x\nExtraInformation=0x%x\nMessage=0x%x\nVKey=0x%x\nEvent=0x%x\nkeyChar=0x%x\n\n"),
+		//	/// device header
+		//	pRaw->header.dwType,
+		//	// device handle, pass this to GetRawInputDeviceInfo
+		//	pRaw->header.hDevice,
 
-			pRaw->data.keyboard.MakeCode,
-			pRaw->data.keyboard.Flags,
-			pRaw->data.keyboard.Reserved,
-			pRaw->data.keyboard.ExtraInformation,
-			pRaw->data.keyboard.Message,
-			pRaw->data.keyboard.VKey,
-			keyChar);
+		//	pRaw->data.keyboard.MakeCode,
+		//	pRaw->data.keyboard.Flags,
+		//	pRaw->data.keyboard.Reserved,
+		//	pRaw->data.keyboard.ExtraInformation,
+		//	pRaw->data.keyboard.Message,
+		//	pRaw->data.keyboard.VKey,
+		//	keyChar);
 
-		wprintf(wcTextBuffer);
+		//wprintf(wcTextBuffer);
 #endif // _DEBUG
 	}//ProcessRawInput
 
@@ -111,7 +111,7 @@ namespace IHHook {
 			USHORT vKey = k[i].vk;
 			USHORT flags = currFlags[vKey];
 			USHORT oldFlags = oldFlagsB[vKey];
-			
+
 			BUTTONEVENT buttonEvent = BUTTONEVENT::UP;
 			if (flags == RI_KEY_MAKE && oldFlags == RI_KEY_BREAK) {
 				buttonEvent = BUTTONEVENT::ONDOWN;
@@ -127,22 +127,22 @@ namespace IHHook {
 		}//for numbuttons
 
 #ifdef _DEBUG
-		WCHAR wcTextBuffer[512];
+		//WCHAR wcTextBuffer[512];
 
-		wsprintf(wcTextBuffer,
-			TEXT("Type=%d\nDevice=0x%x\nulButtons=0x%x\nulRawButtons=0x%x\nusButtonData=0x%x\nusButtonFlags=0x%x\nusFlags=0x%x\nlLastX=0x%x\nlLastY=0x%x\n\n"),
-			pRaw->header.dwType,
-			pRaw->header.hDevice,
+		//wsprintf(wcTextBuffer,
+		//	TEXT("Type=%d\nDevice=0x%x\nulButtons=0x%x\nulRawButtons=0x%x\nusButtonData=0x%x\nusButtonFlags=0x%x\nusFlags=0x%x\nlLastX=0x%x\nlLastY=0x%x\n\n"),
+		//	pRaw->header.dwType,
+		//	pRaw->header.hDevice,
 
-			pRaw->data.mouse.ulButtons,
-			pRaw->data.mouse.ulRawButtons,
-			pRaw->data.mouse.usButtonData,
-			pRaw->data.mouse.usButtonFlags,
-			pRaw->data.mouse.usFlags,
-			pRaw->data.mouse.lLastX,
-			pRaw->data.mouse.lLastY);
+		//	pRaw->data.mouse.ulButtons,
+		//	pRaw->data.mouse.ulRawButtons,
+		//	pRaw->data.mouse.usButtonData,
+		//	pRaw->data.mouse.usButtonFlags,
+		//	pRaw->data.mouse.usFlags,
+		//	pRaw->data.mouse.lLastX,
+		//	pRaw->data.mouse.lLastY);
 
-		wprintf(wcTextBuffer);
+		//wprintf(wcTextBuffer);
 #endif // _DEBUG
 	}//ProcessMouseButtons
 
@@ -265,6 +265,8 @@ namespace IHHook {
 	}//InitIgnoreKeys
 
 	void InitializeInput() {
+		spdlog::debug("Rawinput InitializeInput");
+
 		std::fill_n(currFlags, vKeyMax, RI_KEY_BREAK);
 
 		InitIgnoreKeys();
