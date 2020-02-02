@@ -8,13 +8,12 @@ extern HMODULE thisModule;
 
 namespace IHHook {
 	//IN/SIDE: IHHook::exeName
-	bool CheckVersion(const DWORD checkVersion[])
-	{
-		spdlog::debug("CheckVersion");
+	bool CheckVersion(const DWORD checkVersion[]) {
+		spdlog::debug(__func__);
 
 		std::wstring gameDir = GetGameDir();
 		std::wstring exeDir = gameDir + exeName;
-		spdlog::debug( L"exeDir: {}", exeDir.c_str());
+		spdlog::debug(L"exeDir: {}", exeDir.c_str());
 		LPTSTR lpszFilePath = new TCHAR[MAX_PATH];
 		std::wcscpy(lpszFilePath, exeDir.c_str());
 
@@ -23,8 +22,8 @@ namespace IHHook {
 
 		LPBYTE lpVersionInfo = new BYTE[dwFVISize];
 
-		GetFileVersionInfo(lpszFilePath, 0, dwFVISize, lpVersionInfo);		
-		
+		GetFileVersionInfo(lpszFilePath, 0, dwFVISize, lpVersionInfo);
+
 		delete[] lpszFilePath;
 
 		UINT uLen;
@@ -60,13 +59,12 @@ namespace IHHook {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}//CheckVersion
 
 	//IN/SIDE: ourModule
-	std::wstring GetGameDir()
-	{
+	std::wstring GetGameDir() {
 		//tex user having unicode path might be trouble, but on a quick test lua is hinky with utf16
 		TCHAR path_buffer[_MAX_PATH];
 		GetModuleFileName(thisModule, path_buffer, _MAX_PATH);
@@ -101,9 +99,8 @@ namespace IHHook {
 
 	}//GetGameDirA
 
-	int StartProcess(LPCWSTR lpApplicationPath, LPWSTR lpCommandLine)
-	{
-		spdlog::info("StartProcess");
+	int StartProcess(LPCWSTR lpApplicationPath, LPWSTR lpCommandLine) {
+		spdlog::info(__func__);
 		spdlog::info(L"lpApplicationPath: {}", lpApplicationPath);
 		spdlog::info(L"lpCommandLine: {}", lpCommandLine);
 
@@ -136,7 +133,7 @@ namespace IHHook {
 	}//StartProcess
 
 	std::vector<std::string> GetFolderNames(std::string folder) {
-		spdlog::debug("GetFolderNames");//DEBUGNOW
+		spdlog::debug(__func__);
 
 		std::vector<std::string> names;
 		std::string search_path = folder + "/*.*";
@@ -160,7 +157,7 @@ namespace IHHook {
 	}//GetFolderNames
 
 	std::vector<std::string> GetFileNames(std::string folder) {
-		spdlog::trace("GetFileNames");
+		spdlog::debug(__func__);
 
 		std::vector<std::string> names;
 		std::string search_path = folder + "/*.*";
@@ -237,11 +234,14 @@ namespace IHHook {
 			if (dwWindowProcessID == dwProcessID) {
 				vhWnds.push_back(hCurWnd);  // add the found hCurWnd to the vector
 
-				//DEBUGNOW
+				//DEBUG
 				std::wstring title(GetWindowTextLength(hCurWnd) + 1, L'\0');
-				GetWindowTextW(hCurWnd, &title[0], title.size()); //note: C++11 only
+				if (title.size() > INT_MAX) {
+					throw std::overflow_error("window title is larger than INT_MAX");
+				}
+				GetWindowTextW(hCurWnd, &title[0], static_cast<int>(title.size())); //note: C++11 only
 
-				wprintf(L"Found hWnd %d:%s\n", hCurWnd, title.c_str());
+				wprintf(L"Found hWnd %p:%s\n", hCurWnd, title.c_str());
 			}
 		} while (hCurWnd != NULL);
 	}
@@ -260,12 +260,13 @@ namespace IHHook {
 			GetWindowThreadProcessId(hWnd, &dwWindowProcessID);
 			if (dwWindowProcessID == dwProcessID) {
 				std::wstring title(GetWindowTextLength(hWnd) + 1, L'\0');
-				GetWindowTextW(hWnd, &title[0], title.size());
+				if (title.size() > INT_MAX) {
+					throw std::overflow_error("window title is larger than INT_MAX");
+				}
+				GetWindowTextW(hWnd, &title[0], static_cast<int>(title.size()));
 				if (title != L"IHHook") {
 					return hWnd;
 				}
-
-				wprintf(L"Found hWnd %d:%s\n", hWnd, title.c_str());
 			}
 		} while (hWnd != NULL);
 
