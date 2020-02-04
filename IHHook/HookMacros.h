@@ -2,6 +2,7 @@
 
 //tex macros to declare the various accoutrement required for MH_Hook and straight hooks
 
+//tex typedef for the function pointers
 #define HOOKFUNC(ret, name, ...) typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
 	extern name##Func* name;
 //Example use:
@@ -10,6 +11,7 @@
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //lua_newstateFunc lua_newstate;
 
+//tex declare function pointer, using address in respect to module base, this will be rebased and overwritten at runtime using CREATEHOOK. Kinda hinky, but it saves having to set up yet another variable.
 #define HOOKPTR(name, address) name##Func* name = (name##Func*)address;
 //Example use:
 //HOOKPTR(lua_newstate, 0x14cdd7ab0);
@@ -17,7 +19,7 @@
 //lua_newstateFunc name = (lua_newstate)address;
 //NOTE: CREATEHOOK (defined below) is used to rebase this pointer
 
-//tex used in create hooks functions at runtime, requires setup with FUNCINFO macro
+//tex following macros used in create hooks functions at runtime, requires setup with HOOK* macros
 
 //tex dont need detour, just want original function
 #define CREATEHOOK(name) void* name##Rebased = (void*)(((size_t)name - BaseAddr) + RealBaseAddr); \

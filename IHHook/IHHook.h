@@ -35,14 +35,19 @@ namespace IHHook {
 	static const std::wstring hookLogNamePrev = L"ihhook_log_prev.txt";
 
 	static const size_t BaseAddr = 0x140000000; // from ImageBase field in the EXE
+	extern size_t RealBaseAddr; // Current base address of the EXE
+
+	extern HMODULE thisModule;
 
 	DWORD WINAPI Initialize(LPVOID lpParameter);
 	void Shutdown();
 
+	void* RebasePointer(const size_t address);
+
 //tex create hooks // called from DLLMain
 	void CreateHooks_CityHash(size_t RealBaseAddr);
 	void CreateHooks_LuaIHH(size_t RealBaseAddr);
-
+	void CreateHooks_TPP();
 
 
 	//OS

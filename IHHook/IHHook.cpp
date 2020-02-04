@@ -6,6 +6,9 @@
 #include <signal.h>
 
 namespace IHHook {
+	size_t RealBaseAddr;
+	HMODULE thisModule;
+
 	//DEBUGNOW
 	terminate_function terminate_Original;
 
@@ -88,6 +91,9 @@ namespace IHHook {
 		//	0
 		//);
 
+		thisModule = static_cast<HMODULE>(lpParameter);
+		RealBaseAddr = (size_t)GetModuleHandle(NULL);
+
 		MH_Initialize();
 
 
@@ -154,16 +160,18 @@ namespace IHHook {
 		std::vector<std::string> folderNames = IHHook::GetFolderNames("./mod");
 #endif // _DEBUG
 
+		RealBaseAddr = (size_t)GetModuleHandle(NULL);
+
 		if (!IHHook::CheckVersion(IHHook::GameVersion)) {
 			spdlog::error("IHHook version check mismatch");
 		}
 		else {
-			size_t RealBaseAddr = (size_t)GetModuleHandle(NULL);
 #ifdef ENABLE_CITYHOOK
 			IHHook::CreateHooks_CityHash(RealBaseAddr);
 #endif
 			IHHook::CreateHooks_LuaIHH(RealBaseAddr);
-		}
+			CreateHooks_TPP();
+		}// ChecKVersion
 
 		IHHook::StartPipeServer();
 
@@ -171,11 +179,19 @@ namespace IHHook {
 		log->flush();
 
 		return 0;
-		}//Initialize
+	}//Initialize
 
 	void Shutdown() {
 		spdlog::debug("IHHook DLL_PROCESS_DETACH");
 
 		spdlog::shutdown();
 	}//Shutdown
+
+	//DEBUGNOW move to utils or something
+	//IN/SIDE: BaseAddr, RealBaseAddr
+	void* RebasePointer(size_t address) {
+		return (void*)((address - BaseAddr) + RealBaseAddr);
 	}
+
+
+}//namespace IHHook

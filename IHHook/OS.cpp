@@ -4,8 +4,6 @@
 #pragma comment(lib,"Version.lib") // CheckVersion
 #include <stack>
 
-extern HMODULE thisModule;
-
 namespace IHHook {
 	//IN/SIDE: IHHook::exeName
 	bool CheckVersion(const DWORD checkVersion[]) {
@@ -63,7 +61,7 @@ namespace IHHook {
 		return true;
 	}//CheckVersion
 
-	//IN/SIDE: ourModule
+	//IN/SIDE: thisModule
 	std::wstring GetGameDir() {
 		//tex user having unicode path might be trouble, but on a quick test lua is hinky with utf16
 		TCHAR path_buffer[_MAX_PATH];

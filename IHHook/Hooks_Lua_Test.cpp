@@ -51,7 +51,7 @@ void CreateTestTable(lua_State * L) {
 }//CreateTestTable
 
 void TestHooks_Lua(lua_State* L) {
-	spdlog::debug("TestHooks_Lua:");
+	spdlog::debug(__func__);
 
 	CreateTestTable(L);
 
@@ -168,6 +168,7 @@ void TestHooks_Lua(lua_State* L) {
 
 //tex testing after libs registered
 void TestHooks_Lua_PostLibs(lua_State * L) {
+	spdlog::debug(__func__);
 	lua_getfield(L, LUA_GLOBALSINDEX, "IHH");
 	{
 		lua_pushstring(L, "OnUpdate");

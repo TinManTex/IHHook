@@ -61,7 +61,7 @@ namespace IHHook {
 		lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
 		luaopen_ihh(L);
-		//luaopen_winapi(L);//tex DEBUGNOW, may want to cut down the actual functions available
+		//OFF luaopen_winapi(L);
 #ifdef _DEBUG
 		TestHooks_Lua_PostLibs(L);
 #endif // _DEBUG

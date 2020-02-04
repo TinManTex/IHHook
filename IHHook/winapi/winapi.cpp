@@ -2903,5 +2903,4 @@ set_winapi_constants(L);
     return 1;
 }
 
-
-#define UNICODE//tex DEBUGNOW
+#define UNICODE
