@@ -167,7 +167,7 @@
     <ClCompile Include="IHHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TPP.cpp">
+    <ClCompile Include="Hooks_TPP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
