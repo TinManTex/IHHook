@@ -14,13 +14,6 @@ namespace IHHook {
 
 	//DEBUGNOW
 	void AbortHandler(int signal_number) {
-		//MessageBoxA(
-		//	NULL,
-		//	"abort was called",
-		//	"IHHook: unknown error",
-		//	MB_ICONWARNING
-		//);
-
 		auto log = spdlog::get("ihhook");
 		if (log != NULL) {
 			log->error("abort was called");
@@ -29,19 +22,12 @@ namespace IHHook {
 	}//AbortHandler
 
 	//DEBUGNOW
-	void Terminate_MsgBox() {
-		//MessageBoxA(
-		//	NULL,
-		//	"terminate was called",
-		//	"IHHook: unknown error",
-		//	MB_ICONWARNING
-		//);
+	void TerminateHandler() {
 		auto log = spdlog::get("ihhook");
 		if (log != NULL) {
 			log->error("terminate was called");
 			log->flush();
 		}
-		//DEBUGNOW abort();
 		terminate_Original();
 	}//Terminate_MsgBox
 
@@ -83,31 +69,21 @@ namespace IHHook {
 
 
 	DWORD Initialize(LPVOID lpParameter) {
-		//DEBUGNOW
-		//MessageBoxA(
-		//	NULL,
-		//	"Init",
-		//	"IHH",
-		//	0
-		//);
-
 		thisModule = static_cast<HMODULE>(lpParameter);
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 
-		MH_Initialize();
-
-
 		signal(SIGABRT, &AbortHandler);//tex signal handler for SIGABRT which is thrown by abort()
-		terminate_Original = set_terminate(Terminate_MsgBox);
+		terminate_Original = set_terminate(TerminateHandler);
 		_set_abort_behavior(1, _WRITE_ABORT_MSG);
 
-		::SetUnhandledExceptionFilter(UnhandledExceptionHandler);
+		SetUnhandledExceptionFilter(UnhandledExceptionHandler);
+
 		//https://www.codeproject.com/Articles/154686/SetUnhandledExceptionFilter-and-the-C-C-Runtime-Li
-		if (MH_CreateHook(&SetUnhandledExceptionFilter, &UnhandledExceptionFilter_Hook, reinterpret_cast<LPVOID*>(&SetUnhandledExceptionFilter_Orig)) != MH_OK) {
-			//DEBUGNOW message error
-			return 1;
-		}
-		MH_EnableHook(SetUnhandledExceptionFilter);
+		//if (MH_CreateHook(&SetUnhandledExceptionFilter, &UnhandledExceptionFilter_Hook, reinterpret_cast<LPVOID*>(&SetUnhandledExceptionFilter_Orig)) != MH_OK) {
+		//	//DEBUGNOW message error
+		//	return 1;
+		//}
+		//MH_EnableHook(SetUnhandledExceptionFilter);
 
 
 		//tex OFF //DEBUGNOW
@@ -166,6 +142,7 @@ namespace IHHook {
 			spdlog::error("IHHook version check mismatch");
 		}
 		else {
+			MH_Initialize();
 #ifdef ENABLE_CITYHOOK
 			IHHook::CreateHooks_CityHash(RealBaseAddr);
 #endif
@@ -192,6 +169,5 @@ namespace IHHook {
 	void* RebasePointer(size_t address) {
 		return (void*)((address - BaseAddr) + RealBaseAddr);
 	}
-
 
 }//namespace IHHook

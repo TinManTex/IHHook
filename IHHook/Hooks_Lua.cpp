@@ -80,7 +80,7 @@ namespace IHHook {
 		spdlog::debug("luaL_openlibsHook complete");
 	}//lua_newstateHook
 
-	//tex: divert to use our panic, which wraps the requested panic //DEBUGNOW test by creating an error in a non pcall function lua side.
+	//tex: divert to use our panic, which wraps the requested panic 
 	lua_CFunction lua_atpanicHook(lua_State *L, lua_CFunction panicf) {
 		foxPanic = panicf;
 		lua_CFunction oldPanicFunc = lua_atpanic(L, OnPanic);
@@ -104,10 +104,10 @@ namespace IHHook {
 		CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 		CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-		//DEBUGNOW CREATEDETOURB(lua_newstate)
+		//OFF CREATEDETOURB(lua_newstate)
 		CREATEDETOURB(luaL_openlibs)
 		CREATEDETOURB(lua_atpanic)
-		//DEBUGNOW ENABLEHOOK(lua_newstate)
+		//OFF ENABLEHOOK(lua_newstate)
 		ENABLEHOOK(luaL_openlibs)
 		ENABLEHOOK(lua_atpanic)
 	}//CreateHooks_Lua
@@ -207,7 +207,8 @@ namespace IHHook {
 	}//ReplaceStubedOutFox
 
 	//tex: lua panic function (called on errors in unprotected calls).
-	static int OnPanic(lua_State *L) {//DEBUGNOW TEST
+	//DEBUGNOW test by creating an error in a non pcall function lua side.
+	static int OnPanic(lua_State *L) {
 		(void)L;  /* to avoid warnings */
 		const char* errorMsg = lua_tostring(L, -1);
 		//tex was fprintf(stderr, "PANIC: unprotected error in call to Lua API (%s)\n",errorMsg);
@@ -318,7 +319,6 @@ namespace IHHook {
 		QueueMessageOut(std::string(message));
 		return 1;
 	}
-
 
 	//tex DEBUGNOW will have to rethink if we want something else to read the messages 
 	//returns table of string messages from serverPipeIn
