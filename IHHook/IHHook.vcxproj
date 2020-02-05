@@ -218,7 +218,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TPP.cpp" />
+    <ClCompile Include="Hooks_TPP.cpp" />
     <ClCompile Include="winapi\winapi.cpp" />
     <ClCompile Include="winapi\wutils.cpp" />
   </ItemGroup>
