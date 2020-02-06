@@ -24,8 +24,8 @@
 #include <mutex>
 
 namespace IHHook {
-	bool openConsole = false;//DEBUG CONFIG
-	bool enableCityHook = false;//DEBUG CONFIG
+	static const bool openConsole = false;//DEBUG CONFIG
+	static const bool enableCityHook = false;//DEBUG CONFIG
 
 	static const int Version = 4; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 1 }; //tex: version checking game exe
