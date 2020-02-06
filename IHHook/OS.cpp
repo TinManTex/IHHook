@@ -176,7 +176,7 @@ namespace IHHook {
 	}//GetFileNames
 
 	//use std::vector<std::string> files;
-	//bool success = ListFiles("C:\\somepath", "*", files);//DEBUGNOW wide
+	//bool success = ListFiles("C:\\somepath", "*", files);
 	bool ListFiles(std::string path, std::string mask, std::vector<std::string>& files) {
 		HANDLE hFind = INVALID_HANDLE_VALUE;
 		WIN32_FIND_DATAA ffd;

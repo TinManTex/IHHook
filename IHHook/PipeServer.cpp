@@ -52,13 +52,14 @@ namespace IHHook {
 		else CloseHandle(hThread);
 	}//StartPipeServer
 
+	//IN/SIDE: pipeInName,pipeOutName
 	DWORD WINAPI PipeServerThread(LPVOID lpvParam) {
 		DWORD  dwThreadId = 0;
 		HANDLE hPipeIn = INVALID_HANDLE_VALUE;
 		HANDLE hPipeOut = INVALID_HANDLE_VALUE;
 		HANDLE hThread = NULL;
-		LPCTSTR lpszPipenameIn = TEXT("\\\\.\\pipe\\mgsv_in");//tex DEBUGNOW move somewhere more accessable
-		LPCTSTR lpszPipenameOut = TEXT("\\\\.\\pipe\\mgsv_out");
+		LPCTSTR lpszPipenameIn = pipeInName.c_str();
+		LPCTSTR lpszPipenameOut = pipeOutName.c_str();
 
 		// The main loop creates an instance of the named pipe and 
 		// then waits for a client to connect to it. When the client 

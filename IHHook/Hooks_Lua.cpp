@@ -104,10 +104,10 @@ namespace IHHook {
 		CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 		CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-		//OFF CREATEDETOURB(lua_newstate)
+		CREATEDETOURB(lua_newstate)
 		CREATEDETOURB(luaL_openlibs)
 		CREATEDETOURB(lua_atpanic)
-		//OFF ENABLEHOOK(lua_newstate)
+		ENABLEHOOK(lua_newstate)
 		ENABLEHOOK(luaL_openlibs)
 		ENABLEHOOK(lua_atpanic)
 	}//CreateHooks_Lua
@@ -207,9 +207,9 @@ namespace IHHook {
 	}//ReplaceStubedOutFox
 
 	//tex: lua panic function (called on errors in unprotected calls).
-	//DEBUGNOW test by creating an error in a non pcall function lua side.
+	//test by creating an error in a non pcall function lua side.
+	//TODO doesn't seem to fire
 	static int OnPanic(lua_State *L) {
-		(void)L;  /* to avoid warnings */
 		const char* errorMsg = lua_tostring(L, -1);
 		//tex was fprintf(stderr, "PANIC: unprotected error in call to Lua API (%s)\n",errorMsg);
 		luaLog->error("PANIC: unprotected error in call to Lua API({})",errorMsg);

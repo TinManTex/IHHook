@@ -16,9 +16,6 @@
 
 //Encoding is a mess having pulled in so much code from other projects, and then, should probably try to standardise to utf8 at some point.
 
-//#define ENABLE_CITYHOOK //tex uncomment to enable CityHook hash logging functionality, 
-//NOTE: if you run cityhook with IH mod you'll end up picking up a bunch of IH stuff running through cityhash
-
 #pragma once
 #include "stdafx.h"
 #include <string>
@@ -27,12 +24,18 @@
 #include <mutex>
 
 namespace IHHook {
+	bool openConsole = false;//DEBUG CONFIG
+	bool enableCityHook = false;//DEBUG CONFIG
+
 	static const int Version = 4; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 1 }; //tex: version checking game exe
 	static const std::wstring exeName = L"mgsvtpp.exe";
 
 	static const std::wstring hookLogName = L"ihhook_log.txt";
 	static const std::wstring hookLogNamePrev = L"ihhook_log_prev.txt";
+
+	static const std::wstring pipeInName = L"\\\\.\\pipe\\mgsv_in";
+	static const std::wstring pipeOutName = L"\\\\.\\pipe\\mgsv_out";
 
 	static const size_t BaseAddr = 0x140000000; // from ImageBase field in the EXE
 	extern size_t RealBaseAddr; // Current base address of the EXE

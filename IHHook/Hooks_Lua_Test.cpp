@@ -7,9 +7,11 @@ void CreateTestTable(lua_State * L) {
 	spdlog::debug("lua_createtable");
 	lua_createtable(L, 0, 0);
 	{
-		//tex DEBUGNOW need a different test, setting a key to nil is the same as a key that wasnt set lol
+		//tex not really doing much, setting a key to nil is the same as a key that wasnt set lol
+		//so the assert should be ok for a simeple test
 		spdlog::debug("lua_pushnil");
 		lua_pushnil(L);
+		assert(lua_type(L, -1) == LUA_TNIL);
 		spdlog::debug("lua_setfield");
 		lua_setfield(L, -2, "nilfield");
 

@@ -9,10 +9,8 @@ namespace IHHook {
 	size_t RealBaseAddr;
 	HMODULE thisModule;
 
-	//DEBUGNOW
 	terminate_function terminate_Original;
 
-	//DEBUGNOW
 	void AbortHandler(int signal_number) {
 		auto log = spdlog::get("ihhook");
 		if (log != NULL) {
@@ -21,7 +19,6 @@ namespace IHHook {
 		}
 	}//AbortHandler
 
-	//DEBUGNOW
 	void TerminateHandler() {
 		auto log = spdlog::get("ihhook");
 		if (log != NULL) {
@@ -29,9 +26,8 @@ namespace IHHook {
 			log->flush();
 		}
 		terminate_Original();
-	}//Terminate_MsgBox
+	}//TerminateHandler
 
-	//DEBUGNOW
 	bool g_showCrashDialog = true;
 	LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* /*ExceptionInfo*/) {
 		auto log = spdlog::get("ihhook");
@@ -40,16 +36,8 @@ namespace IHHook {
 			log->flush();
 		}
 
-		//std::cout << "Gotcha!" << std::endl;
-		//MessageBoxA(
-		//	NULL,
-		//	"unhandled exception",
-		//	"IHHook: unknown error",
-		//	MB_ICONWARNING
-		//);
-
 		return g_showCrashDialog ? EXCEPTION_CONTINUE_SEARCH : EXCEPTION_EXECUTE_HANDLER;
-	}
+	}//UnhandledExceptionHandler
 
 	LONG WINAPI UnhandledExceptionFilter_Hook(EXCEPTION_POINTERS* /*ExceptionInfo*/) {
 		// When the CRT calls SetUnhandledExceptionFilter with NULL parameter
@@ -61,9 +49,8 @@ namespace IHHook {
 		}
 
 		return 0;
-	}
+	}//UnhandledExceptionFilter_Hook
 
-	//
 	typedef LPTOP_LEVEL_EXCEPTION_FILTER(WINAPI* SetUnhandledExceptionFilter_Type)(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter);
 	SetUnhandledExceptionFilter_Type SetUnhandledExceptionFilter_Orig = NULL;
 
@@ -86,13 +73,14 @@ namespace IHHook {
 		//MH_EnableHook(SetUnhandledExceptionFilter);
 
 
-		//tex OFF //DEBUGNOW
-		//AllocConsole();
-		//SetConsoleTitle(L"IHHook");
-		//freopen("CONOUT$", "w", stdout);
-		//freopen("CONOUT$", "w", stderr);
-		//freopen("CONIN$", "r", stdin);
-		//printf("Console test\n");
+		if (openConsole) {
+			AllocConsole();
+			SetConsoleTitle(L"IHHook");
+			freopen("CONOUT$", "w", stdout);
+			freopen("CONOUT$", "w", stderr);
+			freopen("CONIN$", "r", stdin);
+			printf("Console test\n");
+		}
 
 		//tex DEBUG, logged below 
 		TCHAR Buffer[MAX_PATH];
@@ -143,9 +131,9 @@ namespace IHHook {
 		}
 		else {
 			MH_Initialize();
-#ifdef ENABLE_CITYHOOK
-			IHHook::CreateHooks_CityHash(RealBaseAddr);
-#endif
+			if (enableCityHook) {
+				IHHook::CreateHooks_CityHash(RealBaseAddr);
+			}
 			IHHook::CreateHooks_LuaIHH(RealBaseAddr);
 			CreateHooks_TPP();
 		}// ChecKVersion
@@ -164,7 +152,7 @@ namespace IHHook {
 		spdlog::shutdown();
 	}//Shutdown
 
-	//DEBUGNOW move to utils or something
+	//TODO move to utils or something
 	//IN/SIDE: BaseAddr, RealBaseAddr
 	void* RebasePointer(size_t address) {
 		return (void*)((address - BaseAddr) + RealBaseAddr);
