@@ -1,10 +1,3 @@
-#pragma once
-#include "stdafx.h"
-#include <string>
-#include <vector>
-#include <queue>
-#include <mutex>
-
 //IHHook: A Dll proxy to extend MGSV for modding
 //tex: can run without Infinite Heaven, but IH will use it.
 
@@ -25,6 +18,13 @@
 
 //#define ENABLE_CITYHOOK //tex uncomment to enable CityHook hash logging functionality, 
 //NOTE: if you run cityhook with IH mod you'll end up picking up a bunch of IH stuff running through cityhash
+
+#pragma once
+#include "stdafx.h"
+#include <string>
+#include <vector>
+#include <queue>
+#include <mutex>
 
 namespace IHHook {
 	static const int Version = 4; //SYNC: fileVersion
