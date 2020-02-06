@@ -5,10 +5,8 @@
 //DEBUGNOW this only really gets you OnKeyDown, OnKeyUp reliably as Held will be limited by key repeat rate
 //the solution there would be to have another state array and have the input events set up,down and querry that with the assumption that down is held
 
-#include <windows.h>
+#include "RawInput.h"
 #include "spdlog/spdlog.h"
-#include "IHHook.h"
-
 
 namespace IHHook {
 	enum BUTTONEVENT {

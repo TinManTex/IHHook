@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 //Proxy dinput8.dll
 

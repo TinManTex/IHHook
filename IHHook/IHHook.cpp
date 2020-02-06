@@ -2,10 +2,16 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "IHHook.h"
+#include "OS.h"
+#include "PipeServer.h"
 #include "MinHook/MinHook.h" // MH_Initialize
 #include <signal.h>
 
 namespace IHHook {
+	extern void CreateHooks_CityHash(size_t RealBaseAddr);
+	extern void CreateHooks_LuaIHH(size_t RealBaseAddr);
+	extern void CreateHooks_TPP();
+
 	size_t RealBaseAddr;
 	HMODULE thisModule;
 

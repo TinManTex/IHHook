@@ -1,4 +1,3 @@
-#include "IHHook.h"
 #include <lua.h>
 #include "spdlog/spdlog.h"
 

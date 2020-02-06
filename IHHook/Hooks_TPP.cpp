@@ -1,6 +1,8 @@
 #include "IHHook.h"
 
 namespace IHHook {
+	extern void* RebasePointer(const size_t address);
+
 	int* missionCode = (int*)0x142A58A00;
 
 	void CreateHooks_TPP() {

@@ -1,6 +1,7 @@
-#include "stdafx.h"
+#include "OS.h"
+
 #include "spdlog/spdlog.h"
-#include "IHHook.h"
+#include "IHHook.h"//exename, thisModule
 #pragma comment(lib,"Version.lib") // CheckVersion
 #include <stack>
 

@@ -1,7 +1,10 @@
+#include "PipeServer.h"
+
 #include "stdafx.h"
 #include <strsafe.h>
 #include "spdlog/spdlog.h"
-#include "IHHook.h"
+#include "IHHook.h"//pipeInName, pipeOutName
+#include <string>
 #include <queue>
 #include <mutex>
 

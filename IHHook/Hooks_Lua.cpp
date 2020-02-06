@@ -1,14 +1,18 @@
 #include "stdafx.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
-#include "IHHook.h"
+#include "IHHook.h"//Version,BaseAddr
+#include "OS.h"
+#include "RawInput.h"
+#include "PipeServer.h"
 #include "MinHook/MinHook.h"
 
 #include "lua/lua_Addresses.h"
 #include "lua/lauxlib_Addresses.h"
 #include "lua/lualib_Addresses.h"
 
-#include <queue>
+#include <string>
+
 
 //tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 int luaopen_winapi(lua_State *L);

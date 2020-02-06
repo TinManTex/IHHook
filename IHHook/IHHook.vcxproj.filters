@@ -93,6 +93,15 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OS.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RawInput.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipeServer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
