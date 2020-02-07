@@ -107,11 +107,12 @@ namespace IHHook {
 		log->flush();
 
 		spdlog::set_default_logger(log);
-#ifdef _DEBUG
-		spdlog::set_level(spdlog::level::debug);
-#else
-		spdlog::set_level(spdlog::level::info);
-#endif // _DEBUG
+		if (debugMode) {
+			spdlog::set_level(spdlog::level::trace);
+		}
+		else {
+			spdlog::set_level(spdlog::level::info);
+		}
 		spdlog::flush_on(spdlog::level::err);
 
 		std::time_t currentTime = time(0);
@@ -137,11 +138,9 @@ namespace IHHook {
 		}
 		else {
 			MH_Initialize();
-			if (enableCityHook) {
-				IHHook::CreateHooks_CityHash(RealBaseAddr);
-			}
+			IHHook::CreateHooks_CityHash(RealBaseAddr);
 			IHHook::CreateHooks_LuaIHH(RealBaseAddr);
-			CreateHooks_TPP();
+			IHHook::CreateHooks_TPP();
 		}// ChecKVersion
 
 		IHHook::StartPipeServer();

@@ -2,7 +2,7 @@
 #include "spdlog/spdlog.h"
 //OFF #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
-#include "IHHook.h"
+#include "IHHook.h"//BaseAddr,enableCityHook
 #include "MinHook/MinHook.h"
 
 
@@ -167,7 +167,9 @@ namespace IHHook {
 		MH_CreateHook(CityHash1_rebased, CityHash1Hook, (LPVOID*)&origCityHash1);
 		MH_CreateHook(CityHash2_rebased, CityHash2Hook, (LPVOID*)&origCityHash2);
 
-		MH_EnableHook(CityHash1_rebased);
-		MH_EnableHook(CityHash2_rebased);
+		if (enableCityHook) {
+			MH_EnableHook(CityHash1_rebased);
+			MH_EnableHook(CityHash2_rebased);
+		}
 	}//CreateHooks_CityHash
 }//namespace IHHook

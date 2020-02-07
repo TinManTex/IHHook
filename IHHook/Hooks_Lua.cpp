@@ -57,18 +57,18 @@ namespace IHHook {
 		spdlog::debug(__func__);
 		luaL_openlibs(L);
 
-#ifdef _DEBUG
-		TestHooks_Lua(L);
-#endif // _DEBUG
+		if (debugMode) {
+			TestHooks_Lua(L);
+		}
 
 		lua_pushinteger(L, Version);
 		lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
 		luaopen_ihh(L);
 		//OFF luaopen_winapi(L);
-#ifdef _DEBUG
-		TestHooks_Lua_PostLibs(L);
-#endif // _DEBUG
+		if (debugMode) {
+			TestHooks_Lua_PostLibs(L);
+		}
 
 		//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 		ReplaceStubedOutLua(L);
@@ -314,6 +314,7 @@ namespace IHHook {
 	}//l_Log_SetFlushLevel
 
 	static int l_Log_Flush(lua_State *L) {
+		spdlog::trace(__func__);
 		luaLog->flush();
 		return 1;
 	}//l_Log_Flush
