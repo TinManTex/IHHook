@@ -1,3 +1,4 @@
+#include "Hooks_Lua.h"
 #include "stdafx.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -14,16 +15,19 @@
 #include <string>
 
 
-//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
-int luaopen_winapi(lua_State *L);
-
 namespace IHHook {
+	extern void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr);
+	extern void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr);
+	extern void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr);
+	//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
+	extern int luaopen_winapi(lua_State* L);
+
 	lua_State* lua;
 	lua_CFunction foxPanic;
 	bool firstUpdate = false;
-	std::wstring luaLogName = L"mod\\ih_log.txt";
-	std::wstring luaLogNamePrev = L"mod\\ih_log_prev.txt";
-	std::shared_ptr<spdlog::logger> luaLog;
+	static const std::wstring luaLogName = L"mod\\ih_log.txt";
+	static const std::wstring luaLogNamePrev = L"mod\\ih_log_prev.txt";
+	std::shared_ptr<spdlog::logger> luaLog;//tex TODO: sort this out
 
 	void TestHooks_Lua(lua_State* L);
 	void CreateTestTable(lua_State * L);
@@ -33,9 +37,6 @@ namespace IHHook {
 	static int OnPanic(lua_State *L);
 	static int luaopen_ihh(lua_State *L);
 
-	extern void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr);
-	extern void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr);
-	extern void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr);
 
 	//tex actual detoured functions
 
@@ -178,11 +179,27 @@ namespace IHHook {
 		return FoxLog(spdlog::level::err, "Error", L);
 	}
 
+	// game lua to IHHook callbacks>
 	//tex called inside-out from init.lua via IH, TODO maybe see where init is loaded to make this independant from IH
-	static int l_FoxLua_Init(lua_State *L) {
+	int l_FoxLua_Init(lua_State* L) {
 		ReplaceStubedOutFox(L);	//tex KLUDGE see comment on this function
 		return 0;
 	}//l_FoxLua_Init
+
+	//tex would maybe prefer to hook the funcion that calls mission_main.Onupdate
+	//but having the lua call this at top of TppMain.OnUpdate should do
+	//OnUpdate(missionTable)
+	int l_FoxLua_OnUpdate(lua_State* L) {
+		//spdlog::trace("l_onupdate");
+		if (!firstUpdate) {
+			firstUpdate = true;
+			spdlog::debug("First Lua Update");
+			luaLog->debug("First Lua Update");
+		}
+
+		return 1;
+	}//l_onupdate
+	//game lua to IHHook callbacks<
 
 		//tex retail build of MGSV stubs out a lot of functions, fortunately lua functions are often just entries in a table so we can try replace them.
 	//base lua dist functions that were stubbed
@@ -350,21 +367,6 @@ namespace IHHook {
 		lua_pushnil(L);
 		return 1;
 	}
-
-	//tex would maybe prefer to hook the funcion that calls mission_main.Onupdate
-	//but having the lua call this at top of TppMain.OnUpdate should do
-	//OnUpdate(missionTable)
-	static int l_FoxLua_OnUpdate(lua_State *L) {
-		//spdlog::trace("l_onupdate");
-		if (!firstUpdate) {
-			firstUpdate = true;
-			spdlog::debug("First Lua Update");
-			luaLog->debug("First Lua Update");
-		}
-
-
-		return 1;
-	}//l_onupdate
 
 	// < IHH module
 
