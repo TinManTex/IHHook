@@ -93,7 +93,7 @@ namespace IHHook {
 		DWORD dwRet = GetCurrentDirectory(MAX_PATH, Buffer);
 		std::wstring currentDir(Buffer);
 
-		std::wstring gameDir = IHHook::GetGameDir();
+		std::wstring gameDir = OS::GetGameDir();
 		SetCurrentDirectory(gameDir.c_str());//tex so this dll and lua can use reletive paths
 
 		DeleteFile(IHHook::hookLogNamePrev.c_str());
@@ -133,7 +133,7 @@ namespace IHHook {
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 
-		if (!IHHook::CheckVersion(IHHook::GameVersion)) {
+		if (!OS::CheckVersion(IHHook::GameVersion)) {
 			spdlog::error("IHHook version check mismatch");
 		}
 		else {
@@ -143,7 +143,7 @@ namespace IHHook {
 			IHHook::CreateHooks_TPP();
 		}// ChecKVersion
 
-		IHHook::StartPipeServer();
+		PipeServer::StartPipeServer();
 
 		spdlog::debug("Initialize complete");
 		log->flush();

@@ -5,8 +5,14 @@
 #include <mutex>
 
 namespace IHHook {
-	void StartPipeServer();
-	void QueueMessageOut(std::string message);
-	extern std::queue<std::string> messagesIn;
-	extern std::mutex inMutex;
+	namespace PipeServer {
+		void StartPipeServer();
+		void QueueMessageOut(std::string message);
+
+		extern std::queue<std::string> messagesOut;
+		extern std::queue<std::string> messagesIn;
+
+		extern std::mutex inMutex;
+		extern std::mutex outMutex;
+	}//namespace PipeServer
 }//namespace IHHook

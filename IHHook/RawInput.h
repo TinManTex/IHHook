@@ -2,6 +2,8 @@
 #include "stdafx.h"
 
 namespace IHHook {
-	void InitializeInput();
-	void HookWndProc(HWND hWnd);
+	namespace RawInput {
+		void InitializeInput();
+		void HookWndProc(HWND hWnd);
+	}//namespace RawInput
 }//namespace IHHook

@@ -77,9 +77,9 @@ namespace IHHook {
 		//DWORD pid = GetCurrentProcessId();
 		//std::vector <HWND> vhWnds;
 		//IHHook::GetAllWindowsFromProcessID(pid, vhWnds);
-		InitializeInput();
-		HWND hWnd = GetMainWindow();
-		HookWndProc(hWnd);
+		RawInput::InitializeInput();
+		HWND hWnd = OS::GetMainWindow();
+		RawInput::HookWndProc(hWnd);
 
 		spdlog::debug("luaL_openlibsHook complete");
 	}//lua_newstateHook
@@ -241,7 +241,7 @@ namespace IHHook {
 	static int l_StartIHExt(lua_State *L) {
 		spdlog::debug(__func__);
 
-		std::wstring gameDir = GetGameDir();
+		std::wstring gameDir = OS::GetGameDir();
 		std::wstring exeDir = gameDir + L"mod\\IHExt.exe";
 		LPTSTR lpszFilePath = new TCHAR[MAX_PATH];
 		std::wcscpy(lpszFilePath, exeDir.c_str());
@@ -250,7 +250,7 @@ namespace IHHook {
 		LPTSTR lpCommandLine = new TCHAR[MAX_PATH];
 		std::wcscpy(lpCommandLine, commandLine.c_str());
 
-		StartProcess(lpszFilePath, lpCommandLine);
+		OS::StartProcess(lpszFilePath, lpCommandLine);
 
 		delete[] lpszFilePath;
 		delete[] lpCommandLine;
@@ -279,8 +279,8 @@ namespace IHHook {
 	static int l_GetModFilesList(lua_State *L) {
 		spdlog::trace(__func__);
 		std::vector<std::string> fullFileNames;
-		std::string modDir = IHHook::GetGameDirA() + "mod";
-		bool success = IHHook::ListFiles(modDir, "*", fullFileNames);
+		std::string modDir = OS::GetGameDirA() + "mod";
+		bool success = OS::ListFiles(modDir, "*", fullFileNames);
 
 		unsigned int numNames = static_cast<unsigned int>(fullFileNames.size());
 		if (numNames <= 0) {
@@ -321,22 +321,22 @@ namespace IHHook {
 
 	static int l_QueuePipeOutMessage(lua_State* L) {
 		const char * message = lua_tostring(L, -1);
-		QueueMessageOut(std::string(message));
+		PipeServer::QueueMessageOut(std::string(message));
 		return 1;
 	}
 
 	//tex DEBUGNOW will have to rethink if we want something else to read the messages 
 	//returns table of string messages from serverPipeIn
 	static int l_GetPipeInMessages(lua_State* L) {
-		if (!messagesIn.empty()) {
-			std::unique_lock<std::mutex> inLock(inMutex);
-			int size = (int)messagesIn.size();
+		if (!PipeServer::messagesIn.empty()) {
+			std::unique_lock<std::mutex> inLock(PipeServer::inMutex);
+			int size = (int)PipeServer::messagesIn.size();
 			if (size > 0) {
 				lua_createtable(L, size, 0);
 				int index = 0;
-				while (!messagesIn.empty()) {
-					std::string message = messagesIn.front();
-					messagesIn.pop();
+				while (!PipeServer::messagesIn.empty()) {
+					std::string message = PipeServer::messagesIn.front();
+					PipeServer::messagesIn.pop();
 
 					index++;
 					lua_pushstring(L, message.c_str());
