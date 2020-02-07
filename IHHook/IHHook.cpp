@@ -10,7 +10,7 @@
 namespace IHHook {
 	extern void CreateHooks_CityHash(size_t RealBaseAddr);
 	extern void CreateHooks_LuaIHH(size_t RealBaseAddr);
-	extern void CreateHooks_TPP();
+	extern void CreateHooks_TPP(size_t RealBaseAddr);
 
 	size_t RealBaseAddr;
 	HMODULE thisModule;
@@ -127,8 +127,8 @@ namespace IHHook {
 		spdlog::debug(L"Original CurrentDir: {}", currentDir.c_str());
 
 #ifdef _DEBUG
-		std::vector<std::string> modFileNames = IHHook::GetFileNames("./mod");
-		std::vector<std::string> folderNames = IHHook::GetFolderNames("./mod");
+		std::vector<std::string> modFileNames = OS::GetFileNames("./mod");
+		std::vector<std::string> folderNames = OS::GetFolderNames("./mod");
 #endif // _DEBUG
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
@@ -140,7 +140,7 @@ namespace IHHook {
 			MH_Initialize();
 			IHHook::CreateHooks_CityHash(RealBaseAddr);
 			IHHook::CreateHooks_LuaIHH(RealBaseAddr);
-			IHHook::CreateHooks_TPP();
+			IHHook::CreateHooks_TPP(RealBaseAddr);
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -161,6 +161,5 @@ namespace IHHook {
 	//IN/SIDE: BaseAddr, RealBaseAddr
 	void* RebasePointer(size_t address) {
 		return (void*)((address - BaseAddr) + RealBaseAddr);
-	}
-
+	}//RebasePointer
 }//namespace IHHook
