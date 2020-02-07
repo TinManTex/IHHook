@@ -160,6 +160,7 @@
     <ClInclude Include="Hooks_Lua.h" />
     <ClInclude Include="Hooks_TPP.h" />
     <ClInclude Include="IHHook.h" />
+    <ClInclude Include="LuaIHH.h" />
     <ClInclude Include="lua\lauxlib.h" />
     <ClInclude Include="lua\lauxlib_Addresses.h" />
     <ClInclude Include="lua\lua.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="Hooks_Lua.cpp" />
     <ClCompile Include="Hooks_Lua_Test.cpp" />
     <ClCompile Include="IHHook.cpp" />
+    <ClCompile Include="LuaIHH.cpp" />
     <ClCompile Include="lua\lapi.cpp" />
     <ClCompile Include="lua\lauxlib.cpp" />
     <ClCompile Include="lua\lauxlib_CreateHooks.cpp" />

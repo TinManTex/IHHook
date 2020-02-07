@@ -111,8 +111,8 @@
     <ClInclude Include="Hooks_CityHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PipeServer.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="LuaIHH.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +189,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hooks_TPP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaIHH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
