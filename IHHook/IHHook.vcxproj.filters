@@ -33,12 +33,6 @@
     <ClInclude Include="spdlog\tweakme.h">
       <Filter>Source Files\MinHook\spdlog</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IHHook.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="MinHook\buffer.h">
       <Filter>Source Files\MinHook</Filter>
     </ClInclude>
@@ -62,9 +56,6 @@
     </ClInclude>
     <ClInclude Include="MinHook\hde\table64.h">
       <Filter>Source Files\MinHook\hde</Filter>
-    </ClInclude>
-    <ClInclude Include="HookMacros.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="lua\lua.h">
       <Filter>Source Files\lua</Filter>
@@ -93,11 +84,32 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OS.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="RawInput.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipeServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IHHook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HookMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_TPP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Lua.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_CityHash.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PipeServer.h">
       <Filter>Source Files</Filter>
