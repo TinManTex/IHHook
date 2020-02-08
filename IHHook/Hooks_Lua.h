@@ -1,7 +1,12 @@
 #pragma once
 
+#include <lua.h>
+
 namespace IHHook {
 	namespace Hooks_Lua {
-		void CreateHooks_LuaIHH(size_t RealBaseAddr);
+		void CreateHooks(size_t RealBaseAddr);
+
+		int l_FoxLua_Init(lua_State* L);
+		int l_FoxLua_OnUpdate(lua_State* L);
 	}//namespace Hooks_Lua
 }//namespace IHHook

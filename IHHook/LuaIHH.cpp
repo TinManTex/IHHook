@@ -1,20 +1,19 @@
 #include "LuaIHH.h"
 
 #include "spdlog/spdlog.h"
-#include "OS.h"
-#include "PipeServer.h"
 
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
+#include "OS.h"
+#include "PipeServer.h"
+
 #include <string>
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
-
-	extern int l_FoxLua_Init(lua_State* L);
-	extern int l_FoxLua_OnUpdate(lua_State * L);
 
 	namespace LuaIHH {
 		//IHH module funcs>
@@ -147,8 +146,8 @@ namespace IHHook {
 				{ "GetModFilesList", l_GetModFilesList},
 				{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 				{ "GetPipeInMessages", l_GetPipeInMessages },
-				{ "Init", l_FoxLua_Init},
-				{ "OnUpdate", l_FoxLua_OnUpdate},
+				{ "Init", Hooks_Lua::l_FoxLua_Init},
+				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
 				{ NULL, NULL }
 			};
 			luaI_openlib(L, "IHH", ihh_funcs, 0);

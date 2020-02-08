@@ -5,19 +5,21 @@
 namespace IHHook {
 	extern void* RebasePointer(const size_t address);
 
-	uintptr_t missionCode_Addr = 0x142A58A00;
-	uint32_t* missionCode;
+	namespace Hooks_TPP {
+		uintptr_t missionCode_Addr = 0x142A58A00;
+		//uint32_t* missionCode;//tex in header
 
-	void CreateHooks_TPP(size_t RealBaseAddr) {		
-		//DEBUGNOW hitting some kind of exception on caps machine
-		try {
-			missionCode = (uint32_t*)((missionCode_Addr - BaseAddr) + RealBaseAddr);;
-		}
-		catch (std::runtime_error & e) {
-			spdlog::error("CHP: runtime exception - {}", e.what());
-			auto log = spdlog::get("ihhook");
-			log->flush();
-		}
+		void CreateHooks(size_t RealBaseAddr) {
+			//DEBUGNOW hitting some kind of exception on caps machine
+			try {
+				missionCode = (uint32_t*)((missionCode_Addr - BaseAddr) + RealBaseAddr);;
+			}
+			catch (std::runtime_error & e) {
+				spdlog::error("CHP: runtime exception - {}", e.what());
+				auto log = spdlog::get("ihhook");
+				log->flush();
+			}
 
-	}//CreateHooks_TPP
+		}//CreateHooks
+	}//Hooks_TPP
 }//namespace IHHook

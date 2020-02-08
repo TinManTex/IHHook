@@ -4,8 +4,8 @@
 
 namespace IHHook {
 	namespace Hooks_TPP {
-		uint32_t* missionCode;
+		static uint32_t* missionCode;
 
-		void CreateHooks_TPP(size_t RealBaseAddr);
+		void CreateHooks(size_t RealBaseAddr);
 	}//namespace Hooks_TPP
 }//namespace IHHook

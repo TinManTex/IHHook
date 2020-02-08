@@ -7,11 +7,11 @@
 #include "MinHook/MinHook.h" // MH_Initialize
 #include <signal.h>
 
-namespace IHHook {
-	extern void CreateHooks_CityHash(size_t RealBaseAddr);
-	extern void CreateHooks_LuaIHH(size_t RealBaseAddr);
-	extern void CreateHooks_TPP(size_t RealBaseAddr);
+#include "Hooks_CityHash.h"
+#include "Hooks_Lua.h"
+#include "Hooks_TPP.h"
 
+namespace IHHook {
 	size_t RealBaseAddr;
 	HMODULE thisModule;
 
@@ -138,9 +138,9 @@ namespace IHHook {
 		}
 		else {
 			MH_Initialize();
-			IHHook::CreateHooks_CityHash(RealBaseAddr);
-			IHHook::CreateHooks_LuaIHH(RealBaseAddr);
-			IHHook::CreateHooks_TPP(RealBaseAddr);
+			Hooks_CityHash::CreateHooks(RealBaseAddr);
+			Hooks_Lua::CreateHooks(RealBaseAddr);
+			Hooks_TPP::CreateHooks(RealBaseAddr);
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
