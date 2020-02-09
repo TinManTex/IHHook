@@ -10,14 +10,6 @@
 
 namespace IHHook {
 	namespace RawInput {
-		enum BUTTONEVENT {
-			UP,
-			ONDOWN,
-			ONUP,
-			HELD
-		};
-
-		typedef void(*ButtonAction) (BUTTONEVENT buttonEvent);
 		const int vKeyMax = 256;//tex: virtual keycode max (VK_OEM_CLEAR      0xFE)
 		USHORT currFlags[vKeyMax];//tex: indexed by Virtual Keycode
 		bool ignore[vKeyMax] = { false };//tex: don't process key, set up in InitIgnoreKeys
