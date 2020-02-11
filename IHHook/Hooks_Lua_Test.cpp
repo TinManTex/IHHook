@@ -181,5 +181,5 @@ void TestHooks_Lua_PostLibs(lua_State * L) {
 		spdlog::debug("{}", iscfunction);
 	}
 	lua_pop(L, 1);
-};//TestHooks_Lua_PostLibs
+}//TestHooks_Lua_PostLibs
 }//namespace ihhook
