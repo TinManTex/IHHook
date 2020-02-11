@@ -11,6 +11,7 @@ namespace IHHook {
 
 		void CreateHooks(size_t RealBaseAddr) {
 			//DEBUGNOW hitting some kind of exception on caps machine
+			missionCode = NULL;
 			try {
 				missionCode = (uint32_t*)((missionCode_Addr - BaseAddr) + RealBaseAddr);;
 			}
@@ -18,6 +19,9 @@ namespace IHHook {
 				spdlog::error("CHP: runtime exception - {}", e.what());
 				auto log = spdlog::get("ihhook");
 				log->flush();
+			}
+			if (missionCode==NULL) {
+				spdlog::error("CHP: missionCode==NULL");
 			}
 
 		}//CreateHooks

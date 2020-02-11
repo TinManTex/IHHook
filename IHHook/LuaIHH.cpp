@@ -104,7 +104,7 @@ namespace IHHook {
 			const char* message = lua_tostring(L, -1);
 			PipeServer::QueueMessageOut(std::string(message));
 			return 1;
-		}
+		}//l_QueuePipeOutMessage
 
 		//tex DEBUGNOW will have to rethink if we want something else to read the messages 
 		//returns table of string messages from serverPipeIn
@@ -130,8 +130,17 @@ namespace IHHook {
 
 			lua_pushnil(L);
 			return 1;
-		}
+		}//l_GetPipeInMessages
 
+		//tex use as a callback to test random shiz
+		int l_TestCallToIHHook(lua_State* L) {
+			spdlog::trace(__func__);
+
+			//DEBUGNOW
+			void* data = lua_touserdata(L, -1);
+			
+			return 1;
+		}//l_TestCallToIHHook
 		// < IHH module funcs
 
 		//tex TODO better module name, will likely break out into IHH<module name> as the amount of functions expands, but would have to change if IHH checks in IH
@@ -148,6 +157,7 @@ namespace IHHook {
 				{ "GetPipeInMessages", l_GetPipeInMessages },
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
+				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }
 			};
 			luaI_openlib(L, "IHH", ihh_funcs, 0);

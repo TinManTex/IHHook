@@ -20,7 +20,6 @@ namespace IHHook {
 	extern void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr);
 	//Hooks_Lua_Test
 	extern void TestHooks_Lua(lua_State* L);
-	extern void CreateTestTable(lua_State* L);
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
 
 	//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
@@ -43,7 +42,7 @@ namespace IHHook {
 		//tex actual detoured functions
 
 		//tex there seems to be other calls to newstate that don't have lua libraries added, might be good to log calls to this and see if/when it's used)
-		//not really doing much with this hook since I shifted to luaL_openlibs as the lua setup func
+		//not really doing much with this hook since I shifted to luaL_openlibs as the lua setup func, but it's kinda the start of lua init, in respect to the lua C api.
 		//DEBUGNOW why does this crash unless you call the original function immediately?
 		lua_State* __fastcall lua_newstateHook(lua_Alloc f, void* ud) {
 			lua_State* L = lua_newstate(f, ud);
@@ -87,6 +86,14 @@ namespace IHHook {
 			spdlog::debug("luaL_openlibsHook complete");
 		}//lua_newstateHook
 
+		//tex not doing anything with this, but it may be interesting to see everything that mgsv lua is loading.
+		int luaL_loadbufferHook(lua_State *L, const char *buff, size_t size, const char *name) {
+			spdlog::trace(__func__);
+			spdlog::trace(name);
+
+			return luaL_loadbuffer(L, buff, size, name);
+		}//luaL_loadbufferHook
+
 		//tex: divert to use our panic, which wraps the requested panic 
 		lua_CFunction lua_atpanicHook(lua_State* L, lua_CFunction panicf) {
 			foxPanic = panicf;
@@ -113,9 +120,12 @@ namespace IHHook {
 
 			CREATEDETOURB(lua_newstate)
 			CREATEDETOURB(luaL_openlibs)
+			CREATEDETOURB(luaL_loadbuffer)
 			CREATEDETOURB(lua_atpanic)
+
 			ENABLEHOOK(lua_newstate)
 			ENABLEHOOK(luaL_openlibs)
+			ENABLEHOOK(luaL_loadbuffer)
 			ENABLEHOOK(lua_atpanic)
 		}//CreateHooks
 
