@@ -109,13 +109,14 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS ;_DEBUG;_WINDOWS;_USRDLL;IHHOOK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./lua</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>./lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>COPY "$(TargetDir)IHHook.dll" "C:\Games\Steam\steamapps\common\MGS_TPP\dinput8.dll"  /Y</Command>
+      <Command>$(SolutionDir)copytogame.bat "$(TargetDir)" "$(TargetFileName)"</Command>
     </PostBuildEvent>
     <ProjectReference />
   </ItemDefinitionGroup>
@@ -143,6 +144,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;IHHOOK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./lua</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,7 +153,7 @@
     </Link>
     <ProjectReference />
     <PostBuildEvent>
-      <Command>COPY "$(TargetDir)IHHook.dll" "C:\Games\Steam\steamapps\common\MGS_TPP\dinput8.dll"  /Y</Command>
+      <Command>$(SolutionDir)copytogame.bat "$(TargetDir)" "$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
