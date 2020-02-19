@@ -42,7 +42,7 @@ namespace IHHook {
 
 			// Create a thread for this client. 
 			hThread = CreateThread(
-				NULL,              // no security attribute 
+				nullptr,			// no security attribute 
 				0,                 // default stack size 
 				PipeServerThread,    // thread proc
 				0,    // thread parameter 
@@ -123,7 +123,7 @@ namespace IHHook {
 
 					// Create a thread for this client. 
 					hThread = CreateThread(
-						NULL,              // no security attribute 
+						nullptr,			// no security attribute 
 						0,                 // default stack size 
 						PipeInThread,    // thread proc
 						hPipeIn,    // thread parameter 
@@ -138,7 +138,7 @@ namespace IHHook {
 
 					// Create a thread for this client. 
 					hThread = CreateThread(
-						NULL,              // no security attribute 
+						nullptr,			// no security attribute 
 						0,                 // default stack size 
 						PipeOutThread,    // thread proc
 						hPipeOut,    // thread parameter 
