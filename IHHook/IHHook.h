@@ -17,7 +17,7 @@
 //Encoding is a mess having pulled in so much code from other projects, and then, should probably try to standardise to utf8 at some point.
 
 #pragma once
-#include "stdafx.h"
+#include "windowsapi.h"
 #include <string>
 #include <queue>
 #include <mutex>

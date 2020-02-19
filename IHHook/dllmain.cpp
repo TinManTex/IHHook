@@ -1,7 +1,7 @@
 //dllmain.cpp
 //dll entry
 
-#include "stdafx.h"
+#include "windowsapi.h"
 #include "IHHook.h"
 
 HMODULE thisModule;

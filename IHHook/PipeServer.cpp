@@ -1,6 +1,6 @@
 #include "PipeServer.h"
 
-#include "stdafx.h"
+#include "windowsapi.h"
 #include <strsafe.h>
 #include "spdlog/spdlog.h"
 #include "IHHook.h"//pipeInName, pipeOutName

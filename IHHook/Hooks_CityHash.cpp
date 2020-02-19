@@ -1,5 +1,4 @@
 #include "Hooks_CityHash.h"
-//#include "stdafx.h"
 #include "spdlog/spdlog.h"
 //OFF #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"

@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+#include "windowsapi.h"
 
 #include <string>
 #include <vector>
