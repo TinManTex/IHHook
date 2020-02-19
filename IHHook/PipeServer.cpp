@@ -161,7 +161,7 @@ namespace IHHook {
 				spdlog::info(L"Pipe Server: Creating pipe: {}", lpszPipenameOut);
 				hPipeOut = CreateNamedPipe(
 					lpszPipenameOut,          // pipe name 
-					PIPE_ACCESS_OUTBOUND,      // read/write access
+					PIPE_ACCESS_DUPLEX,       // read/write access //tex WORKAROUND was PIPE_ACCESS_OUTBOUND, see IHExt/PipeClient for issue, GOTCHA: this means a client could stall the pipe if they write as IHHook only treats is as out only
 					PIPE_TYPE_MESSAGE |       // message type pipe 
 					PIPE_READMODE_MESSAGE |   // message-read mode 
 					PIPE_WAIT,                // blocking mode 
