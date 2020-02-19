@@ -22,7 +22,13 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		//but it should shift execution till after DllMain is exited at least: https://devblogs.microsoft.com/oldnewthing/20070904-00/?p=25283
 		//Ideally I should be just initializing hooks in dll main, 
 		//and hooking some good spot in mgsvs execution then doing the rest of initialization there.
-		CreateThread(NULL, NULL, IHHook::Initialize, hModule, NULL, NULL);
+		HANDLE hInitThread = CreateThread(nullptr, 0, IHHook::Initialize, hModule, 0, nullptr);
+		if (hInitThread == NULL) {
+
+		}
+		else {
+			CloseHandle(hInitThread);
+		}
 	}
 	else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
 		IHHook::Shutdown();

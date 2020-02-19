@@ -61,7 +61,7 @@ namespace IHHook {
 	SetUnhandledExceptionFilter_Type SetUnhandledExceptionFilter_Orig = NULL;
 
 
-	DWORD Initialize(LPVOID lpParameter) {
+	DWORD WINAPI Initialize(LPVOID lpParameter) {
 		thisModule = static_cast<HMODULE>(lpParameter);
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 
