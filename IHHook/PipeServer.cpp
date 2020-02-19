@@ -1,6 +1,7 @@
 #include "PipeServer.h"
 
 #include "windowsapi.h"
+#include <aclapi.h>//security access
 #include <strsafe.h>
 #include "spdlog/spdlog.h"
 #include "IHHook.h"//pipeInName, pipeOutName
@@ -71,6 +72,74 @@ namespace IHHook {
 			// with that client, and this loop is free to wait for the
 			// next client connect request. It is an infinite loop.
 			for (;;) {
+				//tex security attribute, 
+				//only defined this to try and get around namedpipe client needs InOut even for server out/readonly pipe, but I suppose having it defined rather than using default is better
+				//TODO log errors and return instead of throwing exception
+				PSID pEveryoneSID = NULL;
+				PSID pAdminSID = NULL;
+				PACL pACL = NULL;
+				EXPLICIT_ACCESS ea[2];
+				SID_IDENTIFIER_AUTHORITY SIDAuthWorld = SECURITY_WORLD_SID_AUTHORITY;
+				SID_IDENTIFIER_AUTHORITY SIDAuthNT = SECURITY_NT_AUTHORITY;
+				SECURITY_ATTRIBUTES sa;
+				//SCOPE_GUARD{//DEBUGNOW
+					if (pEveryoneSID) { FreeSid(pEveryoneSID); }
+					if (pAdminSID) { FreeSid(pAdminSID); }
+					if (pACL) { LocalFree(pACL); }
+				//};
+
+				// Create a well-known SID for the Everyone group.
+				if (!AllocateAndInitializeSid(&SIDAuthWorld, 1, SECURITY_WORLD_RID, 0, 0, 0, 0, 0, 0, 0, &pEveryoneSID)) {
+					throw std::runtime_error("AllocateAndInitializeSid failed, GLE=" + std::to_string(GetLastError()));
+				}
+				// Initialize an EXPLICIT_ACCESS structure for an ACE.
+				SecureZeroMemory(&ea, 2 * sizeof(EXPLICIT_ACCESS));
+				// The ACE will allow Everyone full access to the key.
+				#define NO_INHERITANCE 0x0//DEBUGNOW, not defined otherwise?
+				ea[0].grfAccessPermissions = FILE_ALL_ACCESS | GENERIC_WRITE | GENERIC_READ;
+				ea[0].grfAccessMode = SET_ACCESS;
+				ea[0].grfInheritance = NO_INHERITANCE;
+				ea[0].Trustee.TrusteeForm = TRUSTEE_IS_SID;
+				ea[0].Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
+				ea[0].Trustee.ptstrName = (LPTSTR)pEveryoneSID;
+
+				// Create a SID for the BUILTIN\Administrators group.
+				if (!AllocateAndInitializeSid(&SIDAuthNT, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &pAdminSID)) {
+					throw std::runtime_error("AllocateAndInitializeSid failed, GLE=" + std::to_string(GetLastError()));
+				}
+				// The ACE will allow the Administrators group full access to the key.
+				ea[1].grfAccessPermissions = FILE_ALL_ACCESS | GENERIC_WRITE | GENERIC_READ;
+				ea[1].grfAccessMode = SET_ACCESS;
+				ea[1].grfInheritance = NO_INHERITANCE;
+				ea[1].Trustee.TrusteeForm = TRUSTEE_IS_SID;
+				ea[1].Trustee.TrusteeType = TRUSTEE_IS_GROUP;
+				ea[1].Trustee.ptstrName = (LPTSTR)pAdminSID;
+
+				// Create a new ACL that contains the new ACEs.
+				DWORD dwRes = SetEntriesInAclW(2, ea, NULL, &pACL);
+				if (ERROR_SUCCESS != dwRes) {
+					throw std::runtime_error("SetEntriesInAcl failed, GLE=" + std::to_string(GetLastError()));
+				}
+				// Initialize a security descriptor.  
+				auto secDesc = std::vector<unsigned char>(SECURITY_DESCRIPTOR_MIN_LENGTH);
+				PSECURITY_DESCRIPTOR pSD = (PSECURITY_DESCRIPTOR)(&secDesc[0]);
+				if (nullptr == pSD) {
+					throw std::runtime_error("LocalAlloc failed, GLE=" + std::to_string(GetLastError()));
+				}
+				if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {
+					throw std::runtime_error("InitializeSecurityDescriptor failed, GLE=" + std::to_string(GetLastError()));
+				}
+				// Add the ACL to the security descriptor. 
+				if (!SetSecurityDescriptorDacl(pSD, TRUE, pACL, FALSE))   // not a default DACL 
+				{
+					throw std::runtime_error("SetSecurityDescriptorDacl failed, GLE=" + std::to_string(GetLastError()));
+				}
+				// Initialize a security attributes structure.
+				sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+				sa.lpSecurityDescriptor = pSD;
+				sa.bInheritHandle = FALSE;
+				//< security attibute
+
 				spdlog::info(L"Pipe Server: Creating pipe: {}", lpszPipenameIn);
 				hPipeIn = CreateNamedPipe(
 					lpszPipenameIn,           // pipe name 
@@ -100,7 +169,7 @@ namespace IHHook {
 					BUFSIZE,                  // output buffer size 
 					BUFSIZE,                  // input buffer size 
 					0,                        // client time-out 
-					NULL);                    // default security attribute 
+					&sa);                    // security attribute 
 
 				if (hPipeOut == INVALID_HANDLE_VALUE) {
 					spdlog::error("CreateNamedPipe PipeOut failed, GLE={}.", GetLastError());
