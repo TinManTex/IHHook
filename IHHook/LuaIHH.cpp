@@ -57,6 +57,12 @@ namespace IHHook {
 			return 1;
 		}//l_log
 
+		static int l_GetGamePath(lua_State* L) {
+			std::string gamePath = OS::GetGameDirA() + "\\";
+			lua_pushstring(L, gamePath.c_str());
+			return 1;
+		}//l_GetGamePath
+
 		static int l_GetModFilesList(lua_State* L) {
 			spdlog::trace(__func__);
 			std::vector<std::string> fullFileNames;
@@ -128,7 +134,7 @@ namespace IHHook {
 				}
 			}
 
-			lua_pushnil(L);
+			lua_pushnil(L);//tex DEBUGNOW why am I doing this?
 			return 1;
 		}//l_GetPipeInMessages
 
@@ -152,6 +158,7 @@ namespace IHHook {
 				{ "Log", l_Log },
 				{ "Log_SetFlushLevel", l_Log_SetFlushLevel},
 				{ "Log_Flush", l_Log_Flush},
+				{ "GetGamePath", l_GetGamePath},
 				{ "GetModFilesList", l_GetModFilesList},
 				{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 				{ "GetPipeInMessages", l_GetPipeInMessages },
