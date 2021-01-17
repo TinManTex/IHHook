@@ -23,7 +23,7 @@
 #include <mutex>
 
 namespace IHHook {
-	static const bool debugMode = false;//DEBUG CONFIG //TODO debug level instead
+	static const bool debugMode = false;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 

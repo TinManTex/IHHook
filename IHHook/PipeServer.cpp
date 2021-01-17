@@ -368,6 +368,9 @@ namespace IHHook {
 						break;
 					}
 				}
+				else if (cbBytesRead == 0) {
+					spdlog::warn("PipeInThread: cbBytesRead == 0");
+				}
 				else {
 					std::string message;
 					message.insert(message.end(), pchRequest, pchRequest + cbBytesRead);

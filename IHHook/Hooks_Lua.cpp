@@ -172,7 +172,7 @@ namespace IHHook {
 			}
 			luaLog->log(level, fullString);
 			return 0;
-		}
+		}//FoxLog
 
 		//tex: Since these are stubbed out in normal we should only log them in debug.
 		static int l_Fox_Log(lua_State* L) {
@@ -202,7 +202,7 @@ namespace IHHook {
 		//but having the lua call this at top of TppMain.OnUpdate should do
 		//OnUpdate(missionTable)
 		int l_FoxLua_OnUpdate(lua_State* L) {
-			//spdlog::trace("l_onupdate");
+			//spdlog::trace(__func__);
 			if (!firstUpdate) {
 				firstUpdate = true;
 				spdlog::debug("First Lua Update");
