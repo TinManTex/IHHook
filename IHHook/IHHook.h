@@ -21,9 +21,10 @@
 #include <string>
 #include <queue>
 #include <mutex>
+#include <spdlog/spdlog.h>
 
 namespace IHHook {
-	static const bool debugMode = false;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
+	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
@@ -42,6 +43,21 @@ namespace IHHook {
 
 	extern HMODULE thisModule;
 
-	DWORD WINAPI Initialize(LPVOID lpParameter);
 	void Shutdown();
+
+	class IHH {
+	public:
+		IHH();
+		virtual ~IHH();
+
+		HMODULE GetModule() {
+			return thisModule;
+		}
+	private:
+		HMODULE thisModule{ 0 };
+
+		std::shared_ptr<spdlog::logger> log;
+	};
+
+	extern std::unique_ptr<IHH> g_ihhook;
 }//namespace IHHook

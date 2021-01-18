@@ -60,9 +60,23 @@ namespace IHHook {
 	typedef LPTOP_LEVEL_EXCEPTION_FILTER(WINAPI* SetUnhandledExceptionFilter_Type)(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter);
 	SetUnhandledExceptionFilter_Type SetUnhandledExceptionFilter_Orig = NULL;
 
+	void Shutdown() {
+		spdlog::debug("IHHook DLL_PROCESS_DETACH");
 
-	DWORD WINAPI Initialize(LPVOID lpParameter) {
-		thisModule = static_cast<HMODULE>(lpParameter);
+		spdlog::shutdown();
+	}//Shutdown
+
+	//TODO move to utils or something
+	//IN/SIDE: BaseAddr, RealBaseAddr
+	void* RebasePointer(size_t address) {
+		return (void*)((address - BaseAddr) + RealBaseAddr);
+	}//RebasePointer
+
+	std::unique_ptr<IHH> g_ihhook{};
+
+	IHH::IHH()
+		: thisModule{ GetModuleHandle(0) } 
+	{
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 
 		signal(SIGABRT, &AbortHandler);//tex signal handler for SIGABRT which is thrown by abort()
@@ -100,7 +114,7 @@ namespace IHHook {
 		CopyFile(IHHook::hookLogName.c_str(), IHHook::hookLogNamePrev.c_str(), false);
 		DeleteFile(IHHook::hookLogName.c_str());
 
-		auto log = spdlog::basic_logger_mt("ihhook", IHHook::hookLogName);//DEBUGNOW st vs mt
+		log = spdlog::basic_logger_mt("ihhook", IHHook::hookLogName);//DEBUGNOW st vs mt
 
 		log->set_pattern("|%H:%M:%S:%e|%l: %v");
 		log->info("IHHook r{}", IHHook::Version);
@@ -147,19 +161,9 @@ namespace IHHook {
 
 		spdlog::debug("Initialize complete");
 		log->flush();
+	}
 
-		return 0;
-	}//Initialize
+	IHH::~IHH() {
 
-	void Shutdown() {
-		spdlog::debug("IHHook DLL_PROCESS_DETACH");
-
-		spdlog::shutdown();
-	}//Shutdown
-
-	//TODO move to utils or something
-	//IN/SIDE: BaseAddr, RealBaseAddr
-	void* RebasePointer(size_t address) {
-		return (void*)((address - BaseAddr) + RealBaseAddr);
-	}//RebasePointer
+	}
 }//namespace IHHook
