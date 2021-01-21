@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include "IHMenu.h" // MenuMessage
+
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
 
@@ -138,6 +140,15 @@ namespace IHHook {
 			return 1;
 		}//l_GetPipeInMessages
 
+		static int l_MenuMessage(lua_State* L) {
+			//spdlog::trace(__func__);
+			const char* cmd = lua_tostring(L, 1);
+			const char* message = lua_tostring(L, 2);
+			spdlog::debug("l_MenuMessage cmd:{},<> message:{}",cmd,message); //DEBUGNOW
+			IHMenu::MenuMessage(cmd, message);
+			return 1;
+		}//l_MenuMessage
+
 		//tex use as a callback to test random shiz
 		int l_TestCallToIHHook(lua_State* L) {
 			spdlog::trace(__func__);
@@ -162,6 +173,7 @@ namespace IHHook {
 				{ "GetModFilesList", l_GetModFilesList},
 				{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 				{ "GetPipeInMessages", l_GetPipeInMessages },
+				{ "MenuMessage", l_MenuMessage },
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
 				{ "TestCallToIHHook", l_TestCallToIHHook},

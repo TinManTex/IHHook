@@ -28,6 +28,21 @@
     <Filter Include="Source Files\MinHook\spdlog">
       <UniqueIdentifier>{948694bd-0951-41aa-bf12-07fb40577e18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utility">
+      <UniqueIdentifier>{c290a374-0a6f-4bc4-a80d-fdecb8fcd57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imguiimpl">
+      <UniqueIdentifier>{3e1e2bf1-b4a1-4783-8a5c-177cbf3c8d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imguiimpl">
+      <UniqueIdentifier>{9cc599aa-05b5-4e7f-88c8-25f4965a5347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{68f7fb73-df44-4d35-8bdb-61cf202acbd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{87b329e2-ba64-4502-9c81-b3fdfdce40e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="spdlog\tweakme.h">
@@ -120,15 +135,48 @@
     <ClInclude Include="MemoryUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utility\FunctionHook.hpp">
+      <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Hook.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\Address.hpp">
+      <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="imguiimpl\imgui_impl_dx11.h">
+      <Filter>Header Files\imguiimpl</Filter>
+    </ClInclude>
+    <ClInclude Include="imguiimpl\imgui_impl_win32.h">
+      <Filter>Header Files\imguiimpl</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsMessageHook.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IHMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DInputProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hooks_CityHash.cpp">
@@ -201,6 +249,39 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MemoryUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\FunctionHook.cpp">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Hook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\Address.cpp">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="imguiimpl\imgui_impl_win32.cpp">
+      <Filter>Source Files\imguiimpl</Filter>
+    </ClCompile>
+    <ClCompile Include="imguiimpl\imgui_impl_dx11.cpp">
+      <Filter>Source Files\imguiimpl</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imguiimpl</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imguiimpl</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsMessageHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DInputProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IHMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

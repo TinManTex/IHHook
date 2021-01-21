@@ -2,6 +2,7 @@
 //tex: can run without Infinite Heaven, but IH will use it.
 
 //Based on the bones of CityHook: https://github.com/emoose/MGSV-QAR-Dictionary-Project/tree/master/CityHook
+//and RE2 Mod Framework: https://github.com/praydog/RE2-Mod-Framework
 
 //Trying to get coverage of whole LUALIB_API functions so that lua c modules can be compiled in
 //The resulting method seems like a huge hack, and there's probably a smarter way to do it. But it works.
@@ -22,6 +23,9 @@
 #include <queue>
 #include <mutex>
 #include <spdlog/spdlog.h>
+#include "D3D11Hook.hpp"
+#include "WindowsMessageHook.hpp"
+#include "RawInput.h"//DEBUGNOW
 
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
@@ -48,16 +52,67 @@ namespace IHHook {
 	class IHH {
 	public:
 		IHH();
+		void SetupLog();
 		virtual ~IHH();
 
 		HMODULE GetModule() {
 			return thisModule;
-		}
+		}//GetModule
+
+		//DEBUGNOW
+		bool IsDrawUI() {
+			return drawUI;
+		}//IsDrawUI
+
+		void ToggleDrawUI() {
+			drawUI = !drawUI;
+		}//ToggleDrawUI
+
+		bool IsCursorUnlocked() {
+			return unlockCursor;
+		}//IsCursorUnlocked
+
+		void ToggleCursor() {
+			unlockCursor = !unlockCursor;
+		}//ToggleCursor
+
+		//Dx11
+		void OnFrame();
+		void OnReset();
+
+		bool OnMessage(HWND wnd, UINT message, WPARAM w_param, LPARAM l_param);
+		void OnDirectInputKeys(const std::array<uint8_t, 256>& keys);
 	private:
+		bool FrameInitialize();
+		void CreateRenderTarget();
+		void CleanupRenderTarget();
+
+		void DrawUI();
+		void DrawAbout();
+
+		//DEBUGNOW d3d11
+		bool firstFrame{ true };
+		//DEBUGNOW bool valid{ false };
+		bool frameInitialized{ false };
+		bool d3dHooked{ false };		
+		bool drawUI{ true };
+		bool unlockCursor{ true };
+
+		std::mutex inputMutex{};//DEBUGNOW
+
+		HWND hwnd{ 0 };
 		HMODULE thisModule{ 0 };
 
+		std::unique_ptr<D3D11Hook> d3d11Hook{};
+		std::unique_ptr<WindowsMessageHook> windowsMessageHook;
 		std::shared_ptr<spdlog::logger> log;
+
+		std::string errorString{ "" };
+
+		ID3D11RenderTargetView* mainRenderTargetView{ nullptr };
 	};
 
-	extern std::unique_ptr<IHH> g_ihhook;
+
 }//namespace IHHook
+
+extern std::unique_ptr<IHHook::IHH> g_ihhook;

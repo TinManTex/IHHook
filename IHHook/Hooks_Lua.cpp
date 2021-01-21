@@ -79,9 +79,11 @@ namespace IHHook {
 			//DWORD pid = GetCurrentProcessId();
 			//std::vector <HWND> vhWnds;
 			//IHHook::GetAllWindowsFromProcessID(pid, vhWnds);
+			//DEBUGNOW DEBUGNOW
 			RawInput::InitializeInput();
-			HWND hWnd = OS::GetMainWindow();
-			RawInput::HookWndProc(hWnd);
+
+			//HWND hWnd = OS::GetMainWindow();
+			//DEBUGNOW RawInput::HookWndProc(hWnd);
 
 			spdlog::debug("luaL_openlibsHook complete");
 		}//lua_newstateHook

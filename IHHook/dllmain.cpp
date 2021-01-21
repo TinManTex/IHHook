@@ -6,6 +6,14 @@
 
 HMODULE thisModule;
 
+DWORD WINAPI InitThread(LPVOID lpParameter) {
+	IHHook::thisModule = static_cast<HMODULE>(lpParameter);//DEBUGNOW CULL
+
+	g_ihhook = std::make_unique<IHHook::IHH>();
+
+	return 0;
+}//InitThread
+
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
 	LPVOID lpReserved
@@ -22,7 +30,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		//but it should shift execution till after DllMain is exited at least: https://devblogs.microsoft.com/oldnewthing/20070904-00/?p=25283
 		//Ideally I should be just initializing hooks in dll main, 
 		//and hooking some good spot in mgsvs execution then doing the rest of initialization there.
-		HANDLE hInitThread = CreateThread(nullptr, 0, IHHook::Initialize, hModule, 0, nullptr);
+		//DEBUGNOW HANDLE hInitThread = CreateThread(nullptr, 0, IHHook::Initialize, hModule, 0, nullptr);
+		HANDLE hInitThread = CreateThread(nullptr, 0, InitThread, hModule, 0, nullptr);
 		if (hInitThread == NULL) {
 
 		}
@@ -35,5 +44,5 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	}
 
 	return TRUE;
-}
+}//DllMain
 
