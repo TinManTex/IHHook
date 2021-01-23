@@ -4,10 +4,10 @@
 #include "windowsapi.h"
 #include "IHHook.h"
 
-HMODULE thisModule;
+HMODULE g_thisModule;
 
 DWORD WINAPI InitThread(LPVOID lpParameter) {
-	IHHook::thisModule = static_cast<HMODULE>(lpParameter);//DEBUGNOW CULL
+	//IHHook::thisModule = static_cast<HMODULE>(lpParameter);
 
 	g_ihhook = std::make_unique<IHHook::IHH>();
 
@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
 		DisableThreadLibraryCalls(hModule);//tex stops DllMain being called by other created threads (which helps for some issues mentioned below) 
 
-		thisModule = hModule;
+		g_thisModule = hModule;
 
 		//tex generally CreateThread in DllMain is bad form, 
 		//https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-best-practices

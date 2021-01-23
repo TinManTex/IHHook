@@ -1,16 +1,17 @@
+//DInputProxy.cpp - from CityHook
+//Proxy dinput8.dll
 #include "windowsapi.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-//Proxy dinput8.dll
+extern HMODULE g_thisModule;
 
 typedef HRESULT(*DirectInput8Create_ptr)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID * ppvOut, void* punkOuter);
-
 DirectInput8Create_ptr DirectInput8Create_orig;
 
 bool origLoaded = false;
 HMODULE origDll = NULL;
-extern HMODULE thisModule;
+
 
 bool LoadProxiedDll()
 {
@@ -24,7 +25,7 @@ bool LoadProxiedDll()
 
 	// get filename of this DLL, which should be the original DLLs filename too
 	WCHAR ourModulePath[MAX_PATH] = { 0 };
-	GetModuleFileNameW(thisModule, ourModulePath, _countof(ourModulePath));
+	GetModuleFileNameW(g_thisModule, ourModulePath, _countof(ourModulePath));
 
 	WCHAR exeName[MAX_PATH] = { 0 };
 	WCHAR extName[MAX_PATH] = { 0 };
