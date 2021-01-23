@@ -18,21 +18,18 @@
 //Encoding is a mess having pulled in so much code from other projects, and then, should probably try to standardise to utf8 at some point.
 
 #pragma once
-#include "windowsapi.h"
 #include <string>
-#include <queue>
 #include <mutex>
 #include <spdlog/spdlog.h>
 #include "D3D11Hook.hpp"
 #include "WindowsMessageHook.hpp"
-#include "RawInput.h"//DEBUGNOW
 
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 4; //SYNC: fileVersion
+	static const int Version = 5; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 1 }; //tex: version checking game exe
 	static const std::wstring exeName = L"mgsvtpp.exe";
 
@@ -44,8 +41,6 @@ namespace IHHook {
 
 	static const size_t BaseAddr = 0x140000000; // from ImageBase field in the EXE
 	extern size_t RealBaseAddr; // Current base address of the EXE
-
-	extern HMODULE thisModule;
 
 	void Shutdown();
 
@@ -111,8 +106,6 @@ namespace IHHook {
 
 		ID3D11RenderTargetView* mainRenderTargetView{ nullptr };
 	};
-
-
 }//namespace IHHook
 
 extern std::unique_ptr<IHHook::IHH> g_ihhook;
