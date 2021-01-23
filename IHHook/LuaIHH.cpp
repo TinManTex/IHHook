@@ -136,7 +136,7 @@ namespace IHHook {
 				}
 			}
 
-			lua_pushnil(L);//tex DEBUGNOW why am I doing this?
+			lua_pushnil(L);//tex no messages
 			return 1;
 		}//l_GetPipeInMessages
 
@@ -144,12 +144,11 @@ namespace IHHook {
 			//spdlog::trace(__func__);
 			const char* cmd = lua_tostring(L, 1);
 			const char* message = lua_tostring(L, 2);
-			spdlog::debug("l_MenuMessage cmd:{},<> message:{}",cmd,message); //DEBUGNOW
+			spdlog::trace("l_MenuMessage cmd:{},<> message:{}",cmd,message); //DEBUGNOW
 			IHMenu::MenuMessage(cmd, message);
 			return 1;
 		}//l_MenuMessage
 
-		//DEBUGNOW
 		//tex since the menu is run through the normal game lua update loop can't really just have ui call lua directly for actions
 		//so it dumps them into a queue for the lua menu to grab and process, pretty much the same way pipe in messages are handled
 		//may have to rethink if expanding ui stuff beyond the IH menu
@@ -174,7 +173,7 @@ namespace IHHook {
 				}
 			}
 
-			lua_pushnil(L);//tex DEBUGNOW why am I doing this?
+			lua_pushnil(L);//tex no messages
 			return 1;
 		}//l_MenuMessages
 

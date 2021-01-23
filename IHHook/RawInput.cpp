@@ -41,7 +41,7 @@ namespace IHHook {
 
 
 		void ProcessKey(PRAWINPUT pRaw) {
-			//spdlog::trace("ProcessKey");//DEBUGNOW
+			//spdlog::trace("ProcessKey");//DEBUG
 			USHORT vKey = pRaw->data.keyboard.VKey;
 			USHORT flags = pRaw->data.keyboard.Flags;
 			USHORT oldFlags = currFlags[vKey];

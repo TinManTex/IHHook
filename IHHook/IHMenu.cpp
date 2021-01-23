@@ -60,7 +60,6 @@ namespace IHHook {
 
 			//DEBUGNOW ImGui::InputText("##menuLine", menuLine, IM_ARRAYSIZE(inputBuffer));
 			ImGui::Text(menuLine.c_str());
-			//ImGui::Selectable(menuLine.c_str());
 
 			//DEBUGNOW ImGui::Combo("##menuSettings", &selectedSetting, menuSettings.data(), menuSettings.size());
 

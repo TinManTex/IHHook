@@ -85,9 +85,8 @@ namespace IHHook {
 		void DrawUI();
 		void DrawAbout();
 
-		//DEBUGNOW d3d11
+		//d3d11
 		bool firstFrame{ true };
-		//DEBUGNOW bool valid{ false };
 		bool frameInitialized{ false };
 		bool d3dHooked{ false };		
 		bool drawUI{ true };

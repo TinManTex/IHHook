@@ -23,9 +23,11 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
-namespace IHHook {
+
+
+namespace IHHook {	
 	size_t RealBaseAddr;
-	HMODULE thisModule;
+	//HMODULE thisModule;
 
 	terminate_function terminate_Original;
 
@@ -72,7 +74,6 @@ namespace IHHook {
 	typedef LPTOP_LEVEL_EXCEPTION_FILTER(WINAPI* SetUnhandledExceptionFilter_Type)(LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter);
 	SetUnhandledExceptionFilter_Type SetUnhandledExceptionFilter_Orig = NULL;
 
-	//DEBUGNOW
 	typedef BOOL(WINAPI* SetCursorPosFunc)(int, int);
 	SetCursorPosFunc SetCursorPos_Orig = NULL;
 
@@ -218,7 +219,7 @@ namespace IHHook {
 
 	//D3D11Hook
 	void IHH::OnFrame() {
-		spdlog::debug("OnFrame");
+		//spdlog::trace("OnFrame");
 
 		if (!frameInitialized) {
 			if (!FrameInitialize()) {
@@ -235,6 +236,7 @@ namespace IHHook {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
+		//DEBUGNOW
 		//if (m_error.empty() && m_game_data_initialized) {
 		//	m_mods->on_frame();
 		//}
@@ -263,7 +265,7 @@ namespace IHHook {
 
 	//WindowsMessageHook
 	bool IHH::OnMessage(HWND wnd, UINT message, WPARAM w_param, LPARAM l_param) {
-		//spdlog::trace("OnMessage");//DEBUGNOW
+		//spdlog::trace("OnMessage");
 
 		if (!frameInitialized) {
 			return true;
@@ -285,22 +287,6 @@ namespace IHHook {
 
 		return true;
 	}//OnMessage
-
-	//RE2FW: this is unfortunate. //DEBUGNOW CULL
-	void IHH::OnDirectInputKeys(const std::array<uint8_t, 256>& keys) {
-		spdlog::trace("OnDirectInputKeys");
-		//if (keys[menuKey] && lastKeys[menuKey] == 0) {
-		//	std::lock_guard _{ inputMutex };
-		//	drawUI = !drawUI;
-
-		//	// Save the config if we close the UI
-		//	//DEBUGNOW if (!m_draw_ui && m_game_data_initialized) {
-		//	//	save_config();
-		//	//}
-		//}
-
-		//lastKeys = keys;
-	}//OnDirectInputKeys
 
 	bool IHH::FrameInitialize() {
 		if (frameInitialized) {
@@ -343,9 +329,8 @@ namespace IHHook {
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//DEBUGNOW io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//DEBUGNOW io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		//DEBUGNOW io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;//DEBUGNOW
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 		spdlog::info("Initializing ImGui Win32");
 
@@ -421,7 +406,7 @@ namespace IHHook {
 		auto& io = ImGui::GetIO();
 		if (!drawUI) {
 			//RawInput::UnBlockAll();//DEBUGNOW
-			unlockCursor = false; //DEBUGNOW
+			unlockCursor = false;
 			io.MouseDrawCursor = false;
 			return;
 		}
@@ -444,7 +429,7 @@ namespace IHHook {
 		
 		IHMenu::DrawMenu();
 
-		//DEBUGNOW
+		
 		//ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
 		//ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
 
@@ -452,7 +437,7 @@ namespace IHHook {
 		//ImGui::Text("Menu Key: Insert");
 
 		//DrawAbout();
-
+		//DEBUGNOW
 		/*if (errorString.empty() && m_game_data_initialized) {
 			m_mods->on_draw_ui();
 		}
@@ -460,50 +445,10 @@ namespace IHHook {
 			ImGui::TextWrapped("IHHook is currently initializing...");
 		}
 		else if*/
-		//DEBUGNOW
 		//if (!errorString.empty()) {
 		//	ImGui::TextWrapped("IHHook error: %s", errorString.c_str());
 		//}
 
 		//ImGui::End();
 	}//DrawUI
-
-
-	//DEBUGNOW
-	void IHH::DrawAbout() {
-		if (!ImGui::CollapsingHeader("About")) {
-			return;
-		}
-
-		ImGui::TreePush("About");
-
-		ImGui::Text("Inspired by (and parts adapted from) various game extension projects.");
-		ImGui::Text("https://github.com/TinManTex/IHHook");
-
-		//DEBUGNOW
-		if (ImGui::CollapsingHeader("Licenses")) {
-			ImGui::TreePush("Licenses");
-
-			if (ImGui::CollapsingHeader("glm")) {
-				ImGui::TextWrapped("glmblurg");
-			}
-
-			if (ImGui::CollapsingHeader("imgui")) {
-				ImGui::TextWrapped("imguifdjhfkjdh");
-			}
-
-			if (ImGui::CollapsingHeader("minhook")) {
-				ImGui::TextWrapped("minhookmnnjh");
-			}
-
-			if (ImGui::CollapsingHeader("spdlog")) {
-				ImGui::TextWrapped("spdlogkjkj");
-			}
-
-			ImGui::TreePop();
-		}
-
-		ImGui::TreePop();
-	}//DrawAbout
-
 }//namespace IHHook
