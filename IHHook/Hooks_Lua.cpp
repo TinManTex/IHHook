@@ -13,6 +13,7 @@
 
 #include <string>
 
+extern void LoadImguiBindings(lua_State* lState);
 
 namespace IHHook {
 	extern void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr);
@@ -25,10 +26,11 @@ namespace IHHook {
 	//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 	extern int luaopen_winapi(lua_State* L);
 
+
 	std::shared_ptr<spdlog::logger> luaLog;
 
 	namespace Hooks_Lua {
-		lua_State* lua;
+		lua_State* luaState = NULL;
 		lua_CFunction foxPanic;
 		bool firstUpdate = false;
 		static const std::wstring luaLogName = L"mod\\ih_log.txt";
@@ -48,7 +50,7 @@ namespace IHHook {
 			lua_State* L = lua_newstate(f, ud);
 			spdlog::debug(__func__);
 
-			lua = L;//tex save reference to local
+			luaState = L;//tex save reference to local
 
 			return L;
 		}//lua_newstateHook
@@ -68,6 +70,7 @@ namespace IHHook {
 
 			LuaIHH::luaopen_ihh(L);
 			//OFF luaopen_winapi(L);
+			LoadImguiBindings(L);
 			if (debugMode) {
 				TestHooks_Lua_PostLibs(L);
 			}
@@ -75,11 +78,6 @@ namespace IHHook {
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
 
-			//DEBUGNOW TODO figure out the earliest point the main window is done being created
-			//DWORD pid = GetCurrentProcessId();
-			//std::vector <HWND> vhWnds;
-			//IHHook::GetAllWindowsFromProcessID(pid, vhWnds);
-			//DEBUGNOW DEBUGNOW
 			RawInput::InitializeInput();
 
 			//HWND hWnd = OS::GetMainWindow();

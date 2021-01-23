@@ -269,12 +269,6 @@
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>Source Files\imguiimpl</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>Source Files\imguiimpl</Filter>
-    </ClCompile>
     <ClCompile Include="WindowsMessageHook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -284,10 +278,30 @@
     <ClCompile Include="IHMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaDrawMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imguiimpl\imgui_lua_bindings.cpp">
+      <Filter>Source Files\imguiimpl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IHHook.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imguiimpl\imgui_iterator.inl">
+      <Filter>Source Files\imguiimpl</Filter>
+    </None>
   </ItemGroup>
 </Project>

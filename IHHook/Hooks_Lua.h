@@ -8,5 +8,7 @@ namespace IHHook {
 
 		int l_FoxLua_Init(lua_State* L);
 		int l_FoxLua_OnUpdate(lua_State* L);
+
+		extern lua_State* luaState;
 	}//namespace Hooks_Lua
 }//namespace IHHook
