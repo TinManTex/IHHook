@@ -3,6 +3,7 @@
 #include <map>
 #include <imgui/imgui.h>
 #include "spdlog/spdlog.h"
+#include <queue>
 
 namespace IHHook {
 	namespace IHMenu {
@@ -63,8 +64,6 @@ namespace IHHook {
 
 			//DEBUGNOW ImGui::Combo("##menuSettings", &selectedSetting, menuSettings.data(), menuSettings.size());
 
-			//const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
-			//static int item_current_idx = 0;                    // Here our selection data is an index.
 			const char* comboLabel = menuSettings[selectedSetting].c_str();  // Label to preview before opening the combo (technically it could be anything)
 			static ImGuiComboFlags flags = 0;
 			if (ImGui::BeginCombo("##menuSettings", comboLabel, flags)) {
@@ -85,6 +84,7 @@ namespace IHHook {
 			ImGui::End();
 		}//DrawMenu
 
+		//IH/Lua > IHMenu
 		//DEBUGNOW tex: this is pretty trash, it's really just getting the IHExt api (which was also trash but atleas more flexible so since pushing through WPF) satisfied with the least fuss.
 		//If IHHook and D3D hook turns out to be robust enough for users then IHExt can be ditched and this should be overhauled along with the IH side where it pushes menu or imgui specific stuff and leaves ExtCmd/Pipe stuff for other purposes
 
@@ -277,7 +277,7 @@ namespace IHHook {
 			//SelectAllText
 		}//AddMenuCommands
 
-		//DEBUGNOW
+		//DEBUGNOW TODO: break out into util
 		std::vector<std::string> split(const std::string& str, const std::string& delim) {
 			std::vector<std::string> tokens;
 			size_t prev = 0, pos = 0;
@@ -303,5 +303,17 @@ namespace IHHook {
 			MenuCommandFunc MenuCommand = menuCommands[cmd];
 			MenuCommand(args);
 		}//MenuMessage
+
+		//IHMenu > IH/Lua
+		//tex: simplest way to allow lua access pipe due to threading
+		std::queue<std::string> messagesIn;
+
+		std::mutex inMutex;
+
+		void QueueMessageIn(std::string message) {
+			std::unique_lock<std::mutex> inLock(inMutex);
+			messagesIn.push(message);
+		}//QueueMessageIn
+
 	}//namespace IHMenu
 }//namespace IHHook

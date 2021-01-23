@@ -149,6 +149,35 @@ namespace IHHook {
 			return 1;
 		}//l_MenuMessage
 
+		//DEBUGNOW
+		//tex since the menu is run through the normal game lua update loop can't really just have ui call lua directly for actions
+		//so it dumps them into a queue for the lua menu to grab and process, pretty much the same way pipe in messages are handled
+		//may have to rethink if expanding ui stuff beyond the IH menu
+		//returns table of string messages from IHMenu
+		static int l_GetMenuMessages(lua_State* L) {
+			if (!IHMenu::messagesIn.empty()) {
+				std::unique_lock<std::mutex> inLock(PipeServer::inMutex);
+				int size = (int)IHMenu::messagesIn.size();
+				if (size > 0) {
+					lua_createtable(L, size, 0);
+					int index = 0;
+					while (!IHMenu::messagesIn.empty()) {
+						std::string message = IHMenu::messagesIn.front();
+						IHMenu::messagesIn.pop();
+
+						index++;
+						lua_pushstring(L, message.c_str());
+						lua_rawseti(L, -2, index);
+					}
+					assert(lua_gettop(L) == 1);//tex table still on stack
+					return 1;
+				}
+			}
+
+			lua_pushnil(L);//tex DEBUGNOW why am I doing this?
+			return 1;
+		}//l_MenuMessages
+
 		//tex use as a callback to test random shiz
 		int l_TestCallToIHHook(lua_State* L) {
 			spdlog::trace(__func__);
@@ -174,6 +203,7 @@ namespace IHHook {
 				{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 				{ "GetPipeInMessages", l_GetPipeInMessages },
 				{ "MenuMessage", l_MenuMessage },
+				{ "GetMenuMessages", l_GetMenuMessages },
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
 				{ "TestCallToIHHook", l_TestCallToIHHook},
