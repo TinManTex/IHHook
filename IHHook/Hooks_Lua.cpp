@@ -1,7 +1,7 @@
 #include "Hooks_Lua.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
-#include "IHHook.h"//Version,BaseAddr
+#include "IHHook.h"//Version,BaseAddr, g_ihhook
 #include "LuaIHH.h"
 #include "OS.h"
 #include "RawInput.h"
@@ -24,7 +24,7 @@ namespace IHHook {
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
 
 	//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
-	extern int luaopen_winapi(lua_State* L);
+	//extern int luaopen_winapi(lua_State* L);
 
 
 	std::shared_ptr<spdlog::logger> luaLog;
@@ -36,9 +36,11 @@ namespace IHHook {
 		static const std::wstring luaLogName = L"mod\\ih_log.txt";
 		static const std::wstring luaLogNamePrev = L"mod\\ih_log_prev.txt";
 
+		//fwd decl
 		void ReplaceStubedOutLua(lua_State* L);
 		void ReplaceStubedOutFox(lua_State* L);
 		static int OnPanic(lua_State* L);
+		void SetLuaVarMenuInitialized(lua_State* L);
 
 
 		//tex actual detoured functions
@@ -78,11 +80,6 @@ namespace IHHook {
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
 
-			RawInput::InitializeInput();
-
-			//HWND hWnd = OS::GetMainWindow();
-			//DEBUGNOW RawInput::HookWndProc(hWnd);
-
 			spdlog::debug("luaL_openlibsHook complete");
 		}//lua_newstateHook
 
@@ -90,7 +87,8 @@ namespace IHHook {
 		int luaL_loadbufferHook(lua_State *L, const char *buff, size_t size, const char *name) {
 			spdlog::trace(__func__);
 			spdlog::trace(name);
-
+			//spdlog::trace(buff);
+			
 			return luaL_loadbuffer(L, buff, size, name);
 		}//luaL_loadbufferHook
 
@@ -198,6 +196,14 @@ namespace IHHook {
 			return 0;
 		}//l_FoxLua_Init
 
+		//tex called inside-out from InitMain.lua via IH
+		int l_FoxLua_InitMain(lua_State* L) {
+			//tex according to logging d3d (and imgui in ihhook) is initialized
+			SetLuaVarMenuInitialized(L);
+
+			return 0;
+		}//l_FoxLua_Init
+
 		//tex would maybe prefer to hook the funcion that calls mission_main.Onupdate
 		//but having the lua call this at top of TppMain.OnUpdate should do
 		//OnUpdate(missionTable)
@@ -213,7 +219,7 @@ namespace IHHook {
 		}//l_onupdate
 		//game lua to IHHook callbacks<
 
-			//tex retail build of MGSV stubs out a lot of functions, fortunately lua functions are often just entries in a table so we can try replace them.
+		//tex retail build of MGSV stubs out a lot of functions, fortunately lua functions are often just entries in a table so we can try replace them.
 		//base lua dist functions that were stubbed
 		void ReplaceStubedOutLua(lua_State* L) {
 			lua_pushcfunction(L, luaB_print);
@@ -252,6 +258,14 @@ namespace IHHook {
 
 			return 0;
 		}//OnPanic
+
+		//tex called from lua -> InfInitMain
+		void SetLuaVarMenuInitialized(lua_State* L) {
+			bool isFrameInitialized = g_ihhook->IsFrameInitialized();
+			lua_getglobal(L, "IHH");
+			lua_pushboolean(L, isFrameInitialized);
+			lua_setfield(L, 1, "menuInitialized");
+		}//SetLuaVarMenuInitialized
 
 		//tex DEBUGNOW find a good spot in exection to call it
 		void TestHooks_Lua_PostNewState(lua_State* L) {
