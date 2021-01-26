@@ -26,13 +26,13 @@ namespace IHHook {
 		}//UnBlockMouseClick
 
 		void BlockAll() {
-			for (int i = 0; i > vKeyMax; i++) {
+			for (int i = 0; i < vKeyMax; i++) {
 				blockGameKeys[i] = true;
 			}
 		}//BlockAll
 
 		void UnBlockAll() {
-			for (int i = 0; i > vKeyMax; i++) {
+			for (int i = 0; i < vKeyMax; i++) {
 				blockGameKeys[i] = false;
 			}
 		}//UnBlockAll
@@ -232,6 +232,20 @@ namespace IHHook {
 			}
 		}//ToggleUI
 
+		void ToggleCursor(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleCursor", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleCursor on ONDOWN");
+				g_ihhook->ToggleCursor();
+			}
+			else if (buttonEvent == RawInput::BUTTONEVENT::ONUP) {
+				spdlog::debug("ToggleCursor on ONUP");
+			}
+			else  if (buttonEvent == RawInput::BUTTONEVENT::HELD) {
+				spdlog::debug("ToggleCursor on HELD");
+			}
+		}//ToggleCursor
+
 		//tex: don't process key
 		void InitIgnoreKeys() {
 			ignore[VK_KANA] = true;
@@ -307,7 +321,8 @@ namespace IHHook {
 			InitIgnoreKeys();
 
 			//RegisterAction(VK_F1, TestAction);//DEBUG
-			RegisterAction(VK_F1, ToggleUI);//DEBUGNOW
+			//RegisterAction(VK_F1, ToggleUI);//DEBUGNOW
+			RegisterAction(VK_F2, ToggleCursor);//DEBUGNOW
 
 			//block[VK_LBUTTON] = true;//DEBUGNOW
 			//block[VK_SPACE] = true;//DEBUGNOW
@@ -365,6 +380,7 @@ namespace IHHook {
 				if (pRaw->header.dwType == RIM_TYPEKEYBOARD) {
 					USHORT vKey = pRaw->data.keyboard.VKey;
 					if (blockGameKeys[vKey]) {
+						delete[] lpb;
 						return false;
 					}
 
@@ -374,6 +390,7 @@ namespace IHHook {
 				}
 				else if (pRaw->header.dwType == RIM_TYPEMOUSE) {
 					if (!ProcessMouseButtons(pRaw)) {
+						delete[] lpb;
 						return false;
 					}
 				}
@@ -385,7 +402,7 @@ namespace IHHook {
 			}//switch uMsg
 
 			return true;
-		}
+		}//OnMessage
 
 		//
 		WNDPROC WndProc_Orig = NULL;
