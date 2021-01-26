@@ -155,7 +155,8 @@ namespace IHHook {
 		//returns table of string messages from IHMenu
 		static int l_GetMenuMessages(lua_State* L) {
 			if (!IHMenu::messagesIn.empty()) {
-				std::unique_lock<std::mutex> inLock(PipeServer::inMutex);
+				spdlog::trace("l_GetMenuMessages: messagesIn not empty");//DEBUG
+				std::unique_lock<std::mutex> inLock(IHMenu::inMutex);
 				int size = (int)IHMenu::messagesIn.size();
 				if (size > 0) {
 					lua_createtable(L, size, 0);
@@ -175,8 +176,8 @@ namespace IHHook {
 
 			lua_pushnil(L);//tex no messages
 			return 1;
-		}//l_MenuMessages
-
+		}//l_GetMenuMessages
+		
 		//tex use as a callback to test random shiz
 		int l_TestCallToIHHook(lua_State* L) {
 			spdlog::trace(__func__);
@@ -204,6 +205,7 @@ namespace IHHook {
 				{ "MenuMessage", l_MenuMessage },
 				{ "GetMenuMessages", l_GetMenuMessages },
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
+				{ "InitMain", Hooks_Lua::l_FoxLua_InitMain},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }
