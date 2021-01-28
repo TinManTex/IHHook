@@ -27,7 +27,6 @@ std::unique_ptr<IHHook::IHH> g_ihhook{};
 
 namespace IHHook {	
 	size_t RealBaseAddr;
-	//HMODULE thisModule;
 
 	terminate_function terminate_Original;
 
@@ -78,7 +77,7 @@ namespace IHHook {
 	SetCursorPosFunc SetCursorPos_Orig = NULL;
 
 	BOOL WINAPI SetCursorPos_Hook(int X, int Y) {
-		if (g_ihhook->IsDrawUI())
+		if (g_ihhook->IsUnlockCursor())
 			return FALSE;
 
 		return SetCursorPos_Orig(X, Y);
@@ -162,7 +161,7 @@ namespace IHHook {
 			MH_Initialize();
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
 			Hooks_Lua::CreateHooks(RealBaseAddr);
-			Hooks_TPP::CreateHooks(RealBaseAddr);
+			//DEBUGNOW Hooks_TPP::CreateHooks(RealBaseAddr);
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -175,7 +174,6 @@ namespace IHHook {
 		if (d3dHooked) {
 			spdlog::info("Hooked D3D11");
 		}
-		//DEBUGNOW TODO: push d3dHooked to lua globals so lua can check if IMGUI available (see "_IHHook" for example)
 
 		spdlog::debug("IHH ctor complete");
 		log->flush();
@@ -229,7 +227,7 @@ namespace IHHook {
 
 			spdlog::info("IHHook frame initialized");
 			frameInitialized = true;
-			return;
+			return;//tex give it an extra frame to settle I guess?
 		}
 
 		ImGui_ImplDX11_NewFrame();
@@ -271,7 +269,7 @@ namespace IHHook {
 			return true;
 		}
 		
-		bool ret = RawInput::OnMessage(wnd, message, w_param, l_param);//DEBUGNOW
+		bool ret = RawInput::OnMessage(wnd, message, w_param, l_param);
 		if (!ret) {
 			return false;
 		}
@@ -288,6 +286,7 @@ namespace IHHook {
 		return true;
 	}//OnMessage
 
+	//tex called on initialize and on device reset
 	bool IHH::FrameInitialize() {
 		if (frameInitialized) {
 			return true;
@@ -348,10 +347,15 @@ namespace IHHook {
 
 		ImGui::StyleColorsDark();
 
-		IHMenu::AddMenuCommands();//DEBUGNOW
-
 		if (firstFrame) {
 			firstFrame = false;
+
+			RawInput::InitializeInput();
+
+			//HWND hWnd = OS::GetMainWindow();
+			//DEBUGNOW RawInput::HookWndProc(hWnd);
+
+			IHMenu::AddMenuCommands();
 
 			InitCursorHook();
 
@@ -379,7 +383,8 @@ namespace IHHook {
 
 			//init_thread.detach();
 		}
-
+		
+		spdlog::info("frame initialized");
 		return true;
 	}//FrameInitialize
 
@@ -400,12 +405,14 @@ namespace IHHook {
 		}
 	}//CleanupRenderTarget
 
+	bool lastOpen = true;//DEBUGNOW
 	void IHH::DrawUI() {
-		std::lock_guard _{ inputMutex };//DEBUGNOW
+		//std::lock_guard _{ inputMutex };//DEBUGNOW
 
 		auto& io = ImGui::GetIO();
 		if (!drawUI) {
-			//RawInput::UnBlockAll();//DEBUGNOW
+			RawInput::UnBlockMouseClick();
+			RawInput::UnBlockKeyboard();
 			unlockCursor = false;
 			io.MouseDrawCursor = false;
 			return;
@@ -417,19 +424,25 @@ namespace IHHook {
 		else {
 			RawInput::UnBlockMouseClick();
 		}
+	
 
 		if (io.WantCaptureKeyboard) {
-			//DEBUGNOW RawInput::BlockKeyboard();
+			RawInput::BlockKeyboard();
 		}
 		else {
-			//DEBUGNOW RawInput::UnBlockKeyboard();
+			RawInput::UnBlockKeyboard();
 		}
 
-		io.MouseDrawCursor = unlockCursor;
-		
-		IHMenu::DrawMenu();
+		io.MouseDrawCursor = unlockCursor;		
 
-		
+		IHMenu::DrawMenu(&menuOpen);			
+		if (lastOpen != menuOpen) {
+			lastOpen = menuOpen;
+			if (!menuOpen) {
+				IHMenu::QueueMessageIn("togglemenu|1");
+			}
+		}
+
 		//ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
 		//ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
 

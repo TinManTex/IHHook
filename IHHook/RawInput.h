@@ -19,10 +19,12 @@ namespace IHHook {
 
 		bool OnMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-		//
-		void BlockMouseClick(); 
-		void UnBlockMouseClick();
+		//		
 		void BlockAll();
 		void UnBlockAll();
+		void BlockMouseClick(); 
+		void UnBlockMouseClick();
+		void BlockKeyboard();
+		void UnBlockKeyboard();
 	}//namespace RawInput
 }//namespace IHHook

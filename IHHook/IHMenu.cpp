@@ -4,15 +4,18 @@
 #include <imgui/imgui.h>
 #include "spdlog/spdlog.h"
 #include <queue>
+#include "IHHook.h"//SetDrawUI
 
 namespace IHHook {
 	namespace IHMenu {
 		//tex would like to keep it const char* all the way through from lua to imgui instead of back and forthing bewtween char* and string, but imgui shits the bed at some point when I try that
 		//try converting just menuItems to see
+
 		std::string menuTitle{ "menuTitle" };
 
 		int selectedItem = 0;
-
+		int prevSelectedItem = 0;
+		int maxStrLength = 0;//tex length of longest string in menuItems
 		std::vector<std::string> menuItems{
 			"1:Menu line test: 1:SomeSetting",
 			"2:Menu line test: 1:SomeSetting",
@@ -33,62 +36,15 @@ namespace IHHook {
 
 		std::string menuHelp = "Some super long textand stuff that might describeand option.Yet more text letst see how this wraps.Some super long textand stuff that might describeand option.Yet more text letst see how this wraps.And more.Some super long textand stuff that might describeand option.Yet more text letst see how this wraps.How much more.Some super long textand stuff that might describeand option.Yet more text lets see how this wraps.So much more.Some super long textand stuff that might describeand option.Yet more text letst see how this wraps.";
 
-		void DrawMenu() {
-			ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
-			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
-
-			//DEBUGNOW tex: name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
-			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
-			ImGui::Begin("Infinite Heaven");//DEBUGNOW, &drawUI); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
-			//ImGui::Text("Menu Key: F1");//DEBUGNOW
-			ImGui::Text(menuTitle.c_str());
-			ImGui::PushItemWidth(-1);//tex push out label
-			int listboxHeightInItems = 20;
-			ImGui::ListBoxHeader("##menuItems", menuItems.size(), listboxHeightInItems);
-			for (int i = 0; i < menuItems.size(); i++) {
-				bool selected = (selectedItem == i);
-				ImGui::Selectable(menuItems[i].c_str(), selected);
-				if (selected) {
-					// handle selection
-				}
-				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
-					// Do stuff on Selectable() double click.                                                                                                                                                                                                                           
-					//selectedItem = i;//DEBUGNOW send tomegv select this equivalent
-				}
-			}
-			ImGui::ListBoxFooter();
-
-			//DEBUGNOW ImGui::InputText("##menuLine", menuLine, IM_ARRAYSIZE(inputBuffer));
-			ImGui::Text(menuLine.c_str());
-
-			//DEBUGNOW ImGui::Combo("##menuSettings", &selectedSetting, menuSettings.data(), menuSettings.size());
-
-			const char* comboLabel = menuSettings[selectedSetting].c_str();  // Label to preview before opening the combo (technically it could be anything)
-			static ImGuiComboFlags flags = 0;
-			if (ImGui::BeginCombo("##menuSettings", comboLabel, flags)) {
-				for (int n = 0; n < menuSettings.size(); n++) {
-					const bool isSelected = (selectedSetting == n);
-					if (ImGui::Selectable(menuSettings[n].c_str(), isSelected))
-						selectedSetting = n;
-
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
-			}
-
-			ImGui::TextWrapped(menuHelp.c_str());
-
-			ImGui::End();
-		}//DrawMenu
+		char inputBuffer[1024] = "";
+		char settingInputBuffer[1024] = "";
 
 		//IH/Lua > IHMenu
 		//DEBUGNOW tex: this is pretty trash, it's really just getting the IHExt api (which was also trash but atleas more flexible so since pushing through WPF) satisfied with the least fuss.
 		//If IHHook and D3D hook turns out to be robust enough for users then IHExt can be ditched and this should be overhauled along with the IH side where it pushes menu or imgui specific stuff and leaves ExtCmd/Pipe stuff for other purposes
 
 		void SetContent(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -102,7 +58,7 @@ namespace IHHook {
 		}//SetContent
 
 		void SetText(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -116,7 +72,7 @@ namespace IHHook {
 		}//SetText
 
 		void SetTextBox(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -126,12 +82,13 @@ namespace IHHook {
 
 			if (name == "menuLine") {
 				menuLine = content;
+				strcpy(inputBuffer, menuLine.c_str());//debugnow
 			}
 		}//SetTextBox
 
 		//args: string name, bool visible
 		void UiElementVisible(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -147,16 +104,21 @@ namespace IHHook {
 
 				}
 			}
+			//DEBUGNOW dont like this
 			else if (name == "menuTitle") {
-				//bool hideMenu = (visible == 0);
-				//if (hideMenu) {
-				//	//DEBUGNOW   ClearMenu();
-				//}
+				if (visible == 1) {
+					g_ihhook->SetDrawUI(true);
+					g_ihhook->SetCursor(true);
+				}
+				else {
+					g_ihhook->SetDrawUI(false);
+					g_ihhook->SetCursor(false);
+				}
 			}
 		}//UiElementVisible
 
 		void ClearTable(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 1) {
 				return;
 			}
@@ -165,11 +127,12 @@ namespace IHHook {
 
 			if (name == "menuItems") {
 				menuItems.clear();
+				maxStrLength = 0;
 			}
 		}//ClearTable
 
 		void AddToTable(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -179,12 +142,15 @@ namespace IHHook {
 
 			if (name == "menuItems") {
 				menuItems.push_back(itemString);
+				if (itemString.length() > maxStrLength) {
+					maxStrLength = (int)itemString.length();
+				}
 			}
 		}//AddToTable
 
 		//args: string name, int itemIndex, string itemString
 		void UpdateTable(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 3) {
 				return;
 			}
@@ -202,7 +168,7 @@ namespace IHHook {
 
 		//args: string name, int itemIndex
 		void SelectItem(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -217,7 +183,7 @@ namespace IHHook {
 		}//SelectItem
 
 		void ClearCombo(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 1) {
 				return;
 			}
@@ -230,7 +196,7 @@ namespace IHHook {
 		}//ClearCombo
 
 		void AddToCombo(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -240,11 +206,18 @@ namespace IHHook {
 
 			if (name == "menuSetting") {
 				menuSettings.push_back(itemString);
+				//DEBUGNOW
+				if (menuSettings.size() == 0) {
+					strcpy(settingInputBuffer, "");
+				} 
+				else if (menuSettings.size() == 1) {
+					strcpy(settingInputBuffer, menuSettings[0].c_str());
+				}
 			}
 		}//AddToCombo
 
 		void SelectCombo(std::vector<std::string> args) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			if (args.size() < 1 + 2) {
 				return;
 			}
@@ -310,9 +283,120 @@ namespace IHHook {
 		std::mutex inMutex;
 
 		void QueueMessageIn(std::string message) {
+			spdlog::trace("QueueMessageIn: " + message);
 			std::unique_lock<std::mutex> inLock(inMutex);
 			messagesIn.push(message);
 		}//QueueMessageIn
+
+		//DEBUGNOW
+		//InputTextCallback_UserData inputTextCallbackUserData;
+		void DrawMenu(bool* p_open) {
+			ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
+			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
+			ImGui::SetNextWindowBgAlpha(0.30f);
+
+			ImGuiStyle& style = ImGui::GetStyle();
+			style.WindowMinSize = ImVec2(60, 60);//tex WORKAROUND listbox crashes when window resized too small
+			style.WindowMenuButtonPosition = ImGuiDir_None;//tex remove collapse button since it does it too
+			//DEBUGNOW it also crashes when dragging window so top of listbox exits bottom of screen, so should try and fix the actual crash at this point lol
+
+			//DEBUGNOW tex: name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
+			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
+
+			//if (!
+			ImGui::Begin("Infinite Heaven", p_open); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
+				//QueueMessageIn("togglemenu|1");
+			//}
+			//ImGui::Text("Menu Key: F1");//DEBUGNOW
+			ImGui::Text(menuTitle.c_str());
+			ImGui::PushItemWidth(-1);//tex push out label
+			int listboxHeightInItems = 20;
+
+			ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems);
+			for (int i = 0; i < menuItems.size(); i++) {
+				ImGui::PushID(i);//DEBUGNOW in theory shouldnt be a problem as menu items have a number prefixed
+				bool selected = (selectedItem == i);
+				if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
+					selectedItem = i;
+					QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
+
+					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+						QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+					}
+				}
+
+				if (selected && prevSelectedItem != selectedItem) {
+					prevSelectedItem = selectedItem;
+					ImGui::SetScrollHereY();
+				}
+				ImGui::PopID();
+			}
+			ImGui::ListBoxFooter();
+
+			ImGui::Selectable(menuLine.c_str(), true);
+			/*//DEBUGNOW tex given up on InputText for now because Listbox keeps stealing its focus for some unknown reason.
+			ImGuiInputTextFlags inputFlags = 0;
+			inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
+			//inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
+			if (ImGui::InputText("##menuLine", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
+				menuLine = inputBuffer;
+				QueueMessageIn("EnterText|menuLine|" + menuLine);
+			}
+			if (ImGui::IsItemHovered() || (ImGui::IsAnyItemFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))) {//DEBUGNOW
+			//	ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
+			//	ImGui::SetItemDefaultFocus();//DEBUGNOW
+			}
+			*/
+
+			if (menuSettings.size()<=1) {//tex just a value (or nothing)
+				if (menuSettings.size() == 1) {
+					ImGui::Selectable(menuSettings[0].c_str(), true);
+				}
+				else {
+					ImGui::Selectable("", true);
+				}
+
+				/* //DEBUGNOW
+				ImGuiInputTextFlags settingInputFlags = 0;
+				settingInputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
+
+				if (ImGui::InputText("##menuSettingInput", settingInputBuffer, IM_ARRAYSIZE(settingInputBuffer), settingInputFlags)) {
+					if (menuSettings.size() == 1) {
+						menuSettings[0] = settingInputBuffer;
+						QueueMessageIn("input|menuSetting|" + menuSettings[0]);
+					}
+				}
+				*/
+			}
+			else {//tex use combo box
+				const char* comboLabel = "";// Label to preview before opening the combo (technically it could be anything)
+				if (menuSettings.size() > 0 && selectedSetting < menuSettings.size()) {
+					comboLabel = menuSettings[selectedSetting].c_str();
+				}
+				static ImGuiComboFlags flags = 0;
+				if (ImGui::BeginCombo("##menuSettings", comboLabel, flags)) {
+					for (int i = 0; i < menuSettings.size(); i++) {
+						ImGui::PushID(i);
+						bool selected = (selectedSetting == i);
+						if (ImGui::Selectable(menuSettings[i].c_str(), selected)) {
+							selectedSetting = i;
+							QueueMessageIn("selectedcombo|menuSetting|" + std::to_string(selectedSetting));
+						}
+
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (selected) {
+							//DEBUGNOW ImGui::SetItemDefaultFocus();
+						}
+						ImGui::PopID();
+					}
+					ImGui::EndCombo();
+				}
+			}
+
+			ImGui::TextWrapped(menuHelp.c_str());
+
+			ImGui::End();
+		}//DrawMenu
 
 	}//namespace IHMenu
 }//namespace IHHook

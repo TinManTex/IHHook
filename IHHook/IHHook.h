@@ -54,18 +54,32 @@ namespace IHHook {
 			return thisModule;
 		}//GetModule
 
+		//tex using this as an indicator that ihhmenu is initialized
+		bool IsFrameInitialized() {
+			return frameInitialized;
+		}//IsFrameInitialized
+
 		//DEBUGNOW
 		bool IsDrawUI() {
 			return drawUI;
 		}//IsDrawUI
 
+		void SetDrawUI(bool set) {
+			drawUI = set;
+			menuOpen = set;//DEBUGNOW
+		}//SetDrawUI
+
 		void ToggleDrawUI() {
-			drawUI = !drawUI;
+			SetDrawUI(!drawUI);
 		}//ToggleDrawUI
 
-		bool IsCursorUnlocked() {
+		bool IsUnlockCursor() {
 			return unlockCursor;
 		}//IsCursorUnlocked
+
+		void SetCursor(bool set) {
+			unlockCursor = set;
+		}//SetCursor
 
 		void ToggleCursor() {
 			unlockCursor = !unlockCursor;
@@ -90,7 +104,8 @@ namespace IHHook {
 		bool frameInitialized{ false };
 		bool d3dHooked{ false };		
 		bool drawUI{ true };
-		bool unlockCursor{ true };
+		bool unlockCursor{ false };
+		bool menuOpen{ false };//DEBUGNOW
 
 		std::mutex inputMutex{};//DEBUGNOW
 

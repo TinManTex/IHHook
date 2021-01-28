@@ -11,7 +11,7 @@
 
 namespace IHHook {
 	namespace RawInput {
-		const int vKeyMax = 256;//tex: virtual keycode max (VK_OEM_CLEAR      0xFE)
+		const USHORT vKeyMax = 256;//tex: virtual keycode max (VK_OEM_CLEAR      0xFE)
 		USHORT currFlags[vKeyMax];//tex: indexed by Virtual Keycode
 		bool ignore[vKeyMax] = { false };//tex: don't process key, set up in InitIgnoreKeys
 		bool blockGameKeys[vKeyMax] = { false };//tex: block game from recieving message
@@ -36,6 +36,46 @@ namespace IHHook {
 				blockGameKeys[i] = false;
 			}
 		}//UnBlockAll
+
+		void BlockKeyboard() {
+			for (USHORT i = VK_BACK; i < 256; i++) {
+				blockGameKeys[i] = true;
+			}
+			blockGameKeys[VK_ESCAPE] = false;
+		}//BlockKeyBoard
+
+		void UnBlockKeyboard() {
+			for (USHORT i = VK_BACK; i < 256; i++) {
+				blockGameKeys[i] = false;
+			}
+		}//UnBlockKeyboard
+
+		USHORT gamepadKeys[]{
+			VK_GAMEPAD_A                         ,
+			VK_GAMEPAD_B                         ,
+			VK_GAMEPAD_X                         ,
+			VK_GAMEPAD_Y                         ,
+			VK_GAMEPAD_RIGHT_SHOULDER            ,
+			VK_GAMEPAD_LEFT_SHOULDER             ,
+			VK_GAMEPAD_LEFT_TRIGGER              ,
+			VK_GAMEPAD_RIGHT_TRIGGER             ,
+			VK_GAMEPAD_DPAD_UP                   ,
+			VK_GAMEPAD_DPAD_DOWN                 ,
+			VK_GAMEPAD_DPAD_LEFT                 ,
+			VK_GAMEPAD_DPAD_RIGHT                ,
+			VK_GAMEPAD_MENU                      ,
+			VK_GAMEPAD_VIEW                      ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_BUTTON    ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_BUTTON   ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_UP        ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_DOWN      ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_RIGHT     ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_LEFT      ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_UP       ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_DOWN     ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_RIGHT    ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT     ,
+		};
 
 		void DoActions(USHORT vKey, RawInput::BUTTONEVENT buttonEvent);
 
@@ -217,18 +257,11 @@ namespace IHHook {
 			}
 		}//TestAction
 
-		//DEBUGNOW
 		void ToggleUI(RawInput::BUTTONEVENT buttonEvent) {
 			spdlog::debug("ButtonEvent: {:d}, Action: ToggleUI", buttonEvent);
 			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
 				spdlog::debug("ToggleUI on ONDOWN");
-				g_ihhook->ToggleDrawUI();//DEBUGNOW
-			}
-			else if (buttonEvent == RawInput::BUTTONEVENT::ONUP) {
-				spdlog::debug("ToggleUI on ONUP");
-			}
-			else  if (buttonEvent == RawInput::BUTTONEVENT::HELD) {
-				spdlog::debug("ToggleUI on HELD");
+				g_ihhook->ToggleDrawUI();
 			}
 		}//ToggleUI
 
@@ -246,7 +279,7 @@ namespace IHHook {
 			}
 		}//ToggleCursor
 
-		//tex: don't process key
+		//tex: don't process key //DEBUGNOW what am I doing here?
 		void InitIgnoreKeys() {
 			ignore[VK_KANA] = true;
 			ignore[VK_HANGEUL] = true;
@@ -324,8 +357,9 @@ namespace IHHook {
 			//RegisterAction(VK_F1, ToggleUI);//DEBUGNOW
 			RegisterAction(VK_F2, ToggleCursor);//DEBUGNOW
 
-			//block[VK_LBUTTON] = true;//DEBUGNOW
-			//block[VK_SPACE] = true;//DEBUGNOW
+			//DEBUG
+			//block[VK_LBUTTON] = true;
+			//block[VK_SPACE] = true;
 		}//InitializeInput
 
 		//CULL not needed, the game will have set up it's own
@@ -335,12 +369,12 @@ namespace IHHook {
 
 			Rid[0].usUsagePage = 0x01;
 			Rid[0].usUsage = 0x02;
-			//DEBUGNOW Rid[0].dwFlags = RIDEV_NOLEGACY;   // adds HID mouse and also ignores legacy mouse messages
+			// Rid[0].dwFlags = RIDEV_NOLEGACY;   // adds HID mouse and also ignores legacy mouse messages
 			Rid[0].hwndTarget = 0;
 
 			Rid[1].usUsagePage = 0x01;
 			Rid[1].usUsage = 0x06;
-			//DEBUGNOW Rid[1].dwFlags = RIDEV_NOLEGACY;   // adds HID keyboard and also ignores legacy keyboard messages
+			// Rid[1].dwFlags = RIDEV_NOLEGACY;   // adds HID keyboard and also ignores legacy keyboard messages
 			Rid[1].hwndTarget = 0;
 
 			if (RegisterRawInputDevices(Rid, 2, sizeof(Rid[0])) == FALSE) {
