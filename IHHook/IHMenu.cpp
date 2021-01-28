@@ -10,6 +10,7 @@ namespace IHHook {
 	namespace IHMenu {
 		//tex would like to keep it const char* all the way through from lua to imgui instead of back and forthing bewtween char* and string, but imgui shits the bed at some point when I try that
 		//try converting just menuItems to see
+		std::string windowTitle{ "windowTitle" };
 
 		std::string menuTitle{ "menuTitle" };
 
@@ -24,8 +25,7 @@ namespace IHHook {
 			"5:Menu line test: 1:SomeSetting",
 		};
 
-		//DEBUGNOW static char menuLine[128] = "1:Menu line test:";
-		std::string menuLine{ "menuLine" };
+		std::string menuLine{ "1:Menu line test:" };
 		int selectedSetting = 0;
 		std::vector<std::string> menuSettings{
 			"1:SomeSetting",
@@ -299,22 +299,21 @@ namespace IHHook {
 			style.WindowMinSize = ImVec2(60, 60);//tex WORKAROUND listbox crashes when window resized too small
 			style.WindowMenuButtonPosition = ImGuiDir_None;//tex remove collapse button since it does it too
 			//DEBUGNOW it also crashes when dragging window so top of listbox exits bottom of screen, so should try and fix the actual crash at this point lol
-
-			//DEBUGNOW tex: name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
+			
+			windowTitle = "Infinite Heaven";//DEBUGNOW push from lua
+			//tex: GOTCHA name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
 			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
-
 			//if (!
-			ImGui::Begin("Infinite Heaven", p_open); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
+			ImGui::Begin(windowTitle.c_str(), p_open); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
 				//QueueMessageIn("togglemenu|1");
 			//}
-			//ImGui::Text("Menu Key: F1");//DEBUGNOW
 			ImGui::Text(menuTitle.c_str());
 			ImGui::PushItemWidth(-1);//tex push out label
 			int listboxHeightInItems = 20;
 
 			ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems);
 			for (int i = 0; i < menuItems.size(); i++) {
-				ImGui::PushID(i);//DEBUGNOW in theory shouldnt be a problem as menu items have a number prefixed
+				ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
 				bool selected = (selectedItem == i);
 				if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
 					selectedItem = i;
@@ -342,9 +341,9 @@ namespace IHHook {
 				menuLine = inputBuffer;
 				QueueMessageIn("EnterText|menuLine|" + menuLine);
 			}
-			if (ImGui::IsItemHovered() || (ImGui::IsAnyItemFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))) {//DEBUGNOW
+			if (ImGui::IsItemHovered() || (ImGui::IsAnyItemFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))) {
 			//	ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
-			//	ImGui::SetItemDefaultFocus();//DEBUGNOW
+			//	ImGui::SetItemDefaultFocus();
 			}
 			*/
 
