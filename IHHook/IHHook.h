@@ -106,6 +106,7 @@ namespace IHHook {
 		bool drawUI{ true };
 		bool unlockCursor{ false };
 		bool menuOpen{ false };//DEBUGNOW
+		bool lastOpen{ true };//DEBUGNOW
 
 		std::mutex inputMutex{};//DEBUGNOW
 

@@ -405,7 +405,6 @@ namespace IHHook {
 		}
 	}//CleanupRenderTarget
 
-	bool lastOpen = true;//DEBUGNOW
 	void IHH::DrawUI() {
 		//std::lock_guard _{ inputMutex };//DEBUGNOW
 
