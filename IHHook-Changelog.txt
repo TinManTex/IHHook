@@ -1,4 +1,11 @@
 IHHook changelog
+r5 -
+IHHMenu IMGUI menu.
+Dear IMGUI implementation from RE2FW.
+D3D11Hook from RE2FW.
+l_GetGamePath
+Bit of refactoring.
+Attempt to hook various errors and exceptions.
 
 r4 - 2020-01-27
 IHHook inited via a thread rather than directly in dllmain, still not 'the way', but better.
