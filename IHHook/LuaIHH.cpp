@@ -8,11 +8,11 @@
 
 #include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
 #include "OS.h"
-#include "PipeServer.h"
+#include "PipeServer.h" // QueueMessageOut, messagesIn
 
 #include <string>
 
-#include "IHMenu.h" // MenuMessage
+#include "IHMenu.h" // MenuMessage, messagesIn
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;

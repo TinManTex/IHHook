@@ -90,7 +90,6 @@ namespace IHHook {
 		void OnReset();
 
 		bool OnMessage(HWND wnd, UINT message, WPARAM w_param, LPARAM l_param);
-		void OnDirectInputKeys(const std::array<uint8_t, 256>& keys);
 	private:
 		bool FrameInitialize();
 		void CreateRenderTarget();
