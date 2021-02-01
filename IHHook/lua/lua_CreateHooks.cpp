@@ -127,7 +127,7 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	CREATEHOOK(lua_concat)//TEST
 
 	//CREATEHOOK(lua_getallocf)//tex DEBUGNOW no calls in lua distro, so may be hard to find, or have been culled by compilation
-	//CREATEHOOK(lua_setallocf)//tex DEBUGNOW no calls in lua distro, so may be hard to find, or have been culled by compilation
+	CREATEHOOK(lua_setallocf)//TEST
 
 	//...
 
@@ -140,8 +140,8 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	CREATEHOOK(lua_getinfo)//TEST
 	CREATEHOOK(lua_getlocal)//TEST
 	CREATEHOOK(lua_setlocal)//TEST
-	//CREATEHOOK(lua_getupvalue)//tex: Using default implementation. DEBUGNOW uses lua_lock, may not be a good idea due to thread issues and not knowing what the engine is doing to the state. Only use in db_getupvalue along with setupvalue, but only one of the functions seems to survive?
-	//CREATEHOOK(lua_setupvalue)//tex: DEBUGNOW lua implementation is getting into GC (luaC_barrier). See above for further note as above
+	CREATEHOOK(lua_getupvalue)//TEST
+	CREATEHOOK(lua_setupvalue)//TEST
 
 	CREATEHOOK(lua_sethook)//TEST
 	CREATEHOOK(lua_gethook)//TEST

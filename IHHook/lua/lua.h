@@ -236,7 +236,7 @@ HOOKFUNC(int, lua_next, lua_State *L, int idx);
 HOOKFUNC(void, lua_concat, lua_State *L, int n);
 
 //OFF LUA_API  lua_Alloc(lua_getallocf, lua_State *L, void **ud);
-//OFF LUA_API  void lua_setallocf(lua_State *L, lua_Alloc f, void *ud);
+HOOKFUNC(void, lua_setallocf, lua_State *L, lua_Alloc f, void *ud);
 
 
 
@@ -330,8 +330,8 @@ HOOKFUNC(int, lua_getinfo, lua_State *L, const char *what, lua_Debug *ar);
 HOOKFUNC(const char *, lua_getlocal, lua_State *L, const lua_Debug *ar, int n);
 HOOKFUNC(const char *, lua_setlocal, lua_State *L, const lua_Debug *ar, int n);
 
-LUA_API const char *lua_getupvalue(lua_State *L, int funcindex, int n);//HOOKFUNC(const char *, lua_getupvalue, lua_State *L, int funcindex, int n);
-//OFF LUA_API const char *lua_setupvalue(lua_State *L, int funcindex, int n);
+HOOKFUNC(const char *, lua_getupvalue, lua_State *L, int funcindex, int n);
+HOOKFUNC(const char *, lua_setupvalue, lua_State *L, int funcindex, int n);
 
 HOOKFUNC(int, lua_sethook, lua_State *L, lua_Hook func, int mask, int count);
 HOOKFUNC(lua_Hook, lua_gethook, lua_State *L);

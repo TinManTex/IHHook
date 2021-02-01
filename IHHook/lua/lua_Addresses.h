@@ -21,7 +21,7 @@ HOOKPTR(lua_atpanic, 0x14cdb8560);
 HOOKPTR(lua_gettop, 0x14cdbb870);
 HOOKPTR(lua_settop, 0x14cdc3810);
 HOOKPTR(lua_pushvalue, 0x14cdc05b0);
-HOOKPTR(lua_remove, 0x141a22aa0);
+HOOKPTR(lua_remove, 0x14cdc2490);
 HOOKPTR(lua_insert, 0x141a04d40);
 HOOKPTR(lua_replace, 0x14cdc2590);
 HOOKPTR(lua_checkstack, 0x14cdb88a0);
@@ -98,17 +98,17 @@ HOOKPTR(lua_setfenv, 0x14cdc2b30);
 */
 HOOKPTR(lua_call, 0x14cdb8670);
 HOOKPTR(lua_pcall, 0x14cdbe140);
-HOOKPTR(lua_cpcall, 0x147e9d220);
+HOOKPTR(lua_cpcall, 0x14cdb8fe0);
 HOOKPTR(lua_load, 0x14cdbd030);
 
-HOOKPTR(lua_dump, 0x141a048a0);
+HOOKPTR(lua_dump, 0x14cdb9c90);
 
 /*
 ** coroutine functions
 */
 //HOOKPTR(lua_yield, );//tex: Using default implementation.
 HOOKPTR(lua_resume, 0x14cdc9330);
-HOOKPTR(lua_status, 0x141a05a70);
+HOOKPTR(lua_status, 0x141a05a70);//tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)
 
 //...
 
@@ -126,7 +126,7 @@ HOOKPTR(lua_next, 0x14cdbd570);
 HOOKPTR(lua_concat, 0x14cdb8bc0);
 
 //HOOKPTR(lua_getallocf, );
-//HOOKPTR(lua_setallocf, );
+HOOKPTR(lua_setallocf, 0x14cdc2710);
 
 //...
 
@@ -139,8 +139,8 @@ HOOKPTR(lua_getstack, 0x14cded2c0);
 HOOKPTR(lua_getinfo, 0x141a144f0);
 HOOKPTR(lua_getlocal, 0x14cded050);
 HOOKPTR(lua_setlocal, 0x14cded700);
-//HOOKPTR(lua_getupvalue, );
-//HOOKPTR(lua_setupvalue, );
+HOOKPTR(lua_getupvalue, 0x14cdbb980);
+HOOKPTR(lua_setupvalue, 0x141a05980);
 //
 HOOKPTR(lua_sethook, 0x14cded4a0);
 HOOKPTR(lua_gethook, 0x14cdec220);
