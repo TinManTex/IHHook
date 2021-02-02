@@ -117,7 +117,7 @@ HOOKFUNC(lua_CFunction, lua_atpanic, lua_State *L, lua_CFunction panicf);
 /*
 ** basic stack manipulation
 */
-HOOKFUNC(int, lua_gettop, lua_State *L);
+LUA_API int   (lua_gettop)(lua_State* L);//HOOKFUNC(int, lua_gettop, lua_State *L);
 HOOKFUNC(void, lua_settop, lua_State *L, int index);
 HOOKFUNC(void, lua_pushvalue, lua_State *L, int index);
 HOOKFUNC(void, lua_remove, lua_State *L, int index);
@@ -207,7 +207,7 @@ HOOKFUNC(int, lua_dump, lua_State *L, lua_Writer writer, void *data);
 */
 LUA_API int  (lua_yield)(lua_State *L, int nresults);//HOOKFUNC(int, lua_yield, lua_State *L, int nresults);
 HOOKFUNC(int, lua_resume, lua_State *L, int narg);
-HOOKFUNC(int, lua_status, lua_State *L);
+LUA_API int  (lua_status)(lua_State* L);//HOOKFUNC(int, lua_status, lua_State *L);
 
 /*
 ** garbage-collection function and options

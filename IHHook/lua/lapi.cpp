@@ -156,11 +156,11 @@ static TValue *index2adr (lua_State *L, int idx) {
 */
 
 
-//LUA_API int lua_gettop (lua_State *L) {
-//  return cast_int(L->top - L->base);
-//}
-//
-//
+LUA_API int lua_gettop (lua_State *L) {
+  return cast_int(L->top - L->base);
+}
+
+
 //LUA_API void lua_settop (lua_State *L, int idx) {
 //  lua_lock(L);
 //  if (idx >= 0) {
@@ -243,14 +243,14 @@ static TValue *index2adr (lua_State *L, int idx) {
 //  StkId o = index2adr(L, idx);
 //  return (o == luaO_nilobject) ? LUA_TNONE : ttype(o);
 //}
-//
-//
+
+
 //LUA_API const char *lua_typename (lua_State *L, int t) {
 //  UNUSED(L);
 //  return (t == LUA_TNONE) ? "no value" : luaT_typenames[t];
 //}
-//
-//
+
+
 //LUA_API int lua_iscfunction (lua_State *L, int idx) {
 //  StkId o = index2adr(L, idx);
 //  return iscfunction(o);
@@ -885,13 +885,13 @@ LUA_API int lua_isuserdata (lua_State *L, int idx) {//tex
 //  lua_unlock(L);
 //  return status;
 //}
-//
-//
-//LUA_API int  lua_status (lua_State *L) {
-//  return L->status;
-//}
-//
-//
+
+
+LUA_API int  lua_status (lua_State *L) {
+  return L->status;
+}
+
+
 ///*
 //** Garbage-collection function
 //*/

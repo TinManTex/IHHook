@@ -18,7 +18,7 @@ HOOKPTR(lua_atpanic, 0x14cdb8560);
 /*
 ** basic stack manipulation
 */
-HOOKPTR(lua_gettop, 0x14cdbb870);
+//HOOKPTR(lua_gettop, 0x14cdbb870);//tex: Using default implementation.
 HOOKPTR(lua_settop, 0x14cdc3810);
 HOOKPTR(lua_pushvalue, 0x14cdc05b0);
 HOOKPTR(lua_remove, 0x14cdc2490);
@@ -108,7 +108,7 @@ HOOKPTR(lua_dump, 0x14cdb9c90);
 */
 //HOOKPTR(lua_yield, );//tex: Using default implementation.
 HOOKPTR(lua_resume, 0x14cdc9330);
-HOOKPTR(lua_status, 0x141a05a70);//tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)
+//HOOKPTR(lua_status, 0x141a05a70);//tex: Using default implementation. //tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)
 
 //...
 

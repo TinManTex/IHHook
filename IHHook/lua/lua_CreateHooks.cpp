@@ -12,19 +12,19 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	*/
 	CREATEHOOK(lua_newstate)//TEST
 	CREATEHOOK(lua_close)//TEST
-	CREATEHOOK(lua_newthread)//TEST
+	CREATEHOOK(lua_newthread)
 
 	CREATEHOOK(lua_atpanic)//TEST
 
 	/*
 	** basic stack manipulation
 	*/
-	CREATEHOOK(lua_gettop)
-	CREATEHOOK(lua_settop)//TEST
-	CREATEHOOK(lua_pushvalue)//TEST
-	CREATEHOOK(lua_remove)//TEST
-	CREATEHOOK(lua_insert)//TEST
-	CREATEHOOK(lua_replace)//TEST
+	//CREATEHOOK(lua_gettop)//tex: Using default implementation.
+	CREATEHOOK(lua_settop)
+	CREATEHOOK(lua_pushvalue)
+	CREATEHOOK(lua_remove)
+	CREATEHOOK(lua_insert)
+	CREATEHOOK(lua_replace)
 	CREATEHOOK(lua_checkstack)//TEST
 
 	CREATEHOOK(lua_xmove)//TEST
@@ -33,16 +33,16 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	/** access functions (stack -> C)
 	/*/
 
-	CREATEHOOK(lua_isnumber)//TEST
+	CREATEHOOK(lua_isnumber)
 	CREATEHOOK(lua_isstring)
 	CREATEHOOK(lua_iscfunction)
-	//CREATEHOOK(lua_isuserdata)//tex: Using default implementation. No calls in lua distro, so may be hard to find, or have been culled by compilation
+	//CREATEHOOK(lua_isuserdata)//TEST tex: Using default implementation. No calls in lua distro, so may be hard to find, or have been culled by compilation
 	CREATEHOOK(lua_type)
-	CREATEHOOK(lua_typename)//TEST
+	CREATEHOOK(lua_typename)
 
 	//CREATEHOOK(lua_equal)//tex: lua implementation goes a bit deeper than I'm happy with to use at the moment. No calls in lua distro, so may be hard to find, or have been culled by compilation
-	CREATEHOOK(lua_rawequal)//TEST
-	CREATEHOOK(lua_lessthan)//TEST
+	CREATEHOOK(lua_rawequal)
+	CREATEHOOK(lua_lessthan)
 
 	CREATEHOOK(lua_tonumber)
 	CREATEHOOK(lua_tointeger)
@@ -109,7 +109,7 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	*/
 	//CREATEHOOK(lua_yield)//tex: Using default implementation.  DEBUGNOW uses lua_lock, may not be a good idea due to thread issues and not knowing what the engine is doing to the state. Seems to be inlined in luaB_yield (it's only call in lua distro)
 	CREATEHOOK(lua_resume)//TEST
-	CREATEHOOK(lua_status)//TEST
+	//CREATEHOOK(lua_status)//TEST //tex: Using default implementation.
 
 	//...
 
