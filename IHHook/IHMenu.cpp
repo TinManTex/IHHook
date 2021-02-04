@@ -82,7 +82,7 @@ namespace IHHook {
 
 			if (name == "menuLine") {
 				menuLine = content;
-				strcpy(inputBuffer, menuLine.c_str());//debugnow
+				strcpy(inputBuffer, menuLine.c_str());//DEBUGNOW
 			}
 		}//SetTextBox
 
@@ -206,11 +206,7 @@ namespace IHHook {
 
 			if (name == "menuSetting") {
 				menuSettings.push_back(itemString);
-				//DEBUGNOW
-				if (menuSettings.size() == 0) {
-					strcpy(settingInputBuffer, "");
-				} 
-				else if (menuSettings.size() == 1) {
+				if (menuSettings.size() == 1) {
 					strcpy(settingInputBuffer, menuSettings[0].c_str());
 				}
 			}
@@ -290,16 +286,11 @@ namespace IHHook {
 
 		//DEBUGNOW
 		//InputTextCallback_UserData inputTextCallbackUserData;
-		void DrawMenu(bool* p_open) {
+		void DrawMenu(bool* p_open, bool lastOpen) {
 			ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
 			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
 			ImGui::SetNextWindowBgAlpha(0.30f);
-
-			ImGuiStyle& style = ImGui::GetStyle();
-			style.WindowMinSize = ImVec2(60, 60);//tex WORKAROUND listbox crashes when window resized too small
-			style.WindowMenuButtonPosition = ImGuiDir_None;//tex remove collapse button since it does it too
-			//DEBUGNOW it also crashes when dragging window so top of listbox exits bottom of screen, so should try and fix the actual crash at this point lol
-			
+		
 			windowTitle = "Infinite Heaven";//DEBUGNOW push from lua
 			//tex: GOTCHA name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
 			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
@@ -307,33 +298,37 @@ namespace IHHook {
 			ImGui::Begin(windowTitle.c_str(), p_open); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
 				//QueueMessageIn("togglemenu|1");
 			//}
+
 			ImGui::Text(menuTitle.c_str());
 			ImGui::PushItemWidth(-1);//tex push out label
 			int listboxHeightInItems = 20;
+			if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
+				for (int i = 0; i < menuItems.size(); i++) {
+					ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
+					bool selected = (selectedItem == i);
+					if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
+						selectedItem = i;
+						QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
 
-			ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems);
-			for (int i = 0; i < menuItems.size(); i++) {
-				ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
-				bool selected = (selectedItem == i);
-				if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
-					selectedItem = i;
-					QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
-
-					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
-						QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+							QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+						}
 					}
-				}
 
-				if (selected && prevSelectedItem != selectedItem) {
-					prevSelectedItem = selectedItem;
-					ImGui::SetScrollHereY();
-				}
-				ImGui::PopID();
-			}
-			ImGui::ListBoxFooter();
+					//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
+					if (*p_open && *p_open != lastOpen) {
+						ImGui::SetItemDefaultFocus();
+					}
 
-			ImGui::Selectable(menuLine.c_str(), true);
-			/*//DEBUGNOW tex given up on InputText for now because Listbox keeps stealing its focus for some unknown reason.
+					if (selected && prevSelectedItem != selectedItem) {
+						prevSelectedItem = selectedItem;
+						ImGui::SetScrollHereY(0.15f);
+					}
+					ImGui::PopID();
+				}
+				ImGui::ListBoxFooter();
+			}//if ListBox
+
 			ImGuiInputTextFlags inputFlags = 0;
 			inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
 			//inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
@@ -341,33 +336,19 @@ namespace IHHook {
 				menuLine = inputBuffer;
 				QueueMessageIn("EnterText|menuLine|" + menuLine);
 			}
-			if (ImGui::IsItemHovered() || (ImGui::IsAnyItemFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))) {
-			//	ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
-			//	ImGui::SetItemDefaultFocus();
-			}
-			*/
 
-			if (menuSettings.size()<=1) {//tex just a value (or nothing)
-				if (menuSettings.size() == 1) {
-					ImGui::Selectable(menuSettings[0].c_str(), true);
-				}
-				else {
-					ImGui::Selectable("", true);
-				}
-
-				/* //DEBUGNOW
+			if (menuSettings.size() == 0) {
+				ImGui::Text("");
+			} else if (menuSettings.size() == 1) {//tex just a value
 				ImGuiInputTextFlags settingInputFlags = 0;
 				settingInputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
-
 				if (ImGui::InputText("##menuSettingInput", settingInputBuffer, IM_ARRAYSIZE(settingInputBuffer), settingInputFlags)) {
 					if (menuSettings.size() == 1) {
 						menuSettings[0] = settingInputBuffer;
 						QueueMessageIn("input|menuSetting|" + menuSettings[0]);
 					}
 				}
-				*/
-			}
-			else {//tex use combo box
+			} else {//tex use combo box
 				const char* comboLabel = "";// Label to preview before opening the combo (technically it could be anything)
 				if (menuSettings.size() > 0 && selectedSetting < menuSettings.size()) {
 					comboLabel = menuSettings[selectedSetting].c_str();
@@ -389,10 +370,10 @@ namespace IHHook {
 						ImGui::PopID();
 					}
 					ImGui::EndCombo();
-				}
-			}
+				}//if Combo
+			}//menuSetting
 
-			ImGui::TextWrapped(menuHelp.c_str());
+			ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
 
 			ImGui::End();
 		}//DrawMenu
