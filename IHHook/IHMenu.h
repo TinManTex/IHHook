@@ -6,6 +6,7 @@ namespace IHHook {
 		void AddMenuCommands();
 		void MenuMessage(const char* cmd, const char* message);
 
+		void SetInitialText();
 		void DrawMenu(bool* p_open, bool lastOpen);
 
 		void QueueMessageIn(std::string message);

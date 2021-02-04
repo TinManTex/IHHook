@@ -225,6 +225,9 @@ namespace IHHook {
 				return;
 			}
 
+			//tex IHMenu initial text DEBUGNOW
+			IHMenu::SetInitialText();
+
 			spdlog::info("IHHook frame initialized");
 			frameInitialized = true;
 			return;//tex give it an extra frame to settle I guess?
@@ -432,7 +435,9 @@ namespace IHHook {
 			RawInput::UnBlockKeyboard();
 		}
 
-		io.MouseDrawCursor = unlockCursor;		
+		io.MouseDrawCursor = unlockCursor;
+
+		//ImGui::ShowDemoWindow();//DEBUG
 
 		IHMenu::DrawMenu(&menuOpen, lastOpen);
 		if (lastOpen != menuOpen) {

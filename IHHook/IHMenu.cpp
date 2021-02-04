@@ -18,11 +18,11 @@ namespace IHHook {
 		int prevSelectedItem = 0;
 		int maxStrLength = 0;//tex length of longest string in menuItems
 		std::vector<std::string> menuItems{
-			"1:Menu line test: 1:SomeSetting",
-			"2:Menu line test: 1:SomeSetting",
-			"3:Menu line test: 1:SomeSetting",
-			"4:Menu line test: 1:SomeSetting",
-			"5:Menu line test: 1:SomeSetting",
+			"1:Menu line test = 1:SomeSetting",
+			"2:Menu line test = 1:SomeSetting",
+			"3:Menu line test = 1:SomeSetting",
+			"4:Menu line test = 1:SomeSetting",
+			"5:Menu line test = 1:SomeSetting",
 		};
 
 		std::string menuLine{ "1:Menu line test:" };
@@ -284,54 +284,74 @@ namespace IHHook {
 			messagesIn.push(message);
 		}//QueueMessageIn
 
-		//DEBUGNOW
-		//InputTextCallback_UserData inputTextCallbackUserData;
+		void SetInitialText() {
+			windowTitle = "Infinite Heaven";
+
+			menuTitle = std::string("IHHook r") + std::to_string(Version);
+
+			menuItems.clear();
+			//menuItems.push_back(std::string("IHHook r") + std::to_string(Version));
+
+			menuLine = "";
+
+			menuSettings.clear();
+
+			menuHelp = "";
+		}//SetInitialText
+
 		void DrawMenu(bool* p_open, bool lastOpen) {
 			ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
 			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
+			//DEBUGNOW ImGui::SetNextWindowSize(ImVec2(0, 0));
 			ImGui::SetNextWindowBgAlpha(0.30f);
+
+			ImGuiWindowFlags windowFlags = 0;
+			//windowFlags |= ImGuiWindowFlags_AlwaysAutoResize;
+			//windowFlags |= ImGuiWindowFlags_NoSavedSettings;
 		
-			windowTitle = "Infinite Heaven";//DEBUGNOW push from lua
 			//tex: GOTCHA name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
 			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
 			//if (!
-			ImGui::Begin(windowTitle.c_str(), p_open); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
+			ImGui::Begin(windowTitle.c_str(), p_open, windowFlags); //tex: TODO: there's probably a better way to handle the x/close button somehow rather than this which just flips a bool
 				//QueueMessageIn("togglemenu|1");
 			//}
 
 			ImGui::Text(menuTitle.c_str());
 			ImGui::PushItemWidth(-1);//tex push out label
-			int listboxHeightInItems = 20;
-			if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
-				for (int i = 0; i < menuItems.size(); i++) {
-					ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
-					bool selected = (selectedItem == i);
-					if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
-						selectedItem = i;
-						QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
+			if (menuItems.size() > 0) {
+				int listboxHeightInItems = 20;
+				if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
+					for (int i = 0; i < menuItems.size(); i++) {
+						ImGui::PushItemWidth(-1);//tex push out label
+						ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
+						bool selected = (selectedItem == i);
+						if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
+							selectedItem = i;
+							QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
 
-						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
-							QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+							if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+								QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+							}
 						}
-					}
 
-					//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
-					if (*p_open && *p_open != lastOpen) {
-						ImGui::SetItemDefaultFocus();
-					}
+						//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
+						if (*p_open && *p_open != lastOpen) {
+							ImGui::SetItemDefaultFocus();
+						}
 
-					if (selected && prevSelectedItem != selectedItem) {
-						prevSelectedItem = selectedItem;
-						ImGui::SetScrollHereY(0.15f);
+						if (selected && prevSelectedItem != selectedItem) {
+							prevSelectedItem = selectedItem;
+							ImGui::SetScrollHereY(0.15f);
+						}
+						ImGui::PopID();
 					}
-					ImGui::PopID();
-				}
-				ImGui::ListBoxFooter();
-			}//if ListBox
+					ImGui::ListBoxFooter();
+				}//if ListBox
+			}//if menuItems
 
 			ImGuiInputTextFlags inputFlags = 0;
 			inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
-			//inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
+			inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
 			if (ImGui::InputText("##menuLine", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
 				menuLine = inputBuffer;
 				QueueMessageIn("EnterText|menuLine|" + menuLine);
@@ -374,8 +394,9 @@ namespace IHHook {
 			}//menuSetting
 
 			ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
-
 			ImGui::End();
+
+			//ImGui::SetNextWindowSizeConstraints(ImVec2(0, -1), ImVec2(0, -1));//DEBUGNOW
 		}//DrawMenu
 
 	}//namespace IHMenu
