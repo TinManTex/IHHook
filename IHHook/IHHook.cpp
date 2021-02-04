@@ -434,7 +434,7 @@ namespace IHHook {
 
 		io.MouseDrawCursor = unlockCursor;		
 
-		IHMenu::DrawMenu(&menuOpen);			
+		IHMenu::DrawMenu(&menuOpen, lastOpen);
 		if (lastOpen != menuOpen) {
 			lastOpen = menuOpen;
 			if (!menuOpen) {

@@ -23,6 +23,7 @@
 #include <spdlog/spdlog.h>
 #include "D3D11Hook.hpp"
 #include "WindowsMessageHook.hpp"
+#include "IHMenu.h"//DEBUGNOW
 
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
