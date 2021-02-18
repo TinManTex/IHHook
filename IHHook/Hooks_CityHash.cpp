@@ -13,8 +13,8 @@ namespace IHHook {
 
 		typedef unsigned __int64(__fastcall* cityHash_func)(char* str, unsigned int len);
 
-		const size_t CityHash1Addr = 0x14CD9C020;
-		const size_t CityHash2Addr = 0x14CD9C750;
+		const size_t CityHash1Addr = 0x141a08ec0;
+		const size_t CityHash2Addr = 0x14bcbdfa0;
 		cityHash_func origCityHash1;
 		cityHash_func origCityHash2;
 

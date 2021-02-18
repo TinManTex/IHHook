@@ -9,140 +9,140 @@
 /*
 ** state manipulation
 */
-HOOKPTR(lua_newstate, 0x14cdd7ab0);
-HOOKPTR(lua_close, 0x14cdd7850);
-HOOKPTR(lua_newthread, 0x14cdbd160);
+HOOKPTR(lua_newstate, 0x14bd561b0);
+HOOKPTR(lua_close, 0x141a21660);
+HOOKPTR(lua_newthread, 0x14bcdc650);
 
-HOOKPTR(lua_atpanic, 0x14cdb8560);
+HOOKPTR(lua_atpanic, 0x14bcd85a0);
 
 /*
 ** basic stack manipulation
 */
 //HOOKPTR(lua_gettop, 0x14cdbb870);//tex: Using default implementation.
-HOOKPTR(lua_settop, 0x14cdc3810);
-HOOKPTR(lua_pushvalue, 0x14cdc05b0);
-HOOKPTR(lua_remove, 0x14cdc2490);
-HOOKPTR(lua_insert, 0x141a04d40);
-HOOKPTR(lua_replace, 0x14cdc2590);
-HOOKPTR(lua_checkstack, 0x14cdb88a0);
+HOOKPTR(lua_settop, 0x14bce4c10);
+HOOKPTR(lua_pushvalue, 0x14bce09f0);
+HOOKPTR(lua_remove, 0x14bce2780);
+HOOKPTR(lua_insert, 0x14bcdb790);
+HOOKPTR(lua_replace, 0x14bce2e10);
+HOOKPTR(lua_checkstack, 0x14bcd88e0);
 
-HOOKPTR(lua_xmove, 0x14cdc55d0);
+HOOKPTR(lua_xmove, 0x14bce71d0);
 
 //*
 /** access functions (stack -> C)
 /*/
 
-HOOKPTR(lua_isnumber, 0x14cdbc190);
-HOOKPTR(lua_isstring, 0x14cdbc490);
-HOOKPTR(lua_iscfunction, 0x14cdbbdc0);
+HOOKPTR(lua_isnumber, 0x14bcdbaf0);
+HOOKPTR(lua_isstring, 0x14bcdbbd0);
+HOOKPTR(lua_iscfunction, 0x141a11630);
 //HOOKPTR(lua_isuserdata, );//tex: Using default implementation.
-HOOKPTR(lua_type, 0x14cdc5270);
-HOOKPTR(lua_typename, 0x14cdc5540);
+HOOKPTR(lua_type, 0x14bce6d00);
+HOOKPTR(lua_typename, 0x14bce6ef0);
 
 //HOOKPTR(lua_equal,  );
-HOOKPTR(lua_rawequal,  0x14cdc0ec0);
-HOOKPTR(lua_lessthan, 0x14cdbca50);
+HOOKPTR(lua_rawequal, 0x14bce1170);
+HOOKPTR(lua_lessthan, 0x14bcdc250);
 
-HOOKPTR(lua_tonumber, 0x14cdc46f0);
-HOOKPTR(lua_tointeger, 0x14cdc4180);
-HOOKPTR(lua_toboolean, 0x14cdc3af0);
-HOOKPTR(lua_tolstring, 0x14cdc4430);
-HOOKPTR(lua_objlen, 0x14cdbdec0);
-HOOKPTR(lua_tocfunction, 0x14cdc3c70);
-HOOKPTR(lua_touserdata, 0x14cdc4e30);
-HOOKPTR(lua_tothread,  0x14cdc4af0);
-HOOKPTR(lua_topointer, 0x14cdc4850);
+HOOKPTR(lua_tonumber, 0x14bce5ac0);
+HOOKPTR(lua_tointeger, 0x14bce55d0);
+HOOKPTR(lua_toboolean, 0x14bce4ef0);
+HOOKPTR(lua_tolstring, 0x14bce5830);
+HOOKPTR(lua_objlen, 0x14bcdcf00);
+HOOKPTR(lua_tocfunction, 0x14bce5110);
+HOOKPTR(lua_touserdata, 0x14bce6890);
+HOOKPTR(lua_tothread, 0x14bce65a0);
+HOOKPTR(lua_topointer, 0x14bce61b0);
 
 
 /*
 ** push functions (C -> stack)
 */
-HOOKPTR(lua_pushnil, 0x14cdbfb40);
-HOOKPTR(lua_pushnumber, 0x14cdbfeb0);
-HOOKPTR(lua_pushinteger, 0x14cdbec00);
-HOOKPTR(lua_pushlstring, 0x14cdbf290);
-HOOKPTR(lua_pushstring, 0x14cdc00e0);
-HOOKPTR(lua_pushvfstring, 0x14cdc0880);
-HOOKPTR(lua_pushfstring, 0x14cdbe870);
-HOOKPTR(lua_pushcclosure, 0x14cdbe580);
-HOOKPTR(lua_pushboolean, 0x14cdbe360);
-HOOKPTR(lua_pushlightuserdata, 0x14cdbedb0);
-HOOKPTR(lua_pushthread, 0x14cdc04c0);
+HOOKPTR(lua_pushnil, 0x14bcded30);
+HOOKPTR(lua_pushnumber, 0x14bcdf650);
+HOOKPTR(lua_pushinteger, 0x14bcde010);
+HOOKPTR(lua_pushlstring, 0x14bcdea10);
+HOOKPTR(lua_pushstring, 0x14bcdf720);
+HOOKPTR(lua_pushvfstring, 0x14bce0dd0);
+HOOKPTR(lua_pushfstring, 0x14bcddd20);
+HOOKPTR(lua_pushcclosure, 0x14bcdd990);
+HOOKPTR(lua_pushboolean, 0x14bcdd750);
+HOOKPTR(lua_pushlightuserdata, 0x14bcde740);
+HOOKPTR(lua_pushthread, 0x14bce04a0);
 
 /*
 ** get functions (Lua -> stack)
 */
-HOOKPTR(lua_gettable, 0x14cdbb1d0);
-HOOKPTR(lua_getfield, 0x14cdba900);
-HOOKPTR(lua_rawget, 0x14cdc14c0);
-HOOKPTR(lua_rawgeti, 0x14cdc1860);
-HOOKPTR(lua_createtable, 0x14cdb90e0);
-HOOKPTR(lua_newuserdata, 0x14cdbd440);
-HOOKPTR(lua_getmetatable, 0x14cdbafa0);
-HOOKPTR(lua_getfenv, 0x14cdba720);
+HOOKPTR(lua_gettable, 0x14bcdadd0);
+HOOKPTR(lua_getfield, 0x14bcda4e0);
+HOOKPTR(lua_rawget, 0x14bce1580);
+HOOKPTR(lua_rawgeti, 0x14bce17e0);
+HOOKPTR(lua_createtable, 0x14bcd9080);
+HOOKPTR(lua_newuserdata, 0x14bcdc9c0);
+HOOKPTR(lua_getmetatable, 0x141a2e0f0);
+HOOKPTR(lua_getfenv, 0x14bcda230);
 
 
 /*
 ** set functions (stack -> Lua)
 */
-HOOKPTR(lua_settable, 0x14cdc3590);
-HOOKPTR(lua_setfield, 0x14cdc30d0);
-HOOKPTR(lua_rawset, 0x14cdc1bc0);
-HOOKPTR(lua_rawseti, 0x14cdc2020);
-HOOKPTR(lua_setmetatable, 0x14cdc3370);
-HOOKPTR(lua_setfenv, 0x14cdc2b30);
+HOOKPTR(lua_settable, 0x14bce48a0);
+HOOKPTR(lua_setfield, 0x14bce37a0);
+HOOKPTR(lua_rawset, 0x14bce1d00);
+HOOKPTR(lua_rawseti, 0x14bce2020);
+HOOKPTR(lua_setmetatable, 0x14bce3e70);
+HOOKPTR(lua_setfenv, 0x14bce3650);
 
 
 /*
 ** `load' and `call' functions (load and run Lua code)
 */
-HOOKPTR(lua_call, 0x14cdb8670);
-HOOKPTR(lua_pcall, 0x14cdbe140);
-HOOKPTR(lua_cpcall, 0x14cdb8fe0);
-HOOKPTR(lua_load, 0x14cdbd030);
+HOOKPTR(lua_call, 0x14bcd8800);
+HOOKPTR(lua_pcall, 0x14bcdd4e0);
+HOOKPTR(lua_cpcall, 0x148be7750);
+HOOKPTR(lua_load, 0x14bcdc480);
 
-HOOKPTR(lua_dump, 0x14cdb9c90);
+HOOKPTR(lua_dump, 0x14bd72b00);
 
 /*
 ** coroutine functions
 */
 //HOOKPTR(lua_yield, );//tex: Using default implementation.
-HOOKPTR(lua_resume, 0x14cdc9330);
+HOOKPTR(lua_resume, 0x14bd46920);
 //HOOKPTR(lua_status, 0x141a05a70);//tex: Using default implementation. //tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)
 
 //...
 
-HOOKPTR(lua_gc, 0x141a04960);
+HOOKPTR(lua_gc, 0x141a11200);
 
 
 /*
 ** miscellaneous functions
 */
 
-HOOKPTR(lua_error, 0x14cdba560);
+HOOKPTR(lua_error, 0x141a2e070);
 
-HOOKPTR(lua_next, 0x14cdbd570);
+HOOKPTR(lua_next, 0x14bcdccc0);
 
-HOOKPTR(lua_concat, 0x14cdb8bc0);
+HOOKPTR(lua_concat, 0x14bcd8a70);
 
 //HOOKPTR(lua_getallocf, );
-HOOKPTR(lua_setallocf, 0x14cdc2710);
+HOOKPTR(lua_setallocf, 0x14bce32d0);
 
 //...
 
 /* hack */
-HOOKPTR(lua_setlevel, 0x14cdc32d0);
+HOOKPTR(lua_setlevel, 0x14bce3a10);
 
 //...
 
-HOOKPTR(lua_getstack, 0x14cded2c0);
-HOOKPTR(lua_getinfo, 0x141a144f0);
-HOOKPTR(lua_getlocal, 0x14cded050);
-HOOKPTR(lua_setlocal, 0x14cded700);
-HOOKPTR(lua_getupvalue, 0x14cdbb980);
-HOOKPTR(lua_setupvalue, 0x141a05980);
+HOOKPTR(lua_getstack, 0x14bd6bff0);
+HOOKPTR(lua_getinfo, 0x14bd6b9b0);
+HOOKPTR(lua_getlocal, 0x14bd6bd70);
+HOOKPTR(lua_setlocal, 0x14bd6c570);
+HOOKPTR(lua_getupvalue, 0x14bcdb540);
+HOOKPTR(lua_setupvalue, 0x141a12220);
 //
-HOOKPTR(lua_sethook, 0x14cded4a0);
-HOOKPTR(lua_gethook, 0x14cdec220);
-HOOKPTR(lua_gethookmask, 0x14cdecd80);
-HOOKPTR(lua_gethookcount, 0x140956a10);
+HOOKPTR(lua_sethook, 0x14bd6c1f0);
+HOOKPTR(lua_gethook, 0x1477e7000);
+HOOKPTR(lua_gethookmask, 0x14bd6b4d0);
+HOOKPTR(lua_gethookcount, 0x141a20e20);
