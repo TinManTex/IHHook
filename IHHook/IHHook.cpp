@@ -153,12 +153,19 @@ namespace IHHook {
 #endif // _DEBUG
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
-
-		if (!OS::CheckVersion(IHHook::GameVersion)) {
-			errorMessages.push_back("ERROR: IHHook - exe version mismatch");
+		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
+		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion);
+		if (versionDelta != 0) {
+			errorMessages.push_back("ERROR: IHHook->exe version mismatch");
 			errorMessages.push_back("Infinite Heaven will continue to load");
 			errorMessages.push_back("with some limitations.");
-			errorMessages.push_back("Please update Infinte Heaven.");
+			if (versionDelta > 0) {
+				errorMessages.push_back("Please update MGSV.");
+			}
+			else if (versionDelta < 0) {
+				errorMessages.push_back("Please update Infinte Heaven.");
+			}
+
 			for each (std::string message in errorMessages) {
 				spdlog::error(message);
 			}
