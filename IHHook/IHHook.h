@@ -19,6 +19,7 @@
 
 #pragma once
 #include <string>
+#include <vector>
 #include <mutex>
 #include <spdlog/spdlog.h>
 #include "D3D11Hook.hpp"
@@ -31,7 +32,7 @@ namespace IHHook {
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
 	static const int Version = 5; //SYNC: fileVersion
-	static const DWORD GameVersion[4] = { 1, 0, 15, 1 }; //tex: version checking game exe
+	static const DWORD GameVersion[4] = { 1, 0, 15, 2 }; //tex: version checking game exe
 	static const std::wstring exeName = L"mgsvtpp.exe";
 
 	static const std::wstring hookLogName = L"ihhook_log.txt";
@@ -42,6 +43,8 @@ namespace IHHook {
 
 	static const size_t BaseAddr = 0x140000000; // from ImageBase field in the EXE
 	extern size_t RealBaseAddr; // Current base address of the EXE
+
+	extern std::vector<std::string> errorMessages;
 
 	void Shutdown();
 
