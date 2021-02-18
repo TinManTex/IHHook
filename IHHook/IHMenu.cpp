@@ -342,6 +342,7 @@ namespace IHHook {
 						//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
 						if (*p_open && *p_open != lastOpen) {
 							ImGui::SetItemDefaultFocus();
+							ImGui::SetKeyboardFocusHere();
 						}
 
 						if (selected && prevSelectedItem != selectedItem) {
@@ -354,15 +355,14 @@ namespace IHHook {
 				}//if ListBox
 			}//if menuItems
 
-			//DEBUGNOW
-			//ImGuiInputTextFlags inputFlags = 0;
-			//inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
-			//inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
-			//if (ImGui::InputText("##menuLine", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
-			//	menuLine = inputBuffer;
-			//	QueueMessageIn("EnterText|menuLine|" + menuLine);
-			//}
-			ImGui::Text(inputBuffer); //DEBUGNOW
+			ImGuiInputTextFlags inputFlags = 0;
+			inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
+			inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
+			if (ImGui::InputText("##menuLine", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
+				menuLine = inputBuffer;
+				QueueMessageIn("EnterText|menuLine|" + menuLine);
+			}
+			//ImGui::Text(inputBuffer); //DEBUG
 
 			if (menuSettings.size() == 0) {
 				ImGui::Text("");
