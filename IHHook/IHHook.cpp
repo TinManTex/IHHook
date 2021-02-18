@@ -23,9 +23,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
-
-
 namespace IHHook {	
+	std::vector<std::string> errorMessages{};
+
 	size_t RealBaseAddr;
 
 	terminate_function terminate_Original;
@@ -155,7 +155,14 @@ namespace IHHook {
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 
 		if (!OS::CheckVersion(IHHook::GameVersion)) {
-			spdlog::error("IHHook version check mismatch");
+			errorMessages.push_back("ERROR: IHHook - exe version mismatch");
+			errorMessages.push_back("Infinite Heaven will continue to load");
+			errorMessages.push_back("with some limitations.");
+			errorMessages.push_back("Please update Infinte Heaven.");
+			for each (std::string message in errorMessages) {
+				spdlog::error(message);
+			}
+			SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
 		}
 		else {
 			MH_Initialize();
@@ -173,6 +180,9 @@ namespace IHHook {
 		d3dHooked = d3d11Hook->hook();
 		if (d3dHooked) {
 			spdlog::info("Hooked D3D11");
+		}
+		else {
+			MessageBox(NULL, L"Could not hook D3D11\n", L"Infinite Heaven IHHook", NULL);
 		}
 
 		spdlog::debug("IHH ctor complete");
