@@ -291,6 +291,11 @@ namespace IHHook {
 
 			menuItems.clear();
 			//menuItems.push_back(std::string("IHHook r") + std::to_string(Version));
+			if (errorMessages.size() > 0) {
+				for each (std::string message in errorMessages) {
+					menuItems.push_back(message);
+				}
+			}
 
 			menuLine = "";
 
@@ -349,13 +354,15 @@ namespace IHHook {
 				}//if ListBox
 			}//if menuItems
 
-			ImGuiInputTextFlags inputFlags = 0;
-			inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
-			inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
-			if (ImGui::InputText("##menuLine", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
-				menuLine = inputBuffer;
-				QueueMessageIn("EnterText|menuLine|" + menuLine);
-			}
+			//DEBUGNOW
+			//ImGuiInputTextFlags inputFlags = 0;
+			//inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
+			//inputFlags |= ImGuiInputTextFlags_AutoSelectAll;
+			//if (ImGui::InputText("##menuLine", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
+			//	menuLine = inputBuffer;
+			//	QueueMessageIn("EnterText|menuLine|" + menuLine);
+			//}
+			ImGui::Text(inputBuffer); //DEBUGNOW
 
 			if (menuSettings.size() == 0) {
 				ImGui::Text("");
