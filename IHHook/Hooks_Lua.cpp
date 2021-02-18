@@ -1,3 +1,16 @@
+/*
+	tex: msgvtpp has lua 5.1.5 statically linked
+	IHHook hooks lua by function addresses (defined in lua/*_Addresses.h), using (macros wrapping) MH_Hook initialised in CreateHooks() below
+	it also replaces the lua function declarations in the lua distro (using the HOOKFUNC macros) so other code can build against it.
+	In some cases uses actual lua lib implementation.
+	See comments on CREATEHOOK entries in *_Creathooks.cpp.
+
+	function signatures/patterns would be more robust to game updates / different game versions than straight addresses, but take a long time to search
+	since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.
+	an alternative would be to do a hook to an early execution point of the game and init  ihhook there,
+	but given the low rate of updates of the game it's better to stick with direct addresses, but have signatures documented as a backup
+*/
+
 #include "Hooks_Lua.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -119,12 +132,12 @@ namespace IHHook {
 			CREATEDETOURB(lua_newstate)
 			CREATEDETOURB(luaL_openlibs)
 			CREATEDETOURB(luaL_loadbuffer)
-			CREATEDETOURB(lua_atpanic)
+			//OFF CREATEDETOURB(lua_atpanic)
 
 			ENABLEHOOK(lua_newstate)
 			ENABLEHOOK(luaL_openlibs)
 			ENABLEHOOK(luaL_loadbuffer)
-			ENABLEHOOK(lua_atpanic)
+			//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
 		}//CreateHooks
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
