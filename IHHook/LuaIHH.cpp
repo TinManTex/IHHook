@@ -11,6 +11,7 @@
 #include "PipeServer.h" // QueueMessageOut, messagesIn
 
 #include <string>
+#include <optional>
 
 #include "IHMenu.h" // MenuMessage, messagesIn
 
@@ -117,26 +118,23 @@ namespace IHHook {
 		//tex DEBUGNOW will have to rethink if we want something else to read the messages 
 		//returns table of string messages from serverPipeIn
 		static int l_GetPipeInMessages(lua_State* L) {
-			if (!PipeServer::messagesIn.empty()) {
-				std::unique_lock<std::mutex> inLock(PipeServer::inMutex);
-				int size = (int)PipeServer::messagesIn.size();
-				if (size > 0) {
-					lua_createtable(L, size, 0);
-					int index = 0;
-					while (!PipeServer::messagesIn.empty()) {
-						std::string message = PipeServer::messagesIn.front();
-						PipeServer::messagesIn.pop();
-
-						index++;
-						lua_pushstring(L, message.c_str());
-						lua_rawseti(L, -2, index);
-					}
-					assert(lua_gettop(L) == 1);//tex table still on stack
-					return 1;
-				}
+			std::optional <std::string> messageOpt = PipeServer::messagesIn.pop();//tex waits if empty		
+			if (!messageOpt) {
+				lua_pushnil(L);//tex no messages
+				return 1;
 			}
+			int index = 0;
+			lua_createtable(L, 0, 0);
+			while (messageOpt) {
+				std::string message = *messageOpt;
 
-			lua_pushnil(L);//tex no messages
+				index++;
+				lua_pushstring(L, message.c_str());
+				lua_rawseti(L, -2, index);//tex add to table
+
+				messageOpt = PipeServer::messagesIn.pop();
+			}//while messageOpt
+			assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetPipeInMessages
 

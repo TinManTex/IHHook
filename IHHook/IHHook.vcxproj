@@ -44,12 +44,12 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -194,6 +194,7 @@
     <ClInclude Include="PipeServer.h" />
     <ClInclude Include="RawInput.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="spdlog\tweakme.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="utility\Address.hpp" />
