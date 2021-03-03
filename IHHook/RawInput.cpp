@@ -284,12 +284,14 @@ namespace IHHook {
 		//tex GOTCHA: WORKAROUND: The game stops lua updates (all gameplay updates I guess) in the pause menu, 
 		//this didn't matter much when IH was lua only, because it would catch that ESC was pressed when the engine resumed the lua state
 		//however since IMGUI is run on present hook/a different thread the delay can put things in a bad state
+		//so just setting SetDrawUI(false) and menuoff will just run whenever
+		//DEBUGNOW rename, this is menuoff
 		void ToggleMenu(RawInput::BUTTONEVENT buttonEvent) {
 			spdlog::debug("ButtonEvent: {:d}, Action: ToggleUI", buttonEvent);
 			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
 				spdlog::debug("ToggleMenu on ONDOWN");
 				g_ihhook->SetDrawUI(false);	
-				IHMenu::QueueMessageIn("togglemenu|1");//DEBUGNOW
+				IHMenu::QueueMessageIn("menuoff");//DEBUGNOW
 			}
 		}//ToggleMenu
 		

@@ -154,6 +154,7 @@ namespace IHHook {
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
+		//can just hope that konami actually keeps updating the exe version properly and not release multiple updates with no exe version change like they have in the past
 		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion);
 		if (versionDelta != 0) {
 			errorMessages.push_back("ERROR: IHHook->exe version mismatch");
@@ -460,7 +461,7 @@ namespace IHHook {
 		if (lastOpen != menuOpen) {
 			lastOpen = menuOpen;
 			if (!menuOpen) {
-				IHMenu::QueueMessageIn("togglemenu|1");
+				IHMenu::QueueMessageIn("menuoff");
 			}
 		}
 
