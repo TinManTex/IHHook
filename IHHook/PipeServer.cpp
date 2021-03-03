@@ -323,20 +323,20 @@ namespace IHHook {
 
 					std::string message = *messageOpt;
 
-						//DEBUGNOW warn if over BUFFSIZE?
+					//DEBUGNOW warn if over BUFFSIZE?
 						
-						DWORD messageBytes = static_cast<DWORD>(message.size()) + sizeof('\0');//tex: std string size() does not include a terminator but c_str() does
-						//spdlog::trace("PipeOutThread Write:{}", message);//DEBUGNOW
-						fSuccess = WriteFile(hPipeOut, message.c_str(), messageBytes, &cbWritten, NULL);
+					DWORD messageBytes = static_cast<DWORD>(message.size()) + sizeof('\0');//tex: std string size() does not include a terminator but c_str() does
+					spdlog::trace("PipeOutThread Write:{}", message);//DEBUGNOW
+					fSuccess = WriteFile(hPipeOut, message.c_str(), messageBytes, &cbWritten, NULL);
 
-						if (!fSuccess || messageBytes != cbWritten) {
-							fSuccess = false;//DEBUGNOW
-							int err = GetLastError();
-							spdlog::error("PipeOutThread WriteFile failed, GLE={}:{}", err, GetLastErrorString(err));
-							spdlog::error("fSuccess={}, messageBytes={}, cbWritten={}.", fSuccess, messageBytes, cbWritten);
-							break;//tex DEBUGNOW think this through, what fails WriteFile (GLEs) and how to deal with them
-						}
-						FlushFileBuffers(hPipeOut);
+					if (!fSuccess || messageBytes != cbWritten) {
+						int err = GetLastError();
+						spdlog::error("PipeOutThread WriteFile failed, GLE={}:{}", err, GetLastErrorString(err));
+						spdlog::error("fSuccess={}, messageBytes={}, cbWritten={}.", fSuccess, messageBytes, cbWritten);
+						fSuccess = false;
+						break;//tex DEBUGNOW think this through, what fails WriteFile (GLEs) and how to deal with them
+					}
+					FlushFileBuffers(hPipeOut);
 
 					messageOpt = messagesOut.pop();
 					//if (!messageOpt) {
@@ -445,7 +445,7 @@ namespace IHHook {
 				else {
 					std::string message;
 					message.insert(message.end(), pchRequest, pchRequest + cbBytesRead);
-					//DEBUGNOW spdlog::trace("Client Request String:\"{}\"", message);
+					spdlog::trace("Client Request String:\"{}\"", message);
 					QueueMessageIn(message);
 				}//if fSuccess
 			}//loop while
