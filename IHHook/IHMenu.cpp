@@ -274,7 +274,7 @@ namespace IHHook {
 
 		//IHMenu > IH/Lua
 		//tex: simplest way to allow lua access pipe due to threading
-		std::queue<std::string> messagesIn;
+		std::queue<std::string> messagesIn;//DEBUGNOW TODO rename to menuMessagesIn to differentiate from pipe?
 
 		std::mutex inMutex;
 
@@ -305,7 +305,7 @@ namespace IHHook {
 		}//SetInitialText
 
 		void DrawMenu(bool* p_open, bool lastOpen) {
-			ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
+			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_::ImGuiCond_Once);
 			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
 			//DEBUGNOW ImGui::SetNextWindowSize(ImVec2(0, 0));
 			ImGui::SetNextWindowBgAlpha(0.30f);
@@ -330,24 +330,26 @@ namespace IHHook {
 						ImGui::PushItemWidth(-1);//tex push out label
 						ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
 						bool selected = (selectedItem == i);
+						//tex putting this before -v- means that ih/lua can set selectedItem (call SelectItem on keyboard scroll)
+						//and have this scroll the selection into the view, but let ImGui::Selectable  //DEBUGNOW unless there's a loop with togamecmd 'selected' that calls SelectItem again?
+						if (selected && prevSelectedItem != selectedItem) {
+							prevSelectedItem = selectedItem;
+							ImGui::SetScrollHereY(0.15f);
+						}
+
 						if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
 							selectedItem = i;
+							prevSelectedItem = selectedItem;//tex to stop autoscroll from kicking off since we changed selectedItem
 							QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
 
 							if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
 								QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
 							}
 						}
-
 						//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
 						if (*p_open && *p_open != lastOpen) {
-							ImGui::SetItemDefaultFocus();
-							ImGui::SetKeyboardFocusHere();
-						}
-
-						if (selected && prevSelectedItem != selectedItem) {
-							prevSelectedItem = selectedItem;
-							ImGui::SetScrollHereY(0.15f);
+							//DEBUGNOW ImGui::SetItemDefaultFocus();
+							//DEBUGNOW ImGui::SetKeyboardFocusHere();
 						}
 						ImGui::PopID();
 					}
