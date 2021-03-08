@@ -291,6 +291,14 @@ namespace IHHook {
 
 			menuItems.clear();
 			//menuItems.push_back(std::string("IHHook r") + std::to_string(Version));
+			menuItems.push_back("This window should close shortly");
+			menuItems.push_back("If it doesn't there may");
+			menuItems.push_back("be an issue with IH");
+			menuItems.push_back("If IH is not installed then");
+			menuItems.push_back("delete MGS_TPP\\dinput8.dll");
+			menuItems.push_back("to remove IHHook");
+			menuItems.push_back("");
+
 			if (errorMessages.size() > 0) {
 				for each (std::string message in errorMessages) {
 					menuItems.push_back(message);
