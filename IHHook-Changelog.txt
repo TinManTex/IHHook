@@ -1,5 +1,13 @@
 IHHook changelog
-r5 -
+r6 -
+IPC shakeout.
+IHMenu shakeout.
+Info and error messages on IHMenu bootup.
+OS:CheckVersion to CheckVersionDelta so can tell if IHHook ahead or behind of target exe version.
+Target mgstpp.exe 1.0.15.2
+More lua api tests
+
+r5 - 2021-01-29
 IHHMenu IMGUI menu.
 Dear IMGUI implementation from RE2FW.
 D3D11Hook from RE2FW.
