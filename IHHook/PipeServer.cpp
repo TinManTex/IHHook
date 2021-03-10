@@ -163,7 +163,7 @@ namespace IHHook {
 					BUFSIZE,                  // output buffer size 
 					BUFSIZE,                  // input buffer size 
 					0,                        // client time-out 
-					NULL);                    // default security attribute 
+					&sa);                     // security attribute 
 
 				if (hPipeIn == INVALID_HANDLE_VALUE) {
 					spdlog::error("CreateNamedPipe PipeIn failed, GLE={}.", GetLastError());
