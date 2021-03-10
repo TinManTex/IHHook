@@ -429,6 +429,8 @@ namespace IHHook {
 	void IHH::DrawUI() {
 		//std::lock_guard _{ inputMutex };//DEBUGNOW
 
+		IHMenu::ProcessMessages();
+
 		auto& io = ImGui::GetIO();
 		if (!drawUI) {
 			RawInput::UnBlockMouseClick();

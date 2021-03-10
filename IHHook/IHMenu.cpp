@@ -5,6 +5,7 @@
 #include "spdlog/spdlog.h"
 #include <queue>
 #include "IHHook.h"//SetDrawUI
+#include "IHMenu.h"
 
 namespace IHHook {
 	namespace IHMenu {
@@ -258,29 +259,46 @@ namespace IHHook {
 			} while (pos < str.length() && prev < str.length());
 			return tokens;
 		}//split
-
-		void MenuMessage(const char* cmd, const char* message) {
+		//DEBUGNOW
+		void MenuMessage(std::string message) {
 			//spdlog::trace(__func__);
+			std::vector<std::string> args = split(message, "|");
+			std::string cmd = args[1];
+
 			if (menuCommands.count(cmd) == 0) {
 				spdlog::warn("MenuMessage: Could not find menuCommand {}", cmd);
 				return;
 			}
 
-			std::vector<std::string> args = split(message, "|");
-
 			MenuCommandFunc MenuCommand = menuCommands[cmd];
 			MenuCommand(args);
 		}//MenuMessage
 
+		void ProcessMessages() {
+			//tex process messagesOut (lua > ihmenu commands) on this thread DEBUGNOW
+			std::optional <std::string> messageOpt = messagesOut.pop();//tex waits if empty
+			while (messageOpt) {
+				std::string message = *messageOpt;
+
+				MenuMessage(message);
+
+				messageOpt = messagesOut.pop();
+			}
+		}//ProcessMessages
+		//< IH/Lua > IHMenu 
+
 		//IHMenu > IH/Lua
-		//tex: simplest way to allow lua access pipe due to threading
-		std::queue<std::string> messagesIn;//DEBUGNOW TODO rename to menuMessagesIn to differentiate from pipe?
-
-		std::mutex inMutex;
-
+		//tex: needs to be thread safe since game/lua is different thread than IHMenu (which is on d3d present)
+		//DEBUGNOW TODO rename to menuMessagesIn to differentiate from pipe?
+		SafeQueue<std::string> messagesIn;
+		SafeQueue<std::string> messagesOut;
+		//tex lua > ihmenu (via l_MenuMessage)
+		void QueueMessageOut(std::string message) {
+			messagesOut.push(message);
+		}//QueueMessageOut
+		//tex ihmenu > lua (via l_GetMenuMessages)
 		void QueueMessageIn(std::string message) {
 			spdlog::trace("QueueMessageIn: " + message);
-			std::unique_lock<std::mutex> inLock(inMutex);
 			messagesIn.push(message);
 		}//QueueMessageIn
 

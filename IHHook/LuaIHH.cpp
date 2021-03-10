@@ -143,7 +143,7 @@ namespace IHHook {
 			const char* cmd = lua_tostring(L, 1);
 			const char* message = lua_tostring(L, 2);
 			spdlog::trace("l_MenuMessage cmd:{},<> message:{}",cmd,message); //DEBUGNOW
-			IHMenu::MenuMessage(cmd, message);
+			IHMenu::QueueMessageOut(message);
 			return 1;
 		}//l_MenuMessage
 
@@ -152,27 +152,23 @@ namespace IHHook {
 		//may have to rethink if expanding ui stuff beyond the IH menu
 		//returns table of string messages from IHMenu
 		static int l_GetMenuMessages(lua_State* L) {
-			if (!IHMenu::messagesIn.empty()) {
-				spdlog::trace("l_GetMenuMessages: messagesIn not empty");//DEBUG
-				std::unique_lock<std::mutex> inLock(IHMenu::inMutex);
-				int size = (int)IHMenu::messagesIn.size();
-				if (size > 0) {
-					lua_createtable(L, size, 0);
-					int index = 0;
-					while (!IHMenu::messagesIn.empty()) {
-						std::string message = IHMenu::messagesIn.front();
-						IHMenu::messagesIn.pop();
-
-						index++;
-						lua_pushstring(L, message.c_str());
-						lua_rawseti(L, -2, index);
-					}
-					assert(lua_gettop(L) == 1);//tex table still on stack
-					return 1;
-				}
+			std::optional <std::string> messageOpt = IHMenu::messagesIn.pop();//tex waits if empty
+			if (!messageOpt) {
+				lua_pushnil(L);//tex no messages
+				return 1;
 			}
+			int index = 0;
+			lua_createtable(L, 0, 0);
+			while (messageOpt) {
+				std::string message = *messageOpt;
 
-			lua_pushnil(L);//tex no messages
+				index++;
+				lua_pushstring(L, message.c_str());
+				lua_rawseti(L, -2, index);
+
+				messageOpt = IHMenu::messagesIn.pop();
+			}//while messageOpt
+			assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetMenuMessages
 		

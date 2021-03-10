@@ -1,18 +1,18 @@
 #pragma once
-#include <queue>
+#include "SafeQueue.h"
 
 namespace IHHook {
 	namespace IHMenu {
 		void AddMenuCommands();
-		void MenuMessage(const char* cmd, const char* message);
+		void ProcessMessages();
 
 		void SetInitialText();
 		void DrawMenu(bool* p_open, bool lastOpen);
 
+		void QueueMessageOut(std::string message);
 		void QueueMessageIn(std::string message);
 
-		extern std::queue<std::string> messagesIn;
-
-		extern std::mutex inMutex;
+		extern SafeQueue<std::string> messagesOut;
+		extern SafeQueue<std::string> messagesIn;
 	}//namespace IHMenu
 }//IHHook
