@@ -24,14 +24,13 @@
 #include <spdlog/spdlog.h>
 #include "D3D11Hook.hpp"
 #include "WindowsMessageHook.hpp"
-#include "IHMenu.h"//DEBUGNOW
 
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 5; //SYNC: fileVersion
+	static const int Version = 6; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 2 }; //tex: version checking game exe
 	static const std::wstring exeName = L"mgsvtpp.exe";
 
