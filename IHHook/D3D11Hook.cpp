@@ -1,4 +1,5 @@
 //D3D11Hook.cpp - from RE2Framework
+//Hooks by creating a dummy device and swapchain to get the addresses of present and resizebuffers from the swapchains dummy swapchain's virtual method table
 #include <algorithm>
 #include <spdlog/spdlog.h>
 
