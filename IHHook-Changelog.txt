@@ -1,5 +1,5 @@
 IHHook changelog
-r6 -
+r6 - 2021-03-12
 IPC shakeout.
 IHMenu shakeout.
 Info and error messages on IHMenu bootup.
