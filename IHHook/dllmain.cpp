@@ -1,10 +1,18 @@
 //dllmain.cpp
 //dll entry
 
-#include "stdafx.h"
+#include "windowsapi.h"
 #include "IHHook.h"
 
-HMODULE thisModule;
+HMODULE g_thisModule;
+
+DWORD WINAPI InitThread(LPVOID lpParameter) {
+	//IHHook::thisModule = static_cast<HMODULE>(lpParameter);
+
+	g_ihhook = std::make_unique<IHHook::IHH>();
+
+	return 0;
+}//InitThread
 
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
@@ -13,7 +21,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
 		DisableThreadLibraryCalls(hModule);//tex stops DllMain being called by other created threads (which helps for some issues mentioned below) 
 
-		thisModule = hModule;
+		g_thisModule = hModule;
 
 		//tex generally CreateThread in DllMain is bad form, 
 		//https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-best-practices
@@ -22,12 +30,19 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		//but it should shift execution till after DllMain is exited at least: https://devblogs.microsoft.com/oldnewthing/20070904-00/?p=25283
 		//Ideally I should be just initializing hooks in dll main, 
 		//and hooking some good spot in mgsvs execution then doing the rest of initialization there.
-		CreateThread(NULL, NULL, IHHook::Initialize, hModule, NULL, NULL);
+		//DEBUGNOW HANDLE hInitThread = CreateThread(nullptr, 0, IHHook::Initialize, hModule, 0, nullptr);
+		HANDLE hInitThread = CreateThread(nullptr, 0, InitThread, hModule, 0, nullptr);
+		if (hInitThread == NULL) {
+
+		}
+		else {
+			CloseHandle(hInitThread);
+		}
 	}
 	else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
 		IHHook::Shutdown();
 	}
 
 	return TRUE;
-}
+}//DllMain
 

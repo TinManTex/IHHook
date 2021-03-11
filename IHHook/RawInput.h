@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+#include "windowsapi.h"
 
 namespace IHHook {
 	namespace RawInput {
@@ -16,5 +16,15 @@ namespace IHHook {
 		void HookWndProc(HWND hWnd);
 
 		void RegisterAction(USHORT vKey, ButtonAction action);
+
+		bool OnMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+		//		
+		void BlockAll();
+		void UnBlockAll();
+		void BlockMouseClick(); 
+		void UnBlockMouseClick();
+		void BlockKeyboard();
+		void UnBlockKeyboard();
 	}//namespace RawInput
 }//namespace IHHook

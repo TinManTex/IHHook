@@ -49,3 +49,7 @@ MH_CreateHook((void*)name, name##Hook, reinterpret_cast<LPVOID*>(&name));
 //tex ASSUMES CREATEDETOUR has defined name##Rebased
 #define ENABLEHOOK(name) MH_EnableHook(name##Rebased);
 
+#define DEFINEPATTERN(name,signature,mask) char* name##Sig = signature;\
+char* name##Mask = mask;
+
+

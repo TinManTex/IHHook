@@ -8,9 +8,12 @@
 
 #include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
 #include "OS.h"
-#include "PipeServer.h"
+#include "PipeServer.h" // QueueMessageOut, messagesIn
 
 #include <string>
+#include <optional>
+
+#include "IHMenu.h" // MenuMessage, messagesIn
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
@@ -56,6 +59,12 @@ namespace IHHook {
 
 			return 1;
 		}//l_log
+
+		static int l_GetGamePath(lua_State* L) {
+			std::string gamePath = OS::GetGameDirA() + "\\";
+			lua_pushstring(L, gamePath.c_str());
+			return 1;
+		}//l_GetGamePath
 
 		static int l_GetModFilesList(lua_State* L) {
 			spdlog::trace(__func__);
@@ -109,29 +118,60 @@ namespace IHHook {
 		//tex DEBUGNOW will have to rethink if we want something else to read the messages 
 		//returns table of string messages from serverPipeIn
 		static int l_GetPipeInMessages(lua_State* L) {
-			if (!PipeServer::messagesIn.empty()) {
-				std::unique_lock<std::mutex> inLock(PipeServer::inMutex);
-				int size = (int)PipeServer::messagesIn.size();
-				if (size > 0) {
-					lua_createtable(L, size, 0);
-					int index = 0;
-					while (!PipeServer::messagesIn.empty()) {
-						std::string message = PipeServer::messagesIn.front();
-						PipeServer::messagesIn.pop();
-
-						index++;
-						lua_pushstring(L, message.c_str());
-						lua_rawseti(L, -2, index);
-					}
-					assert(lua_gettop(L) == 1);//tex table still on stack
-					return 1;
-				}
+			std::optional <std::string> messageOpt = PipeServer::messagesIn.pop();//tex waits if empty		
+			if (!messageOpt) {
+				lua_pushnil(L);//tex no messages
+				return 1;
 			}
+			int index = 0;
+			lua_createtable(L, 0, 0);
+			while (messageOpt) {
+				std::string message = *messageOpt;
 
-			lua_pushnil(L);
+				index++;
+				lua_pushstring(L, message.c_str());
+				lua_rawseti(L, -2, index);//tex add to table
+
+				messageOpt = PipeServer::messagesIn.pop();
+			}//while messageOpt
+			assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetPipeInMessages
 
+		static int l_MenuMessage(lua_State* L) {
+			//spdlog::trace(__func__);
+			const char* cmd = lua_tostring(L, 1);
+			const char* message = lua_tostring(L, 2);
+			spdlog::trace("l_MenuMessage cmd:{},<> message:{}",cmd,message); //DEBUGNOW
+			IHMenu::QueueMessageOut(message);
+			return 1;
+		}//l_MenuMessage
+
+		//tex since the menu is run through the normal game lua update loop can't really just have ui call lua directly for actions
+		//so it dumps them into a queue for the lua menu to grab and process, pretty much the same way pipe in messages are handled
+		//may have to rethink if expanding ui stuff beyond the IH menu
+		//returns table of string messages from IHMenu
+		static int l_GetMenuMessages(lua_State* L) {
+			std::optional <std::string> messageOpt = IHMenu::messagesIn.pop();//tex waits if empty
+			if (!messageOpt) {
+				lua_pushnil(L);//tex no messages
+				return 1;
+			}
+			int index = 0;
+			lua_createtable(L, 0, 0);
+			while (messageOpt) {
+				std::string message = *messageOpt;
+
+				index++;
+				lua_pushstring(L, message.c_str());
+				lua_rawseti(L, -2, index);
+
+				messageOpt = IHMenu::messagesIn.pop();
+			}//while messageOpt
+			assert(lua_gettop(L) == 1);//tex table still on stack
+			return 1;
+		}//l_GetMenuMessages
+		
 		//tex use as a callback to test random shiz
 		int l_TestCallToIHHook(lua_State* L) {
 			spdlog::trace(__func__);
@@ -152,10 +192,14 @@ namespace IHHook {
 				{ "Log", l_Log },
 				{ "Log_SetFlushLevel", l_Log_SetFlushLevel},
 				{ "Log_Flush", l_Log_Flush},
+				{ "GetGamePath", l_GetGamePath},
 				{ "GetModFilesList", l_GetModFilesList},
 				{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 				{ "GetPipeInMessages", l_GetPipeInMessages },
+				{ "MenuMessage", l_MenuMessage },
+				{ "GetMenuMessages", l_GetMenuMessages },
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
+				{ "InitMain", Hooks_Lua::l_FoxLua_InitMain},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }

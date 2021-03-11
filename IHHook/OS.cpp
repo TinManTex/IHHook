@@ -5,10 +5,16 @@
 #pragma comment(lib,"Version.lib") // CheckVersion
 #include <stack>
 
+extern HMODULE g_thisModule;
+
 namespace IHHook {
 	namespace OS {
-		//IN/SIDE: IHHook::exeName
-		bool CheckVersion(const DWORD checkVersion[]) {
+		/// <summary>
+		/// IN/SIDE: IHHook::exeName
+		/// </summary>
+		/// <param name="checkVersion"></param>
+		/// <returns>delta to checkVersion (-1 < 0== > 1)</returns>
+		int CheckVersionDelta(const unsigned long checkVersion[]) {
 			spdlog::debug(__func__);
 
 			std::wstring gameDir = GetGameDir();
@@ -55,19 +61,22 @@ namespace IHHook {
 			spdlog::info("mgsv exe version: {}", exeVersionStr);
 
 			for (int i = 0; i < 4; i++) {
-				if (checkVersion[i] != exeVersion[i]) {
-					return false;
+				if (checkVersion[i] > exeVersion[i]) {
+					return 1;
+				}
+				else if (checkVersion[i] < exeVersion[i]) {
+					return -1;
 				}
 			}
 
-			return true;
+			return 0;
 		}//CheckVersion
 
 		//IN/SIDE: thisModule
 		std::wstring GetGameDir() {
 			//tex user having unicode path might be trouble, but on a quick test lua is hinky with utf16
 			TCHAR path_buffer[_MAX_PATH];
-			GetModuleFileName(thisModule, path_buffer, _MAX_PATH);
+			GetModuleFileName(g_thisModule, path_buffer, _MAX_PATH);
 
 			TCHAR drive[_MAX_DRIVE];
 			TCHAR dir[_MAX_DIR];
@@ -85,7 +94,7 @@ namespace IHHook {
 		std::string GetGameDirA() {
 			//tex user having unicode path might be trouble, but on a quick test lua is hinky with utf16
 			CHAR path_buffer[_MAX_PATH];
-			GetModuleFileNameA(thisModule, path_buffer, sizeof(path_buffer));
+			GetModuleFileNameA(g_thisModule, path_buffer, sizeof(path_buffer));
 
 			CHAR drive[_MAX_DRIVE];
 			CHAR dir[_MAX_DIR];

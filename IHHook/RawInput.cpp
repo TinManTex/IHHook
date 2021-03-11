@@ -7,19 +7,82 @@
 
 #include "RawInput.h"
 #include "spdlog/spdlog.h"
+#include "IHHook.h"
+#include "IHMenu.h"
 
 namespace IHHook {
 	namespace RawInput {
-		const int vKeyMax = 256;//tex: virtual keycode max (VK_OEM_CLEAR      0xFE)
+		const USHORT vKeyMax = 256;//tex: virtual keycode max (VK_OEM_CLEAR      0xFE)
 		USHORT currFlags[vKeyMax];//tex: indexed by Virtual Keycode
 		bool ignore[vKeyMax] = { false };//tex: don't process key, set up in InitIgnoreKeys
-		bool block[vKeyMax] = { false };//tex: block game from recieving message
+		bool blockGameKeys[vKeyMax] = { false };//tex: block game from recieving message
 		std::list<ButtonAction>* buttonActions[vKeyMax] = { NULL };
+
+		void BlockMouseClick() {
+			blockGameKeys[VK_LBUTTON] = true;
+		}//BlockMouseClick
+
+		void UnBlockMouseClick() {
+			blockGameKeys[VK_LBUTTON] = false;
+		}//UnBlockMouseClick
+
+		void BlockAll() {
+			for (int i = 0; i < vKeyMax; i++) {
+				blockGameKeys[i] = true;
+			}
+		}//BlockAll
+
+		void UnBlockAll() {
+			for (int i = 0; i < vKeyMax; i++) {
+				blockGameKeys[i] = false;
+			}
+		}//UnBlockAll
+
+		void BlockKeyboard() {
+			for (USHORT i = VK_BACK; i < 256; i++) {
+				blockGameKeys[i] = true;
+			}
+			blockGameKeys[VK_ESCAPE] = false;
+		}//BlockKeyBoard
+
+		void UnBlockKeyboard() {
+			for (USHORT i = VK_BACK; i < 256; i++) {
+				blockGameKeys[i] = false;
+			}
+		}//UnBlockKeyboard
+
+		USHORT gamepadKeys[]{
+			VK_GAMEPAD_A                         ,
+			VK_GAMEPAD_B                         ,
+			VK_GAMEPAD_X                         ,
+			VK_GAMEPAD_Y                         ,
+			VK_GAMEPAD_RIGHT_SHOULDER            ,
+			VK_GAMEPAD_LEFT_SHOULDER             ,
+			VK_GAMEPAD_LEFT_TRIGGER              ,
+			VK_GAMEPAD_RIGHT_TRIGGER             ,
+			VK_GAMEPAD_DPAD_UP                   ,
+			VK_GAMEPAD_DPAD_DOWN                 ,
+			VK_GAMEPAD_DPAD_LEFT                 ,
+			VK_GAMEPAD_DPAD_RIGHT                ,
+			VK_GAMEPAD_MENU                      ,
+			VK_GAMEPAD_VIEW                      ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_BUTTON    ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_BUTTON   ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_UP        ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_DOWN      ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_RIGHT     ,
+			VK_GAMEPAD_LEFT_THUMBSTICK_LEFT      ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_UP       ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_DOWN     ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_RIGHT    ,
+			VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT     ,
+		};
 
 		void DoActions(USHORT vKey, RawInput::BUTTONEVENT buttonEvent);
 
 
 		void ProcessKey(PRAWINPUT pRaw) {
+			//spdlog::trace("ProcessKey");//DEBUG
 			USHORT vKey = pRaw->data.keyboard.VKey;
 			USHORT flags = pRaw->data.keyboard.Flags;
 			USHORT oldFlags = currFlags[vKey];
@@ -74,7 +137,7 @@ namespace IHHook {
 			{ VK_XBUTTON2,	RI_MOUSE_BUTTON_5_DOWN,			RI_MOUSE_BUTTON_4_UP }
 		};
 
-		void ProcessMouseButtons(PRAWINPUT pRaw) {
+		bool ProcessMouseButtons(PRAWINPUT pRaw) {
 			USHORT usButtonFlags = pRaw->data.mouse.usButtonFlags;
 
 			const int numButtons = _countof(k);
@@ -114,7 +177,13 @@ namespace IHHook {
 					buttonEvent = BUTTONEVENT::HELD;
 				}
 
-				DoActions(vKey, buttonEvent);
+				if (blockGameKeys[vKey]) {
+					return false;
+				}
+
+				if (!ignore[vKey]) {
+					DoActions(vKey, buttonEvent);
+				}
 			}//for numbuttons
 
 #ifdef _DEBUG
@@ -135,6 +204,7 @@ namespace IHHook {
 
 		//wprintf(wcTextBuffer);
 #endif // _DEBUG
+			return true;
 		}//ProcessMouseButtons
 
 		//IN/SIDE: buttonActions
@@ -176,7 +246,7 @@ namespace IHHook {
 
 		//DEBUG
 		void TestAction(BUTTONEVENT buttonEvent) {
-			spdlog::debug("TestAction");
+			spdlog::debug("ButtonEvent: {:d}, Action: TestAction", buttonEvent);
 			if (buttonEvent == BUTTONEVENT::ONDOWN) {
 				spdlog::debug("TestAction on ONDOWN");
 			}
@@ -188,7 +258,45 @@ namespace IHHook {
 			}
 		}//TestAction
 
-		//tex: don't process key
+		void ToggleUI(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleUI", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleUI on ONDOWN");
+				g_ihhook->ToggleDrawUI();
+			}
+		}//ToggleUI
+
+		void ToggleCursor(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleCursor", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleCursor on ONDOWN");
+				g_ihhook->ToggleCursor();
+			}
+			else if (buttonEvent == RawInput::BUTTONEVENT::ONUP) {
+				spdlog::debug("ToggleCursor on ONUP");
+			}
+			else  if (buttonEvent == RawInput::BUTTONEVENT::HELD) {
+				spdlog::debug("ToggleCursor on HELD");
+			}
+		}//ToggleCursor
+
+		//DEBUGNOW
+		//tex GOTCHA: WORKAROUND: The game stops lua updates (all gameplay updates I guess) in the pause menu, 
+		//this didn't matter much when IH was lua only, because it would catch that ESC was pressed when the engine resumed the lua state
+		//however since IMGUI is run on present hook/a different thread the delay can put things in a bad state
+		//so just setting SetDrawUI(false) and menuoff will just run whenever
+		//DEBUGNOW rename, this is menuoff
+		void ToggleMenu(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleUI", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleMenu on ONDOWN");
+				g_ihhook->SetDrawUI(false);	
+				IHMenu::QueueMessageIn("menuoff");//DEBUGNOW
+			}
+		}//ToggleMenu
+		
+
+		//tex: don't process key //DEBUGNOW what am I doing here?
 		void InitIgnoreKeys() {
 			ignore[VK_KANA] = true;
 			ignore[VK_HANGEUL] = true;
@@ -262,8 +370,14 @@ namespace IHHook {
 
 			InitIgnoreKeys();
 
+			//RegisterAction(VK_F1, TestAction);//DEBUG
+			//RegisterAction(VK_F1, ToggleUI);//DEBUGNOW
+			RegisterAction(VK_F2, ToggleCursor);//DEBUGNOW
+			RegisterAction(VK_ESCAPE, ToggleMenu);//DEBUGNOW
+
 			//DEBUG
-			RegisterAction(VK_F1, TestAction);
+			//block[VK_LBUTTON] = true;
+			//block[VK_SPACE] = true;
 		}//InitializeInput
 
 		//CULL not needed, the game will have set up it's own
@@ -273,12 +387,12 @@ namespace IHHook {
 
 			Rid[0].usUsagePage = 0x01;
 			Rid[0].usUsage = 0x02;
-			Rid[0].dwFlags = RIDEV_NOLEGACY;   // adds HID mouse and also ignores legacy mouse messages
+			// Rid[0].dwFlags = RIDEV_NOLEGACY;   // adds HID mouse and also ignores legacy mouse messages
 			Rid[0].hwndTarget = 0;
 
 			Rid[1].usUsagePage = 0x01;
 			Rid[1].usUsage = 0x06;
-			Rid[1].dwFlags = RIDEV_NOLEGACY;   // adds HID keyboard and also ignores legacy keyboard messages
+			// Rid[1].dwFlags = RIDEV_NOLEGACY;   // adds HID keyboard and also ignores legacy keyboard messages
 			Rid[1].hwndTarget = 0;
 
 			if (RegisterRawInputDevices(Rid, 2, sizeof(Rid[0])) == FALSE) {
@@ -287,10 +401,7 @@ namespace IHHook {
 
 		}//InitializeRawInput
 
-		//
-		WNDPROC WndProc_Orig = NULL;
-
-		LRESULT CALLBACK WndProc_Hook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		bool OnMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 			switch (uMsg) {
 			case WM_INPUT:
 			{
@@ -320,8 +431,9 @@ namespace IHHook {
 				PRAWINPUT pRaw = (PRAWINPUT)lpb;
 				if (pRaw->header.dwType == RIM_TYPEKEYBOARD) {
 					USHORT vKey = pRaw->data.keyboard.VKey;
-					if (block[vKey]) {
-						return -1L;
+					if (blockGameKeys[vKey]) {
+						delete[] lpb;
+						return false;
 					}
 
 					if (!ignore[vKey]) {
@@ -329,9 +441,10 @@ namespace IHHook {
 					}
 				}
 				else if (pRaw->header.dwType == RIM_TYPEMOUSE) {
-					//DEBUGNOW block not implemented
-
-					ProcessMouseButtons(pRaw);
+					if (!ProcessMouseButtons(pRaw)) {
+						delete[] lpb;
+						return false;
+					}
 				}
 
 				// not needed
@@ -339,6 +452,17 @@ namespace IHHook {
 				break;
 			}//case WM_INPUT
 			}//switch uMsg
+
+			return true;
+		}//OnMessage
+
+		//
+		WNDPROC WndProc_Orig = NULL;
+
+		LRESULT CALLBACK WndProc_Hook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+			if (!OnMessage(hwnd, uMsg, wParam, lParam)) {
+				return -1L;
+			}
 
 			return CallWindowProc(WndProc_Orig, hwnd, uMsg, wParam, lParam);
 		}//WndProc_Hook
