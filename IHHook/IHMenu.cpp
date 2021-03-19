@@ -180,6 +180,9 @@ namespace IHHook {
 				if (itemIndex >= 0 && itemIndex < menuItems.size()) {
 					selectedItem = itemIndex;
 				}
+				else {
+					spdlog::warn("IHMenu.SelectItem: itemIndex {} out of bounds: {}",itemIndex, menuItems.size());
+				}
 			}
 		}//SelectItem
 
@@ -223,8 +226,11 @@ namespace IHHook {
 			int selectedIndex = std::stoi(args[3]);
 
 			if (name == "menuSetting") {
-				if (selectedIndex >= 0 && selectedIndex < menuItems.size()) {
+				if (selectedIndex >= 0 && selectedIndex < menuSettings.size()) {
 					selectedSetting = selectedIndex;
+				}
+				else {
+					spdlog::warn("IHMenu.SelectCombo: itemIndex {} out of bounds: {}", selectedIndex, menuSettings.size());
 				}
 			}
 		}//SelectCombo

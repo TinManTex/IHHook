@@ -1,5 +1,9 @@
 IHHook changelog
-r6 -
+r7ish
+F3 - togglemenu
+Fix: SelectCombo was checking menuItems bounds instead of menuSettings, which meant combo selection wouldn't update on keyboard scroll if #combo settings > #menu items.
+
+r6 - 2021-03-12
 IPC shakeout.
 IHMenu shakeout.
 Info and error messages on IHMenu bootup.

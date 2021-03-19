@@ -280,20 +280,29 @@ namespace IHHook {
 			}
 		}//ToggleCursor
 
+		void ToggleMenu(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleUI", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleMenu on ONDOWN");
+				g_ihhook->SetDrawUI(false);
+				IHMenu::QueueMessageIn("togglemenu");
+			}
+		}//ToggleMenu
+
 		//DEBUGNOW
 		//tex GOTCHA: WORKAROUND: The game stops lua updates (all gameplay updates I guess) in the pause menu, 
 		//this didn't matter much when IH was lua only, because it would catch that ESC was pressed when the engine resumed the lua state
 		//however since IMGUI is run on present hook/a different thread the delay can put things in a bad state
 		//so just setting SetDrawUI(false) and menuoff will just run whenever
 		//DEBUGNOW rename, this is menuoff
-		void ToggleMenu(RawInput::BUTTONEVENT buttonEvent) {
+		void MenuOff(RawInput::BUTTONEVENT buttonEvent) {
 			spdlog::debug("ButtonEvent: {:d}, Action: ToggleUI", buttonEvent);
 			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
 				spdlog::debug("ToggleMenu on ONDOWN");
 				g_ihhook->SetDrawUI(false);	
-				IHMenu::QueueMessageIn("menuoff");//DEBUGNOW
+				IHMenu::QueueMessageIn("menuoff");
 			}
-		}//ToggleMenu
+		}//MenuOff
 		
 
 		//tex: don't process key //DEBUGNOW what am I doing here?
@@ -373,7 +382,8 @@ namespace IHHook {
 			//RegisterAction(VK_F1, TestAction);//DEBUG
 			//RegisterAction(VK_F1, ToggleUI);//DEBUGNOW
 			RegisterAction(VK_F2, ToggleCursor);//DEBUGNOW
-			RegisterAction(VK_ESCAPE, ToggleMenu);//DEBUGNOW
+			RegisterAction(VK_F3, ToggleMenu);//DEBUGNOW
+			RegisterAction(VK_ESCAPE, MenuOff);//DEBUGNOW
 
 			//DEBUG
 			//block[VK_LBUTTON] = true;
