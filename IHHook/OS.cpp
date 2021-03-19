@@ -4,6 +4,7 @@
 #include "IHHook.h"//exename, thisModule
 #pragma comment(lib,"Version.lib") // CheckVersion
 #include <stack>
+#include <filesystem>
 
 extern HMODULE g_thisModule;
 
@@ -16,6 +17,15 @@ namespace IHHook {
 		/// <returns>delta to checkVersion (-1 < 0== > 1)</returns>
 		int CheckVersionDelta(const unsigned long checkVersion[]) {
 			spdlog::debug(__func__);
+
+			HMODULE hExe = GetModuleHandle(NULL);
+			WCHAR fullPath[MAX_PATH]{ 0 };
+			GetModuleFileNameW(hExe, fullPath, MAX_PATH);
+			std::filesystem::path path(fullPath);
+			std::wstring exeName = path.filename().c_str();
+
+			spdlog::debug("GetModuleFileName:");
+			spdlog::debug(exeName.c_str());
 
 			std::wstring gameDir = GetGameDir();
 			std::wstring exeDir = gameDir + exeName;
@@ -59,7 +69,7 @@ namespace IHHook {
 				std::to_string(exeVersion[3]);
 
 			spdlog::info("mgsv exe version: {}", exeVersionStr);
-
+			//GOTCHA: DEBUGNOW: will return wrong delta if they bump a sub version and reset
 			for (int i = 0; i < 4; i++) {
 				if (checkVersion[i] > exeVersion[i]) {
 					return 1;
