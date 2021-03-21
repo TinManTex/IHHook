@@ -1,7 +1,5 @@
 #include "../HookMacros.h"
 #include <lauxlib.h>
-#include <iostream>
-#include <chrono>
 
 namespace IHHook {
 
