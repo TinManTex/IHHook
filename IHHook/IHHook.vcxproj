@@ -197,6 +197,7 @@
     <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="spdlog\tweakme.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Util.h" />
     <ClInclude Include="utility\Address.hpp" />
     <ClInclude Include="utility\FunctionHook.hpp" />
     <ClInclude Include="windowsapi.h" />
