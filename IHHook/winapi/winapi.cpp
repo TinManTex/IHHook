@@ -49,7 +49,8 @@ typedef LPCWSTR WStr;
 #include <lauxlib.h>
 #include <lualib.h>
 #ifdef WIN32
-#define EXPORT __declspec(dllexport)
+//tex this isnt actually a lua dll OFF #define EXPORT __declspec(dllexport)
+#define EXPORT
 #else
 #define EXPORT
 #endif
