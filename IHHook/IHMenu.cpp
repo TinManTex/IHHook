@@ -4,6 +4,7 @@
 #include <imgui/imgui.h>
 #include "spdlog/spdlog.h"
 #include <queue>
+#include "Util.h"
 #include "IHHook.h"//SetDrawUI
 #include "IHMenu.h"
 
@@ -252,19 +253,6 @@ namespace IHHook {
 			//SelectAllText
 		}//AddMenuCommands
 
-		//DEBUGNOW TODO: break out into util
-		std::vector<std::string> split(const std::string& str, const std::string& delim) {
-			std::vector<std::string> tokens;
-			size_t prev = 0, pos = 0;
-			do {
-				pos = str.find(delim, prev);
-				if (pos == std::string::npos) pos = str.length();
-				std::string token = str.substr(prev, pos - prev);
-				if (!token.empty()) tokens.push_back(token);
-				prev = pos + delim.length();
-			} while (pos < str.length() && prev < str.length());
-			return tokens;
-		}//split
 		//DEBUGNOW
 		void MenuMessage(std::string message) {
 			//spdlog::trace(__func__);
@@ -339,8 +327,12 @@ namespace IHHook {
 		void DrawMenu(bool* p_open, bool lastOpen) {
 			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_::ImGuiCond_Once);
 			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
+
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigWindowsMoveFromTitleBarOnly = true;
+
 			//DEBUGNOW ImGui::SetNextWindowSize(ImVec2(0, 0));
-			ImGui::SetNextWindowBgAlpha(0.30f);
+			//ImGui::SetNextWindowBgAlpha(0.30f);
 
 			ImGuiWindowFlags windowFlags = 0;
 			//windowFlags |= ImGuiWindowFlags_AlwaysAutoResize;
