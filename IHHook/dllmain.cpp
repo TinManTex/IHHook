@@ -5,6 +5,7 @@
 #include "IHHook.h"
 
 HMODULE g_thisModule;
+extern HMODULE origDll;//dinputproxy
 
 DWORD WINAPI InitThread(LPVOID lpParameter) {
 	//IHHook::thisModule = static_cast<HMODULE>(lpParameter);
@@ -41,6 +42,10 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	}
 	else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
 		IHHook::Shutdown();
+		//DInputProxy
+		if (origDll) {
+			FreeLibrary(origDll);
+		}
 	}
 
 	return TRUE;
