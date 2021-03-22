@@ -197,6 +197,7 @@
     <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="spdlog\tweakme.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StyleEditor.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="utility\Address.hpp" />
     <ClInclude Include="utility\FunctionHook.hpp" />
@@ -258,6 +259,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Hooks_TPP.cpp" />
+    <ClCompile Include="StyleEditor.cpp" />
     <ClCompile Include="utility\Address.cpp" />
     <ClCompile Include="utility\FunctionHook.cpp" />
     <ClCompile Include="winapi\winapi.cpp" />

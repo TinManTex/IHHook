@@ -7,7 +7,7 @@ namespace IHHook {
 		void ProcessMessages();
 
 		void SetInitialText();
-		void DrawMenu(bool* p_open, bool lastOpen);
+		void DrawMenu(bool* p_open, bool openPrev);
 
 		void QueueMessageOut(std::string message);
 		void QueueMessageIn(std::string message);

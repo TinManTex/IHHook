@@ -17,6 +17,8 @@
 
 //Encoding is a mess having pulled in so much code from other projects, and then, should probably try to standardise to utf8 at some point.
 
+//Another GOTCHA might be if you ever export any functions not to break DinputProxy ordinals.
+
 #pragma once
 #include <string>
 #include <vector>
@@ -88,6 +90,14 @@ namespace IHHook {
 			unlockCursor = !unlockCursor;
 		}//ToggleCursor
 
+		void ToggleImguiDemo() {
+			showImguiDemo = !showImguiDemo;
+		}//ToggleImguiDemo
+
+		void ToggleStyleEditor() {
+			showStyleEditor = !showStyleEditor;
+		}//ToggleStyleEditor
+
 		//Dx11
 		void OnFrame();
 		void OnReset();
@@ -108,7 +118,12 @@ namespace IHHook {
 		bool drawUI{ true };
 		bool unlockCursor{ false };
 		bool menuOpen{ false };//DEBUGNOW
-		bool lastOpen{ true };//DEBUGNOW
+		bool menuOpenPrev{ true };//DEBUGNOW
+
+		bool showStyleEditor{ false };//DEBUGNOW
+		bool showStyleEditorPrev{ true };//DEBUGNOW
+	
+		bool showImguiDemo{ false };//DEBUGNOW
 
 		std::mutex inputMutex{};//DEBUGNOW
 

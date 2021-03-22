@@ -324,7 +324,7 @@ namespace IHHook {
 			menuHelp = "";
 		}//SetInitialText
 
-		void DrawMenu(bool* p_open, bool lastOpen) {
+		void DrawMenu(bool* p_open, bool openPrev) {
 			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_::ImGuiCond_Once);
 			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
 
@@ -371,7 +371,7 @@ namespace IHHook {
 							}
 						}
 						//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
-						if (*p_open && *p_open != lastOpen) {
+						if (*p_open && *p_open != openPrev) {
 							//DEBUGNOW ImGui::SetItemDefaultFocus();
 							//DEBUGNOW ImGui::SetKeyboardFocusHere();
 						}
