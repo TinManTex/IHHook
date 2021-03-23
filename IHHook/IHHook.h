@@ -32,7 +32,7 @@ namespace IHHook {
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 6; //SYNC: fileVersion
+	static const int Version = 7; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 2 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
 
@@ -112,18 +112,18 @@ namespace IHHook {
 		void DrawAbout();
 
 		//d3d11
-		bool firstFrame{ true };
-		bool frameInitialized{ false };
-		bool d3dHooked{ false };		
-		bool drawUI{ true };
-		bool unlockCursor{ false };
-		bool menuOpen{ false };//DEBUGNOW
-		bool menuOpenPrev{ true };//DEBUGNOW
+		bool firstFrame = true;
+		bool frameInitialized = false;
+		bool d3dHooked = false;
+		bool drawUI = true;
+		bool unlockCursor = false;
+		bool menuOpen = false;
+		bool menuOpenPrev = true;
 
-		bool showStyleEditor{ false };//DEBUGNOW
-		bool showStyleEditorPrev{ true };//DEBUGNOW
-	
-		bool showImguiDemo{ false };//DEBUGNOW
+		bool showStyleEditor = false;
+		bool showStyleEditorPrev = false;
+
+		bool showImguiDemo = false;
 
 		std::mutex inputMutex{};//DEBUGNOW
 
