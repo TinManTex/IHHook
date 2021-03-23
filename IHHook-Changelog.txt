@@ -1,7 +1,12 @@
 IHHook changelog
-r7ish
+r7 - 
+
+IMGUI style editor with save/load.
 F3 - togglemenu
+
+Fix: Imgui gamepad support (which was enabled by default, but I wasn't actually using) links xinput, which caused controller - thanks MIKEH2011 for your report and testing.
 Fix: SelectCombo was checking menuItems bounds instead of menuSettings, which meant combo selection wouldn't update on keyboard scroll if #combo settings > #menu items.
+Fix: Return if exe is mgo (don't know if it was issue)
 
 r6 - 2021-03-12
 IPC shakeout.
