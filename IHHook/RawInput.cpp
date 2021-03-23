@@ -400,8 +400,8 @@ namespace IHHook {
 			RegisterAction(VK_F2, ToggleCursor);//DEBUGNOW
 			RegisterAction(VK_F3, ToggleMenu);//DEBUGNOW
 			RegisterAction(VK_ESCAPE, MenuOff);//DEBUGNOW
-			RegisterAction(VK_F5, ToggleImguiDemo);//DEBUGNOW
-			RegisterAction(VK_F4, ToggleStyleEditor);//DEBUGNOW
+			//RegisterAction(VK_F5, ToggleImguiDemo);//DEBUGNOW
+			//RegisterAction(VK_F4, ToggleStyleEditor);//DEBUGNOW
 
 			//DEBUG
 			//block[VK_LBUTTON] = true;
