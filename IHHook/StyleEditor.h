@@ -3,6 +3,6 @@
 #include <imgui/imgui.h>
 
 namespace IHHook {
-	void ShowStyleEditor(ImGuiStyle* ref);
-
+	void ShowStyleEditor(bool* p_open, bool openPrev, ImGuiStyle* ref);
+	void LoadSelectedInitial(ImGuiStyle* ref);
 }//namespace IHHook

@@ -236,6 +236,14 @@ namespace IHHook {
 			}
 		}//SelectCombo
 
+		void ToggleStyleEditor(std::vector<std::string> args) {
+			g_ihhook->ToggleStyleEditor();
+		}//ToggleStyleEditor
+
+		void ToggleImguiDemo(std::vector<std::string> args) {
+			g_ihhook->ToggleImguiDemo();
+		}//ToggleImguiDemo
+
 		typedef void(*MenuCommandFunc) (std::vector<std::string> args);
 		std::map<std::string, MenuCommandFunc> menuCommands;
 		void AddMenuCommands() {
@@ -250,6 +258,8 @@ namespace IHHook {
 			menuCommands["ClearCombo"] = ClearCombo;
 			menuCommands["AddToCombo"] = AddToCombo;
 			menuCommands["SelectCombo"] = SelectCombo;
+			menuCommands["ToggleStyleEditor"] = ToggleStyleEditor;
+			menuCommands["ToggleImguiDemo"] = ToggleImguiDemo;
 			//SelectAllText
 		}//AddMenuCommands
 

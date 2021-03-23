@@ -17,6 +17,8 @@
 #include "imguiimpl/imgui_impl_win32.h"
 #include "imguiimpl/imgui_impl_dx11.h"
 
+#include <string>
+#include <filesystem>
 
 
 #include "IHMenu.h"
@@ -27,8 +29,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
 namespace IHHook {
-
-
 	std::vector<std::string> errorMessages{};
 
 	size_t RealBaseAddr;
@@ -148,6 +148,18 @@ namespace IHHook {
 		SetCurrentDirectory(gameDir.c_str());//tex so this dll and lua can use reletive paths
 
 		SetupLog();
+
+		//tex DEBUGNOW mgo is a seperate exe in the same dir, so bail out on exe name
+		HMODULE hExe = GetModuleHandle(NULL);
+		WCHAR fullPath[MAX_PATH]{ 0 };
+		GetModuleFileNameW(hExe, fullPath, MAX_PATH);
+		std::filesystem::path path(fullPath);
+		std::wstring exeName = path.filename().c_str();
+		if (exeName.find(L"mgo")!= std::wstring::npos) {
+			spdlog::warn("IHHook is not for mgo");
+			return;
+		}
+		//
 
 		spdlog::debug(L"Original CurrentDir: {}", currentDir.c_str());
 		spdlog::debug(L"gameDir: {}", gameDir);
@@ -424,6 +436,8 @@ namespace IHHook {
 			//});
 
 			//init_thread.detach();
+
+			LoadSelectedInitial(NULL);//StyleEditor
 		}
 
 		spdlog::info("frame initialized");
@@ -479,9 +493,8 @@ namespace IHHook {
 		io.MouseDrawCursor = unlockCursor;
 
 		if (showStyleEditor) {
-			ImGui::Begin("Gui Style Editor", &showStyleEditor);
-			ShowStyleEditor(NULL);
-			ImGui::End();
+			ShowStyleEditor(&showStyleEditor, showStyleEditorPrev, NULL);
+			showStyleEditorPrev = showStyleEditor;
 		}
 
 		if (showImguiDemo) {
@@ -489,12 +502,10 @@ namespace IHHook {
 		}
 
 		IHMenu::DrawMenu(&menuOpen, menuOpenPrev);
-		if (menuOpenPrev != menuOpen) {
-			menuOpenPrev = menuOpen;
-			if (!menuOpen) {
-				IHMenu::QueueMessageIn("menuoff");
-			}
+		if (!menuOpen && menuOpenPrev) {
+			IHMenu::QueueMessageIn("menuoff");
 		}
+		menuOpenPrev = menuOpen;
 
 		//ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
 		//ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);

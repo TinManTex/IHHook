@@ -20,10 +20,10 @@ namespace IHHook {
 	std::string BoolToString(bool b) {
 		return b ? "true" : "false";
 	}
-	std::string DumpImVec2(ImVec2 imVec2) {
+	std::string ImVec2ToLuaStr(ImVec2 imVec2) {
 		return "{" + std::to_string(imVec2.x) + "," + std::to_string(imVec2.y) + "}";//DEBUGNOW decimal format depend on locale?
 	}
-	std::string DumpImVec4(ImVec4 imVec4) {
+	std::string ImVec4ToLuaStr(ImVec4 imVec4) {
 		return "{" + std::to_string(imVec4.x) + "," + std::to_string(imVec4.y) + "," + std::to_string(imVec4.z) + "," + std::to_string(imVec4.w) + "}";//DEBUGNOW decimal format depend on locale?
 	}
 
@@ -32,22 +32,22 @@ namespace IHHook {
 		ImGuiStyle* style = src ? src : &ImGui::GetStyle();
 
 		savedStyle.push_back("Alpha=" + std::to_string(style->Alpha));
-		savedStyle.push_back("WindowPadding=" + DumpImVec2(style->WindowPadding));
+		savedStyle.push_back("WindowPadding=" + ImVec2ToLuaStr(style->WindowPadding));
 		savedStyle.push_back("WindowRounding=" + std::to_string(style->WindowRounding));
 		savedStyle.push_back("WindowBorderSize=" + std::to_string(style->WindowBorderSize));
-		savedStyle.push_back("WindowMinSize=" + DumpImVec2(style->WindowMinSize));
-		savedStyle.push_back("WindowTitleAlign=" + DumpImVec2(style->WindowTitleAlign));
+		savedStyle.push_back("WindowMinSize=" + ImVec2ToLuaStr(style->WindowMinSize));
+		savedStyle.push_back("WindowTitleAlign=" + ImVec2ToLuaStr(style->WindowTitleAlign));
 		savedStyle.push_back("WindowMenuButtonPosition=" + std::to_string(style->WindowMenuButtonPosition));
 		savedStyle.push_back("ChildRounding=" + std::to_string(style->ChildRounding));
 		savedStyle.push_back("ChildBorderSize=" + std::to_string(style->ChildBorderSize));
 		savedStyle.push_back("PopupRounding=" + std::to_string(style->PopupRounding));
 		savedStyle.push_back("PopupBorderSize=" + std::to_string(style->PopupBorderSize));
-		savedStyle.push_back("FramePadding=" + DumpImVec2(style->FramePadding));
+		savedStyle.push_back("FramePadding=" + ImVec2ToLuaStr(style->FramePadding));
 		savedStyle.push_back("FrameRounding=" + std::to_string(style->FrameRounding));
 		savedStyle.push_back("FrameBorderSize=" + std::to_string(style->FrameBorderSize));
-		savedStyle.push_back("ItemSpacing=" + DumpImVec2(style->ItemSpacing));
-		savedStyle.push_back("ItemInnerSpacing=" + DumpImVec2(style->ItemInnerSpacing));
-		savedStyle.push_back("TouchExtraPadding=" + DumpImVec2(style->TouchExtraPadding));
+		savedStyle.push_back("ItemSpacing=" + ImVec2ToLuaStr(style->ItemSpacing));
+		savedStyle.push_back("ItemInnerSpacing=" + ImVec2ToLuaStr(style->ItemInnerSpacing));
+		savedStyle.push_back("TouchExtraPadding=" + ImVec2ToLuaStr(style->TouchExtraPadding));
 		savedStyle.push_back("IndentSpacing=" + std::to_string(style->IndentSpacing));
 		savedStyle.push_back("ColumnsMinSpacing=" + std::to_string(style->ColumnsMinSpacing));
 		savedStyle.push_back("ScrollbarSize=" + std::to_string(style->ScrollbarSize));
@@ -59,10 +59,10 @@ namespace IHHook {
 		savedStyle.push_back("TabBorderSize=" + std::to_string(style->TabBorderSize));
 		savedStyle.push_back("TabMinWidthForCloseButton=" + std::to_string(style->TabMinWidthForCloseButton));
 		savedStyle.push_back("ColorButtonPosition=" + std::to_string(style->ColorButtonPosition));
-		savedStyle.push_back("ButtonTextAlign=" + DumpImVec2(style->ButtonTextAlign));
-		savedStyle.push_back("SelectableTextAlign=" + DumpImVec2(style->SelectableTextAlign));
-		savedStyle.push_back("DisplayWindowPadding=" + DumpImVec2(style->DisplayWindowPadding));
-		savedStyle.push_back("DisplaySafeAreaPadding=" + DumpImVec2(style->DisplaySafeAreaPadding));
+		savedStyle.push_back("ButtonTextAlign=" + ImVec2ToLuaStr(style->ButtonTextAlign));
+		savedStyle.push_back("SelectableTextAlign=" + ImVec2ToLuaStr(style->SelectableTextAlign));
+		savedStyle.push_back("DisplayWindowPadding=" + ImVec2ToLuaStr(style->DisplayWindowPadding));
+		savedStyle.push_back("DisplaySafeAreaPadding=" + ImVec2ToLuaStr(style->DisplaySafeAreaPadding));
 		savedStyle.push_back("MouseCursorScale=" + std::to_string(style->MouseCursorScale));
 		savedStyle.push_back("AntiAliasedLines=" + BoolToString(style->AntiAliasedLines));
 		savedStyle.push_back("AntiAliasedLinesUseTex=" + BoolToString(style->AntiAliasedLinesUseTex));
@@ -71,10 +71,9 @@ namespace IHHook {
 		savedStyle.push_back("CircleSegmentMaxError=" + std::to_string(style->CircleSegmentMaxError));
 
 		//ImVec4      Colors[ImGuiCol_COUNT];
-
 	}//GetStyle
 
-	//DEBUGNOW ImGui style management
+	//enum as string
 	std::vector<std::string> ImGuiCol_str{
 		"ImGuiCol_Text",
 		"ImGuiCol_TextDisabled",
@@ -131,13 +130,13 @@ namespace IHHook {
 		ImGuiStyle* style = src ? src : &ImGui::GetStyle();
 		ImVec4* colors = style->Colors;
 		for (int i = 0; i < ImGuiCol_COUNT; i++) {
-			savedColors.push_back(ImGuiCol_str[i] + "=" + DumpImVec4(colors[i]));
+			savedColors.push_back(ImGuiCol_str[i] + "=" + ImVec4ToLuaStr(colors[i]));
 		}//for ImGuiCol_COUNT
 	}//GetColors
 
 	//DEBUGNOW encoding utf8?
 	void SaveGuiStyle(std::string fileName) {
-		spdlog::debug("SaveGuiStyle");
+		spdlog::debug("SaveGuiStyle {}", fileName);
 
 		std::list<std::string> dumpedStyle{};
 		GetStyle(dumpedStyle, NULL);
@@ -148,8 +147,8 @@ namespace IHHook {
 		styleFile.open(fileName, std::ios::out | std::ios::trunc);
 
 		if (styleFile.is_open()) {
-			styleFile << "--" << fileName << "\n";
-			styleFile << "\n";
+			styleFile << "-- " << fileName << "\n";
+			styleFile << "-- Saved by gui style editor\n";
 			styleFile << "local this={\n";
 			for each (std::string line in dumpedStyle) {
 				styleFile << "\t" << line << ",\n";
@@ -168,7 +167,7 @@ namespace IHHook {
 	//Style to string <
 
 	//Util
-		//DEBUGNOW a propper str enum
+	//DEBUGNOW a propper str enum
 	//ASSUMPTION: consecutive enum
 	int EnumForStr(const std::vector<std::string>& strEnum, std::string key) {
 		for (int i = 0; i < strEnum.size(); i++) {
@@ -236,6 +235,7 @@ namespace IHHook {
 
 	//tex: even though it's saved as valid lua, we'll just parse it as text on IHHook side rather than dealing with back and forth through lua
 	bool ParseGuiStyle(std::string fileName, ImGuiStyle* ref) {
+		spdlog::debug("ParseGuiStyle {}", fileName);
 		std::ifstream infile(fileName);
 		if (infile.fail()) {
 			spdlog::warn("ParseGuiStyle ifstream.fail for {}", fileName);
@@ -288,6 +288,8 @@ namespace IHHook {
 
 			std::string varName = line.substr(0, found);
 			std::string valueStr = line.substr(found + 1);
+			varName = trim(varName);
+			valueStr = trim(valueStr);
 
 			//tex ugh
 			if (varName == "Alpha") {
@@ -420,11 +422,122 @@ namespace IHHook {
 	//DEBUGNOW
 	//style editor windows>
 	std::string stylesPath = "mod\\guiStyles\\";
+	std::string currentStyleFileName = stylesPath + "CurrentStyle.ini";
 
 	int selectedSetting = -1;
 	std::vector<std::filesystem::path> fileList{};
 	char inputBuffer[1024] = "";//SaveBox
 	bool showSaveBox = false;
+	std::string currentStyle = "Default";//DEBUGNOW
+
+
+	int FindIndexForCurrentStyle() {
+		int index = -1;
+		if (currentStyle != "") {
+			for (int i = 0; i < fileList.size(); i++) {
+				auto entry = fileList[i];
+				if (entry.stem().string() == currentStyle) {
+					return i;
+				}
+			}
+		}
+		return index;
+	}//FindIndexForCurrentStyle
+
+	//DEBUGNOW
+	//IN: IO: currentStyleFileName
+	void SaveCurrentStyleValue() {
+		spdlog::debug("SaveGuiStyleValue");
+
+		if (currentStyle == "") {
+			return;
+		}
+
+		if (FindIndexForCurrentStyle() == -1) {
+			return;
+		}
+
+		std::ofstream styleFile;
+		styleFile.open(currentStyleFileName, std::ios::out | std::ios::trunc);
+		if (styleFile.is_open()) {
+			styleFile << "CurrentStyle=" << currentStyle;//DEBUGNOW non quoted string
+		}
+		styleFile.close();
+	}//SaveCurrentStyleValue
+
+	//DEBUGNOW create a ParseLuaAsValues or something to key/value dict (and refactor ParseGuiStyle to use it)
+	//OUT: IO: currentStyleFileName
+	//OUT: currentStyleName
+	bool LoadCurrentStyleValue() {
+		spdlog::debug("LoadCurrentStyleValue");
+
+		std::ifstream infile(currentStyleFileName);
+		if (infile.fail()) {
+			spdlog::warn("LoadCurrentStyleValue ifstream.fail for {}", currentStyleFileName);
+			return false;
+		}
+
+		std::string line;
+		while (std::getline(infile, line)) {
+			std::istringstream iss(line);
+			//tex trim leading/trailing whitespace
+			line = trim(line);
+			if (line.size() == 0) {
+				continue;
+			}
+
+			//tex trim to before comment
+			std::size_t found = line.find("--");
+			if (found == 0) {
+				continue;
+			}
+			if (found != std::string::npos) {
+				line = line.substr(0, found - 1);
+			}
+			if (line.size() == 0) {
+				continue;
+			}
+
+			//tex just skip the specific cases outright
+			found = line.find("local this");
+			if (found != std::string::npos) {
+				continue;
+			}
+			found = line.find("return this");
+			if (found != std::string::npos) {
+				continue;
+			}
+			if (line == "}") {
+				continue;
+			}
+
+			//tex trim trailing comma
+			if (line[line.size() - 1] == ',') {
+				line = line.substr(0, line.size() - 1);
+			}
+
+			found = line.find("=");
+			if (found == std::string::npos) {
+				continue;
+			}
+
+			std::string varName = line.substr(0, found);
+			std::string valueStr = line.substr(found + 1);
+			varName = trim(varName);
+			valueStr = trim(valueStr);
+
+			if (varName == "CurrentStyle") {
+				currentStyle = valueStr;//DEBUGNOW non quoted string
+				return true;
+			}
+		}
+		return false;
+	}//LoadCurrentStyleValue
+
+	void SetCurrentStyle(std::string styleName) {
+		currentStyle = styleName;
+		SaveCurrentStyleValue();
+	}//SetCurrentStyle
 
 	//IN: stylesPath
 	//OUT: fileList, selectedSetting
@@ -452,7 +565,26 @@ namespace IHHook {
 		else if (numFiles != prevNumFiles) {
 			selectedSetting = 0;
 		}
+
+		if (numFiles) {
+			selectedSetting = FindIndexForCurrentStyle();
+			if (selectedSetting == -1) {
+				SetCurrentStyle("Default");
+				selectedSetting = FindIndexForCurrentStyle();
+			}
+		}// if numFiles
 	}//RefreshFileList
+
+	bool LoadSelected(ImGuiStyle* ref, ImGuiStyle& style) {
+		//load
+		std::string fileName = fileList[selectedSetting].string();
+		bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
+		if (ok) {
+			style = *ref;
+			SetCurrentStyle(fileList[selectedSetting].stem().string());
+		}
+		return ok;
+	}//LoadSelected
 
 	// Helper to display a little (?) mark which shows a tooltip when hovered.
 	// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
@@ -479,6 +611,7 @@ namespace IHHook {
 		if (ImGui::InputText("file name", inputBuffer, IM_ARRAYSIZE(inputBuffer), inputFlags)) {
 			std::string fileName(inputBuffer);
 			if (fileName != "" && fileName != "Default") {
+				SetCurrentStyle(fileName);
 				SaveGuiStyle(stylesPath + fileName + ".lua");
 				RefreshFileList();
 				*p_open = false;
@@ -491,9 +624,9 @@ namespace IHHook {
 			//ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
 		}
-		if (ImGui::Button("Save")) {
-			
+		if (ImGui::Button("Save")) {	
 			if (fileName != "" && fileName != "Default") {
+				SetCurrentStyle(fileName);
 				SaveGuiStyle(stylesPath + fileName + ".lua");
 				RefreshFileList();
 				*p_open = false;
@@ -512,13 +645,6 @@ namespace IHHook {
 
 		ImGui::End();
 	}//ShowSaveBox
-
-	// Play it nice with Windows users (Update: May 2018, Notepad now supports Unix-style carriage returns!)
-#ifdef _WIN32
-#define IM_NEWLINE  "\r\n"
-#else
-#define IM_NEWLINE  "\n"
-#endif
 
 	// [Internal] Display details for a single font, called by ShowStyleEditor().
 	static void NodeFont(ImFont* font) {
@@ -602,18 +728,36 @@ namespace IHHook {
 		ImGui::TreePop();
 	}//NodeFont
 
-	//tex REWORKED imgui_demo to allow load/save
-	void ShowStyleEditor(ImGuiStyle* ref) {
-		//tex>
-		if (showSaveBox) {
-			ShowSaveBox(&showSaveBox);//DEBUGNOW
+	//DEBUGNOW ugh
+	void LoadSelectedInitial(ImGuiStyle* ref) {
+		ImGuiStyle& style = ImGui::GetStyle();
+		static ImGuiStyle ref_saved_style;
+
+		// Default to using internal storage as reference
+		static bool init = true;
+		if (init && ref == NULL)
+			ref_saved_style = style;
+		init = false;
+		if (ref == NULL)
+			ref = &ref_saved_style;
+
+		LoadCurrentStyleValue();
+		RefreshFileList();
+		std::string fileName = fileList[selectedSetting].string();
+		bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
+		if (ok) {
+			style = *ref;
+			currentStyle = fileList[selectedSetting].stem().string();
 		}
+		else {
+			std::error_code ec;
+			std::filesystem::remove(currentStyleFileName, ec);
+			currentStyle = "Default";
+		}
+	}//LoadSelectedInitial
 
-		// DEBUGNOW if (showStyleEditorPrev == false) {
-		//showStyleEditorPrev=true;
-		//RefreshFileList();
-		//< tex
-
+	//tex REWORKED imgui_demo to allow load/save
+	void ShowStyleEditor(bool* p_open, bool openPrev, ImGuiStyle* ref) {
 		// You can pass in a reference ImGuiStyle structure to compare to, revert to and save to
 		// (without a reference style pointer, we will use one compared locally as a reference)
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -627,14 +771,34 @@ namespace IHHook {
 		if (ref == NULL)
 			ref = &ref_saved_style;
 
+
+		//tex>
+		if (showSaveBox) {
+			ShowSaveBox(&showSaveBox);//DEBUGNOW
+		}
+		if (openPrev == false) {
+			LoadCurrentStyleValue();
+			RefreshFileList();
+			//load
+			std::string fileName = fileList[selectedSetting].string();
+			bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
+			if (ok) {
+				style = *ref;
+				currentStyle = fileList[selectedSetting].stem().string();
+			}
+		}
+		//< tex
+
+
+		ImGui::Begin("Gui Style Editor", p_open);
 		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
 
-		//DEBUGNOW HIDE once refresh on open
-		if (ImGui::Button("Refresh List")) {
-			RefreshFileList();
-		}
+		//OFF DEBUG
+		//if (ImGui::Button("Refresh List")) {
+		//	RefreshFileList();
+		//}
 
-		//tex >DEBUGNOW
+		//tex >
 		std::string comboLabel = "";// Label to preview before opening the combo (technically it could be anything)
 		if (fileList.size() > 0 && selectedSetting < fileList.size()) {
 			comboLabel = fileList[selectedSetting].stem().string();
@@ -647,12 +811,7 @@ namespace IHHook {
 				std::string name = fileList[i].stem().string();
 				if (ImGui::Selectable(name.c_str(), selected)) {
 					selectedSetting = i;
-					//load
-					std::string fileName = fileList[selectedSetting].string();
-					bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
-					if (ok) {
-						style = *ref;
-					}
+					bool ok = LoadSelected(ref, style);
 					//DEBUGNOW if (!ok) { name = <fileName> - Load Failed }
 					//but need it to persist
 				}//if IMGui::Selectable
@@ -669,13 +828,18 @@ namespace IHHook {
 				modifyOK = true;
 			}
 		}
+		if (fileName == "") {
+			modifyOK = false;
+		}
+
 		//WORKAROUND: https://github.com/ocornut/imgui/issues/1889
 		if (!modifyOK) {
 			//ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
 		}
 		if (ImGui::Button("Save")) {
-			if (modifyOK && fileName != "") {
+			if (modifyOK) {
+				SetCurrentStyle(fileList[selectedSetting].stem().string());
 				SaveGuiStyle(fileName);
 			}
 		}//Button Save
@@ -693,11 +857,13 @@ namespace IHHook {
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
 		}
 		if (ImGui::Button("Delete")) {
-			if (modifyOK && fileName != "") {
+			if (modifyOK) {
 				auto path = fileList[selectedSetting];
 				std::error_code ec;
 				std::filesystem::remove(path, ec);
+				SetCurrentStyle("Default");
 				RefreshFileList();
+				bool ok = LoadSelected(ref, style);
 			}
 		}//Button Delete
 		if (!modifyOK) {
@@ -706,8 +872,7 @@ namespace IHHook {
 		}
 		//< tex
 
-
-		//ORIG
+		//ORIG OFF
 		/*
 		if (ImGui::Button("Save Ref"))
 			*ref = ref_saved_style = style;
@@ -722,14 +887,15 @@ namespace IHHook {
 
 		ImGui::Separator();
 
-		//DEBUGNOW HIDE
-		if (ImGui::ShowStyleSelector("Colors##Selector"))
-			ref_saved_style = style;
+		//OFF
+		//if (ImGui::ShowStyleSelector("Colors##Selector"))
+		//	ref_saved_style = style;
+
 		//OFF ImGui::ShowFontSelector("Fonts##Selector"); //tex no much sense showing this unless I actually add a font loading system
 
 		// Simplified Settings (expose floating-pointer border sizes as boolean representing 0.0f or 1.0f)
-		if (ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 12.0f, "%.0f"))
-			style.GrabRounding = style.FrameRounding; // Make GrabRounding always the same value as FrameRounding
+		//OFF if (ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 12.0f, "%.0f"))
+		//	style.GrabRounding = style.FrameRounding; // Make GrabRounding always the same value as FrameRounding
 		{ bool border = (style.WindowBorderSize > 0.0f); if (ImGui::Checkbox("WindowBorder", &border)) { style.WindowBorderSize = border ? 1.0f : 0.0f; } }
 		ImGui::SameLine();
 		{ bool border = (style.FrameBorderSize > 0.0f);  if (ImGui::Checkbox("FrameBorder", &border)) { style.FrameBorderSize = border ? 1.0f : 0.0f; } }
@@ -781,6 +947,7 @@ namespace IHHook {
 			}
 
 			if (ImGui::BeginTabItem("Colors")) {
+				/* OFF
 				static int output_dest = 0;
 				static bool output_only_modified = true;
 				if (ImGui::Button("Export")) {
@@ -800,7 +967,7 @@ namespace IHHook {
 				}
 				ImGui::SameLine(); ImGui::SetNextItemWidth(120); ImGui::Combo("##output_type", &output_dest, "To Clipboard\0To TTY\0");
 				ImGui::SameLine(); ImGui::Checkbox("Only Modified Colors", &output_only_modified);
-
+				*/
 				static ImGuiTextFilter filter;
 				filter.Draw("Filter colors", ImGui::GetFontSize() * 16);
 
@@ -825,7 +992,7 @@ namespace IHHook {
 						// Tips: in a real user application, you may want to merge and use an icon font into the main font,
 						// so instead of "Save"/"Revert" you'd use icons!
 						// Read the FAQ and docs/FONTS.md about using icon fonts. It's really easy and super convenient!
-						ImGui::SameLine(0.0f, style.ItemInnerSpacing.x); if (ImGui::Button("Save")) { ref->Colors[i] = style.Colors[i]; }
+						// OFF ImGui::SameLine(0.0f, style.ItemInnerSpacing.x); if (ImGui::Button("Save")) { ref->Colors[i] = style.Colors[i]; }
 						ImGui::SameLine(0.0f, style.ItemInnerSpacing.x); if (ImGui::Button("Revert")) { style.Colors[i] = ref->Colors[i]; }
 					}
 					ImGui::SameLine(0.0f, style.ItemInnerSpacing.x);
@@ -920,6 +1087,8 @@ namespace IHHook {
 		}
 
 		ImGui::PopItemWidth();
+
+		ImGui::End();
 	}//ShowStyleEditor
 	//style editor windows<
 }//namespace IHHook
