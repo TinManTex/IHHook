@@ -23,4 +23,4 @@ HOOKPTR(luaopen_debug, 0x14bd7c560);
 
 HOOKPTR(luaopen_package, 0x14bd7c780);
 
-HOOKPTR(luaL_openlibs, 0x14bd56910);
+HOOKPTR(luaL_openlibs, 0x14c1fd0c0);//1.0.15.2 =  0x14bd56910);//MINIMAL_HOOK

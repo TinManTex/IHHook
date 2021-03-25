@@ -111,10 +111,12 @@ namespace IHHook {
 	void* RebasePointer(size_t address) {
 		return (void*)((address - BaseAddr) + RealBaseAddr);
 	}//RebasePointer
-
+	extern void TestSigScan();//DEBUGNOW
 	IHH::IHH()
 		: thisModule{ GetModuleHandle(0) } {
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
+
+		//TestSigScan();//DEBUGNOW
 
 		signal(SIGABRT, &AbortHandler);//tex signal handler for SIGABRT which is thrown by abort()
 		terminate_Original = set_terminate(TerminateHandler);
@@ -169,6 +171,14 @@ namespace IHHook {
 		std::vector<std::string> folderNames = OS::GetFolderNames("./mod");
 #endif // _DEBUG
 
+		if (!std::filesystem::exists("./mod/modules")) {//tex GOTCHA: since this continues ih_log will be created thus ./mod will actually exist. so check modules instead
+			errorMessages.push_back("ERROR: IH mod folder not found.");
+
+			for each (std::string message in errorMessages) {
+				spdlog::error(message);
+			}
+		}
+
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
 		//can just hope that konami actually keeps updating the exe version properly and not release multiple updates with no exe version change like they have in the past
@@ -177,12 +187,14 @@ namespace IHHook {
 			errorMessages.push_back("ERROR: IHHook->exe version mismatch");
 			errorMessages.push_back("Infinite Heaven will continue to load");
 			errorMessages.push_back("with some limitations.");
+			errorMessages.push_back("Including this menu not working in-game.");
 			if (versionDelta > 0) {
 				errorMessages.push_back("Please update MGSV.");
 			}
 			else if (versionDelta < 0) {
 				errorMessages.push_back("Please update Infinte Heaven.");
 			}
+			errorMessages.push_back("Click on the x to close this window.");
 
 			for each (std::string message in errorMessages) {
 				spdlog::error(message);
@@ -191,7 +203,9 @@ namespace IHHook {
 		}
 		else {
 			MH_Initialize();
+#ifndef MINIMAL_HOOK
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
+#endif // !MINIMAL_HOOK
 			Hooks_Lua::CreateHooks(RealBaseAddr);
 			//DEBUGNOW Hooks_TPP::CreateHooks(RealBaseAddr);
 		}// ChecKVersion
@@ -234,11 +248,12 @@ namespace IHHook {
 		spdlog::set_default_logger(log);
 		if (debugMode) {
 			spdlog::set_level(spdlog::level::trace);
+			spdlog::flush_on(spdlog::level::trace);
 		}
 		else {
-			spdlog::set_level(spdlog::level::info);
+			spdlog::set_level(spdlog::level::info);		
+			spdlog::flush_on(spdlog::level::err);
 		}
-		spdlog::flush_on(spdlog::level::err);
 
 		std::time_t currentTime = time(0);
 		std::tm now;
@@ -307,10 +322,22 @@ namespace IHHook {
 	//D3D11Hook
 	void IHH::OnReset() {
 		spdlog::info("OnReset");
+		//DEBUGNOW
+		auto log = spdlog::get("ihhook");
+		if (log != NULL) {
+			log->flush();
+		}
 
 		// RE2FW: Crashes if we don't release it at this point.
 		CleanupRenderTarget();
 		frameInitialized = false;
+
+		//DEBUGNOW
+		spdlog::info("OnReset done");
+		if (log != NULL) {
+			log->flush();
+		}
+
 	}//OnReset
 
 	//WindowsMessageHook
@@ -455,6 +482,13 @@ namespace IHHook {
 	}//CreateRenderTarget
 
 	void IHH::CleanupRenderTarget() {
+		spdlog::trace("CleanupRenderTarget");
+		//DEBUGNOW
+		auto log = spdlog::get("ihhook");
+		if (log != NULL) {
+			log->flush();
+		}
+
 		if (mainRenderTargetView != nullptr) {
 			mainRenderTargetView->Release();
 			mainRenderTargetView = nullptr;

@@ -134,7 +134,7 @@ namespace IHHook {
 
 				messageOpt = PipeServer::messagesIn.pop();
 			}//while messageOpt
-			assert(lua_gettop(L) == 1);//tex table still on stack
+			//DEBUGNOW MINIMAL_HOOK OFF assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetPipeInMessages
 
@@ -168,7 +168,7 @@ namespace IHHook {
 
 				messageOpt = IHMenu::messagesIn.pop();
 			}//while messageOpt
-			assert(lua_gettop(L) == 1);//tex table still on stack
+			//DEBUGNOW MINIMAL_HOOK OFF assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetMenuMessages
 		
