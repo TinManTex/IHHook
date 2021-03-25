@@ -84,15 +84,6 @@
     <ClInclude Include="lua\lauxlib.h">
       <Filter>Source Files\lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\lauxlib_Addresses.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\lua_Addresses.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\lualib_Addresses.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
     <ClInclude Include="winapi\wutils.hpp">
       <Filter>Source Files\winapi</Filter>
     </ClInclude>
@@ -179,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="StyleEditor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lua_AddressesGEN.h">
+      <Filter>Source Files\lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
