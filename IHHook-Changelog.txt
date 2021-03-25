@@ -1,7 +1,10 @@
 IHHook changelog
-r7 - 
+r7 - 2021-03-24
+Target mgstpp.exe 1.0.15.3
 
 IMGUI style editor with save/load.
+[youtube]_AbPHXTgfLg[/youtube]
+https://youtu.be/_AbPHXTgfLg
 F3 - togglemenu
 
 Fix: Imgui gamepad support (which was enabled by default, but I wasn't actually using) links xinput, which caused controller - thanks MIKEH2011 for your report and testing.
@@ -11,6 +14,8 @@ Fix: Return if exe is mgo (don't know if it was issue)
 r6 - 2021-03-12
 IPC shakeout.
 IHMenu shakeout.
+[youtube]ERL7okZVcW4[/youtube]
+https://youtu.be/ERL7okZVcW4
 Info and error messages on IHMenu bootup.
 OS:CheckVersion to CheckVersionDelta so can tell if IHHook ahead or behind of target exe version.
 Target mgstpp.exe 1.0.15.2
