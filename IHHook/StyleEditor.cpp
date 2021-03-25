@@ -741,18 +741,23 @@ namespace IHHook {
 		if (ref == NULL)
 			ref = &ref_saved_style;
 
-		LoadCurrentStyleValue();
-		RefreshFileList();
-		std::string fileName = fileList[selectedSetting].string();
-		bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
-		if (ok) {
-			style = *ref;
-			currentStyle = fileList[selectedSetting].stem().string();
+		bool loadedCurrentStyleValue = LoadCurrentStyleValue();
+		if (!loadedCurrentStyleValue) {
+			return;
 		}
-		else {
-			std::error_code ec;
-			std::filesystem::remove(currentStyleFileName, ec);
-			currentStyle = "Default";
+		RefreshFileList();
+		if (selectedSetting != -1) {
+			std::string fileName = fileList[selectedSetting].string();
+			bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
+			if (ok) {
+				style = *ref;
+				currentStyle = fileList[selectedSetting].stem().string();
+			}
+			else {
+				std::error_code ec;
+				std::filesystem::remove(currentStyleFileName, ec);
+				currentStyle = "Default";
+			}
 		}
 	}//LoadSelectedInitial
 
