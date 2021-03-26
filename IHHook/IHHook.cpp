@@ -207,7 +207,7 @@ namespace IHHook {
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
 			Hooks_Lua::CreateHooks(RealBaseAddr);
-			//DEBUGNOW Hooks_TPP::CreateHooks(RealBaseAddr);
+			Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
