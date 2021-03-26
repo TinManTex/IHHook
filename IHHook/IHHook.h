@@ -17,6 +17,8 @@
 
 //Encoding is a mess having pulled in so much code from other projects, and then, should probably try to standardise to utf8 at some point.
 
+//Another GOTCHA might be if you ever export any functions not to break DinputProxy ordinals.
+
 #pragma once
 #include <string>
 #include <vector>
@@ -25,13 +27,15 @@
 #include "D3D11Hook.hpp"
 #include "WindowsMessageHook.hpp"
 
+//#define MINIMAL_HOOK //
+
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 6; //SYNC: fileVersion
-	static const DWORD GameVersion[4] = { 1, 0, 15, 2 }; //tex: version checking game exe
+	static const int Version = 7; //SYNC: fileVersion
+	static const DWORD GameVersion[4] = { 1, 0, 15, 3 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
 
 	static const std::wstring hookLogName = L"ihhook_log.txt";
@@ -88,6 +92,14 @@ namespace IHHook {
 			unlockCursor = !unlockCursor;
 		}//ToggleCursor
 
+		void ToggleImguiDemo() {
+			showImguiDemo = !showImguiDemo;
+		}//ToggleImguiDemo
+
+		void ToggleStyleEditor() {
+			showStyleEditor = !showStyleEditor;
+		}//ToggleStyleEditor
+
 		//Dx11
 		void OnFrame();
 		void OnReset();
@@ -102,13 +114,18 @@ namespace IHHook {
 		void DrawAbout();
 
 		//d3d11
-		bool firstFrame{ true };
-		bool frameInitialized{ false };
-		bool d3dHooked{ false };		
-		bool drawUI{ true };
-		bool unlockCursor{ false };
-		bool menuOpen{ false };//DEBUGNOW
-		bool lastOpen{ true };//DEBUGNOW
+		bool firstFrame = true;
+		bool frameInitialized = false;
+		bool d3dHooked = false;
+		bool drawUI = true;
+		bool unlockCursor = false;
+		bool menuOpen = false;
+		bool menuOpenPrev = true;
+
+		bool showStyleEditor = false;
+		bool showStyleEditorPrev = false;
+
+		bool showImguiDemo = false;
 
 		std::mutex inputMutex{};//DEBUGNOW
 

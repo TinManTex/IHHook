@@ -17,13 +17,18 @@
 #include "imguiimpl/imgui_impl_win32.h"
 #include "imguiimpl/imgui_impl_dx11.h"
 
+#include <string>
+#include <filesystem>
+
+
 #include "IHMenu.h"
+#include "StyleEditor.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//tex see note in imgui_impl_win32.h
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
-namespace IHHook {	
+namespace IHHook {
 	std::vector<std::string> errorMessages{};
 
 	size_t RealBaseAddr;
@@ -106,11 +111,12 @@ namespace IHHook {
 	void* RebasePointer(size_t address) {
 		return (void*)((address - BaseAddr) + RealBaseAddr);
 	}//RebasePointer
-
+	extern void TestSigScan();//DEBUGNOW
 	IHH::IHH()
-		: thisModule{ GetModuleHandle(0) } 
-	{
+		: thisModule{ GetModuleHandle(0) } {
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
+
+		//TestSigScan();//DEBUGNOW
 
 		signal(SIGABRT, &AbortHandler);//tex signal handler for SIGABRT which is thrown by abort()
 		terminate_Original = set_terminate(TerminateHandler);
@@ -145,12 +151,33 @@ namespace IHHook {
 
 		SetupLog();
 
+		//tex DEBUGNOW mgo is a seperate exe in the same dir, so bail out on exe name
+		HMODULE hExe = GetModuleHandle(NULL);
+		WCHAR fullPath[MAX_PATH]{ 0 };
+		GetModuleFileNameW(hExe, fullPath, MAX_PATH);
+		std::filesystem::path path(fullPath);
+		std::wstring exeName = path.filename().c_str();
+		if (exeName.find(L"mgo")!= std::wstring::npos) {
+			spdlog::warn("IHHook is not for mgo");
+			return;
+		}
+		//
+
 		spdlog::debug(L"Original CurrentDir: {}", currentDir.c_str());
+		spdlog::debug(L"gameDir: {}", gameDir);
 
 #ifdef _DEBUG
 		std::vector<std::string> modFileNames = OS::GetFileNames("./mod");
 		std::vector<std::string> folderNames = OS::GetFolderNames("./mod");
 #endif // _DEBUG
+
+		if (!std::filesystem::exists("./mod/modules")) {//tex GOTCHA: since this continues ih_log will be created thus ./mod will actually exist. so check modules instead
+			errorMessages.push_back("ERROR: IH mod folder not found.");
+
+			for each (std::string message in errorMessages) {
+				spdlog::error(message);
+			}
+		}
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
@@ -160,12 +187,14 @@ namespace IHHook {
 			errorMessages.push_back("ERROR: IHHook->exe version mismatch");
 			errorMessages.push_back("Infinite Heaven will continue to load");
 			errorMessages.push_back("with some limitations.");
+			errorMessages.push_back("Including this menu not working in-game.");
 			if (versionDelta > 0) {
 				errorMessages.push_back("Please update MGSV.");
 			}
 			else if (versionDelta < 0) {
 				errorMessages.push_back("Please update Infinte Heaven.");
 			}
+			errorMessages.push_back("Click on the x to close this window.");
 
 			for each (std::string message in errorMessages) {
 				spdlog::error(message);
@@ -174,9 +203,11 @@ namespace IHHook {
 		}
 		else {
 			MH_Initialize();
+#ifndef MINIMAL_HOOK
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
+#endif // !MINIMAL_HOOK
 			Hooks_Lua::CreateHooks(RealBaseAddr);
-			//DEBUGNOW Hooks_TPP::CreateHooks(RealBaseAddr);
+			Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -217,11 +248,12 @@ namespace IHHook {
 		spdlog::set_default_logger(log);
 		if (debugMode) {
 			spdlog::set_level(spdlog::level::trace);
+			spdlog::flush_on(spdlog::level::trace);
 		}
 		else {
-			spdlog::set_level(spdlog::level::info);
+			spdlog::set_level(spdlog::level::info);		
+			spdlog::flush_on(spdlog::level::err);
 		}
-		spdlog::flush_on(spdlog::level::err);
 
 		std::time_t currentTime = time(0);
 		std::tm now;
@@ -233,9 +265,11 @@ namespace IHHook {
 		spdlog::debug("Note: ihhook_log is multithreaded to accept logging from multiple threads so order of entries may not be sequential.");
 	}//SetupLog
 
-	//D3D11Hook
+	//D3D11Hook->present
+	//GOTCHA: this is blocking to actual d3d Present, so keep performance in mind
 	void IHH::OnFrame() {
 		//spdlog::trace("OnFrame");
+		auto frameTimeStart = std::chrono::high_resolution_clock::now();
 
 		if (!frameInitialized) {
 			if (!FrameInitialize()) {
@@ -260,6 +294,14 @@ namespace IHHook {
 		//	m_mods->on_frame();
 		//}
 
+
+		//DEBUGNOW test frame impact
+		//bool boop = false;
+		//for (int i = 0; i < 10000000; i++) {
+		//	boop = !boop;
+		//}
+
+
 		DrawUI();
 
 		ImGui::EndFrame();
@@ -271,15 +313,31 @@ namespace IHHook {
 		context->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
 
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		auto frameTimeEnd = std::chrono::high_resolution_clock::now();
+		auto frameDuration = std::chrono::duration_cast<std::chrono::microseconds>(frameTimeEnd - frameTimeStart).count();
+		//spdlog::trace("frame time microseconds: {}", frameDuration);//DEBUGNOW
 	}//OnFrame
 
 	//D3D11Hook
 	void IHH::OnReset() {
 		spdlog::info("OnReset");
+		//DEBUGNOW
+		auto log = spdlog::get("ihhook");
+		if (log != NULL) {
+			log->flush();
+		}
 
 		// RE2FW: Crashes if we don't release it at this point.
 		CleanupRenderTarget();
 		frameInitialized = false;
+
+		//DEBUGNOW
+		spdlog::info("OnReset done");
+		if (log != NULL) {
+			log->flush();
+		}
+
 	}//OnReset
 
 	//WindowsMessageHook
@@ -289,7 +347,7 @@ namespace IHHook {
 		if (!frameInitialized) {
 			return true;
 		}
-		
+
 		bool ret = RawInput::OnMessage(wnd, message, w_param, l_param);
 		if (!ret) {
 			return false;
@@ -367,6 +425,8 @@ namespace IHHook {
 		}
 
 		ImGui::StyleColorsDark();
+		
+		//SaveGuiStyle("styledefaultdump.lua");//DEBUGNOW
 
 		if (firstFrame) {
 			firstFrame = false;
@@ -403,8 +463,10 @@ namespace IHHook {
 			//});
 
 			//init_thread.detach();
+
+			LoadSelectedInitial(NULL);//StyleEditor
 		}
-		
+
 		spdlog::info("frame initialized");
 		return true;
 	}//FrameInitialize
@@ -420,6 +482,13 @@ namespace IHHook {
 	}//CreateRenderTarget
 
 	void IHH::CleanupRenderTarget() {
+		spdlog::trace("CleanupRenderTarget");
+		//DEBUGNOW
+		auto log = spdlog::get("ihhook");
+		if (log != NULL) {
+			log->flush();
+		}
+
 		if (mainRenderTargetView != nullptr) {
 			mainRenderTargetView->Release();
 			mainRenderTargetView = nullptr;
@@ -446,7 +515,7 @@ namespace IHHook {
 		else {
 			RawInput::UnBlockMouseClick();
 		}
-	
+
 
 		if (io.WantCaptureKeyboard) {
 			RawInput::BlockKeyboard();
@@ -457,15 +526,20 @@ namespace IHHook {
 
 		io.MouseDrawCursor = unlockCursor;
 
-		//ImGui::ShowDemoWindow();//DEBUG
-
-		IHMenu::DrawMenu(&menuOpen, lastOpen);
-		if (lastOpen != menuOpen) {
-			lastOpen = menuOpen;
-			if (!menuOpen) {
-				IHMenu::QueueMessageIn("menuoff");
-			}
+		if (showStyleEditor) {
+			ShowStyleEditor(&showStyleEditor, showStyleEditorPrev, NULL);
+			showStyleEditorPrev = showStyleEditor;
 		}
+
+		if (showImguiDemo) {
+			ImGui::ShowDemoWindow(&showImguiDemo);
+		}
+
+		IHMenu::DrawMenu(&menuOpen, menuOpenPrev);
+		if (!menuOpen && menuOpenPrev) {
+			IHMenu::QueueMessageIn("menuoff");
+		}
+		menuOpenPrev = menuOpen;
 
 		//ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
 		//ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
@@ -488,4 +562,6 @@ namespace IHHook {
 
 		//ImGui::End();
 	}//DrawUI
+
+
 }//namespace IHHook

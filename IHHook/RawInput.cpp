@@ -289,6 +289,22 @@ namespace IHHook {
 			}
 		}//ToggleMenu
 
+		void ToggleImguiDemo(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleImguiDemo", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleImguiDemo on ONDOWN");
+				g_ihhook->ToggleImguiDemo();
+			}
+		}//ToggleImguiDemo
+
+		void ToggleStyleEditor(RawInput::BUTTONEVENT buttonEvent) {
+			spdlog::debug("ButtonEvent: {:d}, Action: ToggleStyleEditor", buttonEvent);
+			if (buttonEvent == RawInput::BUTTONEVENT::ONDOWN) {
+				spdlog::debug("ToggleStyleEditor on ONDOWN");
+				g_ihhook->ToggleStyleEditor();
+			}
+		}//ToggleStyleEditor
+
 		//DEBUGNOW
 		//tex GOTCHA: WORKAROUND: The game stops lua updates (all gameplay updates I guess) in the pause menu, 
 		//this didn't matter much when IH was lua only, because it would catch that ESC was pressed when the engine resumed the lua state
@@ -384,6 +400,8 @@ namespace IHHook {
 			RegisterAction(VK_F2, ToggleCursor);//DEBUGNOW
 			RegisterAction(VK_F3, ToggleMenu);//DEBUGNOW
 			RegisterAction(VK_ESCAPE, MenuOff);//DEBUGNOW
+			//RegisterAction(VK_F5, ToggleImguiDemo);//DEBUGNOW
+			//RegisterAction(VK_F4, ToggleStyleEditor);//DEBUGNOW
 
 			//DEBUG
 			//block[VK_LBUTTON] = true;

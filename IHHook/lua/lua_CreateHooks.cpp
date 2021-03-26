@@ -126,13 +126,13 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 
 	CREATEHOOK(lua_concat)//TEST
 
-	//CREATEHOOK(lua_getallocf)//tex DEBUGNOW no calls in lua distro, so may be hard to find, or have been culled by compilation
-	CREATEHOOK(lua_setallocf)//TEST
+	//CREATEHOOK(lua_getallocf)//
+	//CREATEHOOK(lua_setallocf)//
 
 	//...
 
 	/* hack */
-	CREATEHOOK(lua_setlevel)//TEST
+	//CREATEHOOK(lua_setlevel)//TEST
 
 	//...
 

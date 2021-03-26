@@ -20,9 +20,7 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 
-#include "lua/lua_Addresses.h"
-#include "lua/lauxlib_Addresses.h"
-#include "lua/lualib_Addresses.h"
+#include "lua/lua_AddressesGEN.h"
 
 #include <string>
 #include <Psapi.h>// ModuleInfo, DEBUGNOW
@@ -135,6 +133,10 @@ namespace IHHook {
 
 		uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
 
+		char* foxmainSig = "\x48\x89\x00\x00\x00\x48\x89\x00\x00\x00\x57\x48\x83\xEC\x00\x83\x64\x24\x20";
+		char* foxMainMask = "xx???xx???xxxx?xxxx";
+
+
 		char* luaI_openlibSig = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xE9";
 		char* luaI_openlibMask = "xx?x????xxxxxxxxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
@@ -151,6 +153,10 @@ namespace IHHook {
 		auto t3 = std::chrono::high_resolution_clock::now();
 		//uintptr_t luaI_openlibOrigShort = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
 		//PBYTE luaI_openlibOrigShort = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
+
+		//uintptr_t foxMainOrigFoundPattern = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
+		PBYTE foxMainOrigFoundSig = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
+
 		auto t4 = std::chrono::high_resolution_clock::now();
 
 		auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
@@ -191,15 +197,16 @@ namespace IHHook {
 		void __fastcall luaL_openlibsHook(lua_State* L) {
 			spdlog::debug(__func__);
 			luaL_openlibs(L);
-
+#ifndef MINIMAL_HOOK
 			if (debugMode) {
 				TestHooks_Lua(L);
 			}
-
+#endif
 			lua_pushinteger(L, Version);
 			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
 			LuaIHH::luaopen_ihh(L);
+#ifndef MINIMAL_HOOK
 			//OFF luaopen_winapi(L);
 			LoadImguiBindings(L);
 			if (debugMode) {
@@ -208,7 +215,7 @@ namespace IHHook {
 
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
-
+#endif
 			spdlog::debug("luaL_openlibsHook complete");
 		}//lua_newstateHook
 
@@ -241,19 +248,30 @@ namespace IHHook {
 			luaLog = spdlog::basic_logger_st("lua", luaLogName);//tex st/single threaded since we want to preserver order, it's better performance, and we wont be logging from different threads
 			luaLog->set_pattern("|%H:%M:%S:%e|%l: %v");
 
+			if (debugMode) {
+				luaLog->set_level(spdlog::level::trace);
+				luaLog->flush_on(spdlog::level::trace);
+			}
+			else {
+				luaLog->set_level(spdlog::level::info);
+				luaLog->flush_on(spdlog::level::err);
+			}
+
 			CreateHooks_Lua(BaseAddr, RealBaseAddr);
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-			CREATEDETOURB(lua_newstate)
 			CREATEDETOURB(luaL_openlibs)
+#ifndef MINIMAL_HOOK
+			CREATEDETOURB(lua_newstate)
 			CREATEDETOURB(luaL_loadbuffer)
 			//OFF CREATEDETOURB(lua_atpanic)
 
 			ENABLEHOOK(lua_newstate)
-			ENABLEHOOK(luaL_openlibs)
 			ENABLEHOOK(luaL_loadbuffer)
 			//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
+#endif		
+			ENABLEHOOK(luaL_openlibs)
 		}//CreateHooks
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
@@ -321,7 +339,9 @@ namespace IHHook {
 		// game lua to IHHook callbacks>
 		//tex called inside-out from init.lua via IH, TODO maybe see where init is loaded to make this independant from IH
 		int l_FoxLua_Init(lua_State* L) {
+#ifndef MINIMAL_HOOK
 			ReplaceStubedOutFox(L);	//tex KLUDGE see comment on this function
+#endif
 			return 0;
 		}//l_FoxLua_Init
 

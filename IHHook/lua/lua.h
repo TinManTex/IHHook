@@ -236,7 +236,7 @@ HOOKFUNC(int, lua_next, lua_State *L, int idx);
 HOOKFUNC(void, lua_concat, lua_State *L, int n);
 
 //OFF LUA_API  lua_Alloc(lua_getallocf, lua_State *L, void **ud);
-HOOKFUNC(void, lua_setallocf, lua_State *L, lua_Alloc f, void *ud);
+//HOOKFUNC(void, lua_setallocf, lua_State *L, lua_Alloc f, void *ud);
 
 
 
@@ -290,7 +290,7 @@ HOOKFUNC(void, lua_setallocf, lua_State *L, lua_Alloc f, void *ud);
 
 
 /* hack */
-HOOKFUNC(void, lua_setlevel, lua_State *from, lua_State *to);
+//HOOKFUNC(void, lua_setlevel, lua_State *from, lua_State *to);
 
 
 /*

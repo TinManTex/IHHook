@@ -1,11 +1,29 @@
 IHHook changelog
-r7ish
+
+r7, IHr240 - 2021-03-26
+Full* lua API hook again. (still a few pesky missing functions).
+AddressCSVToMacroHeader.lua
+mgstpp-adresses-1.0.15.3.csv - exported from ghidra
+To generate function > address macro header, replacing my prior method of manually updating the headers for 100 functions lol.
+GetFreeRoamLangIdHook - to override the free roam entry which was hard coded to locations and return empty string for custom.
+
+r7 - 2021-03-24
+Target mgstpp.exe 1.0.15.3
+
+IMGUI style editor with save/load.
+[youtube]_AbPHXTgfLg[/youtube]
+https://youtu.be/_AbPHXTgfLg
 F3 - togglemenu
+
+Fix: Imgui gamepad support (which was enabled by default, but I wasn't actually using) links xinput, which caused controller - thanks MIKEH2011 for your report and testing.
 Fix: SelectCombo was checking menuItems bounds instead of menuSettings, which meant combo selection wouldn't update on keyboard scroll if #combo settings > #menu items.
+Fix: Return if exe is mgo (don't know if it was issue)
 
 r6 - 2021-03-12
 IPC shakeout.
 IHMenu shakeout.
+[youtube]ERL7okZVcW4[/youtube]
+https://youtu.be/ERL7okZVcW4
 Info and error messages on IHMenu bootup.
 OS:CheckVersion to CheckVersionDelta so can tell if IHHook ahead or behind of target exe version.
 Target mgstpp.exe 1.0.15.2

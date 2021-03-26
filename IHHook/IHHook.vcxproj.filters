@@ -84,15 +84,6 @@
     <ClInclude Include="lua\lauxlib.h">
       <Filter>Source Files\lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\lauxlib_Addresses.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\lua_Addresses.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\lualib_Addresses.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
     <ClInclude Include="winapi\wutils.hpp">
       <Filter>Source Files\winapi</Filter>
     </ClInclude>
@@ -173,6 +164,15 @@
     </ClInclude>
     <ClInclude Include="SafeQueue.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lua_AddressesGEN.h">
+      <Filter>Source Files\lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -290,11 +290,11 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="LuaDrawMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imguiimpl\imgui_lua_bindings.cpp">
       <Filter>Source Files\imguiimpl</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleEditor.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

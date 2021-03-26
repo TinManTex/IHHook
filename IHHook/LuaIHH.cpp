@@ -12,11 +12,15 @@
 
 #include <string>
 #include <optional>
+#include <map>
 
 #include "IHMenu.h" // MenuMessage, messagesIn
+#include "Hooks_TPP.h"
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
+
+	extern std::map<int, long long> locationLangIds;
 
 	namespace LuaIHH {
 		//IHH module funcs>
@@ -134,7 +138,7 @@ namespace IHHook {
 
 				messageOpt = PipeServer::messagesIn.pop();
 			}//while messageOpt
-			assert(lua_gettop(L) == 1);//tex table still on stack
+			//DEBUGNOW MINIMAL_HOOK OFF assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetPipeInMessages
 
@@ -168,9 +172,43 @@ namespace IHHook {
 
 				messageOpt = IHMenu::messagesIn.pop();
 			}//while messageOpt
-			assert(lua_gettop(L) == 1);//tex table still on stack
+			//DEBUGNOW MINIMAL_HOOK OFF assert(lua_gettop(L) == 1);//tex table still on stack
 			return 1;
 		}//l_GetMenuMessages
+
+		//REF
+		//{
+		//	{locationCode, langIdStr64},
+		//	...
+
+		//input lua table {{int langCode,string langId},...}
+		//REF IH InfMission.UpdateChangeLocationMenu
+		static int l_UpdateChangeLocationMenu(lua_State* L) {
+			spdlog::trace(__func__);
+
+			if (!lua_istable(L, -1)) {
+				luaLog->error("UpdateChangeLocationMenu expected table");
+				return 1;
+			}
+			//ASSUMPTION: table includes the vanilla location landIds
+			//see locationLangIds initialisation for those deaults
+			//and IH InfMission.UpdateChangeLocationMenu where it adds them at top
+			locationLangIds.clear();
+
+			/* table is in the stack at index 't' */
+			lua_pushnil(L);  /* first key */
+			while (lua_next(L, -2) != 0) {//tex locationLangIds param now at second on stack since nil was pushed
+				/* uses 'key' (at index -2) and 'value' (at index -1) */
+				int locationCode = (int)lua_tointeger(L, -2);
+				const char* langId = lua_tostring(L, -1);
+				luaLog->info("{}={}",locationCode,langId);
+				locationLangIds[locationCode] = StrCode64(langId, strlen(langId));
+				/* removes 'value'; keeps 'key' for next iteration */
+				lua_pop(L, 1);
+			}
+
+			return 1;
+		}//l_UpdateChangeLocationMenu
 		
 		//tex use as a callback to test random shiz
 		int l_TestCallToIHHook(lua_State* L) {
@@ -201,6 +239,7 @@ namespace IHHook {
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
 				{ "InitMain", Hooks_Lua::l_FoxLua_InitMain},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
+				{ "UpdateChangeLocationMenu",l_UpdateChangeLocationMenu},
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }
 			};
