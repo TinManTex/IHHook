@@ -1,4 +1,12 @@
 IHHook changelog
+
+r7, IHr240 - 2021-03-26
+Full* lua API hook again. (still a few pesky missing functions).
+AddressCSVToMacroHeader.lua
+mgstpp-adresses-1.0.15.3.csv - exported from ghidra
+To generate function > address macro header, replacing my prior method of manually updating the headers for 100 functions lol.
+GetFreeRoamLangIdHook - to override the free roam entry which was hard coded to locations and return empty string for custom.
+
 r7 - 2021-03-24
 Target mgstpp.exe 1.0.15.3
 
