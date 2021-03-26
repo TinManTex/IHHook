@@ -11,8 +11,6 @@
 #include <sstream>   
 
 namespace IHHook {
-	//DEBUGNOW
-	HOOKFUNC(long long, StrCode64, const char* str, long long len)
 	HOOKPTR(StrCode64, 0x14c1bd730)//1.0.15.3
 
 	std::map<int, long long> locationLangIds{
@@ -110,7 +108,7 @@ namespace IHHook {
 			//}
 
 			CREATEHOOK(StrCode64)
-				ENABLEHOOK(StrCode64)
+			ENABLEHOOK(StrCode64)
 
 			//DEBUGNOW TEST
 			const char* langId = "tpp_loc_afghan";
