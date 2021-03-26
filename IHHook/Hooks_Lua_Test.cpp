@@ -277,9 +277,24 @@ void TestHooks_Lua(lua_State* L) {
 		lua_pop(L, 1);
 		assert(std::string(rawsetifield) == "rawsetivalue");
 		spdlog::debug("rawseti 1:'{}'", rawsetifield);
+
+
 	}
 	lua_pop(L, 1);
 
+	//
+	spdlog::debug("lua_getfield _IHHook_TestTable");
+	lua_getfield(L, LUA_GLOBALSINDEX, "_IHHook_TestTable");
+	spdlog::debug("while lua_next");
+	lua_pushnil(L);  /* first key */
+	while (lua_next(L, -2) != 0) {
+		/* uses 'key' (at index -2) and 'value' (at index -1) */
+		spdlog::debug("{} - {}",
+			lua_typename(L, lua_type(L, -2)),
+			lua_typename(L, lua_type(L, -1)));
+		/* removes 'value'; keeps 'key' for next iteration */
+		lua_pop(L, 1);
+	}
 }//TestHooks_Lua
 
 //tex testing after libs registered
