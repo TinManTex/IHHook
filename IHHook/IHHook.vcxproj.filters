@@ -290,9 +290,6 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="LuaDrawMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imguiimpl\imgui_lua_bindings.cpp">
       <Filter>Source Files\imguiimpl</Filter>
     </ClCompile>
