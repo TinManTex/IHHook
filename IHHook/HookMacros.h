@@ -2,16 +2,19 @@
 
 //tex macros to declare the various accoutrement required for MH_Hook and straight hooks
 
-//tex typedef for the function pointers
+//tex typedef for the function pointer, 
+//and an extern function pointer of the type
+//so you can include a header with the hookfunc in other files and use the function
 #define HOOKFUNC(ret, name, ...) typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
-	extern name##Func* name;
+extern name##Func* name;
 //Example use:
 //FUNCINFO_WITHHOOK(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //lua_newstateFunc lua_newstate;
 
-//tex declare function pointer, using address in respect to module base, this will be rebased and overwritten at runtime using CREATEHOOK. Kinda hinky, but it saves having to set up yet another variable.
+//tex declare function pointer, and set to address in respect to module base, this will be rebased and overwritten at runtime using CREATEHOOK. Kinda hinky, but it saves having to set up yet another variable.
+//since it's actually setting value this macro cant be in header/must be in a cpp else linker will complain about the muli decls
 #define HOOKPTR(name, address) name##Func* name = (name##Func*)address;
 //Example use:
 //HOOKPTR(lua_newstate, 0x14cdd7ab0);
