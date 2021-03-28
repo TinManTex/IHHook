@@ -6,7 +6,7 @@
 
 namespace IHHook {
 	namespace OS {
-		int CheckVersionDelta(const unsigned long checkVersion[]);
+		int CheckVersionDelta(const unsigned long checkVersion[], std::string &exeVersionStr);
 		std::wstring GetGameDir();
 		std::string GetGameDirA();
 		int StartProcess(LPCWSTR lpApplicationPath, LPWSTR lpCommandLine);
