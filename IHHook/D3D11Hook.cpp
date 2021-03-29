@@ -21,6 +21,7 @@ bool D3D11Hook::hook() {
     HWND h_wnd = GetDesktopWindow();
     IDXGISwapChain* swap_chain = nullptr;
     ID3D11Device* device = nullptr;
+    D3D_FEATURE_LEVEL device_max_feature_level = D3D_FEATURE_LEVEL_9_1;
     ID3D11DeviceContext* context = nullptr;
 
     D3D_FEATURE_LEVEL feature_level = D3D_FEATURE_LEVEL_11_0;
@@ -38,10 +39,12 @@ bool D3D11Hook::hook() {
     swap_chain_desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-    if (FAILED(D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_NULL, nullptr, 0, &feature_level, 1, D3D11_SDK_VERSION, &swap_chain_desc, &swap_chain, &device, nullptr, &context))) {
-        spdlog::error("Failed to create D3D11 device");
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_NULL, nullptr, 0, &feature_level, 1, D3D11_SDK_VERSION, &swap_chain_desc, &swap_chain, &device, &device_max_feature_level, &context);
+    if (FAILED(hr)) {  
+        spdlog::error("Failed to create dummy D3D11 device. HRESULT={0:x} max_feature={1:x}", hr, device_max_feature_level);
         return false;
     }
+    //spdlog::info("Created dummy D3D11 device. HRESULT={0:x} max_feature={1:x}", hr, device_max_feature_level);
 
     auto present_fn = (*(uintptr_t**)swap_chain)[8];
     auto resize_buffers_fn = (*(uintptr_t**)swap_chain)[13];
@@ -51,6 +54,7 @@ bool D3D11Hook::hook() {
     device->Release();
     context->Release();
     swap_chain->Release();
+    //spdlog::info("Released dummy D3D11 device");
 
     m_hooked = m_present_hook->create() && m_resize_buffers_hook->create();
 
