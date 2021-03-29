@@ -347,6 +347,9 @@ namespace IHHook {
 
 		//tex called inside-out from InitMain.lua via IH
 		int l_FoxLua_InitMain(lua_State* L) {
+			int modVersion = (int)lua_tointeger(L, -1);
+			spdlog::debug("InitMain IHr{}", modVersion);
+
 			//tex according to logging d3d (and imgui in ihhook) is initialized
 			SetLuaVarMenuInitialized(L);
 
