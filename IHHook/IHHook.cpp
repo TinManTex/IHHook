@@ -19,6 +19,9 @@
 
 #include <string>
 #include <filesystem>
+// version_info parse
+#include <fstream>
+#include <sstream>
 
 
 #include "IHMenu.h"
@@ -180,8 +183,53 @@ namespace IHHook {
 		}
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
+
+
+
 		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
 		//can just hope that konami actually keeps updating the exe version properly and not release multiple updates with no exe version change like they have in the past
+		//but version_info.txt should help there
+
+		//DEBUGNOW So jp voice version is actually different exe, so cant just rely on exe version info.
+		std::string versionInfoFileName = "version_info.txt";
+		std::ifstream infile(versionInfoFileName);
+		if (infile.fail()) {//tex likely pirated game, or user has some wierd setup, cant know actual version
+			spdlog::warn("Could not load ", versionInfoFileName);
+			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different ");
+			//any point using errormessages since if this is an actual lang exe mismatch its going to crash before it gets to the ui
+			//DEBUGNOW think what to do.
+		}
+
+		//REF
+		//Tpp_steam_mst_en_day1820Mgo_patch_0212_1307
+		//Tpp_steam_mst_jp_day1820Mgo_patch_0212_1307
+		std::string line;
+		std::string lang = NULL;
+		while (std::getline(infile, line)) {
+			std::istringstream iss(line);
+
+			if (line.length() < std::string("Tpp_steam_mst_en").length()) {
+				spdlog::warn("Unexpected version string, string shorter than expected");
+				break;
+			}
+			
+			std::string prefix = "Tpp_steam_mst_";
+			std::size_t found = line.find(prefix);
+			if (found == std::string::npos) {
+				spdlog::warn("Unexpected version string, could not find {}", prefix);
+				break;
+			}
+
+			lang = line.substr(prefix.length(),2);//en,jp etc
+			spdlog::debug("Found lang: {}", lang);
+	
+			if (lang != "en" || lang != "jp") {
+				spdlog::warn("Unexpected lang version");
+			}
+		}//while infile
+
+
+
 		std::string exeVersionStr = "";
 		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion, exeVersionStr);
 		if (versionDelta != 0) {
