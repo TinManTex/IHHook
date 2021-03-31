@@ -14,6 +14,7 @@ extern name##Func* name##Addr;\
 //Expands to:
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //extern lua_newstateFunc lua_newstate;
+//extern lua_newstateFunc lua_newstateAddr;
 
 //base address of func, and actually declare the function pointer -- can be in header or code (as long as later code using it can see its declaration)
 #define FUNC_DECL_ADDR(name, address)\
@@ -22,8 +23,8 @@ name##Func* name##Addr = (name##Func*)address;\
 //Example use:
 //FUNC_DECL_ADDR(lua_newstate, 0x14cdd7ab0);
 //Expands to:
-//lua_newstateFunc name = (lua_newstate)address;
-//NOTE: CREATEHOOK (defined below) is used to rebase this pointer
+//lua_newstateFunc lua_newstate;
+//lua_newstateFunc lua_newstateFuncAddr = (lua_newstateFunc)0x14cdd7ab0;
 
 //tex following macros used in create hooks functions at runtime, requires setup with HOOK* macros
 
