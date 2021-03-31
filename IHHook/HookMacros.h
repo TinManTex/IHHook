@@ -5,10 +5,10 @@
 //tex typedef for the function pointer, 
 //and an extern function pointer of the type
 //so you can include a header with the hookfunc in other files and use the function
-#define HOOKFUNC(ret, name, ...) typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
+#define FUNCPTRDEF(ret, name, ...) typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
 extern name##Func* name;
 //Example use:
-//FUNCINFO_WITHHOOK(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
+//FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //lua_newstateFunc lua_newstate;

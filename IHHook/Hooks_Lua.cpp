@@ -1,7 +1,7 @@
 /*
 	tex: msgvtpp has lua 5.1.5 statically linked
 	IHHook hooks lua by function addresses (defined in lua/*_Addresses.h), using (macros wrapping) MH_Hook initialised in CreateHooks() below
-	it also replaces the lua function declarations in the lua distro (using the HOOKFUNC macros) so other code can build against it.
+	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it.
 	In some cases uses actual lua lib implementation.
 	See comments on CREATEHOOK entries in *_Creathooks.cpp.
 

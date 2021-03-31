@@ -30,7 +30,7 @@ namespace IHHook {
 		uintptr_t missionCode_Addr = 0x142A58A00;
 		//uint32_t* missionCode;//tex in header
 #ifndef VER_JP
-		HOOKFUNC(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
+		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
 		HOOKPTR(UnkSomePlayerUpdateFunc, 0x146e3a620)
 		
 		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
@@ -43,7 +43,7 @@ namespace IHHook {
 #endif
 
 
-		HOOKFUNC(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
+		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
 #ifndef VER_JP
 		HOOKPTR(GetFreeRoamLangId, 0x145e60f40);//1.0.15.3_en
 #else

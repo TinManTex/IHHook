@@ -3,7 +3,7 @@
 ** Lua standard libraries
 ** See Copyright Notice in lua.h
 */
-//tex: Butchered fwd decls to func pointers. Search //OFF , HOOKFUNC
+//tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF
 #include "../HookMacros.h" //tex
 
 #ifndef lualib_h
@@ -17,32 +17,32 @@
 
 
 #define LUA_COLIBNAME	"coroutine"
-HOOKFUNC(int, luaopen_base, lua_State *L);
+FUNCPTRDEF(int, luaopen_base, lua_State *L);
 
 #define LUA_TABLIBNAME	"table"
-HOOKFUNC(int, luaopen_table, lua_State *L);
+FUNCPTRDEF(int, luaopen_table, lua_State *L);
 
 #define LUA_IOLIBNAME	"io"
-HOOKFUNC(int, luaopen_io, lua_State *L);
+FUNCPTRDEF(int, luaopen_io, lua_State *L);
 
 #define LUA_OSLIBNAME	"os"
-HOOKFUNC(int, luaopen_os, lua_State *L);
+FUNCPTRDEF(int, luaopen_os, lua_State *L);
 
 #define LUA_STRLIBNAME	"string"
-HOOKFUNC(int, luaopen_string, lua_State *L);
+FUNCPTRDEF(int, luaopen_string, lua_State *L);
 
 #define LUA_MATHLIBNAME	"math"
-HOOKFUNC(int, luaopen_math, lua_State *L);
+FUNCPTRDEF(int, luaopen_math, lua_State *L);
 
 #define LUA_DBLIBNAME	"debug"
-HOOKFUNC(int, luaopen_debug, lua_State *L);
+FUNCPTRDEF(int, luaopen_debug, lua_State *L);
 
 #define LUA_LOADLIBNAME	"package"
-HOOKFUNC(int, luaopen_package, lua_State *L);
+FUNCPTRDEF(int, luaopen_package, lua_State *L);
 
 
 /* open all previous libraries */
-HOOKFUNC(void, luaL_openlibs, lua_State *L);
+FUNCPTRDEF(void, luaL_openlibs, lua_State *L);
 
 
 
