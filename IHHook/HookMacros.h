@@ -8,7 +8,7 @@
 
 //tex: for all hooks need:
 //FUNCPTRDEF
-//FUNC_BASEADDRESS
+//FUNC_DECL_ADDR
 
 //then in runtime:
 //just want to use original function
