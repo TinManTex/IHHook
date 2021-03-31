@@ -2,6 +2,27 @@
 
 //tex macros to declare the various accoutrement required for MH_Hook and straight hooks
 
+// Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
+// the real base address changes every time the game is run though, so we have to remove that base address and add the real one
+// so it's rebased when its set up (see CREATE_ for the simple rebasing math)
+
+//tex: for all hooks need:
+//FUNCPTRDEF
+//FUNC_BASEADDRESS
+
+//then in runtime:
+//just want to use original function
+//CREATE_FUNCPTR
+
+//or want to modify the function
+//CREATE_HOOK -- DEBUGNOW was CREATEDETOUR
+//MH_STATUS status; //not a macro, just a var for enablehook to log the status of it trying to hook, define once in scope for any number of uses of ENABLEHOOK 
+//ENABLE_HOOK
+
+//NOTE: You can just CREATE_FUNCPTR as a matter of course
+//and CREATE_HOOK/ENABLE_HOOK after if you want a detour instead
+
+
 //tex typedef for the function pointer, 
 //and an extern function pointer of the type
 //so you can include a header with the hookfunc in other files and use the function
@@ -26,9 +47,8 @@ name##Func* name##Addr = (name##Func*)address;\
 //lua_newstateFunc lua_newstate;
 //lua_newstateFunc lua_newstateFuncAddr = (lua_newstateFunc)0x14cdd7ab0;
 
-//tex following macros used in create hooks functions at runtime, requires setup with HOOK* macros
-
-//tex dont need detour, just want original function
+//just want to use original function
+//sets the pointer to the rebased address so the function pointer is usable
 #define CREATE_FUNCPTR(name)\
 void* name##AddrRebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr); \
 name = (name##Func*)name##AddrRebased;
@@ -40,8 +60,6 @@ name = (name##Func*)name##AddrRebased;
 
 
 //tex detour and trampoline via MinHook
-// Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
-// the real base address changes every time the game is run though, so we have to remove that base address and add the real one
 #define CREATE_HOOK(name)\
 void* name##Rebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr);\
 MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));
