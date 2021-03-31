@@ -70,7 +70,11 @@ MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));
 //MH_CreateHook(lua_newstateRebased, lua_newstateHook, (LPVOID*)&lua_newstate);
 
 //tex ASSUMES CREATEDETOUR has defined name##Rebased
-#define ENABLEHOOK(name) MH_EnableHook(name##Rebased);
+#define ENABLEHOOK(name)\
+MH_STATUS name##Status = MH_EnableHook(name##Rebased);\
+if (name##Status != MH_OK) {\
+	spdlog::error("MH_EnableHook failed for {} with code {}", "name", name##Status);\
+}
 
 #define DEFINEPATTERN(name,signature,mask) char* name##Sig = signature;\
 char* name##Mask = mask;
