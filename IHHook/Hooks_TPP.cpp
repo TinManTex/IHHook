@@ -12,7 +12,7 @@
 
 namespace IHHook {
 #ifndef VER_JP
-	HOOKPTR(StrCode64, 0x14c1bd730)//1.0.15.3
+	FUNC_DECL_ADDR(StrCode64, 0x14c1bd730)//1.0.15.3
 #else
 	HOOKPTR(StrCode64, 0x1433534b0)//1.0.15.3 jp
 #endif // !VER_JP
@@ -31,7 +31,7 @@ namespace IHHook {
 		//uint32_t* missionCode;//tex in header
 #ifndef VER_JP
 		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		HOOKPTR(UnkSomePlayerUpdateFunc, 0x146e3a620)
+		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc, 0x146e3a620)
 		
 		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
 			spdlog::trace(__func__);
@@ -45,7 +45,7 @@ namespace IHHook {
 
 		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
 #ifndef VER_JP
-		HOOKPTR(GetFreeRoamLangId, 0x145e60f40);//1.0.15.3_en
+		FUNC_DECL_ADDR(GetFreeRoamLangId, 0x145e60f40);//1.0.15.3_en
 #else
 		HOOKPTR(GetFreeRoamLangId, 0x147a6b040);//1.0.15.3_jp
 #endif	

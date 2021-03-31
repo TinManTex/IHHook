@@ -15,13 +15,12 @@ extern name##Func* name##Addr;\
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //extern lua_newstateFunc lua_newstate;
 
-//tex declare function pointer, and set to address in respect to module base, this will be rebased and overwritten at runtime using CREATEHOOK. Kinda hinky, but it saves having to set up yet another variable.
-//since it's actually setting value this macro cant be in header/must be in a cpp else linker will complain about the muli decls
-#define HOOKPTR(name, address)\
-name##Func* name = (name##Func*)address;\
+//base address of func, and actually declare the function pointer -- can be in header or code (as long as later code using it can see its declaration)
+#define FUNC_DECL_ADDR(name, address)\
+name##Func* name;\
 name##Func* name##Addr = (name##Func*)address;\
 //Example use:
-//HOOKPTR(lua_newstate, 0x14cdd7ab0);
+//FUNC_DECL_ADDR(lua_newstate, 0x14cdd7ab0);
 //Expands to:
 //lua_newstateFunc name = (lua_newstate)address;
 //NOTE: CREATEHOOK (defined below) is used to rebase this pointer
