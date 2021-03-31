@@ -48,9 +48,9 @@ void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr) {
 	CREATEHOOK(luaL_loadfile)//TEST
 	CREATEHOOK(luaL_loadbuffer)//TEST
 	//OFF CREATEHOOK(luaL_loadstring)//tex: Using default implementation.
-
+#ifndef  VER_JP
 	CREATEHOOK(luaL_newstate)
-
+#endif
 
 	CREATEHOOK(luaL_gsub)//TEST
 

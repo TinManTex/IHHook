@@ -20,7 +20,12 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 
+#ifndef VER_JP
 #include "lua/lua_AddressesGEN.h"
+#else
+#include "lua/lua_AddressesGEN_jp.h"
+#endif // !VER_JP
+
 
 #include <string>
 #include <Psapi.h>// ModuleInfo, DEBUGNOW
@@ -347,8 +352,8 @@ namespace IHHook {
 
 		//tex called inside-out from InitMain.lua via IH
 		int l_FoxLua_InitMain(lua_State* L) {
-			int modVersion = (int)lua_tointeger(L, -1);
-			spdlog::debug("InitMain IHr{}", modVersion);
+		//DEBUGNOW	int modVersion = (int)lua_tointeger(L, -1);
+		//DEBUGNOW	spdlog::debug("InitMain IHr{}", modVersion);
 
 			//tex according to logging d3d (and imgui in ihhook) is initialized
 			SetLuaVarMenuInitialized(L);
@@ -423,11 +428,13 @@ namespace IHHook {
 		void TestHooks_Lua_PostNewState(lua_State* L) {
 			//tex cant be in newstate or following functions (luaL_openlibs) or it will recurse
 			spdlog::debug(__func__);
+#ifndef VER_JP
 			lua_State* nL = luaL_newstate();
 			if (nL != NULL) {
 				spdlog::debug("lua_close");
 				lua_close(nL);
 			}
+#endif
 		}//TestHooks_Lua_PostNewState
 	}//namespace Hooks_Lua
 }//namespace IHHoook
