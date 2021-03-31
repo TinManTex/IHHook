@@ -1,5 +1,9 @@
 IHHook changelog
 
+r7, IHr243 - 2021-03-29
+Fix: A grame crash soon after starting - issue likely was user not having vs redist for what IHHook was built against.
+Downgraded platform toolset to VS2017/v141 to hit less vsredist issues - thanks fintip for the report and working through test builds with me.
+
 r7, IHr240 - 2021-03-26
 Full* lua API hook again. (still a few pesky missing functions).
 AddressCSVToMacroHeader.lua

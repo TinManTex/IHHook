@@ -15,7 +15,7 @@ namespace IHHook {
 		/// </summary>
 		/// <param name="checkVersion"></param>
 		/// <returns>delta to checkVersion (-1 < 0== > 1)</returns>
-		int CheckVersionDelta(const unsigned long checkVersion[]) {
+		int CheckVersionDelta(const unsigned long checkVersion[], std::string &exeVersionStr) {
 			spdlog::debug(__func__);
 
 			HMODULE hExe = GetModuleHandle(NULL);
@@ -62,7 +62,7 @@ namespace IHHook {
 				LOWORD(dwFileVersionLS)
 			};
 
-			std::string exeVersionStr =
+			exeVersionStr =
 				std::to_string(exeVersion[0]) + "," +
 				std::to_string(exeVersion[1]) + "," +
 				std::to_string(exeVersion[2]) + "," +

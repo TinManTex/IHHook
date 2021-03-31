@@ -19,6 +19,9 @@
 
 #include <string>
 #include <filesystem>
+// version_info parse
+#include <fstream>
+#include <sstream>
 
 
 #include "IHMenu.h"
@@ -180,9 +183,55 @@ namespace IHHook {
 		}
 
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
+
+
+
 		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
 		//can just hope that konami actually keeps updating the exe version properly and not release multiple updates with no exe version change like they have in the past
-		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion);
+		//but version_info.txt should help there
+
+		//DEBUGNOW So jp voice version is actually different exe, so cant just rely on exe version info.
+		std::string versionInfoFileName = "version_info.txt";
+		std::ifstream infile(versionInfoFileName);
+		if (infile.fail()) {//tex likely pirated game, or user has some wierd setup, cant know actual version
+			spdlog::warn("Could not load ", versionInfoFileName);
+			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different ");
+			//any point using errormessages since if this is an actual lang exe mismatch its going to crash before it gets to the ui
+			//DEBUGNOW think what to do.
+		}
+
+		//REF
+		//Tpp_steam_mst_en_day1820Mgo_patch_0212_1307
+		//Tpp_steam_mst_jp_day1820Mgo_patch_0212_1307
+		std::string line;
+		std::string lang = "";
+		while (std::getline(infile, line)) {
+			std::istringstream iss(line);
+
+			if (line.length() < std::string("Tpp_steam_mst_en").length()) {
+				spdlog::warn("Unexpected version string, string shorter than expected");
+				break;
+			}
+			
+			std::string prefix = "Tpp_steam_mst_";
+			std::size_t found = line.find(prefix);
+			if (found == std::string::npos) {
+				spdlog::warn("Unexpected version string, could not find {}", prefix);
+				break;
+			}
+
+			lang = line.substr(prefix.length(),2);//en,jp etc
+			spdlog::debug("Found lang: {}", lang);
+	
+			if (lang != "en" || lang != "jp") {
+				spdlog::warn("Unexpected lang version");
+			}
+		}//while infile
+
+
+
+		std::string exeVersionStr = "";
+		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion, exeVersionStr);
 		if (versionDelta != 0) {
 			errorMessages.push_back("ERROR: IHHook->exe version mismatch");
 			errorMessages.push_back("Infinite Heaven will continue to load");
@@ -200,14 +249,29 @@ namespace IHHook {
 				spdlog::error(message);
 			}
 			SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
-		}
+		} 
 		else {
-			MH_Initialize();
+			if (lang != "en") {//DEBUGNOW
+				errorMessages.push_back("WARNING: IHHook currently ");
+				errorMessages.push_back("only supports the eng version");
+				errorMessages.push_back("Infinite Heaven will continue to load");
+				errorMessages.push_back("with some limitations.");
+				errorMessages.push_back("Including this menu not working in-game.");
+				errorMessages.push_back("Click on the x to close this window.");
+
+				for each (std::string message in errorMessages) {
+					spdlog::error(message);
+				}
+				SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
+			}
+			else {
+				MH_Initialize();
 #ifndef MINIMAL_HOOK
-			Hooks_CityHash::CreateHooks(RealBaseAddr);
+				Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
-			Hooks_Lua::CreateHooks(RealBaseAddr);
-			Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
+				Hooks_Lua::CreateHooks(RealBaseAddr);
+				Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
+			}
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -229,7 +293,7 @@ namespace IHHook {
 	}//IHH
 
 	IHH::~IHH() {
-
+		MH_Uninitialize();
 	}//~IHH
 
 	//OUT/SIDE: log file, log file prev
@@ -261,7 +325,7 @@ namespace IHHook {
 		char datestr[100];
 		std::strftime(datestr, sizeof(datestr), "Started: %Y/%m/%d %H:%M:%S", &now);
 		spdlog::info(datestr);
-
+		log->flush();
 		spdlog::debug("Note: ihhook_log is multithreaded to accept logging from multiple threads so order of entries may not be sequential.");
 	}//SetupLog
 

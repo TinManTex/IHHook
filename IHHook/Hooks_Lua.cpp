@@ -1,9 +1,9 @@
 /*
 	tex: msgvtpp has lua 5.1.5 statically linked
 	IHHook hooks lua by function addresses (defined in lua/*_Addresses.h), using (macros wrapping) MH_Hook initialised in CreateHooks() below
-	it also replaces the lua function declarations in the lua distro (using the HOOKFUNC macros) so other code can build against it.
+	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it.
 	In some cases uses actual lua lib implementation.
-	See comments on CREATEHOOK entries in *_Creathooks.cpp.
+	See comments on CREATE_FUNCPTR entries in *_Creathooks.cpp.
 
 	function signatures/patterns would be more robust to game updates / different game versions than straight addresses, but take a long time to search
 	since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.
@@ -20,7 +20,12 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 
+#ifndef VER_JP
 #include "lua/lua_AddressesGEN.h"
+#else
+#include "lua/lua_AddressesGEN_jp.h"
+#endif // !VER_JP
+
 
 #include <string>
 #include <Psapi.h>// ModuleInfo, DEBUGNOW
@@ -261,11 +266,11 @@ namespace IHHook {
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-			CREATEDETOURB(luaL_openlibs)
+			CREATE_HOOK(luaL_openlibs)
 #ifndef MINIMAL_HOOK
-			CREATEDETOURB(lua_newstate)
-			CREATEDETOURB(luaL_loadbuffer)
-			//OFF CREATEDETOURB(lua_atpanic)
+			CREATE_HOOK(lua_newstate)
+			CREATE_HOOK(luaL_loadbuffer)
+			//OFF CREATE_HOOK(lua_atpanic)
 
 			ENABLEHOOK(lua_newstate)
 			ENABLEHOOK(luaL_loadbuffer)
@@ -347,6 +352,9 @@ namespace IHHook {
 
 		//tex called inside-out from InitMain.lua via IH
 		int l_FoxLua_InitMain(lua_State* L) {
+		//DEBUGNOW	int modVersion = (int)lua_tointeger(L, -1);
+		//DEBUGNOW	spdlog::debug("InitMain IHr{}", modVersion);
+
 			//tex according to logging d3d (and imgui in ihhook) is initialized
 			SetLuaVarMenuInitialized(L);
 
@@ -420,11 +428,13 @@ namespace IHHook {
 		void TestHooks_Lua_PostNewState(lua_State* L) {
 			//tex cant be in newstate or following functions (luaL_openlibs) or it will recurse
 			spdlog::debug(__func__);
+#ifndef VER_JP
 			lua_State* nL = luaL_newstate();
 			if (nL != NULL) {
 				spdlog::debug("lua_close");
 				lua_close(nL);
 			}
+#endif
 		}//TestHooks_Lua_PostNewState
 	}//namespace Hooks_Lua
 }//namespace IHHoook

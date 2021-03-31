@@ -13,16 +13,8 @@
 #pragma comment(linker, "/export:DllRegisterServer=DllRegisterServer,PRIVATE")
 #pragma comment(linker, "/export:DllUnregisterServer=DllUnregisterServer,PRIVATE")
 #pragma comment(linker, "/export:GetdfDIJoystick=GetdfDIJoystick")
-//DEBUGNOW not sure if these are correct mangled names. extern C exports unmangled anyway
-//#pragma comment(linker,"/EXPORT:DllCanUnloadNow=DllCanUnloadNow@0,PRIVATE")
-//#pragma comment(linker, "/EXPORT:DllGetClassObject=DllGetClassObject@12,PRIVATE")
-//#pragma comment(linker, "/EXPORT:DllRegisterServer=DllRegisterServer@0,PRIVATE")
-//#pragma comment(linker, "/EXPORT:DllUnregisterServer=DllUnregisterServer@0,PRIVATE")
 
 typedef HRESULT(WINAPI*DirectInput8Create_ptr)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID * ppvOut, void* punkOuter);
-//typedef HRESULT(WINAPI* DirectInput8Create_ptr)(HINSTANCE, DWORD, REFIID, LPVOID*, LPUNKNOWN);//DEBUGNOW CULL
-//typedef HRESULT(WINAPI* CreateDevice_ptr)(IDirectInput8*, REFGUID, LPDIRECTINPUTDEVICE, LPUNKNOWN);//DEBUGNOW CULL
-//typedef HRESULT(WINAPI* GetClassObject_ptr)(REFCLSID rclsid, REFIID riid, LPVOID* ppv);
 
 DirectInput8Create_ptr DirectInput8Create_Orig = NULL;
 FARPROC DllCanUnloadNow_Orig;

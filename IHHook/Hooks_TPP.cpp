@@ -11,7 +11,11 @@
 #include <sstream>   
 
 namespace IHHook {
-	HOOKPTR(StrCode64, 0x14c1bd730)//1.0.15.3
+#ifndef VER_JP
+	FUNC_DECL_ADDR(StrCode64, 0x14c1bd730)//1.0.15.3
+#else
+	HOOKPTR(StrCode64, 0x1433534b0)//1.0.15.3 jp
+#endif // !VER_JP
 
 	std::map<int, long long> locationLangIds{
 		{10,0x1b094033d45d},//afgh,tpp_loc_afghan
@@ -25,9 +29,9 @@ namespace IHHook {
 	namespace Hooks_TPP {
 		uintptr_t missionCode_Addr = 0x142A58A00;
 		//uint32_t* missionCode;//tex in header
-
-		HOOKFUNC(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		HOOKPTR(UnkSomePlayerUpdateFunc, 0x146e3a620)
+#ifndef VER_JP
+		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
+		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc, 0x146e3a620)
 		
 		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
 			spdlog::trace(__func__);
@@ -36,12 +40,15 @@ namespace IHHook {
 			intptr_t playerClass = unkPlayerClass;
 			
 		}//UnkSomePlayerUpdateFuncHook
+#endif
 
 
-
-		HOOKFUNC(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
-		HOOKPTR(GetFreeRoamLangId, 0x145e60f40);
-
+		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
+#ifndef VER_JP
+		FUNC_DECL_ADDR(GetFreeRoamLangId, 0x145e60f40);//1.0.15.3_en
+#else
+		HOOKPTR(GetFreeRoamLangId, 0x147a6b040);//1.0.15.3_jp
+#endif	
 
 
 		//tex the idroid free roam mission tab had an issue where it wouldn't show the name of custom free roam missions
@@ -106,13 +113,15 @@ namespace IHHook {
 			//if (missionCode==NULL) {
 			//	spdlog::error("CHP: missionCode==NULL");
 			//}
-
-			CREATEHOOK(StrCode64)
-			ENABLEHOOK(StrCode64)
+			//DEBUGNOW
+#ifndef VER_JP
+			CREATE_FUNCPTR(StrCode64)
+			//void* StrCode64Rebased = (void*)(((size_t)StrCode64 - BaseAddr) + RealBaseAddr); \
+			//StrCode64 = (StrCode64Func*)StrCode64Rebased;
 
 			//DEBUGNOW TEST
 			const char* langId = "tpp_loc_afghan";
-			long long tpp_loc_afghanS64 = StrCode64(langId,strlen(langId));
+			long long tpp_loc_afghanS64 = StrCode64(langId, strlen(langId));
 
 			std::stringstream stream;
 			stream << std::hex << tpp_loc_afghanS64;
@@ -124,14 +133,17 @@ namespace IHHook {
 				//{ 50,0xfa8eaa7758b1 },//mtbs,tpp_loc_mb
 				////DEBUGNOW proof of concept hack
 				//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
+#endif // !VER_JP
 
 
-			CREATEDETOURB(GetFreeRoamLangId)
+#ifndef VER_JP			
+			CREATE_HOOK(GetFreeRoamLangId)
 			ENABLEHOOK(GetFreeRoamLangId)
 
 			//DEBUGNOW
-			//CREATEDETOURB(UnkSomeUpdateFunc)
+			//CREATE_HOOK(UnkSomeUpdateFunc)
 			//ENABLEHOOK(UnkSomeUpdateFunc)
+#endif // !VER_JP
 		}//CreateHooks
 	}//Hooks_TPP
 }//namespace IHHook
