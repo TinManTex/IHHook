@@ -42,11 +42,11 @@ name = (name##Func*)name##AddrRebased;
 //tex detour and trampoline via MinHook
 // Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
 // the real base address changes every time the game is run though, so we have to remove that base address and add the real one
-#define CREATEDETOURB(name)\
+#define CREATE_HOOK(name)\
 void* name##Rebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr);\
 MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));
 //Example use:
-//CREATEDETOURB(lua_newstate);
+//CREATE_HOOK(lua_newstate);
 //Expands to:
 //void* lua_newstateAddrRebased = (void*)((lua_newstateAddr - BaseAddr) + RealBaseAddr);
 //MH_CreateHook(lua_newstateRebased, lua_newstateHook, (LPVOID*)&lua_newstate);

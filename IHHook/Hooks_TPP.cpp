@@ -137,11 +137,11 @@ namespace IHHook {
 
 
 #ifndef VER_JP			
-			CREATEDETOURB(GetFreeRoamLangId)
+			CREATE_HOOK(GetFreeRoamLangId)
 			ENABLEHOOK(GetFreeRoamLangId)
 
 			//DEBUGNOW
-			//CREATEDETOURB(UnkSomeUpdateFunc)
+			//CREATE_HOOK(UnkSomeUpdateFunc)
 			//ENABLEHOOK(UnkSomeUpdateFunc)
 #endif // !VER_JP
 		}//CreateHooks

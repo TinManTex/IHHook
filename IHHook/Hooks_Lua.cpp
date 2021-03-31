@@ -266,11 +266,11 @@ namespace IHHook {
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-			CREATEDETOURB(luaL_openlibs)
+			CREATE_HOOK(luaL_openlibs)
 #ifndef MINIMAL_HOOK
-			CREATEDETOURB(lua_newstate)
-			CREATEDETOURB(luaL_loadbuffer)
-			//OFF CREATEDETOURB(lua_atpanic)
+			CREATE_HOOK(lua_newstate)
+			CREATE_HOOK(luaL_loadbuffer)
+			//OFF CREATE_HOOK(lua_atpanic)
 
 			ENABLEHOOK(lua_newstate)
 			ENABLEHOOK(luaL_loadbuffer)
