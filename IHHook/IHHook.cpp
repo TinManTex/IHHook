@@ -195,7 +195,7 @@ namespace IHHook {
 		std::ifstream infile(versionInfoFileName);
 		if (infile.fail()) {//tex likely pirated game, or user has some wierd setup, cant know actual version
 			spdlog::warn("Could not load ", versionInfoFileName);
-			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different ");
+			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different sku.");
 			//any point using errormessages since if this is an actual lang exe mismatch its going to crash before it gets to the ui
 			//DEBUGNOW think what to do.
 		}
@@ -223,7 +223,7 @@ namespace IHHook {
 			lang = line.substr(prefix.length(),2);//en,jp etc
 			spdlog::debug("Found lang: {}", lang);
 	
-			if (lang != "en" || lang != "jp") {
+			if (lang != "en" && lang != "jp") {
 				spdlog::warn("Unexpected lang version");
 			}
 		}//while infile
@@ -252,8 +252,8 @@ namespace IHHook {
 		} 
 		else {
 			if (lang != "en") {//DEBUGNOW
-				errorMessages.push_back("WARNING: IHHook currently ");
-				errorMessages.push_back("only supports the eng version");
+				errorMessages.push_back("WARNING: IHHook currently only");
+				errorMessages.push_back("supports the english language version");
 				errorMessages.push_back("Infinite Heaven will continue to load");
 				errorMessages.push_back("with some limitations.");
 				errorMessages.push_back("Including this menu not working in-game.");
@@ -599,7 +599,9 @@ namespace IHHook {
 			ImGui::ShowDemoWindow(&showImguiDemo);
 		}
 
-		IHMenu::DrawMenu(&menuOpen, menuOpenPrev);
+		if (menuOpen) {
+			IHMenu::DrawMenu(&menuOpen, menuOpenPrev);
+		}
 		if (!menuOpen && menuOpenPrev) {
 			IHMenu::QueueMessageIn("menuoff");
 		}

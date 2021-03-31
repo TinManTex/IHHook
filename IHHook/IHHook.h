@@ -119,7 +119,7 @@ namespace IHHook {
 		bool d3dHooked = false;
 		bool drawUI = true;
 		bool unlockCursor = false;
-		bool menuOpen = false;
+		bool menuOpen = true;//tex start open, as it's used as a intro and error window during startup
 		bool menuOpenPrev = true;
 
 		bool showStyleEditor = false;
