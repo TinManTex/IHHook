@@ -204,7 +204,7 @@ namespace IHHook {
 		//Tpp_steam_mst_en_day1820Mgo_patch_0212_1307
 		//Tpp_steam_mst_jp_day1820Mgo_patch_0212_1307
 		std::string line;
-		std::string lang = NULL;
+		std::string lang = "";
 		while (std::getline(infile, line)) {
 			std::istringstream iss(line);
 
@@ -249,14 +249,29 @@ namespace IHHook {
 				spdlog::error(message);
 			}
 			SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
-		}
+		} 
 		else {
-			MH_Initialize();
+			if (lang != "en") {//DEBUGNOW
+				errorMessages.push_back("WARNING: IHHook currently ");
+				errorMessages.push_back("only supports the eng version");
+				errorMessages.push_back("Infinite Heaven will continue to load");
+				errorMessages.push_back("with some limitations.");
+				errorMessages.push_back("Including this menu not working in-game.");
+				errorMessages.push_back("Click on the x to close this window.");
+
+				for each (std::string message in errorMessages) {
+					spdlog::error(message);
+				}
+				SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
+			}
+			else {
+				MH_Initialize();
 #ifndef MINIMAL_HOOK
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
 			Hooks_Lua::CreateHooks(RealBaseAddr);
 			Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
+			}
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -278,7 +293,7 @@ namespace IHHook {
 	}//IHH
 
 	IHH::~IHH() {
-
+		MH_Uninitialize();
 	}//~IHH
 
 	//OUT/SIDE: log file, log file prev
