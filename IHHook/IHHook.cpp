@@ -267,10 +267,10 @@ namespace IHHook {
 			else {
 				MH_Initialize();
 #ifndef MINIMAL_HOOK
-			Hooks_CityHash::CreateHooks(RealBaseAddr);
+				Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
-			Hooks_Lua::CreateHooks(RealBaseAddr);
-			Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
+				Hooks_Lua::CreateHooks(RealBaseAddr);
+				Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
 			}
 		}// ChecKVersion
 
