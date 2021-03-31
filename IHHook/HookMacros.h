@@ -5,7 +5,8 @@
 //tex typedef for the function pointer, 
 //and an extern function pointer of the type
 //so you can include a header with the hookfunc in other files and use the function
-#define FUNCPTRDEF(ret, name, ...) typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
+#define FUNCPTRDEF(ret, name, ...)\
+typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
 extern name##Func* name;\
 extern name##Func* name##Addr;\
 //Example use:
@@ -16,7 +17,8 @@ extern name##Func* name##Addr;\
 
 //tex declare function pointer, and set to address in respect to module base, this will be rebased and overwritten at runtime using CREATEHOOK. Kinda hinky, but it saves having to set up yet another variable.
 //since it's actually setting value this macro cant be in header/must be in a cpp else linker will complain about the muli decls
-#define HOOKPTR(name, address) name##Func* name = (name##Func*)address;\
+#define HOOKPTR(name, address)\
+name##Func* name = (name##Func*)address;\
 name##Func* name##Addr = (name##Func*)address;\
 //Example use:
 //HOOKPTR(lua_newstate, 0x14cdd7ab0);
@@ -27,7 +29,8 @@ name##Func* name##Addr = (name##Func*)address;\
 //tex following macros used in create hooks functions at runtime, requires setup with HOOK* macros
 
 //tex dont need detour, just want original function
-#define CREATEHOOK(name) void* name##AddrRebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr); \
+#define CREATEHOOK(name)\
+void* name##AddrRebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr); \
 name = (name##Func*)name##AddrRebased;
 //Example use:
 //CREATEHOOK(lua_newstate);
@@ -39,7 +42,8 @@ name = (name##Func*)name##AddrRebased;
 //tex detour and trampoline via MinHook
 // Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
 // the real base address changes every time the game is run though, so we have to remove that base address and add the real one
-#define CREATEDETOURB(name) void* name##Rebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr);\
+#define CREATEDETOURB(name)\
+void* name##Rebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr);\
 MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));
 //Example use:
 //CREATEHOOK(lua_newstate);
