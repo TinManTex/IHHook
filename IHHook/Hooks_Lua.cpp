@@ -3,7 +3,7 @@
 	IHHook hooks lua by function addresses (defined in lua/*_Addresses.h), using (macros wrapping) MH_Hook initialised in CreateHooks() below
 	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it.
 	In some cases uses actual lua lib implementation.
-	See comments on CREATEHOOK entries in *_Creathooks.cpp.
+	See comments on CREATE_FUNCPTR entries in *_Creathooks.cpp.
 
 	function signatures/patterns would be more robust to game updates / different game versions than straight addresses, but take a long time to search
 	since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.

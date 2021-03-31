@@ -115,7 +115,7 @@ namespace IHHook {
 			//}
 			//DEBUGNOW
 #ifndef VER_JP
-			CREATEHOOK(StrCode64)
+			CREATE_FUNCPTR(StrCode64)
 			//void* StrCode64Rebased = (void*)(((size_t)StrCode64 - BaseAddr) + RealBaseAddr); \
 			//StrCode64 = (StrCode64Func*)StrCode64Rebased;
 

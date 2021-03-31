@@ -29,11 +29,11 @@ name##Func* name##Addr = (name##Func*)address;\
 //tex following macros used in create hooks functions at runtime, requires setup with HOOK* macros
 
 //tex dont need detour, just want original function
-#define CREATEHOOK(name)\
+#define CREATE_FUNCPTR(name)\
 void* name##AddrRebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr); \
 name = (name##Func*)name##AddrRebased;
 //Example use:
-//CREATEHOOK(lua_newstate);
+//CREATE_FUNCPTR(lua_newstate);
 //Expands to:
 //void* lua_newstateAddrRebased = (void*)((lua_newstateAddr - BaseAddr) + RealBaseAddr);
 //lua_newstate = (lua_newstateFunc)lua_newstateAddrRebased;
@@ -46,7 +46,7 @@ name = (name##Func*)name##AddrRebased;
 void* name##Rebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr);\
 MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));
 //Example use:
-//CREATEHOOK(lua_newstate);
+//CREATEDETOURB(lua_newstate);
 //Expands to:
 //void* lua_newstateAddrRebased = (void*)((lua_newstateAddr - BaseAddr) + RealBaseAddr);
 //MH_CreateHook(lua_newstateRebased, lua_newstateHook, (LPVOID*)&lua_newstate);

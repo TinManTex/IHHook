@@ -110,7 +110,7 @@ FUNC_DECL_ADDR(luaL_checkudata, 0x14c200630);
 FUNC_DECL_ADDR(luaL_where, 0x14c203350);
 FUNC_DECL_ADDR(luaL_error, 0x14c2008f0);
 FUNC_DECL_ADDR(luaL_checkoption, 0x14c1ffd60);
-//FUNC_DECL_ADDR(luaL_ref, USING_CODE);//tex: Unsure on this address, see lauxlib_Creathooks CREATEHOOK(luaL_ref) for more info
+//FUNC_DECL_ADDR(luaL_ref, USING_CODE);//tex: Unsure on this address, see lauxlib_Creathooks CREATE_FUNCPTR(luaL_ref) for more info
 //FUNC_DECL_ADDR(luaL_unref, USING_CODE);
 FUNC_DECL_ADDR(luaL_loadfile, 0x141a17b90);
 FUNC_DECL_ADDR(luaL_loadbuffer, 0x14c200f90);

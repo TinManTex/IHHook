@@ -16,45 +16,45 @@ void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr) {
 	//DEBUGNOW uintptr_t luaI_openlibOrig = FindPattern(NULL, luaI_openlibSig, luaI_openlibMask);
 
 	//...
-	CREATEHOOK(luaI_openlib)
-	//OFF CREATEHOOK(luaL_register)//tex: Using default implementation.
-	CREATEHOOK(luaL_getmetafield)//TEST
-	CREATEHOOK(luaL_callmeta)//TEST
-	CREATEHOOK(luaL_typerror)//TEST
-	CREATEHOOK(luaL_argerror)//TEST
-	CREATEHOOK(luaL_checklstring)//TEST
-	CREATEHOOK(luaL_optlstring)//TEST
-	CREATEHOOK(luaL_checknumber)//TEST
-	//OFF CREATEHOOK(luaL_optnumber)//tex: Using default implementation. Only use in os_difftime, but decompilation is giving a bunch more params than it usually takes
+	CREATE_FUNCPTR(luaI_openlib)
+	//OFF CREATE_FUNCPTR(luaL_register)//tex: Using default implementation.
+	CREATE_FUNCPTR(luaL_getmetafield)//TEST
+	CREATE_FUNCPTR(luaL_callmeta)//TEST
+	CREATE_FUNCPTR(luaL_typerror)//TEST
+	CREATE_FUNCPTR(luaL_argerror)//TEST
+	CREATE_FUNCPTR(luaL_checklstring)//TEST
+	CREATE_FUNCPTR(luaL_optlstring)//TEST
+	CREATE_FUNCPTR(luaL_checknumber)//TEST
+	//OFF CREATE_FUNCPTR(luaL_optnumber)//tex: Using default implementation. Only use in os_difftime, but decompilation is giving a bunch more params than it usually takes
 
-	CREATEHOOK(luaL_checkinteger)//TEST
-	CREATEHOOK(luaL_optinteger)//TEST
+	CREATE_FUNCPTR(luaL_checkinteger)//TEST
+	CREATE_FUNCPTR(luaL_optinteger)//TEST
 
-	CREATEHOOK(luaL_checkstack)//TEST
-	CREATEHOOK(luaL_checktype)//TEST
-	CREATEHOOK(luaL_checkany)//TEST
+	CREATE_FUNCPTR(luaL_checkstack)//TEST
+	CREATE_FUNCPTR(luaL_checktype)//TEST
+	CREATE_FUNCPTR(luaL_checkany)//TEST
 
-	CREATEHOOK(luaL_newmetatable)//TEST
-	CREATEHOOK(luaL_checkudata)//TEST
+	CREATE_FUNCPTR(luaL_newmetatable)//TEST
+	CREATE_FUNCPTR(luaL_checkudata)//TEST
 
-	CREATEHOOK(luaL_where)//TEST
-	CREATEHOOK(luaL_error)//TEST
+	CREATE_FUNCPTR(luaL_where)//TEST
+	CREATE_FUNCPTR(luaL_error)//TEST
 
-	CREATEHOOK(luaL_checkoption)//TEST
+	CREATE_FUNCPTR(luaL_checkoption)//TEST
 
-	//OFF CREATEHOOK(luaL_ref)//tex: Using default implementation. No uses in lua dist, found a function that looks much like it, but it was undefined, and has a errant param
-	//OFF CREATEHOOK(luaL_unref)//tex: Using default implementation.
+	//OFF CREATE_FUNCPTR(luaL_ref)//tex: Using default implementation. No uses in lua dist, found a function that looks much like it, but it was undefined, and has a errant param
+	//OFF CREATE_FUNCPTR(luaL_unref)//tex: Using default implementation.
 
-	CREATEHOOK(luaL_loadfile)//TEST
-	CREATEHOOK(luaL_loadbuffer)//TEST
-	//OFF CREATEHOOK(luaL_loadstring)//tex: Using default implementation.
+	CREATE_FUNCPTR(luaL_loadfile)//TEST
+	CREATE_FUNCPTR(luaL_loadbuffer)//TEST
+	//OFF CREATE_FUNCPTR(luaL_loadstring)//tex: Using default implementation.
 #ifndef  VER_JP
-	CREATEHOOK(luaL_newstate)
+	CREATE_FUNCPTR(luaL_newstate)
 #endif
 
-	CREATEHOOK(luaL_gsub)//TEST
+	CREATE_FUNCPTR(luaL_gsub)//TEST
 
-	CREATEHOOK(luaL_findtable)//TEST
+	CREATE_FUNCPTR(luaL_findtable)//TEST
 
 
 	//...
@@ -65,11 +65,11 @@ void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr) {
 	** =======================================================
 	*/
 
-	CREATEHOOK(luaL_buffinit)//TEST
-	CREATEHOOK(luaL_prepbuffer)
-	CREATEHOOK(luaL_addlstring)//TEST
-	//OFF CREATEHOOK(luaL_addstring)//tex: Using default implementation. Only call in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring
-	CREATEHOOK(luaL_addvalue)//TEST
-	CREATEHOOK(luaL_pushresult)//TEST
+	CREATE_FUNCPTR(luaL_buffinit)//TEST
+	CREATE_FUNCPTR(luaL_prepbuffer)
+	CREATE_FUNCPTR(luaL_addlstring)//TEST
+	//OFF CREATE_FUNCPTR(luaL_addstring)//tex: Using default implementation. Only call in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring
+	CREATE_FUNCPTR(luaL_addvalue)//TEST
+	CREATE_FUNCPTR(luaL_pushresult)//TEST
 }//CreateHooks_Lauxlib
 }//namespace IHHook
