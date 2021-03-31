@@ -248,7 +248,7 @@ namespace IHHook {
 			for each (std::string message in errorMessages) {
 				spdlog::error(message);
 			}
-			SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
+			SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 		} 
 		else {
 			if (lang != "en") {//DEBUGNOW
@@ -262,7 +262,7 @@ namespace IHHook {
 				for each (std::string message in errorMessages) {
 					spdlog::error(message);
 				}
-				SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
+				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
 			else {
 				MH_Initialize();
