@@ -37,6 +37,13 @@ extern name##Func* name##Addr;\
 //extern lua_newstateFunc lua_newstate;
 //extern lua_newstateFunc lua_newstateAddr;
 
+#define FUNCADDRDEF(ret, name, ...)\
+extern name##Func* name##Addr;\
+//Example use:
+//FUNCADDRDEF(lua_newstate);
+//Expands to:
+//extern lua_newstateFunc lua_newstateAddr;
+
 //base address of func, and actually declare the function pointer -- can be in header or code (as long as later code using it can see its declaration)
 #define FUNC_DECL_ADDR(name, address)\
 name##Func* name;\
@@ -62,19 +69,32 @@ name = (name##Func*)name##AddrRebased;
 //tex detour and trampoline via MinHook
 #define CREATE_HOOK(name)\
 void* name##Rebased = (void*)(((size_t)name##Addr - BaseAddr) + RealBaseAddr);\
-MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));
+MH_STATUS name##CreateStatus = MH_CreateHook(name##Rebased, name##Hook, reinterpret_cast<LPVOID*>(&name));\
+if (name##CreateStatus != MH_OK) {\
+	spdlog::error("MH_CreateHook failed for {} with code {}", "name", name##CreateStatus);\
+}
 //Example use:
 //CREATE_HOOK(lua_newstate);
 //Expands to:
-//void* lua_newstateAddrRebased = (void*)((lua_newstateAddr - BaseAddr) + RealBaseAddr);
-//MH_CreateHook(lua_newstateRebased, lua_newstateHook, (LPVOID*)&lua_newstate);
+//void* lua_newstateRebased = (void*)((lua_newstateAddr - BaseAddr) + RealBaseAddr);
+//MH_STATUS lua_newstateCreateStatus = MH_CreateHook(lua_newstateRebased, lua_newstateHook, (LPVOID*)&lua_newstate);
+//if (lua_newstateCreateStatus != MH_OK) {
+//	spdlog::error("MH_CreateHook failed for {} with code {}", "name", lua_newstateCreateStatus);\
+//}
 
 //tex ASSUMES CREATEDETOUR has defined name##Rebased
 #define ENABLEHOOK(name)\
-MH_STATUS name##Status = MH_EnableHook(name##Rebased);\
-if (name##Status != MH_OK) {\
-	spdlog::error("MH_EnableHook failed for {} with code {}", "name", name##Status);\
+MH_STATUS name##EnableStatus = MH_EnableHook(name##Rebased);\
+if (name##EnableStatus != MH_OK) {\
+	spdlog::error("MH_EnableHook failed for {} with code {}", "name", name##EnableStatus);\
 }
+//Example use:
+//ENABLEHOOK(lua_newstate);
+//Expands to:
+//MH_STATUS lua_newstateEnableStatus = MH_EnableHook(lua_newstateRebased);
+//if (lua_newstateEnableStatus != MH_OK) {
+//	spdlog::error("MH_EnableHook failed for {} with code {}", "name", lua_newstateEnableStatus);\
+//}
 
 #define DEFINEPATTERN(name,signature,mask) char* name##Sig = signature;\
 char* name##Mask = mask;
