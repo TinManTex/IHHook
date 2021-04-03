@@ -10,6 +10,7 @@
 #include "Hooks_CityHash.h"
 #include "Hooks_Lua.h"
 #include "Hooks_TPP.h"
+#include "Hooks_FOV.h"
 
 #include "RawInput.h"
 
@@ -226,6 +227,9 @@ namespace IHHook {
 			if (lang != "en" && lang != "jp") {
 				spdlog::warn("Unexpected lang version");
 			}
+			else {
+				break;
+			}
 		}//while infile
 
 
@@ -264,14 +268,23 @@ namespace IHHook {
 				}
 				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
-			else {
+			else {					
+				Hooks_Lua::SetupLog();
+
 				MH_Initialize();
+
+				auto tstart = std::chrono::high_resolution_clock::now();
 #ifndef MINIMAL_HOOK
 				Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
 				Hooks_Lua::CreateHooks(RealBaseAddr);
 				Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
-			}
+				Hooks_FOV::CreateHooks(RealBaseAddr);//DEBUGNOW
+		
+				auto tend = std::chrono::high_resolution_clock::now();
+				auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+				spdlog::debug("IHHook::CreateHooks total time(microseconds): {}µs", durationShort);
+			}//if ok to hook
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -285,8 +298,26 @@ namespace IHHook {
 			spdlog::info("Hooked D3D11");
 		}
 		else {
-			MessageBox(NULL, L"Could not hook D3D11\n", L"Infinite Heaven IHHook", NULL);
-		}
+			if (std::filesystem::exists("d3d11.dll")) {
+				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
+				std::wstring message =
+					L"ERROR: Could not hook D3D11\n"
+					L"Unknown d3d11.dll in MGS_TPP folder\n"
+					//DEBUGNOW L"If this is from the FOV Modifier dll you can remove it\n"
+					//L"as IHHook now has it intergrated\n"
+					;
+				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
+			}
+			else {
+				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
+				std::wstring message = 
+					L"ERROR: Could not hook D3D11\n"
+					L"See ihhook_log.txt in MGS_TPP folder for details.\n"
+				;
+				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
+			}//exists d3d11.dll
+
+		}//d3dHooked
 
 		spdlog::debug("IHH ctor complete");
 		log->flush();
