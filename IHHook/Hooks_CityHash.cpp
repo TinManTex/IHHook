@@ -13,8 +13,8 @@ namespace IHHook {
 
 		typedef unsigned __int64(__fastcall* cityHash_func)(char* str, unsigned int len);
 
-		const size_t CityHash1Addr = 0x141a08ee0; //<//1.0.15.3 //1.0.15.2> 0x141a08ec0;
-		const size_t CityHash2Addr = 0x14c1bc140;//<//1.0.15.3 //1.0.15.2> 0x14bcbdfa0;
+		const size_t CityHash1BaseAddr = 0x141a08ee0; //<//1.0.15.3 //1.0.15.2> 0x141a08ec0;
+		const size_t CityHash2BaseAddr = 0x14c1bc140;//<//1.0.15.3 //1.0.15.2> 0x14bcbdfa0;
 		cityHash_func origCityHash1;
 		cityHash_func origCityHash2;
 
@@ -150,10 +150,10 @@ namespace IHHook {
 			//logger = spdlog::basic_logger_mt<spdlog::async_factory>("cityhash", logName);
 			cityLog->set_pattern("%v");//tex raw logging
 
-			// CityHash1Addr / CityHash2Addr addresses are from IDA, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
+			// CityHash1BaseAddr / CityHash2BaseAddr addresses are from IDA, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
 			// the real base address changes every time the game is run though, so we have to remove that base address and add the real one
-			void* CityHash1_rebased = (void*)((CityHash1Addr - BaseAddr) + RealBaseAddr);
-			void* CityHash2_rebased = (void*)((CityHash2Addr - BaseAddr) + RealBaseAddr);
+			void* CityHash1_rebased = (void*)((CityHash1BaseAddr - BaseAddr) + RealBaseAddr);
+			void* CityHash2_rebased = (void*)((CityHash2BaseAddr - BaseAddr) + RealBaseAddr);
 
 			MH_CreateHook(CityHash1_rebased, CityHash1Hook, (LPVOID*)&origCityHash1);
 			MH_CreateHook(CityHash2_rebased, CityHash2Hook, (LPVOID*)&origCityHash2);
