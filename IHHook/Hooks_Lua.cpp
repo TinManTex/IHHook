@@ -180,6 +180,11 @@ namespace IHHook {
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
+			CREATE_REBASED_ADDR(luaL_openlibs)
+			CREATE_REBASED_ADDR(lua_newstate)
+			CREATE_REBASED_ADDR(luaL_loadbuffer)
+			CREATE_REBASED_ADDR(lua_atpanic)
+			
 			CREATE_HOOK(luaL_openlibs)
 #ifndef MINIMAL_HOOK
 			CREATE_HOOK(lua_newstate)

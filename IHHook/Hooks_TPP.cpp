@@ -137,6 +137,7 @@ namespace IHHook {
 
 
 #ifndef VER_JP			
+			CREATE_REBASED_ADDR(GetFreeRoamLangId)
 			CREATE_HOOK(GetFreeRoamLangId)
 			ENABLEHOOK(GetFreeRoamLangId)
 
