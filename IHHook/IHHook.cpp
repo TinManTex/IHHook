@@ -278,8 +278,8 @@ namespace IHHook {
 				Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
 				Hooks_Lua::CreateHooks(RealBaseAddr);
-				Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
-				Hooks_FOV::CreateHooks(RealBaseAddr);//DEBUGNOW
+				Hooks_TPP::CreateHooks(RealBaseAddr); 
+				Hooks_FOV::CreateHooks(RealBaseAddr);
 		
 				auto tend = std::chrono::high_resolution_clock::now();
 				auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
