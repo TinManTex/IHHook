@@ -24,7 +24,7 @@ namespace IHHook {
 
 		enum CamMode {
 			NORMAL,
-			SHOULDER,
+			AIMING,
 			HIDING,
 			CQC,
 		};
@@ -135,8 +135,8 @@ namespace IHHook {
 			//tex since updateFOVLerpRef is at the address part of of the E8 CALL rel32 (see REF above again), it needs to jump to the next instruction (+4)
 			//then add the dereferenced rel32
 			UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
-			MH_STATUS updateFOVLerpCreateStatus = MH_CreateHook((LPVOID*)UpdateFOVLerpAddr, UpdateFOVLerpHook, (LPVOID*)&UpdateFOVLerp);
-			MH_STATUS updateFOVLerpEnableStatus = MH_EnableHook((LPVOID*)UpdateFOVLerpAddr);
+			CREATE_HOOK(UpdateFOVLerp)
+			ENABLEHOOK(UpdateFOVLerp)
 		}//CreateHooks
 
 		void SetFocalLength(CamMode camMode, float focalLength) {
@@ -144,7 +144,7 @@ namespace IHHook {
 				case CamMode::NORMAL:
 					new_tpp_fov = focalLength;
 					break;
-				case CamMode::SHOULDER:
+				case CamMode::AIMING:
 					new_shoulder_fov = focalLength;
 					break;
 				case CamMode::HIDING:
@@ -171,10 +171,10 @@ namespace IHHook {
 				new_shoulder_fov = default_shoulder_fov;
 				new_hiding_fov = default_hiding_fov;
 				new_cqc_fov = default_cqc_fov;
-				MH_STATUS updateFOVLerpEnableStatus = MH_DisableHook((LPVOID*)UpdateFOVLerpAddr);
+				DISABLEHOOK(UpdateFOVLerp);
 			}
 			else {
-				MH_STATUS updateFOVLerpEnableStatus = MH_EnableHook((LPVOID*)UpdateFOVLerpAddr);
+				ENABLEHOOK(UpdateFOVLerp)
 			}
 			return 1;
 		}//l_SetCamHook
