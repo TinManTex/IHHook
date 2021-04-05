@@ -1,4 +1,5 @@
 // adapted from //mons fork of AltimoorTADSKs fov Modifier dll https://github.com/mon/MGSV-TPP-FoV
+// supported by IH InfCamHook.lua
 
 #include <stdexcept>
 #include <cmath>
@@ -15,9 +16,28 @@
 
 #include <MemoryUtils.h>
 
+#include "IHHook.h"//DEBUGNOW
 
 namespace IHHook {
+
+
 	namespace Hooks_FOV {
+		FUNCPTRDEF(void, UpdateFOVLerp, const uintptr_t thisptr)
+		//typedef void(__fastcall UpdateFOVLerpFunc) (const uintptr_t thisptr); 
+		//	extern UpdateFOVLerpFunc* UpdateFOVLerp;
+		//	extern UpdateFOVLerpFunc* UpdateFOVLerpBaseAddr;
+		//	extern void* UpdateFOVLerpAddr;
+		FUNC_DECL_ADDR(UpdateFOVLerp, 0x141116800)//1.0.15.3 en
+
+		FUNC_DECL_SIG(UpdateFOVLerp,
+			"\x4C\x8B\x00\x49\x89\x00\x00\x55\x56\x57\x41\x00\x41\x00\x49\x8D\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x33\x00\x48\x89\x00\x00\x00\x00\x00\xF3\x0F",
+			 "xx?xx??xxxx?x?xx?????xxx????xx?????xx?xx?????xx")
+		//FUNC_DECL_PATTERN("4C 8B ? 49 89 ? ? 55 56 57 41 ? 41 ? 49 8D ? ? ? ? ? 48 81 EC ? ? ? ? 48 8B ? ? ? ? ? 48 33 ? 48 89 ? ? ? ? ? F3 0F")
+
+		//intptr_t UpdateFOVLerpAddr;
+
+
+
 		enum class gametype { mgsv, mgo };
 
 		gametype game = gametype::mgsv;
@@ -47,10 +67,6 @@ namespace IHHook {
 		float new_hiding_fov = default_hiding_fov;
 		float new_cqc_fov = default_cqc_fov;
 
-		intptr_t UpdateFOVLerpAddr;
-
-		typedef void(__fastcall UpdateFOVLerpFunc)(const uintptr_t thisptr);
-		UpdateFOVLerpFunc* UpdateFOVLerp;
 		/**
 		 * hook_update_fov_lerp - Change the target fov
 		 * @thisptr:	Struct containing fov data
@@ -122,19 +138,35 @@ namespace IHHook {
 			//REF: E8 cd 	CALL rel32 	Call near, relative, displacement relative to next instruction
 			//14111dc7f e8 7c 8b ff ff
 			//updateFOVLerpRef = 14111dc80 > 7c 8b
-			const auto updateFOVLerpRef = (int32_t*)(MemoryUtils::sigscan("updateFOVLerpRef",
-				"\x48\x8B\x8F\x00\x00\x00\x00\x48\x8B\x01\xFF\x50\x18\x48\x8D\x4F\xE0\xE8",
-				"xxx????xxxxxxxxxxx") + 18);
+			//const auto updateFOVLerpRef = (int32_t*)(MemoryUtils::sigscan("updateFOVLerpRef",
+			//	"\x48\x8B\x8F\x00\x00\x00\x00\x48\x8B\x01\xFF\x50\x18\x48\x8D\x4F\xE0\xE8",
+			//	"xxx????xxxxxxxxxxx") + 18);
 
-			if (updateFOVLerpRef == NULL){
-				spdlog::warn("FOV hook fail: update_fov_lerp_ref == NULL");
-				return;
-			}
+			//if (updateFOVLerpRef == NULL){
+			//	spdlog::warn("FOV hook fail: update_fov_lerp_ref == NULL");
+			//	return;
+			//}
 
 			//tex update_fov_lerp() 1.0.15.3 = 0x141116800, in case the unlikely event sig breaks
 			//tex since updateFOVLerpRef is at the address part of of the E8 CALL rel32 (see REF above again), it needs to jump to the next instruction (+4)
 			//then add the dereferenced rel32
-			UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
+			//DEBUGNOW UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
+
+
+			//DEBUGNOW
+			if (isTargetExe) {
+				CREATE_REBASED_ADDR(UpdateFOVLerp)
+				//UpdateFOVLerpAddr = (void*)(((size_t)UpdateFOVLerpBaseAddr - BaseAddr) + RealBaseAddr);//DEBUGNOW
+			}
+			else {
+				CREATE_SIG_ADDR(UpdateFOVLerp)
+			}
+
+			if (UpdateFOVLerpAddr == NULL) {
+				spdlog::warn("FOV hook fail: UpdateFOVLerpAddr == NULL");
+				return;
+			}
+
 			CREATE_HOOK(UpdateFOVLerp)
 			ENABLEHOOK(UpdateFOVLerp)
 		}//CreateHooks
