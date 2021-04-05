@@ -73,9 +73,7 @@ FUNCPTRDEF(int, luaL_loadfile, lua_State *L, const char *filename);
 FUNCPTRDEF(int, luaL_loadbuffer, lua_State *L, const char *buff, size_t sz, const char *name);
 LUALIB_API int (luaL_loadstring)(lua_State *L, const char *s); //FUNCPTRDEF(int, luaL_loadstring, lua_State *L, const char *s);
 
-#ifndef  VER_JP
 FUNCPTRDEF(lua_State *, luaL_newstate, void);
-#endif // ! VER_JP
 
 FUNCPTRDEF(const char *, luaL_gsub, lua_State *L, const char *s, const char *p, const char *r);
 

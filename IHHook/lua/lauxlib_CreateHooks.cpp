@@ -48,9 +48,7 @@ void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr) {
 	CREATE_FUNCPTR(luaL_loadfile)//TEST
 	CREATE_FUNCPTR(luaL_loadbuffer)//TEST
 	//OFF CREATE_FUNCPTR(luaL_loadstring)//tex: Using default implementation.
-#ifndef  VER_JP
 	CREATE_FUNCPTR(luaL_newstate)
-#endif
 
 	CREATE_FUNCPTR(luaL_gsub)//TEST
 
