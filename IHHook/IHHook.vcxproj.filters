@@ -312,5 +312,6 @@
     <None Include="imguiimpl\imgui_iterator.inl">
       <Filter>Source Files\imguiimpl</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
