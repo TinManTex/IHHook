@@ -29,28 +29,32 @@
 #define FUNCPTRDEF(ret, name, ...)\
 typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
 extern name##Func* name;\
-extern name##Func* name##BaseAddr;\
+extern intptr_t* name##BaseAddr;\
+extern intptr_t* name##Addr;
 //Example use:
 //FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //extern lua_newstateFunc lua_newstate;
 //extern lua_newstateFunc lua_newstateBaseAddr;
+//extern lua_newstateFunc lua_newstateAddr;
 
 //base address of func, and actually declare the function pointer -- can be in header or code (as long as later code using it can see its declaration)
 #define FUNC_DECL_ADDR(name, address)\
 name##Func* name;\
-name##Func* name##BaseAddr = (name##Func*)address;\
+intptr_t* name##BaseAddr = (intptr_t*)address;\
+intptr_t* name##Addr;
 //Example use:
 //FUNC_DECL_ADDR(lua_newstate, 0x14cdd7ab0);
 //Expands to:
 //lua_newstateFunc lua_newstate;
 //lua_newstateFunc lua_newstateBaseAddr = (lua_newstateFunc)0x14cdd7ab0;
+//lua_newstateFunc lua_newstateBaseAddr;
 
 //just want to use original function
 //sets the pointer to the rebased address so the function pointer is usable
 #define CREATE_FUNCPTR(name)\
-void* name##FuncAddr = (void*)(((size_t)name##BaseAddr - BaseAddr) + RealBaseAddr); \
+intptr_t* name##FuncAddr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);\
 name = (name##Func*)name##FuncAddr;
 //Example use:
 //CREATE_FUNCPTR(lua_newstate);
@@ -60,7 +64,7 @@ name = (name##Func*)name##FuncAddr;
 
 //Rebases an address an puts it in var for CREATE_HOOK macro
 #define CREATE_REBASED_ADDR(name)\
-void* name##Addr = (void*)(((size_t)name##BaseAddr - BaseAddr) + RealBaseAddr);
+name##Addr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);
 //Example use:
 //CREATE_HOOK(lua_newstate);
 //Expands to:
@@ -72,7 +76,7 @@ void* name##Addr = (void*)(((size_t)name##BaseAddr - BaseAddr) + RealBaseAddr);
 //while the hook/detour is at <name>Hook function pointer.
 //ASSUMPTION must have a name##Addr of the runtime location of the function, either via CREATE_REBASED_ADDR or some other means (like a sig scan or other method)
 #define CREATE_HOOK(name)\
-MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)name##Addr, name##Hook, reinterpret_cast<LPVOID*>(&name));\
+MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)name##Addr, name##Hook, (LPVOID*)&name);\
 if (name##CreateStatus != MH_OK) {\
 	spdlog::error("MH_CreateHook failed for {} with code {}", "name", name##CreateStatus);\
 }
@@ -111,9 +115,4 @@ if (name##DisableStatus != MH_OK) {\
 //if (DisableStatus != MH_OK) {
 //	spdlog::error("MH_DisableHook failed for {} with code {}", "name", lua_newstateDisableStatus);\
 //}
-
-#define DEFINEPATTERN(name,signature,mask)\
-char* name##Sig = signature;\
-char* name##Mask = mask;
-
 
