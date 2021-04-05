@@ -11,8 +11,13 @@
 #include <sstream>   
 
 namespace IHHook {
+	//DEBUGNOW push this into somewhere more accessable
 	FUNC_DECL_ADDR(StrCode64, 0x14c1bd730)//1.0.15.3
-	//HOOKPTR(StrCode64, 0x1433534b0)//1.0.15.3 jp
+		//0x1433534b0)//1.0.15.3 jp
+	FUNC_DECL_SIG(StrCode64, 
+		"\x48\x89\x00\x00\x00\x56\x48\x83\xEC\x00\x80\x3C\x0A", 
+		"xx???xxxx?xxx")
+	FUNC_DECL_PATTERN(StrCode64, "48 89 ? ? ? 56 48 83 EC ? 80 3C 0A")
 
 	std::map<int, long long> locationLangIds{
 		{10,0x1b094033d45d},//afgh,tpp_loc_afghan
@@ -41,7 +46,10 @@ namespace IHHook {
 		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
 		FUNC_DECL_ADDR(GetFreeRoamLangId, 0x145e60f40);//1.0.15.3_en
 		//FUNC_DECL_ADDR(GetFreeRoamLangId, 0x147a6b040);//1.0.15.3_jp	
-
+		FUNC_DECL_SIG(GetFreeRoamLangId,
+			"\x0F\xB7\x00\x83\xF8\x00\x74\x00\x83\xF8\x00\x74\x00\x83\xF8\x00\x74\x00\x48\xB8",
+			"xx?xx?x?xx?x?xx?x?xx")
+		FUNC_DECL_PATTERN(GetFreeRoamLangId,"0F B7 ? 83 F8 ? 74 ? 83 F8 ? 74 ? 83 F8 ? 74 ? 48 B8")
 
 		//tex the idroid free roam mission tab had an issue where it wouldn't show the name of custom free roam missions
 		//despite there being a map_location_parameter - locationNameLangId = "tpp_loc_<whatever> (that matches tpp_common lng for vanilla free)
@@ -126,7 +134,12 @@ namespace IHHook {
 				////DEBUGNOW proof of concept hack
 				//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 	
+			if (isTargetExe) {
 			CREATE_REBASED_ADDR(GetFreeRoamLangId)
+			}
+			else {
+				CREATE_SIG_ADDR(GetFreeRoamLangId)
+			}
 			CREATE_HOOK(GetFreeRoamLangId)
 			ENABLEHOOK(GetFreeRoamLangId)
 
