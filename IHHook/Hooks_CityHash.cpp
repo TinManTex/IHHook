@@ -18,6 +18,17 @@ namespace IHHook {
 		cityHash_func origCityHash1;
 		cityHash_func origCityHash2;
 
+		//FUNCPTRDEF(unsigned __int64, CityHash1, char* str, unsigned int  len)
+		//FUNCPTRDEF(unsigned __int64, CityHash2, char* str, unsigned int  len)
+		//FUNC_DECL_SIG(CityHash1,
+		//	"\x40\x00\x55\x56\x41\x00\x48\x83\xEC\x00\x44\x8B", 
+		//	"x?xxx?xxx?xx")
+		//FUNC_DECL_PATTERN(CityHash1,"40 ? 55 56 41 ? 48 83 EC ? 44 8B")
+		//FUNC_DECL_SIG(CityHash2,
+		//	"\x53\x55\x56\x41\x00\x48\x83\xEC\x00\x41\x89", 
+		//	"xxxx?xxx?xx")
+		//	FUNC_DECL_PATTERN(CityHash2,"53 55 56 41 ? 48 83 EC ? 41 89")
+
 		std::wstring cityLogName = L"cityhash_log.txt";
 		std::shared_ptr<spdlog::logger> cityLog;
 
@@ -150,17 +161,19 @@ namespace IHHook {
 			//logger = spdlog::basic_logger_mt<spdlog::async_factory>("cityhash", logName);
 			cityLog->set_pattern("%v");//tex raw logging
 
-			// CityHash1BaseAddr / CityHash2BaseAddr addresses are from IDA, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
-			// the real base address changes every time the game is run though, so we have to remove that base address and add the real one
-			void* CityHash1_rebased = (void*)((CityHash1BaseAddr - BaseAddr) + RealBaseAddr);
-			void* CityHash2_rebased = (void*)((CityHash2BaseAddr - BaseAddr) + RealBaseAddr);
+			if (isTargetExe) {//DEBUGNOW
+				// CityHash1BaseAddr / CityHash2BaseAddr addresses are from IDA, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
+				// the real base address changes every time the game is run though, so we have to remove that base address and add the real one
+				void* CityHash1_rebased = (void*)((CityHash1BaseAddr - BaseAddr) + RealBaseAddr);
+				void* CityHash2_rebased = (void*)((CityHash2BaseAddr - BaseAddr) + RealBaseAddr);
 
-			MH_CreateHook(CityHash1_rebased, CityHash1Hook, (LPVOID*)&origCityHash1);
-			MH_CreateHook(CityHash2_rebased, CityHash2Hook, (LPVOID*)&origCityHash2);
+				MH_CreateHook(CityHash1_rebased, CityHash1Hook, (LPVOID*)&origCityHash1);
+				MH_CreateHook(CityHash2_rebased, CityHash2Hook, (LPVOID*)&origCityHash2);
 
-			if (enableCityHook) {
-				MH_EnableHook(CityHash1_rebased);
-				MH_EnableHook(CityHash2_rebased);
+				if (enableCityHook) {
+					MH_EnableHook(CityHash1_rebased);
+					MH_EnableHook(CityHash2_rebased);
+				}
 			}
 		}//CreateHooks
 	}//namespace Hooks_CityHash
