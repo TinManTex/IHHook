@@ -36,6 +36,7 @@ namespace IHHook {
 	std::vector<std::string> errorMessages{};
 
 	size_t RealBaseAddr;
+	bool isTargetExe = false;
 
 	terminate_function terminate_Original;
 
@@ -237,6 +238,8 @@ namespace IHHook {
 		std::string exeVersionStr = "";
 		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion, exeVersionStr);
 		if (versionDelta != 0) {
+			isTargetExe = false;
+
 			errorMessages.push_back("ERROR: IHHook->exe version mismatch");
 			errorMessages.push_back("Infinite Heaven will continue to load");
 			errorMessages.push_back("with some limitations.");
@@ -256,6 +259,8 @@ namespace IHHook {
 		} 
 		else {
 			if (lang != "en") {//DEBUGNOW
+				isTargetExe = false;
+
 				errorMessages.push_back("WARNING: IHHook currently only");
 				errorMessages.push_back("supports the english language version");
 				errorMessages.push_back("Infinite Heaven will continue to load");
@@ -268,24 +273,29 @@ namespace IHHook {
 				}
 				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
-			else {					
-				Hooks_Lua::SetupLog();
-
-				MH_Initialize();
-
-				auto tstart = std::chrono::high_resolution_clock::now();
-#ifndef MINIMAL_HOOK
-				Hooks_CityHash::CreateHooks(RealBaseAddr);
-#endif // !MINIMAL_HOOK
-				Hooks_Lua::CreateHooks(RealBaseAddr);
-				Hooks_TPP::CreateHooks(RealBaseAddr); 
-				Hooks_FOV::CreateHooks(RealBaseAddr);
-		
-				auto tend = std::chrono::high_resolution_clock::now();
-				auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-				spdlog::debug("IHHook::CreateHooks total time(microseconds): {}µs", durationShort);
-			}//if ok to hook
+			else {
+				isTargetExe = true;
+			}//
 		}// ChecKVersion
+
+		//DEBUGNOW
+		{//tex hook em up boys
+			Hooks_Lua::SetupLog();
+
+			MH_Initialize();
+
+			auto tstart = std::chrono::high_resolution_clock::now();
+#ifndef MINIMAL_HOOK
+			Hooks_CityHash::CreateHooks(RealBaseAddr);
+#endif // !MINIMAL_HOOK
+			Hooks_Lua::CreateHooks(RealBaseAddr);
+			Hooks_TPP::CreateHooks(RealBaseAddr);
+			Hooks_FOV::CreateHooks(RealBaseAddr);
+
+			auto tend = std::chrono::high_resolution_clock::now();
+			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+			spdlog::debug("IHHook::CreateHooks total time(microseconds): {}µs", durationShort);
+		}
 
 		PipeServer::StartPipeServer();
 
