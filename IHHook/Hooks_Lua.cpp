@@ -28,6 +28,7 @@
 
 
 #include <string>
+#include "MemoryUtils.h"
 #include <Psapi.h>// ModuleInfo, DEBUGNOW
 
 extern void LoadImguiBindings(lua_State* lState);
@@ -46,92 +47,10 @@ namespace IHHook {
 
 	std::shared_ptr<spdlog::logger> luaLog;
 
-	//TEST DEBUGNOW todo shift into another module
-	//Get all module related info, this will include the base DLL and the size of the module
-	MODULEINFO GetModuleInfo(LPCWSTR szModule) {
-		MODULEINFO modinfo = { 0 };
-		HMODULE hModule = GetModuleHandle(szModule);
-		if (hModule == 0)
-			return modinfo;
-		GetModuleInformation(GetCurrentProcess(), hModule, &modinfo, sizeof(MODULEINFO));
-		return modinfo;
-	}
-
-	//Pattern Scan https://guidedhacking.com/threads/c-signature-scan-pattern-scanning-tutorial-difficulty-3-10.3981
-	uintptr_t FindPattern(LPCWSTR module, char* pattern, char* mask) {
-		spdlog::trace("FindPattern:");//DEBUGNOW
-		spdlog::trace("Sig:{}", pattern);//DEBUGNOW
-		spdlog::trace("Msk:{}", mask);//DEBUGNOW
-
-		//Get all module related information
-		MODULEINFO mInfo = GetModuleInfo(module);
-
-		//Assign our base and module size
-		uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
-
-		uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
-
-		//Get length for our mask, this will allow us to loop through our array
-		DWORD patternLength = (DWORD)strlen(mask);
-
-		for (DWORD i = 0; i < size - patternLength; i++) {
-			bool found = true;
-			for (DWORD j = 0; j < patternLength; j++) {
-				//if we have a ? in our mask then we have true by default,
-				//or if the bytes match then we keep searching until finding it or not
-				found &= mask[j] == '?' || pattern[j] == *(char*)(base + i + j);
-			}
-
-			//found = true, our entire pattern was found
-			if (found) {
-				spdlog::trace("Pattern found : {x}", (base + i));
-				return base + i;
-			}
-		}
-		spdlog::trace("Pattern not found");
-		return NULL;
-	}
-
-	int CompareByteArray(PBYTE ByteArray1, PCHAR ByteArray2, PCHAR Mask, DWORD Length) {
-		DWORD nextStart = 0;
-		char start = ByteArray2[0];
-		for (DWORD i = 0; i < Length; i++) {
-			if (Mask[i] == '?') {
-				continue;
-			}
-			if (ByteArray1[i] == start) {
-				nextStart = i;
-			}
-			if (ByteArray1[i] != (BYTE)ByteArray2[i]) {
-				return nextStart;
-			}
-		}
-		return -1;
-	}
-
-	PBYTE FindSignature(LPVOID BaseAddress, DWORD ImageSize, PCHAR Signature, PCHAR Mask) {
-		PBYTE Address = NULL;
-		PBYTE Buffer = (PBYTE)BaseAddress;
-
-		DWORD Length = strlen(Mask);
-
-		for (DWORD i = 0; i < (ImageSize - Length); i++) {
-			int result = CompareByteArray((Buffer + i), Signature, Mask, Length);
-			if (result < 0) {
-				Address = (PBYTE)BaseAddress + i;
-				break;
-			}
-			else {
-				i += result;
-			}
-		}
-
-		return Address;
-	}
-
 	void TestSigScan() {
+		auto tstart = std::chrono::high_resolution_clock::now();
 			//Get all module related information
-		MODULEINFO mInfo = GetModuleInfo(NULL);
+		MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
 
 		//Assign our base and module size
 		uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
@@ -148,26 +67,19 @@ namespace IHHook {
 		char* luaI_openlibSigShort = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC";
 		char* luaI_openlibMaskShort = "xx?x????xxxxxxxx";
 
-		//auto t1 = std::chrono::high_resolution_clock::now();
+
 		//uintptr_t luaI_openlibOrig = FindPattern(NULL, luaI_openlibSig, luaI_openlibMask);
-		//auto t2 = std::chrono::high_resolution_clock::now();
 
-		//auto duration = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-		//spdlog::debug("sig scan long time: {}",duration);
-
-		auto t3 = std::chrono::high_resolution_clock::now();
 		//uintptr_t luaI_openlibOrigShort = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
 		//PBYTE luaI_openlibOrigShort = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
 
 		//uintptr_t foxMainOrigFoundPattern = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
-		PBYTE foxMainOrigFoundSig = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
+		PBYTE foxMainOrigFoundSig = MemoryUtils::FindSignature("foxMain", mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
 
-		auto t4 = std::chrono::high_resolution_clock::now();
-
-		auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
-		spdlog::debug("sig scan short time: {}", durationShort);
-	}
-	//< TEST
+		auto tend = std::chrono::high_resolution_clock::now();
+		auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+		spdlog::debug("sig scan total time: {}", durationShort);
+	}//TestSigScan
 
 	namespace Hooks_Lua {
 		lua_State* luaState = NULL;
@@ -240,11 +152,7 @@ namespace IHHook {
 			return oldPanicFunc;
 		}//lua_atpanicDetour
 
-		//tex: caller DLLMain
-		//IN/SIDE: IHHook::BaseAddr
-		void CreateHooks(size_t RealBaseAddr) {
-			spdlog::debug(__func__);
-
+		void SetupLog() {
 			//tex create ih_log
 			DeleteFile(luaLogNamePrev.c_str());
 			CopyFile(luaLogName.c_str(), luaLogNamePrev.c_str(), false);
@@ -261,11 +169,22 @@ namespace IHHook {
 				luaLog->set_level(spdlog::level::info);
 				luaLog->flush_on(spdlog::level::err);
 			}
+		}//SetupLog
+
+		//tex: caller DLLMain
+		//IN/SIDE: IHHook::BaseAddr
+		void CreateHooks(size_t RealBaseAddr) {
+			spdlog::debug(__func__);
 
 			CreateHooks_Lua(BaseAddr, RealBaseAddr);
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
+			CREATE_REBASED_ADDR(luaL_openlibs)
+			CREATE_REBASED_ADDR(lua_newstate)
+			CREATE_REBASED_ADDR(luaL_loadbuffer)
+			CREATE_REBASED_ADDR(lua_atpanic)
+			
 			CREATE_HOOK(luaL_openlibs)
 #ifndef MINIMAL_HOOK
 			CREATE_HOOK(lua_newstate)

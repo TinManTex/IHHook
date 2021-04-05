@@ -5,6 +5,7 @@
 namespace IHHook {
 	namespace Hooks_Lua {
 		void CreateHooks(size_t RealBaseAddr);
+		void SetupLog();
 
 		int l_FoxLua_Init(lua_State* L);
 		int l_FoxLua_InitMain(lua_State* L);

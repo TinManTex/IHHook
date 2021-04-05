@@ -1,4 +1,14 @@
-IHHook changelog
+IHHook changelog 
+- just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
+
+r11 IHr247 - 2021-04-05
+Hooks_FOV - cribbing from https://github.com/mon/MGSV-TPP-FoV , supported by IH InfCamHook.lua
+
+r10 IHr244 - 2021-03-31
+Version jumped IHHook, still have to figure out versioning vs IH required IHHook version vs leeway to release an update of IHHook seperately.
+Refactor hook macros for clarity.
+Fix: menu close button working from start, doesn't require the IH callback so it can function when it's there as the startup error window.
+Fix: Steam version_info.txt check to see if it's the jp language version. Currently it only warns, and does not hook, but that's better than crashing lol.
 
 r7, IHr243 - 2021-03-29
 Fix: A grame crash soon after starting - issue likely was user not having vs redist for what IHHook was built against.

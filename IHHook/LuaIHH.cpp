@@ -16,6 +16,7 @@
 
 #include "IHMenu.h" // MenuMessage, messagesIn
 #include "Hooks_TPP.h"
+#include "Hooks_FOV.h"
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
@@ -221,7 +222,7 @@ namespace IHHook {
 		}//l_TestCallToIHHook
 		// < IHH module funcs
 
-		//tex TODO better module name, will likely break out into IHH<module name> as the amount of functions expands, but would have to change if IHH checks in IH
+		//tex TODO better module name, will likely break out into IHH<module name> as the amount of functions expands, but would have to change 'if IHH' checks in IH
 		int luaopen_ihh(lua_State* L) {
 			spdlog::debug(__func__);
 
@@ -239,7 +240,9 @@ namespace IHHook {
 				{ "Init", Hooks_Lua::l_FoxLua_Init},
 				{ "InitMain", Hooks_Lua::l_FoxLua_InitMain},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
-				{ "UpdateChangeLocationMenu",l_UpdateChangeLocationMenu},
+				{ "UpdateChangeLocationMenu", l_UpdateChangeLocationMenu},
+				{ "SetCamHook", Hooks_FOV::l_SetCamHook },
+				{ "UpdateCamHook", Hooks_FOV::l_UpdateCamHook },
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }
 			};

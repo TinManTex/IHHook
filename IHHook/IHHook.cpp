@@ -10,6 +10,7 @@
 #include "Hooks_CityHash.h"
 #include "Hooks_Lua.h"
 #include "Hooks_TPP.h"
+#include "Hooks_FOV.h"
 
 #include "RawInput.h"
 
@@ -195,7 +196,7 @@ namespace IHHook {
 		std::ifstream infile(versionInfoFileName);
 		if (infile.fail()) {//tex likely pirated game, or user has some wierd setup, cant know actual version
 			spdlog::warn("Could not load ", versionInfoFileName);
-			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different ");
+			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different sku.");
 			//any point using errormessages since if this is an actual lang exe mismatch its going to crash before it gets to the ui
 			//DEBUGNOW think what to do.
 		}
@@ -223,8 +224,11 @@ namespace IHHook {
 			lang = line.substr(prefix.length(),2);//en,jp etc
 			spdlog::debug("Found lang: {}", lang);
 	
-			if (lang != "en" || lang != "jp") {
+			if (lang != "en" && lang != "jp") {
 				spdlog::warn("Unexpected lang version");
+			}
+			else {
+				break;
 			}
 		}//while infile
 
@@ -248,12 +252,12 @@ namespace IHHook {
 			for each (std::string message in errorMessages) {
 				spdlog::error(message);
 			}
-			SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
+			SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 		} 
 		else {
 			if (lang != "en") {//DEBUGNOW
-				errorMessages.push_back("WARNING: IHHook currently ");
-				errorMessages.push_back("only supports the eng version");
+				errorMessages.push_back("WARNING: IHHook currently only");
+				errorMessages.push_back("supports the english language version");
 				errorMessages.push_back("Infinite Heaven will continue to load");
 				errorMessages.push_back("with some limitations.");
 				errorMessages.push_back("Including this menu not working in-game.");
@@ -262,16 +266,25 @@ namespace IHHook {
 				for each (std::string message in errorMessages) {
 					spdlog::error(message);
 				}
-				SetCursor(true);//tex DEBUGNOW currently wont auto dismiss, so give user cursor
+				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
-			else {
+			else {					
+				Hooks_Lua::SetupLog();
+
 				MH_Initialize();
+
+				auto tstart = std::chrono::high_resolution_clock::now();
 #ifndef MINIMAL_HOOK
 				Hooks_CityHash::CreateHooks(RealBaseAddr);
 #endif // !MINIMAL_HOOK
 				Hooks_Lua::CreateHooks(RealBaseAddr);
-				Hooks_TPP::CreateHooks(RealBaseAddr);//DEBUGNOW 
-			}
+				Hooks_TPP::CreateHooks(RealBaseAddr); 
+				Hooks_FOV::CreateHooks(RealBaseAddr);
+		
+				auto tend = std::chrono::high_resolution_clock::now();
+				auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+				spdlog::debug("IHHook::CreateHooks total time(microseconds): {}µs", durationShort);
+			}//if ok to hook
 		}// ChecKVersion
 
 		PipeServer::StartPipeServer();
@@ -285,8 +298,26 @@ namespace IHHook {
 			spdlog::info("Hooked D3D11");
 		}
 		else {
-			MessageBox(NULL, L"Could not hook D3D11\n", L"Infinite Heaven IHHook", NULL);
-		}
+			if (std::filesystem::exists("d3d11.dll")) {
+				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
+				std::wstring message =
+					L"ERROR: Could not hook D3D11\n"
+					L"Unknown d3d11.dll in MGS_TPP folder\n"
+					//DEBUGNOW L"If this is from the FOV Modifier dll you can remove it\n"
+					//L"as IHHook now has it intergrated\n"
+					;
+				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
+			}
+			else {
+				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
+				std::wstring message = 
+					L"ERROR: Could not hook D3D11\n"
+					L"See ihhook_log.txt in MGS_TPP folder for details.\n"
+				;
+				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
+			}//exists d3d11.dll
+
+		}//d3dHooked
 
 		spdlog::debug("IHH ctor complete");
 		log->flush();
@@ -599,7 +630,9 @@ namespace IHHook {
 			ImGui::ShowDemoWindow(&showImguiDemo);
 		}
 
-		IHMenu::DrawMenu(&menuOpen, menuOpenPrev);
+		if (menuOpen) {
+			IHMenu::DrawMenu(&menuOpen, menuOpenPrev);
+		}
 		if (!menuOpen && menuOpenPrev) {
 			IHMenu::QueueMessageIn("menuoff");
 		}
