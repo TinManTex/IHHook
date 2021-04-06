@@ -302,6 +302,12 @@
     <ClCompile Include="Hooks_FOV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\ltm.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\ldebug.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IHHook.rc">
