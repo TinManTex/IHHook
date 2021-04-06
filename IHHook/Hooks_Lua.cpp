@@ -110,16 +110,15 @@ namespace IHHook {
 		void __fastcall luaL_openlibsHook(lua_State* L) {
 			spdlog::debug(__func__);
 			luaL_openlibs(L);
-#ifndef MINIMAL_HOOK
+
 			if (debugMode) {
 				TestHooks_Lua(L);
 			}
-#endif
 			lua_pushinteger(L, Version);
 			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
 			LuaIHH::luaopen_ihh(L);
-#ifndef MINIMAL_HOOK
+
 			//OFF luaopen_winapi(L);
 			LoadImguiBindings(L);
 			if (debugMode) {
@@ -128,7 +127,7 @@ namespace IHHook {
 
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
-#endif
+
 			spdlog::debug("luaL_openlibsHook complete");
 		}//lua_newstateHook
 
@@ -176,22 +175,34 @@ namespace IHHook {
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-			CREATE_REBASED_ADDR(luaL_openlibs)
-			CREATE_REBASED_ADDR(lua_newstate)
-			CREATE_REBASED_ADDR(luaL_loadbuffer)
-			CREATE_REBASED_ADDR(lua_atpanic)
-			
-			CREATE_HOOK(luaL_openlibs)
-#ifndef MINIMAL_HOOK
-			CREATE_HOOK(lua_newstate)
-			CREATE_HOOK(luaL_loadbuffer)
-			//OFF CREATE_HOOK(lua_atpanic)
 
-			ENABLEHOOK(lua_newstate)
-			ENABLEHOOK(luaL_loadbuffer)
-			//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
-#endif		
-			ENABLEHOOK(luaL_openlibs)
+			if (isTargetExe) {
+				CREATE_REBASED_ADDR(luaL_openlibs)
+				CREATE_REBASED_ADDR(lua_newstate)
+				CREATE_REBASED_ADDR(luaL_loadbuffer)
+				CREATE_REBASED_ADDR(lua_atpanic)
+			}
+			else {
+				CREATE_SIG_ADDR(luaL_openlibs)
+				CREATE_SIG_ADDR(lua_newstate)
+				CREATE_SIG_ADDR(luaL_loadbuffer)
+				CREATE_SIG_ADDR(lua_atpanic)
+			}
+
+			if (luaL_openlibsAddr == NULL || lua_newstateAddr == NULL || luaL_loadbufferAddr == NULL || lua_atpanicAddr == NULL) {//DEBUGNOW 
+				spdlog::warn("Hooks_Lua addr fail: address==NULL");
+			}
+			else {
+				CREATE_HOOK(luaL_openlibs)
+				CREATE_HOOK(lua_newstate)
+				CREATE_HOOK(luaL_loadbuffer)
+				//OFF CREATE_HOOK(lua_atpanic)
+
+				ENABLEHOOK(lua_newstate)
+				ENABLEHOOK(luaL_loadbuffer)
+				//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
+				ENABLEHOOK(luaL_openlibs)
+			}//if name##Addr != NULL
 		}//CreateHooks
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
@@ -259,9 +270,8 @@ namespace IHHook {
 		// game lua to IHHook callbacks>
 		//tex called inside-out from init.lua via IH, TODO maybe see where init is loaded to make this independant from IH
 		int l_FoxLua_Init(lua_State* L) {
-#ifndef MINIMAL_HOOK
 			ReplaceStubedOutFox(L);	//tex KLUDGE see comment on this function
-#endif
+
 			return 0;
 		}//l_FoxLua_Init
 
