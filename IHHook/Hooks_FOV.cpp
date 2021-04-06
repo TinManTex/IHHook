@@ -150,10 +150,8 @@ namespace IHHook {
 			//tex update_fov_lerp() 1.0.15.3 = 0x141116800, in case the unlikely event sig breaks
 			//tex since updateFOVLerpRef is at the address part of of the E8 CALL rel32 (see REF above again), it needs to jump to the next instruction (+4)
 			//then add the dereferenced rel32
-			//DEBUGNOW UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
+			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
 
-
-			//DEBUGNOW
 			if (isTargetExe) {
 				CREATE_REBASED_ADDR(UpdateFOVLerp)
 				//UpdateFOVLerpAddr = (void*)(((size_t)UpdateFOVLerpBaseAddr - BaseAddr) + RealBaseAddr);//DEBUGNOW
@@ -163,7 +161,7 @@ namespace IHHook {
 			}
 
 			if (UpdateFOVLerpAddr == NULL) {
-				spdlog::warn("FOV hook fail: UpdateFOVLerpAddr == NULL");
+				spdlog::warn("FOV addr fail: UpdateFOVLerpAddr == NULL");
 				return;
 			}
 
