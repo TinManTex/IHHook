@@ -177,6 +177,9 @@
     <ClInclude Include="Hooks_FOV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lua\lua_Signatures.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
