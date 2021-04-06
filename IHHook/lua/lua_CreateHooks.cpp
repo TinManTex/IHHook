@@ -150,7 +150,7 @@ namespace IHHook {
 			//GET_REBASED_ADDR(lua_gethookcount)//TEST //tex: Using default implementation.
 		}//GetRebasedAddresses
 
-		void GetSigAddresses() {
+		void GetSigAddresses(size_t BaseAddr, size_t RealBaseAddr) {
 			//lua.h
 
 			//...
@@ -451,7 +451,7 @@ namespace IHHook {
 			lua::GetRebasedAddresses(BaseAddr, RealBaseAddr);
 		}
 		else {
-			lua::GetSigAddresses();
+			lua::GetSigAddresses(BaseAddr, RealBaseAddr);
 		}
 
 		lua::CreateFuncPtrs();

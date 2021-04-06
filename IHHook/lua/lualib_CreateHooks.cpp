@@ -25,7 +25,7 @@ namespace IHHook {
 			GET_REBASED_ADDR(luaL_openlibs)
 		}//GetRebasedAddresses
 
-		void GetSigAddresses() {
+		void GetSigAddresses(size_t BaseAddr, size_t RealBaseAddr) {
 			//lualib.h
 
 			GET_SIG_ADDR(luaopen_base)//TEST
@@ -75,7 +75,7 @@ namespace IHHook {
 			lualib::GetRebasedAddresses(BaseAddr, RealBaseAddr);
 		}
 		else {
-			lualib::GetSigAddresses();
+			lualib::GetSigAddresses(BaseAddr, RealBaseAddr);
 		}
 
 		lualib::CreateFuncPtrs();

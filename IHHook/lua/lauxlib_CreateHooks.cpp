@@ -60,9 +60,9 @@ namespace IHHook {
 				//OFF GET_REBASED_ADDR(luaL_addstring)//tex: Using default implementation. Only call in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring
 				GET_REBASED_ADDR(luaL_addvalue)//TEST
 				GET_REBASED_ADDR(luaL_pushresult)//TEST
-		}//CreateHooks_Lauxlib_GetRebasedAddresses
+		}//GetRebasedAddresses
 
-		void GetSigAddresses() {
+		void GetSigAddresses(size_t BaseAddr, size_t RealBaseAddr) {
 			//lauxlib.h
 
 			//...
@@ -119,7 +119,7 @@ namespace IHHook {
 				//OFF GET_SIG_ADDR(luaL_addstring)//tex: Using default implementation. Only call in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring
 				GET_SIG_ADDR(luaL_addvalue)//TEST
 				GET_SIG_ADDR(luaL_pushresult)//TEST
-		}//CreateHooks_Lauxlib_GetSigAddresses
+		}//GetSigAddresses
 
 		void CreateFuncPtrs() {
 			//lauxlib.h
@@ -187,7 +187,7 @@ namespace IHHook {
 			lua_lauxlib::GetRebasedAddresses(BaseAddr, RealBaseAddr);
 		}
 		else {
-			lua_lauxlib::GetSigAddresses();
+			lua_lauxlib::GetSigAddresses(BaseAddr, RealBaseAddr);
 		}
 
 		lua_lauxlib::CreateFuncPtrs();
