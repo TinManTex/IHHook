@@ -14,7 +14,7 @@
 
 // Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
 // the real base address changes every time the game is run though, so we have to remove that base address and add the real one
-// so it's rebased when its set up (see CREATE_REBASED_ADDR for the simple rebasing math)
+// so it's rebased when its set up (see GET_REBASED_ADDR for the simple rebasing math)
 
 //Signatures currently grabbed using GH SigMaker
 //https://guidedhacking.com/resources/guided-hacking-x64-cheat-engine-sigmaker-plugin-ce-7-2.319/
@@ -33,7 +33,7 @@
 //CREATE_FUNCPTR
 
 //or want to modify the function
-//CREATE_REBASED_ADDR, or define name#Addr to the runtime address of the function gained from some other method
+//GET_REBASED_ADDR, or define name#Addr to the runtime address of the function gained from some other method
 //CREATE_HOOK -- DEBUGNOW was CREATEDETOUR
 //ENABLE_HOOK
 
@@ -92,19 +92,19 @@ intptr_t* name##Addr;
 
 //DEBUGNOW rename CREATE addrs (sig as well) GET_<>_ADDR
 //Rebases an address an puts it in var for CREATE_HOOK macro
-#define CREATE_REBASED_ADDR(name)\
+#define GET_REBASED_ADDR(name)\
 name##Addr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);
 //Example use:
-//CREATE_REBASED_ADDR(lua_newstate);
+//GET_REBASED_ADDR(lua_newstate);
 //Expands to:
 //lua_newstateAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
 
 //ASSUMPTION name##Addr defined, FUNC_DECL_SIG declared
 //sigscans for an address an puts it in var for CREATE_HOOK macro
-#define CREATE_SIG_ADDR(name)\
+#define GET_SIG_ADDR(name)\
 name##Addr = (intptr_t*)MemoryUtils::sigscan("name##Addr", name##Sig, name##Mask);
 //Example use:
-//CREATE_SIG_ADDR(lua_newstate);
+//GET_SIG_ADDR(lua_newstate);
 //Expands to:
 //lua_newstateAddr = (intptr_t*)MemoryUtils::sigscan("lua_newstate", lua_newstateSig, lua_newstateMask);
 
@@ -134,7 +134,7 @@ name = (name##Func*)name##Addr;
 //detour and trampoline via MH_CreateHook
 //original function is at the <name> function ptr (just like createptr)
 //while the hook/detour is at <name>Hook function pointer.
-//ASSUMPTION must have a name##Addr of the runtime location of the function, either via CREATE_REBASED_ADDR or some other means (like a sig scan or other method)
+//ASSUMPTION must have a name##Addr of the runtime location of the function, either via GET_REBASED_ADDR or some other means (like a sig scan or other method)
 #define CREATE_HOOK(name)\
 MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)name##Addr, name##Hook, (LPVOID*)&name);\
 if (name##CreateStatus != MH_OK) {\

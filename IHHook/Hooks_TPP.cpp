@@ -116,10 +116,10 @@ namespace IHHook {
 			//DEBUGNOW
 
 			if (isTargetExe) {
-				CREATE_REBASED_ADDR(StrCode64)
+				GET_REBASED_ADDR(StrCode64)
 			}
 			else {
-				CREATE_SIG_ADDR(StrCode64)
+				GET_SIG_ADDR(StrCode64)
 			}
 			if (StrCode64Addr == NULL) {
 				spdlog::warn("addr fail: StrCode64Addr == NULL");
@@ -144,10 +144,10 @@ namespace IHHook {
 				//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 	
 			if (isTargetExe) {
-				CREATE_REBASED_ADDR(GetFreeRoamLangId)
+				GET_REBASED_ADDR(GetFreeRoamLangId)
 			}
 			else {
-				CREATE_SIG_ADDR(GetFreeRoamLangId)
+				GET_SIG_ADDR(GetFreeRoamLangId)
 			}
 			if (GetFreeRoamLangIdAddr == NULL) {
 				spdlog::warn("addr fail: GetFreeRoamLangIdAddr == NULL");

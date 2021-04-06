@@ -177,16 +177,16 @@ namespace IHHook {
 
 
 			if (isTargetExe) {
-				CREATE_REBASED_ADDR(luaL_openlibs)
-				CREATE_REBASED_ADDR(lua_newstate)
-				CREATE_REBASED_ADDR(luaL_loadbuffer)
-				CREATE_REBASED_ADDR(lua_atpanic)
+				GET_REBASED_ADDR(luaL_openlibs)
+				GET_REBASED_ADDR(lua_newstate)
+				GET_REBASED_ADDR(luaL_loadbuffer)
+				GET_REBASED_ADDR(lua_atpanic)
 			}
 			else {
-				CREATE_SIG_ADDR(luaL_openlibs)
-				CREATE_SIG_ADDR(lua_newstate)
-				CREATE_SIG_ADDR(luaL_loadbuffer)
-				CREATE_SIG_ADDR(lua_atpanic)
+				GET_SIG_ADDR(luaL_openlibs)
+				GET_SIG_ADDR(lua_newstate)
+				GET_SIG_ADDR(luaL_loadbuffer)
+				GET_SIG_ADDR(lua_atpanic)
 			}
 
 			if (luaL_openlibsAddr == NULL || lua_newstateAddr == NULL || luaL_loadbufferAddr == NULL || lua_atpanicAddr == NULL) {//DEBUGNOW 

@@ -153,11 +153,11 @@ namespace IHHook {
 			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
 
 			if (isTargetExe) {
-				CREATE_REBASED_ADDR(UpdateFOVLerp)
+				GET_REBASED_ADDR(UpdateFOVLerp)
 				//UpdateFOVLerpAddr = (void*)(((size_t)UpdateFOVLerpBaseAddr - BaseAddr) + RealBaseAddr);//DEBUGNOW
 			}
 			else {
-				CREATE_SIG_ADDR(UpdateFOVLerp)
+				GET_SIG_ADDR(UpdateFOVLerp)
 			}
 
 			if (UpdateFOVLerpAddr == NULL) {
