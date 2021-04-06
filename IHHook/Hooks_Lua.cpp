@@ -46,12 +46,12 @@ namespace IHHook {
 	void TestSigScan() {
 		auto tstart = std::chrono::high_resolution_clock::now();
 			//Get all module related information
-		MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
+		//MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
 
 		//Assign our base and module size
-		uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
+		//uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
 
-		uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
+		//uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
 
 		char* foxmainSig = "\x48\x89\x00\x00\x00\x48\x89\x00\x00\x00\x57\x48\x83\xEC\x00\x83\x64\x24\x20";
 		char* foxMainMask = "xx???xx???xxxx?xxxx";
@@ -70,7 +70,7 @@ namespace IHHook {
 		//PBYTE luaI_openlibOrigShort = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
 
 		//uintptr_t foxMainOrigFoundPattern = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
-		PBYTE foxMainOrigFoundSig = MemoryUtils::FindSignature("foxMain", mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
+		//PBYTE foxMainOrigFoundSig = MemoryUtils::FindSignature("foxMain", mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
 
 		auto tend = std::chrono::high_resolution_clock::now();
 		auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
