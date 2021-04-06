@@ -60,7 +60,7 @@ namespace IHHook {
 					if (mask[i] == '\0') {
 						auto tend = std::chrono::high_resolution_clock::now();
 						auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-						spdlog::debug("sigscan found {} in(microseconds): {}", name, duration);
+						spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
 						return addr;
 					}
 					if (mask[i] != '?' && sig[i] != *(char*)(addr + i))
