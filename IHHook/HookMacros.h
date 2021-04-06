@@ -3,18 +3,27 @@
 #include "MinHook.h"
 #include "MemoryUtils.h"
 
+//DEBUGNOW put this somewhere or CULL
+	//DEBUGNOW signatures are more robust to game updates/different game versions than straight addresses, but take a long time to search
+	//since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.
+	//an alternative would be to do a hook to an early execution point of the game and init  ihhook there,
+	//but given the low rate of updates of the game it's better to stick with direct addresses, but have signatures documented as a backup
+
+
 //tex macros to declare the various accoutrement required for MH_Hook and straight hooks
 
 // Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
 // the real base address changes every time the game is run though, so we have to remove that base address and add the real one
 // so it's rebased when its set up (see CREATE_REBASED_ADDR for the simple rebasing math)
 
-//Signatures grabbed using GH SigMaker
+//Signatures currently grabbed using GH SigMaker
 //https://guidedhacking.com/resources/guided-hacking-x64-cheat-engine-sigmaker-plugin-ce-7-2.319/
 //DEBUGNOW only need one type sig&mask or pattern, but have yet to decide on which to use (sigmaker grabs both so there's no real issue on generating
-//seems all the sigmatching funcs I gathered so far are sig&mask, though I prefer pattern for easier manual comparing without having to jump back and forth between sig and mask
+//though I prefer pattern for easier manual comparing without having to jump back and forth between sig and mask, seems all the sigmatching funcs I have currently gathered so far are sig&mask
 
 //DEBUGNOW update this
+//also document isTargetExe
+
 //for all hooks need:
 //FUNCPTRDEF
 //FUNC_DECL_ADDR
@@ -81,17 +90,6 @@ intptr_t* name##Addr;
 //lua_newstateFunc lua_newstateBaseAddr = (lua_newstateFunc)0x14cdd7ab0;
 //lua_newstateFunc lua_newstateBaseAddr;
 
-//just want to use original function
-//sets the pointer to the rebased address so the function pointer is usable
-#define CREATE_FUNCPTR(name)\
-intptr_t* name##FuncAddr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);\
-name = (name##Func*)name##FuncAddr;
-//Example use:
-//CREATE_FUNCPTR(lua_newstate);
-//Expands to:
-//intptr_t* lua_newstateFuncAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
-//lua_newstate = (lua_newstateFunc*)lua_newstateFuncAddr;
-
 //DEBUGNOW rename CREATE addrs (sig as well) GET_<>_ADDR
 //Rebases an address an puts it in var for CREATE_HOOK macro
 #define CREATE_REBASED_ADDR(name)\
@@ -109,6 +107,29 @@ name##Addr = (intptr_t*)MemoryUtils::sigscan("name##Addr", name##Sig, name##Mask
 //CREATE_SIG_ADDR(lua_newstate);
 //Expands to:
 //lua_newstateAddr = (intptr_t*)MemoryUtils::sigscan("lua_newstate", lua_newstateSig, lua_newstateMask);
+
+//just want to use original function
+//sets the pointer to the rebased address so the function pointer is usable
+#define CREATE_FUNCPTR(name)\
+intptr_t* name##FuncAddr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);\
+name = (name##Func*)name##FuncAddr;
+//Example use:
+//CREATE_FUNCPTR(lua_newstate);
+//Expands to:
+//intptr_t* lua_newstateFuncAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
+//lua_newstate = (lua_newstateFunc*)lua_newstateFuncAddr;
+
+
+//DEBUGNOW use whatev name##Addr already set
+//just want to use original function
+//sets the pointer to the rebased address so the function pointer is usable
+#define CREATE_FUNCPTR_B(name)\
+name = (name##Func*)name##Addr;
+//Example use:
+//CREATE_FUNCPTR(lua_newstate);
+//Expands to:
+//intptr_t* lua_newstateFuncAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
+//lua_newstate = (lua_newstateFunc*)lua_newstateFuncAddr;
 
 //detour and trampoline via MH_CreateHook
 //original function is at the <name> function ptr (just like createptr)
