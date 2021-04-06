@@ -4,8 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <spdlog/spdlog.h>
-
-//DEBUGNOW TODO: figure out which sig scan to use, cull the others
+#include "ntdll.h"//DEBUGNOW
 
 namespace IHHook {
 	namespace MemoryUtils {
@@ -73,108 +72,120 @@ namespace IHHook {
 			return NULL;
 		}//sigscan
 
-		//Get all module related info, this will include the base DLL and the size of the module
-		//used by FindPattern
-		MODULEINFO GetModuleInfo(LPCWSTR szModule) {
-			MODULEINFO modinfo = { 0 };
-			HMODULE hModule = GetModuleHandle(szModule);
-			if (hModule == 0)
-				return modinfo;
-			GetModuleInformation(GetCurrentProcess(), hModule, &modinfo, sizeof(MODULEINFO));
-			return modinfo;
-		}
-
-		//Pattern Scan https://guidedhacking.com/threads/c-signature-scan-pattern-scanning-tutorial-difficulty-3-10.3981
-		//REF
-		//char* pattern = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC";
-		//char* mask = "xx?x????xxxxxxxx";
-		uintptr_t FindPattern(const char* name, LPCWSTR module, char* pattern, char* mask) {
+		//gh scanner https://guidedhacking.com/threads/external-internal-pattern-scanning-guide.14112/ >
+		/// <summary>
+		/// Actual pattern scanning, rest of functions basically narrow down the range of memory to scan
+		/// </summary>
+		/// <param name="pattern"></param>
+		/// <param name="mask"></param>
+		/// <param name="begin">address of buffer to scan</param>
+		/// <param name="size">size of that buffer</param>
+		/// <returns></returns>
+		char* ScanBasic(char* pattern, char* mask, char* begin, intptr_t size) {
 			auto tstart = std::chrono::high_resolution_clock::now();
-			spdlog::trace("FindPattern:");//DEBUGNOW
-			spdlog::trace("Sig:{}", pattern);//DEBUGNOW
-			spdlog::trace("Msk:{}", mask);//DEBUGNOW
+			intptr_t patternLen = strlen(mask);
 
-			//Get all module related information
-			MODULEINFO mInfo = GetModuleInfo(module);
-
-			//Assign our base and module size
-			uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
-
-			uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
-
-			//Get length for our mask, this will allow us to loop through our array
-			DWORD patternLength = (DWORD)strlen(mask);
-
-			for (DWORD i = 0; i < size - patternLength; i++) {
+			for (int i = 0; i < size; i++) {
 				bool found = true;
-				for (DWORD j = 0; j < patternLength; j++) {
-					//if we have a ? in our mask then we have true by default,
-					//or if the bytes match then we keep searching until finding it or not
-					found &= mask[j] == '?' || pattern[j] == *(char*)(base + i + j);
+				for (int j = 0; j < patternLen; j++) {
+					if (mask[j] != '?' && pattern[j] != *(char*)((intptr_t)begin + i + j)) {
+						found = false;
+						break;
+					}
 				}
-
-				//found = true, our entire pattern was found
 				if (found) {
-					spdlog::trace("Pattern found : {x}", (base + i));
 					auto tend = std::chrono::high_resolution_clock::now();
 					auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-					spdlog::debug("FindPattern found {} in(microseconds): {}", name, duration);
-					return base + i;
+					spdlog::debug("sigscan found  in(microseconds): {}", duration);//DEBUGNOW name, dump addr
+					return (begin + i);
 				}
 			}
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-			spdlog::debug("FindPatter not found {} in(microseconds): {}", name, duration);
-			return NULL;
-		}//FindPattern
+			spdlog::debug("sigscan not found in(microseconds): {}", duration);//DEBUGNOW name, addr
+			return nullptr;
+		}//ScanBasic
 
-		//Used by FindSignature
-		int CompareByteArray(PBYTE ByteArray1, PCHAR ByteArray2, PCHAR Mask, DWORD Length) {
-			DWORD nextStart = 0;
-			char start = ByteArray2[0];
-			for (DWORD i = 0; i < Length; i++) {
-				if (Mask[i] == '?') {
-					continue;
-				}
-				if (ByteArray1[i] == start) {
-					nextStart = i;
-				}
-				if (ByteArray1[i] != (BYTE)ByteArray2[i]) {
-					return nextStart;
+		//narrow down to valid memory
+		//DEBUGNOW
+		//- Scanning pages with PAGE_GUARD protection raises exception, if not handled it crashes. Solution: Don't scan those pages or use VirtualProtect().
+		//guard page stuff sure, dont need to vprotect, can just wrap in try/except, whatever your preference is
+		char* ScanInternal(char* pattern, char* mask, char* begin, intptr_t size) {
+			char* match{ nullptr };
+			MEMORY_BASIC_INFORMATION mbi{};
+
+			for (char* curr = begin; curr < begin + size; curr += mbi.RegionSize) {
+				if (!VirtualQuery(curr, &mbi, sizeof(mbi)) || mbi.State != MEM_COMMIT || mbi.Protect & (PAGE_NOACCESS | PAGE_GUARD)) continue;
+				match = ScanBasic(pattern, mask, curr, mbi.RegionSize);
+
+				if (match != nullptr) {
+					break;
 				}
 			}
-			return -1;
-		}//CompareByteArray
+			return match;
+		}//ScanInternal
 
-		//tex not sure where I got this from lol
-		//REF
-		//char* sig = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC";
-		//char* mask = "xx?x????xxxxxxxx";
-		PBYTE FindSignature(const char* name, LPVOID BaseAddress, DWORD ImageSize, PCHAR Signature, PCHAR Mask) {
-			auto tstart = std::chrono::high_resolution_clock::now();
+		char* TO_CHAR(wchar_t* string) {
+			size_t len = wcslen(string) + 1;
+			char* c_string = new char[len];
+			size_t numCharsRead;
+			wcstombs_s(&numCharsRead, c_string, len, string, _TRUNCATE);
+			return c_string;
+		}//TO_CHAR
 
-			PBYTE Address = NULL;
-			PBYTE Buffer = (PBYTE)BaseAddress;
+		PEB* GetPEB() {
+#ifdef _WIN64
+			PEB* peb = (PEB*)__readgsqword(0x60);
 
-			DWORD Length = strlen(Mask);
-			for (DWORD i = 0; i < (ImageSize - Length); i++) {
-				int result = CompareByteArray((Buffer + i), Signature, Mask, Length);
-				if (result < 0) {
-					Address = (PBYTE)BaseAddress + i;
-					auto tend = std::chrono::high_resolution_clock::now();
-					auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-					spdlog::debug("FindSignature found {} in(microseconds): {}", name, duration);
-					return Address;
+#else
+			PEB* peb = (PEB*)__readfsdword(0x30);
+#endif
+
+			return peb;
+		}//GetPEB
+
+		LDR_DATA_TABLE_ENTRY* GetLDREntry(std::string name) {
+			LDR_DATA_TABLE_ENTRY* ldr = nullptr;
+
+			PEB* peb = GetPEB();
+
+			LIST_ENTRY head = peb->Ldr->InMemoryOrderModuleList;
+
+			LIST_ENTRY curr = head;
+
+			while (curr.Flink != head.Blink) {
+				LDR_DATA_TABLE_ENTRY* mod = (LDR_DATA_TABLE_ENTRY*)CONTAINING_RECORD(curr.Flink, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
+
+				if (mod->FullDllName.Buffer) {
+					char* cName = TO_CHAR(mod->BaseDllName.Buffer);
+
+					if (_stricmp(cName, name.c_str()) == 0) {
+						ldr = mod;
+						break;
+					}
+					delete[] cName;
 				}
-				else {
-					i += result;
-				}
+				curr = *curr.Flink;
 			}
-			auto tend = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-			spdlog::debug("FindSignature not found {} in(microseconds): {}", name, duration);
-			return NULL;
-		}//FindSignature
+			return ldr;
+		}//GetLDREntry
+
+		//Actual sig scan function to use
+		//narrows down memory to scan even further to the modules ldr entries 
+		//ultimately not much different than getting module information but:
+		//Why do you prefer walking the module list in the PEB ?
+		//	#1 stealth
+		//	#2 if they do hooks to prevent you from finding the module, you can still find it in PEB, they would have to unlink it from the PEB or manual map to make the PEB lookup fail
+		char* ScanModIn(char* pattern, char* mask, std::string modName) {
+			LDR_DATA_TABLE_ENTRY* ldr = GetLDREntry(modName);
+
+			//DEBUGNOW char* match = ScanInternal(pattern, mask, (char*)ldr->DllBase, ldr->SizeOfImage);//DEBUGNOW ScanInternal memory validation just ends up not finding the required sigs
+			char* match = ScanBasic(pattern, mask, (char*)ldr->DllBase, ldr->SizeOfImage);//DEBUGNOW
+
+			return match;
+		}//ScanModIn
+
+		//< gh scanner
 
 		//IN/SIDE: BaseAddr, RealBaseAddr
 		//void* RebasePointer(uintptr_t address) {
