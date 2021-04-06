@@ -286,9 +286,8 @@ namespace IHHook {
 			MH_Initialize();
 
 			auto tstart = std::chrono::high_resolution_clock::now();
-#ifndef MINIMAL_HOOK
+
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
-#endif // !MINIMAL_HOOK
 			Hooks_Lua::CreateHooks(RealBaseAddr);
 			Hooks_TPP::CreateHooks(RealBaseAddr);
 			Hooks_FOV::CreateHooks(RealBaseAddr);

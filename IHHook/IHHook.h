@@ -27,8 +27,6 @@
 #include "D3D11Hook.hpp"
 #include "WindowsMessageHook.hpp"
 
-//#define MINIMAL_HOOK //
-
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
