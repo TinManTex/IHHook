@@ -50,8 +50,8 @@ extern name##Func* name;\
 extern intptr_t* name##BaseAddr;\
 extern intptr_t* name##Addr;\
 extern const char* name##Sig;\
-extern const char * name##Mask;\
-extern const char * name##Pattern;
+extern const char* name##Mask;\
+extern const char* name##Pattern;
 //Example use:
 //FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
@@ -109,6 +109,8 @@ name##Addr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);
 //sigscans for an address an puts it in var for CREATE_HOOK macro
 #define GET_SIG_ADDR(name)\
 name##Addr = (intptr_t*)MemoryUtils::sigscan("name##Addr", name##Sig, name##Mask);
+//ALT name##Addr = MemoryUtils::PatternScan(name##Pattern);
+//ALT name##Addr = (intptr_t*)MemoryUtils::ScanModIn(name##Sig, name##Mask, "mgsvtpp.exe");//DEBUG exeName?
 //Example use:
 //GET_SIG_ADDR(lua_newstate);
 //Expands to:
