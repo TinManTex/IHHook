@@ -122,7 +122,7 @@ namespace IHHook {
 				CREATE_SIG_ADDR(StrCode64)
 			}
 			if (StrCode64Addr == NULL) {
-				spdlog::warn("FOV hook fail: StrCode64Addr == NULL");
+				spdlog::warn("addr fail: StrCode64Addr == NULL");
 			}
 			else {
 				CREATE_FUNCPTR_B(StrCode64)
@@ -150,7 +150,7 @@ namespace IHHook {
 				CREATE_SIG_ADDR(GetFreeRoamLangId)
 			}
 			if (GetFreeRoamLangIdAddr == NULL) {
-				spdlog::warn("FOV hook fail: GetFreeRoamLangIdAddr == NULL");
+				spdlog::warn("addr fail: GetFreeRoamLangIdAddr == NULL");
 			}
 			else {
 				CREATE_HOOK(GetFreeRoamLangId)
