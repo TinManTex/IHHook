@@ -28,6 +28,7 @@
 #include "IHMenu.h"
 #include "StyleEditor.h"
 
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//tex see note in imgui_impl_win32.h
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
@@ -279,8 +280,9 @@ namespace IHHook {
 			}//
 		}// ChecKVersion
 
-		//DEBUGNOW
-		{//tex hook em up boys
+		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true
+		bool doHooks = isTargetExe;
+		if (doHooks) {//tex hook em up boys
 			Hooks_Lua::SetupLog();
 
 			MH_Initialize();
