@@ -125,7 +125,7 @@ namespace IHHook {
 				spdlog::warn("addr fail: StrCode64Addr == NULL");
 			}
 			else {
-				CREATE_FUNCPTR_B(StrCode64)
+				CREATE_FUNCPTR(StrCode64)
 			}
 
 			//DEBUGNOW TEST
