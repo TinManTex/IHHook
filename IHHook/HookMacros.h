@@ -48,14 +48,20 @@
 typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
 extern name##Func* name;\
 extern intptr_t* name##BaseAddr;\
-extern intptr_t* name##Addr;
+extern intptr_t* name##Addr;\
+extern const char* name##Sig;\
+extern const char * name##Mask;\
+extern const char * name##Pattern;
 //Example use:
 //FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
 //typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
 //extern lua_newstateFunc lua_newstate;
-//extern lua_newstateFunc lua_newstateBaseAddr;
-//extern lua_newstateFunc lua_newstateAddr;
+//extern intptr_t* lua_newstateBaseAddr;
+//extern intptr_t* lua_newstateAddr;
+//extern const char* lua_newstateSig;
+//extern const char * lua_newstateMask;
+//extern const char * lua_newstatePattern;
 
 //Define signature and mask
 #define FUNC_DECL_SIG(name, sig, mask)\
@@ -111,24 +117,10 @@ name##Addr = (intptr_t*)MemoryUtils::sigscan("name##Addr", name##Sig, name##Mask
 //just want to use original function
 //sets the pointer to the rebased address so the function pointer is usable
 #define CREATE_FUNCPTR(name)\
-intptr_t* name##FuncAddr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);\
-name = (name##Func*)name##FuncAddr;
-//Example use:
-//CREATE_FUNCPTR(lua_newstate);
-//Expands to:
-//intptr_t* lua_newstateFuncAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
-//lua_newstate = (lua_newstateFunc*)lua_newstateFuncAddr;
-
-
-//DEBUGNOW use whatev name##Addr already set
-//just want to use original function
-//sets the pointer to the rebased address so the function pointer is usable
-#define CREATE_FUNCPTR_B(name)\
 name = (name##Func*)name##Addr;
 //Example use:
 //CREATE_FUNCPTR(lua_newstate);
 //Expands to:
-//intptr_t* lua_newstateFuncAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
 //lua_newstate = (lua_newstateFunc*)lua_newstateFuncAddr;
 
 //detour and trampoline via MH_CreateHook
