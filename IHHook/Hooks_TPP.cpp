@@ -115,9 +115,18 @@ namespace IHHook {
 			//}
 			//DEBUGNOW
 
-			CREATE_FUNCPTR(StrCode64)
-			//void* StrCode64Rebased = (void*)(((size_t)StrCode64 - BaseAddr) + RealBaseAddr); \
-			//StrCode64 = (StrCode64Func*)StrCode64Rebased;
+			if (isTargetExe) {
+				CREATE_REBASED_ADDR(StrCode64)
+			}
+			else {
+				CREATE_SIG_ADDR(StrCode64)
+			}
+			if (StrCode64Addr == NULL) {
+				spdlog::warn("FOV hook fail: StrCode64Addr == NULL");
+			}
+			else {
+				CREATE_FUNCPTR_B(StrCode64)
+			}
 
 			//DEBUGNOW TEST
 			const char* langId = "tpp_loc_afghan";
@@ -135,13 +144,18 @@ namespace IHHook {
 				//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 	
 			if (isTargetExe) {
-			CREATE_REBASED_ADDR(GetFreeRoamLangId)
+				CREATE_REBASED_ADDR(GetFreeRoamLangId)
 			}
 			else {
 				CREATE_SIG_ADDR(GetFreeRoamLangId)
 			}
-			CREATE_HOOK(GetFreeRoamLangId)
-			ENABLEHOOK(GetFreeRoamLangId)
+			if (GetFreeRoamLangIdAddr == NULL) {
+				spdlog::warn("FOV hook fail: GetFreeRoamLangIdAddr == NULL");
+			}
+			else {
+				CREATE_HOOK(GetFreeRoamLangId)
+				ENABLEHOOK(GetFreeRoamLangId)
+			}
 
 			//DEBUGNOW
 			//CREATE_HOOK(UnkSomeUpdateFunc)
