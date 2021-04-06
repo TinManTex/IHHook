@@ -180,6 +180,9 @@
     <ClInclude Include="lua\lua_Signatures.h">
       <Filter>Source Files\lua</Filter>
     </ClInclude>
+    <ClInclude Include="ntdll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

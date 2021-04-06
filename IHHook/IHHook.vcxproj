@@ -191,6 +191,7 @@
     <ClInclude Include="MinHook\hde\table64.h" />
     <ClInclude Include="MinHook\MinHook.h" />
     <ClInclude Include="MinHook\trampoline.h" />
+    <ClInclude Include="ntdll.h" />
     <ClInclude Include="OS.h" />
     <ClInclude Include="PipeServer.h" />
     <ClInclude Include="RawInput.h" />
