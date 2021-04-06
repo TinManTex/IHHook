@@ -38,7 +38,7 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	CREATE_FUNCPTR(lua_iscfunction)
 	//CREATE_FUNCPTR(lua_isuserdata)//TEST tex: Using default implementation. No calls in lua distro, so may be hard to find, or have been culled by compilation
 	CREATE_FUNCPTR(lua_type)
-	CREATE_FUNCPTR(lua_typename)
+	//CREATE_FUNCPTR(lua_typename)//tex: Using default implementation. 
 
 	//CREATE_FUNCPTR(lua_equal)//tex: lua implementation goes a bit deeper than I'm happy with to use at the moment. No calls in lua distro, so may be hard to find, or have been culled by compilation
 	CREATE_FUNCPTR(lua_rawequal)
@@ -144,8 +144,8 @@ void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr) {
 	CREATE_FUNCPTR(lua_setupvalue)//TEST
 
 	CREATE_FUNCPTR(lua_sethook)//TEST
-	CREATE_FUNCPTR(lua_gethook)//TEST
-	CREATE_FUNCPTR(lua_gethookmask)//TEST
-	CREATE_FUNCPTR(lua_gethookcount)//TEST
+	//CREATE_FUNCPTR(lua_gethook)//TEST //tex: Using default implementation.
+	//CREATE_FUNCPTR(lua_gethookmask)//TEST //tex: Using default implementation.
+	//CREATE_FUNCPTR(lua_gethookcount)//TEST //tex: Using default implementation.
 }//CreateHooks_Lua
 }//namespace IHHook

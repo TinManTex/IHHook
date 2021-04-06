@@ -27,7 +27,7 @@ FUNC_DECL_ADDR(lua_isstring, 0x14c1d9250);
 FUNC_DECL_ADDR(lua_iscfunction, 0x141a11650);
 //FUNC_DECL_ADDR(lua_isuserdata, USING_CODE);
 FUNC_DECL_ADDR(lua_type, 0x14c1ed760);
-FUNC_DECL_ADDR(lua_typename, 0x14c1eda50);
+//FUNC_DECL_ADDR(lua_typename, USING_CODE)//1.0.15.3=0x14c1eda50);
 //FUNC_DECL_ADDR(lua_equal, NOT_FOUND);//DEBUGNOW NOT_FOUND//tex: lua implementation goes a bit deeper than I'm happy with to use at the moment. No calls in lua distro, so may be hard to find, or have been culled by compilation
 FUNC_DECL_ADDR(lua_rawequal, 0x14c1e8d70);
 FUNC_DECL_ADDR(lua_lessthan, 0x14c1d9890);
@@ -87,10 +87,10 @@ FUNC_DECL_ADDR(lua_setlocal, 0x14c20fff0);
 FUNC_DECL_ADDR(lua_getupvalue, 0x14c1d7ea0);
 FUNC_DECL_ADDR(lua_setupvalue, 0x141a12240);
 FUNC_DECL_ADDR(lua_sethook, 0x14c20fde0);
-FUNC_DECL_ADDR(lua_gethook, 0x145bd7100);
-FUNC_DECL_ADDR(lua_gethookmask, 0x14c20f450);
-FUNC_DECL_ADDR(lua_gethookcount, 0x141a20e40);
-FUNC_DECL_ADDR(luaI_openlib, 0x141a18300);//MINIMAL_HOOK 
+//FUNC_DECL_ADDR(lua_gethook, 0x145bd7100);
+//FUNC_DECL_ADDR(lua_gethookmask, 0x14c20f450);
+//FUNC_DECL_ADDR(lua_gethookcount, 0x141a20e40);
+FUNC_DECL_ADDR(luaI_openlib, 0x14c201610);//MINIMAL_HOOK 
 //FUNC_DECL_ADDR(luaL_register, USING_CODE);
 FUNC_DECL_ADDR(luaL_getmetafield, 0x14c200d50);
 FUNC_DECL_ADDR(luaL_callmeta, 0x14c1fec20);
@@ -118,7 +118,7 @@ FUNC_DECL_ADDR(luaL_loadbuffer, 0x14c200f90);
 FUNC_DECL_ADDR(luaL_newstate, 0x14c201490);
 FUNC_DECL_ADDR(luaL_gsub, 0x141a17710);
 FUNC_DECL_ADDR(luaL_findtable, 0x14c200aa0);
-FUNC_DECL_ADDR(luaL_buffinit, 0x14c1fe910);
+//FUNC_DECL_ADDR(luaL_buffinit, USING_CODE);// 0x14c1fe910);
 FUNC_DECL_ADDR(luaL_prepbuffer, 0x14c202140);
 FUNC_DECL_ADDR(luaL_addlstring, 0x141a16e70);
 //FUNC_DECL_ADDR(luaL_addstring, USING_CODE);

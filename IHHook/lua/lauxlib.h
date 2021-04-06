@@ -133,7 +133,7 @@ typedef struct luaL_Buffer {
 
 #define luaL_addsize(B,n)	((B)->p += (n))
 
-FUNCPTRDEF(void, luaL_buffinit, lua_State *L, luaL_Buffer *B);
+LUALIB_API void (luaL_buffinit)(lua_State* L, luaL_Buffer* B);//FUNCPTRDEF(void, luaL_buffinit, lua_State *L, luaL_Buffer *B);
 FUNCPTRDEF(char *, luaL_prepbuffer, luaL_Buffer *B);
 FUNCPTRDEF(void, luaL_addlstring, luaL_Buffer *B, const char *s, size_t l);
 LUALIB_API void (luaL_addstring)(luaL_Buffer *B, const char *s);// FUNCPTRDEF(void, luaL_addstring, luaL_Buffer *B, const char *s);

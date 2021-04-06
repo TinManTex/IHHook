@@ -245,10 +245,10 @@ LUA_API int lua_gettop (lua_State *L) {
 //}
 
 
-//LUA_API const char *lua_typename (lua_State *L, int t) {
-//  UNUSED(L);
-//  return (t == LUA_TNONE) ? "no value" : luaT_typenames[t];
-//}
+LUA_API const char *lua_typename (lua_State *L, int t) {
+  UNUSED(L);
+  return (t == LUA_TNONE) ? "no value" : luaT_typenames[t];
+}
 
 
 //LUA_API int lua_iscfunction (lua_State *L, int idx) {

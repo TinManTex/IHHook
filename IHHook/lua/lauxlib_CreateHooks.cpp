@@ -6,15 +6,6 @@ namespace IHHook {
 void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr) {
 	//lauxlib.h
 
-	//DEBUGNOW signatures are more robust to game updates/different game versions than straight addresses, but take a long time to search
-	//since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.
-	//an alternative would be to do a hook to an early execution point of the game and init  ihhook there,
-	//but given the low rate of updates of the game it's better to stick with direct addresses, but have signatures documented as a backup
-	//Address of signature = mgsvtpp.exe + 0x01A0B990
-	//char* luaI_openlibSig = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xE9"; 
-	//char* luaI_openlibMask = "xx?x????xxxxxxxxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-	//DEBUGNOW uintptr_t luaI_openlibOrig = FindPattern(NULL, luaI_openlibSig, luaI_openlibMask);
-
 	//...
 	CREATE_FUNCPTR(luaI_openlib)
 	//OFF CREATE_FUNCPTR(luaL_register)//tex: Using default implementation.
@@ -63,7 +54,7 @@ void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr) {
 	** =======================================================
 	*/
 
-	CREATE_FUNCPTR(luaL_buffinit)//TEST
+	//CREATE_FUNCPTR(luaL_buffinit)//TEST //tex: Using default implementation.
 	CREATE_FUNCPTR(luaL_prepbuffer)
 	CREATE_FUNCPTR(luaL_addlstring)//TEST
 	//OFF CREATE_FUNCPTR(luaL_addstring)//tex: Using default implementation. Only call in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring

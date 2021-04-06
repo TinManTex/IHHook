@@ -151,6 +151,11 @@ namespace IHHook {
 		void CreateHooks(size_t RealBaseAddr) {
 			spdlog::debug(__func__);
 
+			if (!enableCityHook) {
+				spdlog::debug("Disabled, returning");
+				return;
+			}
+
 			cityLog = spdlog::basic_logger_st("cityhash", cityLogName);
 			// NMC: default thread pool settings can be modified *before* creating the async logger:
 			// spdlog::init_thread_pool(8192, 1); // queue with 8k items and 1 backing thread.

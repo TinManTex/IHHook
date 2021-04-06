@@ -274,6 +274,7 @@ namespace IHHook {
 				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
 			else {
+				//tex for using listed address vs sigscan
 				isTargetExe = true;
 			}//
 		}// ChecKVersion

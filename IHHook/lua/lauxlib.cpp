@@ -467,13 +467,13 @@ LUALIB_API void luaL_addstring (luaL_Buffer *B, const char *s) {
 //    adjuststack(B);
 //  }
 //}
-//
-//
-//LUALIB_API void luaL_buffinit (lua_State *L, luaL_Buffer *B) {
-//  B->L = L;
-//  B->p = B->buffer;
-//  B->lvl = 0;
-//}
+
+
+LUALIB_API void luaL_buffinit (lua_State *L, luaL_Buffer *B) {
+  B->L = L;
+  B->p = B->buffer;
+  B->lvl = 0;
+}
 
 /* }====================================================== */
 
