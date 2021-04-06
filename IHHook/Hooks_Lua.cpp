@@ -21,7 +21,7 @@
 #include "MinHook/MinHook.h"
 
 #include "lua/lua_AddressesGEN.h"
-
+#include "lua/lua_Signatures.h"
 
 #include <string>
 #include "MemoryUtils.h"
