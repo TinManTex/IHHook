@@ -12,8 +12,7 @@
 
 namespace IHHook {
 	//DEBUGNOW push this into somewhere more accessable
-	FUNC_DECL_ADDR(StrCode64, 0x14c1bd730)//1.0.15.3
-		//0x1433534b0)//1.0.15.3 jp
+	FUNC_DECL_ADDR(StrCode64)
 	FUNC_DECL_SIG(StrCode64, 
 		"\x48\x89\x00\x00\x00\x56\x48\x83\xEC\x00\x80\x3C\x0A", 
 		"xx???xxxx?xxx")
@@ -33,7 +32,7 @@ namespace IHHook {
 		//uint32_t* missionCode;//tex in header
 
 		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc, 0x146e3a620)
+		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)
 		
 		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
 			spdlog::trace(__func__);
@@ -44,8 +43,7 @@ namespace IHHook {
 		}//UnkSomePlayerUpdateFuncHook
 
 		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
-		FUNC_DECL_ADDR(GetFreeRoamLangId, 0x145e60f40);//1.0.15.3_en
-		//FUNC_DECL_ADDR(GetFreeRoamLangId, 0x147a6b040);//1.0.15.3_jp	
+		FUNC_DECL_ADDR(GetFreeRoamLangId)
 		FUNC_DECL_SIG(GetFreeRoamLangId,
 			"\x0F\xB7\x00\x83\xF8\x00\x74\x00\x83\xF8\x00\x74\x00\x83\xF8\x00\x74\x00\x48\xB8",
 			"xx?xx?x?xx?x?xx?x?xx")
@@ -125,23 +123,25 @@ namespace IHHook {
 				spdlog::warn("addr fail: StrCode64Addr == NULL");
 			}
 			else {
-				CREATE_FUNCPTR(StrCode64)
+				CREATE_FUNCPTR(StrCode64)			
+					
+				//DEBUGNOW TEST
+				const char* langId = "tpp_loc_afghan";
+				long long tpp_loc_afghanS64 = StrCode64(langId, strlen(langId));
+
+				std::stringstream stream;
+				stream << std::hex << tpp_loc_afghanS64;
+				std::string result(stream.str());
+				spdlog::debug("Str64 tpp_loc_afghan:0x{}", result);
+
+				//0x1b094033d45d//tpp_loc_afghan
+					//{ 20,0x7114b69e71e7 },//mafr,tpp_loc_africa
+					//{ 50,0xfa8eaa7758b1 },//mtbs,tpp_loc_mb
+					////DEBUGNOW proof of concept hack
+					//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 			}
 
-			//DEBUGNOW TEST
-			const char* langId = "tpp_loc_afghan";
-			long long tpp_loc_afghanS64 = StrCode64(langId, strlen(langId));
 
-			std::stringstream stream;
-			stream << std::hex << tpp_loc_afghanS64;
-			std::string result(stream.str());
-			spdlog::debug("Str64 tpp_loc_afghan:0x{}", result);
-
-			//0x1b094033d45d//tpp_loc_afghan
-				//{ 20,0x7114b69e71e7 },//mafr,tpp_loc_africa
-				//{ 50,0xfa8eaa7758b1 },//mtbs,tpp_loc_mb
-				////DEBUGNOW proof of concept hack
-				//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 	
 			if (isTargetExe) {
 				GET_REBASED_ADDR(GetFreeRoamLangId)
