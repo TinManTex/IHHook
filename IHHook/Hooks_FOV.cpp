@@ -27,7 +27,7 @@ namespace IHHook {
 		//	extern UpdateFOVLerpFunc* UpdateFOVLerp;
 		//	extern UpdateFOVLerpFunc* UpdateFOVLerpBaseAddr;
 		//	extern void* UpdateFOVLerpAddr;
-		FUNC_DECL_ADDR(UpdateFOVLerp, 0x141116800)//1.0.15.3 en
+		FUNC_DECL_ADDR(UpdateFOVLerp)
 
 		FUNC_DECL_SIG(UpdateFOVLerp,
 			"\x4C\x8B\x00\x49\x89\x00\x00\x55\x56\x57\x41\x00\x41\x00\x49\x8D\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x33\x00\x48\x89\x00\x00\x00\x00\x00\xF3\x0F",
@@ -158,6 +158,7 @@ namespace IHHook {
 			}
 			else {
 				GET_SIG_ADDR(UpdateFOVLerp)
+				//DEBUGNOW UpdateFOVLerpAddr = (intptr_t*)MemoryUtils::PatternScan("UpdateFOVLerp", UpdateFOVLerpPattern);
 			}
 
 			if (UpdateFOVLerpAddr == NULL) {
