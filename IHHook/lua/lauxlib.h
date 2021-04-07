@@ -73,9 +73,7 @@ FUNCPTRDEF(int, luaL_loadfile, lua_State *L, const char *filename);
 FUNCPTRDEF(int, luaL_loadbuffer, lua_State *L, const char *buff, size_t sz, const char *name);
 LUALIB_API int (luaL_loadstring)(lua_State *L, const char *s); //FUNCPTRDEF(int, luaL_loadstring, lua_State *L, const char *s);
 
-#ifndef  VER_JP
 FUNCPTRDEF(lua_State *, luaL_newstate, void);
-#endif // ! VER_JP
 
 FUNCPTRDEF(const char *, luaL_gsub, lua_State *L, const char *s, const char *p, const char *r);
 
@@ -135,7 +133,7 @@ typedef struct luaL_Buffer {
 
 #define luaL_addsize(B,n)	((B)->p += (n))
 
-FUNCPTRDEF(void, luaL_buffinit, lua_State *L, luaL_Buffer *B);
+LUALIB_API void (luaL_buffinit)(lua_State* L, luaL_Buffer* B);//FUNCPTRDEF(void, luaL_buffinit, lua_State *L, luaL_Buffer *B);
 FUNCPTRDEF(char *, luaL_prepbuffer, luaL_Buffer *B);
 FUNCPTRDEF(void, luaL_addlstring, luaL_Buffer *B, const char *s, size_t l);
 LUALIB_API void (luaL_addstring)(luaL_Buffer *B, const char *s);// FUNCPTRDEF(void, luaL_addstring, luaL_Buffer *B, const char *s);

@@ -20,12 +20,8 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 
-#ifndef VER_JP
 #include "lua/lua_AddressesGEN.h"
-#else
-#include "lua/lua_AddressesGEN_jp.h"
-#endif // !VER_JP
-
+#include "lua/lua_Signatures.h"
 
 #include <string>
 #include "MemoryUtils.h"
@@ -50,12 +46,12 @@ namespace IHHook {
 	void TestSigScan() {
 		auto tstart = std::chrono::high_resolution_clock::now();
 			//Get all module related information
-		MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
+		//MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
 
 		//Assign our base and module size
-		uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
+		//uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
 
-		uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
+		//uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
 
 		char* foxmainSig = "\x48\x89\x00\x00\x00\x48\x89\x00\x00\x00\x57\x48\x83\xEC\x00\x83\x64\x24\x20";
 		char* foxMainMask = "xx???xx???xxxx?xxxx";
@@ -74,7 +70,7 @@ namespace IHHook {
 		//PBYTE luaI_openlibOrigShort = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
 
 		//uintptr_t foxMainOrigFoundPattern = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
-		PBYTE foxMainOrigFoundSig = MemoryUtils::FindSignature("foxMain", mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
+		//PBYTE foxMainOrigFoundSig = MemoryUtils::FindSignature("foxMain", mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
 
 		auto tend = std::chrono::high_resolution_clock::now();
 		auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
@@ -114,16 +110,15 @@ namespace IHHook {
 		void __fastcall luaL_openlibsHook(lua_State* L) {
 			spdlog::debug(__func__);
 			luaL_openlibs(L);
-#ifndef MINIMAL_HOOK
+
 			if (debugMode) {
 				TestHooks_Lua(L);
 			}
-#endif
 			lua_pushinteger(L, Version);
 			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
 			LuaIHH::luaopen_ihh(L);
-#ifndef MINIMAL_HOOK
+
 			//OFF luaopen_winapi(L);
 			LoadImguiBindings(L);
 			if (debugMode) {
@@ -132,7 +127,7 @@ namespace IHHook {
 
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
-#endif
+
 			spdlog::debug("luaL_openlibsHook complete");
 		}//lua_newstateHook
 
@@ -180,22 +175,34 @@ namespace IHHook {
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 
-			CREATE_REBASED_ADDR(luaL_openlibs)
-			CREATE_REBASED_ADDR(lua_newstate)
-			CREATE_REBASED_ADDR(luaL_loadbuffer)
-			CREATE_REBASED_ADDR(lua_atpanic)
-			
-			CREATE_HOOK(luaL_openlibs)
-#ifndef MINIMAL_HOOK
-			CREATE_HOOK(lua_newstate)
-			CREATE_HOOK(luaL_loadbuffer)
-			//OFF CREATE_HOOK(lua_atpanic)
 
-			ENABLEHOOK(lua_newstate)
-			ENABLEHOOK(luaL_loadbuffer)
-			//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
-#endif		
-			ENABLEHOOK(luaL_openlibs)
+			if (isTargetExe) {
+				GET_REBASED_ADDR(luaL_openlibs)
+				GET_REBASED_ADDR(lua_newstate)
+				GET_REBASED_ADDR(luaL_loadbuffer)
+				GET_REBASED_ADDR(lua_atpanic)
+			}
+			else {
+				GET_SIG_ADDR(luaL_openlibs)
+				GET_SIG_ADDR(lua_newstate)
+				GET_SIG_ADDR(luaL_loadbuffer)
+				GET_SIG_ADDR(lua_atpanic)
+			}
+
+			if (luaL_openlibsAddr == NULL || lua_newstateAddr == NULL || luaL_loadbufferAddr == NULL || lua_atpanicAddr == NULL) {//DEBUGNOW 
+				spdlog::warn("Hooks_Lua addr fail: address==NULL");
+			}
+			else {
+				CREATE_HOOK(luaL_openlibs)
+				CREATE_HOOK(lua_newstate)
+				CREATE_HOOK(luaL_loadbuffer)
+				//OFF CREATE_HOOK(lua_atpanic)
+
+				ENABLEHOOK(lua_newstate)
+				ENABLEHOOK(luaL_loadbuffer)
+				//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
+				ENABLEHOOK(luaL_openlibs)
+			}//if name##Addr != NULL
 		}//CreateHooks
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
@@ -263,9 +270,8 @@ namespace IHHook {
 		// game lua to IHHook callbacks>
 		//tex called inside-out from init.lua via IH, TODO maybe see where init is loaded to make this independant from IH
 		int l_FoxLua_Init(lua_State* L) {
-#ifndef MINIMAL_HOOK
 			ReplaceStubedOutFox(L);	//tex KLUDGE see comment on this function
-#endif
+
 			return 0;
 		}//l_FoxLua_Init
 
@@ -347,13 +353,12 @@ namespace IHHook {
 		void TestHooks_Lua_PostNewState(lua_State* L) {
 			//tex cant be in newstate or following functions (luaL_openlibs) or it will recurse
 			spdlog::debug(__func__);
-#ifndef VER_JP
+
 			lua_State* nL = luaL_newstate();
 			if (nL != NULL) {
 				spdlog::debug("lua_close");
 				lua_close(nL);
 			}
-#endif
 		}//TestHooks_Lua_PostNewState
 	}//namespace Hooks_Lua
 }//namespace IHHoook

@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Hook.hpp" />
+    <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h" />
     <ClInclude Include="HookMacros.h" />
     <ClInclude Include="Hooks_CityHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
@@ -181,7 +182,10 @@
     <ClInclude Include="lua\luaconf.h" />
     <ClInclude Include="lua\lualib.h" />
     <ClInclude Include="lua\lua_AddressesGEN.h" />
+    <ClInclude Include="lua\lua_Signatures.h" />
     <ClInclude Include="MemoryUtils.h" />
+    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_en.h" />
+    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_jp.h" />
     <ClInclude Include="MinHook\buffer.h" />
     <ClInclude Include="MinHook\hde\hde32.h" />
     <ClInclude Include="MinHook\hde\hde64.h" />
@@ -190,6 +194,7 @@
     <ClInclude Include="MinHook\hde\table64.h" />
     <ClInclude Include="MinHook\MinHook.h" />
     <ClInclude Include="MinHook\trampoline.h" />
+    <ClInclude Include="ntdll.h" />
     <ClInclude Include="OS.h" />
     <ClInclude Include="PipeServer.h" />
     <ClInclude Include="RawInput.h" />
@@ -208,6 +213,7 @@
   <ItemGroup>
     <ClCompile Include="D3D11Hook.cpp" />
     <ClCompile Include="DInputProxy.cpp" />
+    <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp" />
     <ClCompile Include="Hooks_CityHash.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -239,8 +245,10 @@
     <ClCompile Include="lua\lapi.cpp" />
     <ClCompile Include="lua\lauxlib.cpp" />
     <ClCompile Include="lua\lauxlib_CreateHooks.cpp" />
+    <ClCompile Include="lua\ldebug.cpp" />
     <ClCompile Include="lua\ldo.cpp" />
     <ClCompile Include="lua\lobject.cpp" />
+    <ClCompile Include="lua\ltm.cpp" />
     <ClCompile Include="lua\lualib_CreateHooks.cpp" />
     <ClCompile Include="lua\lua_CreateHooks.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
@@ -270,6 +278,7 @@
     <ResourceCompile Include="IHHook.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="imguiimpl\imgui_iterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

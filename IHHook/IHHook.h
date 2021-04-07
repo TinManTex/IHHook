@@ -27,14 +27,12 @@
 #include "D3D11Hook.hpp"
 #include "WindowsMessageHook.hpp"
 
-//#define MINIMAL_HOOK //
-
 namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 10; //SYNC: fileVersion
+	static const int Version = 12; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 3 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
 
@@ -47,6 +45,8 @@ namespace IHHook {
 	static const size_t BaseAddr = 0x140000000; // from ImageBase field in the EXE
 	extern size_t RealBaseAddr; // Current base address of the EXE
 
+	extern bool isTargetExe;//DEBUGNOW try direct addresses, or sig matching
+
 	extern std::vector<std::string> errorMessages;
 
 	void Shutdown();
@@ -54,7 +54,6 @@ namespace IHHook {
 	class IHH {
 	public:
 		IHH();
-		void SetupLog();
 		virtual ~IHH();
 
 		HMODULE GetModule() {
@@ -106,6 +105,9 @@ namespace IHHook {
 
 		bool OnMessage(HWND wnd, UINT message, WPARAM w_param, LPARAM l_param);
 	private:
+		void SetupLog();
+		std::string GetLangVersion();
+
 		bool FrameInitialize();
 		void CreateRenderTarget();
 		void CleanupRenderTarget();

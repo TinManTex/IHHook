@@ -43,6 +43,9 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{87b329e2-ba64-4502-9c81-b3fdfdce40e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Hooking.Patterns">
+      <UniqueIdentifier>{baa6b5c2-e13a-46a0-b92f-60d9ddee4702}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="spdlog\tweakme.h">
@@ -177,6 +180,21 @@
     <ClInclude Include="Hooks_FOV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lua\lua_Signatures.h">
+      <Filter>Source Files\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="ntdll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_en.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_jp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h">
+      <Filter>Source Files\Hooking.Patterns</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -302,6 +320,15 @@
     <ClCompile Include="Hooks_FOV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\ltm.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\ldebug.cpp">
+      <Filter>Source Files\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp">
+      <Filter>Source Files\Hooking.Patterns</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IHHook.rc">
@@ -312,5 +339,6 @@
     <None Include="imguiimpl\imgui_iterator.inl">
       <Filter>Source Files\imguiimpl</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
