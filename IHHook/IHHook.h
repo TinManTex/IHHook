@@ -54,7 +54,6 @@ namespace IHHook {
 	class IHH {
 	public:
 		IHH();
-		void SetupLog();
 		virtual ~IHH();
 
 		HMODULE GetModule() {
@@ -106,6 +105,9 @@ namespace IHHook {
 
 		bool OnMessage(HWND wnd, UINT message, WPARAM w_param, LPARAM l_param);
 	private:
+		void SetupLog();
+		std::string GetLangVersion();
+
 		bool FrameInitialize();
 		void CreateRenderTarget();
 		void CleanupRenderTarget();

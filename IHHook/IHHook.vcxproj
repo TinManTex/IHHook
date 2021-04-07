@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Hook.hpp" />
+    <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h" />
     <ClInclude Include="HookMacros.h" />
     <ClInclude Include="Hooks_CityHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
@@ -183,6 +184,8 @@
     <ClInclude Include="lua\lua_AddressesGEN.h" />
     <ClInclude Include="lua\lua_Signatures.h" />
     <ClInclude Include="MemoryUtils.h" />
+    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_en.h" />
+    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_jp.h" />
     <ClInclude Include="MinHook\buffer.h" />
     <ClInclude Include="MinHook\hde\hde32.h" />
     <ClInclude Include="MinHook\hde\hde64.h" />
@@ -210,6 +213,7 @@
   <ItemGroup>
     <ClCompile Include="D3D11Hook.cpp" />
     <ClCompile Include="DInputProxy.cpp" />
+    <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp" />
     <ClCompile Include="Hooks_CityHash.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

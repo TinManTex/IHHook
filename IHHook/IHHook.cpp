@@ -28,16 +28,22 @@
 #include "IHMenu.h"
 #include "StyleEditor.h"
 
+//DEBUGNOW
+#include "mgsvtpp_adresses_1_0_15_3_en.h"
+#include "mgsvtpp_adresses_1_0_15_3_jp.h"
+
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//tex see note in imgui_impl_win32.h
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
+
 
 namespace IHHook {
 	std::vector<std::string> errorMessages{};
 
 	size_t RealBaseAddr;
 	bool isTargetExe = false;
+	std::map<std::string, int64_t> addressSet{};
 
 	terminate_function terminate_Original;
 
@@ -112,17 +118,9 @@ namespace IHHook {
 		spdlog::shutdown();
 	}//Shutdown
 
-	//TODO move to utils or something
-	//IN/SIDE: BaseAddr, RealBaseAddr
-	void* RebasePointer(size_t address) {
-		return (void*)((address - BaseAddr) + RealBaseAddr);
-	}//RebasePointer
-	extern void TestSigScan();//DEBUGNOW
 	IHH::IHH()
 		: thisModule{ GetModuleHandle(0) } {
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
-
-		//TestSigScan();//DEBUGNOW
 
 		signal(SIGABRT, &AbortHandler);//tex signal handler for SIGABRT which is thrown by abort()
 		terminate_Original = set_terminate(TerminateHandler);
@@ -188,53 +186,11 @@ namespace IHHook {
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
 
 
-
 		//tex Much of IHHooks hooks are based on direct addresses, so if the exe is different the user needs to know
 		//can just hope that konami actually keeps updating the exe version properly and not release multiple updates with no exe version change like they have in the past
-		//but version_info.txt should help there
+		//but version_info.txt should help there too
 
-		//DEBUGNOW So jp voice version is actually different exe, so cant just rely on exe version info.
-		std::string versionInfoFileName = "version_info.txt";
-		std::ifstream infile(versionInfoFileName);
-		if (infile.fail()) {//tex likely pirated game, or user has some wierd setup, cant know actual version
-			spdlog::warn("Could not load ", versionInfoFileName);
-			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different sku.");
-			//any point using errormessages since if this is an actual lang exe mismatch its going to crash before it gets to the ui
-			//DEBUGNOW think what to do.
-		}
-
-		//REF
-		//Tpp_steam_mst_en_day1820Mgo_patch_0212_1307
-		//Tpp_steam_mst_jp_day1820Mgo_patch_0212_1307
-		std::string line;
-		std::string lang = "";
-		while (std::getline(infile, line)) {
-			std::istringstream iss(line);
-
-			if (line.length() < std::string("Tpp_steam_mst_en").length()) {
-				spdlog::warn("Unexpected version string, string shorter than expected");
-				break;
-			}
-			
-			std::string prefix = "Tpp_steam_mst_";
-			std::size_t found = line.find(prefix);
-			if (found == std::string::npos) {
-				spdlog::warn("Unexpected version string, could not find {}", prefix);
-				break;
-			}
-
-			lang = line.substr(prefix.length(),2);//en,jp etc
-			spdlog::debug("Found lang: {}", lang);
-	
-			if (lang != "en" && lang != "jp") {
-				spdlog::warn("Unexpected lang version");
-			}
-			else {
-				break;
-			}
-		}//while infile
-
-
+		std::string lang = GetLangVersion();
 
 		std::string exeVersionStr = "";
 		int versionDelta = OS::CheckVersionDelta(IHHook::GameVersion, exeVersionStr);
@@ -259,11 +215,10 @@ namespace IHHook {
 			SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 		} 
 		else {
-			if (lang != "en") {//DEBUGNOW
+			if (lang != "en" && lang != "jp" ) {//DEBUGNOW
 				isTargetExe = false;
 
-				errorMessages.push_back("WARNING: IHHook currently only");
-				errorMessages.push_back("supports the english language version");
+				errorMessages.push_back("WARNING: Unknown lang version");
 				errorMessages.push_back("Infinite Heaven will continue to load");
 				errorMessages.push_back("with some limitations.");
 				errorMessages.push_back("Including this menu not working in-game.");
@@ -280,12 +235,29 @@ namespace IHHook {
 			}//
 		}// ChecKVersion
 
-		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true
-		bool doHooks = isTargetExe;
+		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
+		//bool doHooks = true;
+
+		bool doHooks = isTargetExe;//tex in theory could fall back to signature scanning, however it takes a litteral minute for 100+ signatures to be found 
+		//plus if you did go that route you'd have to put it at an earlier blocking point (like off dllmain itself)
+		//since this function we're in is run by a thread so the exe will continue past the point we need our hooks up and running
 		if (doHooks) {//tex hook em up boys
 			Hooks_Lua::SetupLog();
 
 			MH_Initialize();
+
+			//DEBUGNOW TODO: an addresset map too I guess
+			if (lang == "en") {
+				addressSet = mgsvtpp_adresses_1_0_15_3_en;
+			}
+			else {
+				if (lang == "jp") {
+					addressSet = mgsvtpp_adresses_1_0_15_3_jp;
+				}
+				else {
+					//tex unknown exe lang, should already be handled by isTargetExe
+				}
+			}//if lang
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 
@@ -371,6 +343,50 @@ namespace IHHook {
 		log->flush();
 		spdlog::debug("Note: ihhook_log is multithreaded to accept logging from multiple threads so order of entries may not be sequential.");
 	}//SetupLog
+
+	std::string IHH::GetLangVersion() {
+		//DEBUGNOW So jp voice version is actually different exe, so cant just rely on exe version info.
+		std::string versionInfoFileName = "version_info.txt";
+		std::ifstream infile(versionInfoFileName);
+		if (infile.fail()) {//tex likely pirated game, or user has some wierd setup, cant know actual version
+			spdlog::warn("Could not load ", versionInfoFileName);
+			spdlog::warn("Cannot differentiate what language version the exe is, so game may crash when hooking if exe version matches but using different sku.");
+			//any point using errormessages since if this is an actual lang exe mismatch its going to crash before it gets to the ui
+			//DEBUGNOW think what to do.
+		}
+
+		//REF
+		//Tpp_steam_mst_en_day1820Mgo_patch_0212_1307
+		//Tpp_steam_mst_jp_day1820Mgo_patch_0212_1307
+		std::string line;
+		std::string lang = "";
+		while (std::getline(infile, line)) {
+			std::istringstream iss(line);
+
+			if (line.length() < std::string("Tpp_steam_mst_en").length()) {
+				spdlog::warn("Unexpected version string, string shorter than expected");
+				break;
+			}
+
+			std::string prefix = "Tpp_steam_mst_";
+			std::size_t found = line.find(prefix);
+			if (found == std::string::npos) {
+				spdlog::warn("Unexpected version string, could not find {}", prefix);
+				break;
+			}
+
+			lang = line.substr(prefix.length(), 2);//en,jp etc
+			spdlog::debug("Found lang: {}", lang);
+
+			if (lang != "en" && lang != "jp") {
+				spdlog::warn("Unexpected lang version");
+			}
+			else {
+				break;
+			}
+		}//while infile
+		return lang;
+	}//GetLangVersion
 
 	//D3D11Hook->present
 	//GOTCHA: this is blocking to actual d3d Present, so keep performance in mind

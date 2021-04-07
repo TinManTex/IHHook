@@ -2,6 +2,13 @@
 
 #include "MinHook.h"
 #include "MemoryUtils.h"
+#include <map>
+
+#include "Hooking.Patterns/Hooking.Patterns.h"//DEBUGNOW
+
+namespace IHHook {
+	extern std::map<std::string, int64_t> addressSet;
+}
 
 //DEBUGNOW put this somewhere or CULL
 	//DEBUGNOW signatures are more robust to game updates/different game versions than straight addresses, but take a long time to search
@@ -39,6 +46,10 @@
 
 //NOTE: You can just CREATE_FUNCPTR as a matter of course
 //and CREATE_HOOK/ENABLE_HOOK after if you want a detour instead
+
+#define STRINGIFY(x) #x
+#define TOKENPASTE(x, y) STRINGIFY(x ## y)
+
 
 
 //typedef for the function pointer, 
@@ -85,31 +96,30 @@ const char * name##Pattern = pattern;
 //const char * lua_newstate = "4C 8B ? 49 89 ? ? 55 56 57 41 ? 41";
 
 //base address of func, and actually declare the function pointer -- can be in header or code (as long as later code using it can see its declaration)
-#define FUNC_DECL_ADDR(name, address)\
+#define FUNC_DECL_ADDR(name)\
 name##Func* name;\
-intptr_t* name##BaseAddr = (intptr_t*)address;\
 intptr_t* name##Addr;
 //Example use:
-//FUNC_DECL_ADDR(lua_newstate, 0x14cdd7ab0);
+//FUNC_DECL_ADDR(lua_newstate);
 //Expands to:
 //lua_newstateFunc lua_newstate;
-//lua_newstateFunc lua_newstateBaseAddr = (lua_newstateFunc)0x14cdd7ab0;
 //lua_newstateFunc lua_newstateBaseAddr;
 
 //DEBUGNOW rename CREATE addrs (sig as well) GET_<>_ADDR
 //Rebases an address an puts it in var for CREATE_HOOK macro
 #define GET_REBASED_ADDR(name)\
-name##Addr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);
+name##Addr = (intptr_t*)((addressSet[#name] - BaseAddr) + RealBaseAddr);
+//OLD name##Addr = (intptr_t*)((name##BaseAddr - BaseAddr) + RealBaseAddr);
 //Example use:
 //GET_REBASED_ADDR(lua_newstate);
 //Expands to:
-//lua_newstateAddr = (intptr_t*)((lua_newstateBaseAddr - BaseAddr) + RealBaseAddr);
+//lua_newstateAddr = (intptr_t*)((addressSet["lua_newstate"] - BaseAddr) + RealBaseAddr);
 
 //ASSUMPTION name##Addr defined, FUNC_DECL_SIG declared
 //sigscans for an address an puts it in var for CREATE_HOOK macro
 #define GET_SIG_ADDR(name)\
-name##Addr = (intptr_t*)MemoryUtils::sigscan("name##Addr", name##Sig, name##Mask);
-//ALT name##Addr = MemoryUtils::PatternScan(name##Pattern);
+name##Addr = (intptr_t*)MemoryUtils::sigscan(#name, name##Sig, name##Mask);
+//ALT name##Addr = (intptr_t*)MemoryUtils::PatternScan(#name, name##Pattern);
 //ALT name##Addr = (intptr_t*)MemoryUtils::ScanModIn(name##Sig, name##Mask, "mgsvtpp.exe");//DEBUG exeName?
 //Example use:
 //GET_SIG_ADDR(lua_newstate);
@@ -132,41 +142,41 @@ name = (name##Func*)name##Addr;
 #define CREATE_HOOK(name)\
 MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)name##Addr, name##Hook, (LPVOID*)&name);\
 if (name##CreateStatus != MH_OK) {\
-	spdlog::error("MH_CreateHook failed for {} with code {}", "name", name##CreateStatus);\
+	spdlog::error("MH_CreateHook failed for {} with code {}", #name, name##CreateStatus);\
 }
 //Example use:
 //CREATE_HOOK(lua_newstate);
 //Expands to:
 //MH_STATUS lua_newstateCreateStatus = MH_CreateHook(lua_newstateAddr, lua_newstateHook, (LPVOID*)&lua_newstate);
 //if (lua_newstateCreateStatus != MH_OK) {
-//	spdlog::error("MH_CreateHook failed for {} with code {}", "name", lua_newstateCreateStatus);\
+//	spdlog::error("MH_CreateHook failed for {} with code {}", "lua_newstate", lua_newstateCreateStatus);\
 //}
 
 //ASSUMPTION name##Addr of runtime memory address has been defined
 #define ENABLEHOOK(name)\
 MH_STATUS name##EnableStatus = MH_EnableHook((LPVOID*)name##Addr);\
 if (name##EnableStatus != MH_OK) {\
-	spdlog::error("MH_EnableHook failed for {} with code {}", "name", name##EnableStatus);\
+	spdlog::error("MH_EnableHook failed for {} with code {}", #name, name##EnableStatus);\
 }
 //Example use:
 //ENABLEHOOK(lua_newstate);
 //Expands to:
 //MH_STATUS lua_newstateEnableStatus = MH_EnableHook(lua_newstateAddr);
 //if (lua_newstateEnableStatus != MH_OK) {
-//	spdlog::error("MH_EnableHook failed for {} with code {}", "name", lua_newstateEnableStatus);\
+//	spdlog::error("MH_EnableHook failed for {} with code {}", "lua_newstate", lua_newstateEnableStatus);\
 //}
 
 //ASSUMES CREATEDETOUR has defined name##Addr
 #define DISABLEHOOK(name)\
 MH_STATUS name##DisableStatus = MH_DisableHook((LPVOID*)name##Addr);\
 if (name##DisableStatus != MH_OK) {\
-	spdlog::error("MH_DisableHook failed for {} with code {}", "name", name##DisableStatus);\
+	spdlog::error("MH_DisableHook failed for {} with code {}", #name, name##DisableStatus);\
 }
 //Example use:
 //ENABLEHOOK(lua_newstate);
 //Expands to:
 //MH_STATUS lua_newstateDisableStatus = MH_DisableHook(lua_newstateAddr);
 //if (DisableStatus != MH_OK) {
-//	spdlog::error("MH_DisableHook failed for {} with code {}", "name", lua_newstateDisableStatus);\
+//	spdlog::error("MH_DisableHook failed for {} with code {}", "lua_newstate", lua_newstateDisableStatus);\
 //}
 
