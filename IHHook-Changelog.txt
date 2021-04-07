@@ -1,6 +1,9 @@
 IHHook changelog 
 - just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
 
+r12 IH r248 - 2021-04-08
+Support for mgsvtpp JP audio version.
+
 r11 IHr247 - 2021-04-05
 Hooks_FOV - cribbing from https://github.com/mon/MGSV-TPP-FoV , supported by IH InfCamHook.lua
 

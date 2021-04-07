@@ -32,7 +32,7 @@ namespace IHHook {
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 11; //SYNC: fileVersion
+	static const int Version = 12; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 3 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
 
