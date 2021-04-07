@@ -4,7 +4,13 @@
 #include <vector>
 #include <chrono>
 #include <spdlog/spdlog.h>
-#include "ntdll.h"//DEBUGNOW
+#include "ntdll.h"//gh scanner
+#include "Hooking.Patterns/Hooking.Patterns.h"
+
+//GH scanner taking longer than simple scanner
+
+//DEBUGNOW TODO evaluate https://github.com/WopsS/RenHook pattern scanner (Yooungis recomendation), looks interesting in that its using std::scan
+
 
 namespace IHHook {
 	namespace MemoryUtils {
@@ -186,6 +192,29 @@ namespace IHHook {
 		}//ScanModIn
 
 		//< gh scanner
+
+		//https://github.com/ThirteenAG/Hooking.Patterns
+		//DEBUGNOW hint system seems interesting, but if you're going to serialize stuff just for performance why arent you dumping addresses themselves?
+		//also its 10x slower than basic sig scan for some reason
+		uint32_t* PatternScan(const char* name, const char* pattern) {
+			auto tstart = std::chrono::high_resolution_clock::now();
+
+			auto pattern_result = hook::pattern(pattern);
+			if (!pattern_result.count_hint(1).empty()) {
+				uint32_t* result = pattern_result.count(1).get(0).get<uint32_t>();
+				auto tend = std::chrono::high_resolution_clock::now();
+				auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+				spdlog::debug("sigscan found {} in(microseconds): {}", name, duration);
+				return result;
+			}
+			else {
+				auto tend = std::chrono::high_resolution_clock::now();
+				auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+				spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
+			}
+
+			return NULL;
+		}//PatternScan
 
 		//IN/SIDE: BaseAddr, RealBaseAddr
 		//void* RebasePointer(uintptr_t address) {
