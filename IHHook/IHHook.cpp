@@ -28,7 +28,6 @@
 #include "IHMenu.h"
 #include "StyleEditor.h"
 
-//DEBUGNOW
 #include "mgsvtpp_adresses_1_0_15_3_en.h"
 #include "mgsvtpp_adresses_1_0_15_3_jp.h"
 
@@ -588,7 +587,7 @@ namespace IHHook {
 			//init_thread.detach();
 
 			LoadSelectedInitial(NULL);//StyleEditor
-		}
+		}//if firstFrame
 
 		spdlog::info("frame initialized");
 		return true;
