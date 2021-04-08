@@ -24,8 +24,6 @@
 #include "lua/lua_Signatures.h"
 
 #include <string>
-#include "MemoryUtils.h"
-#include <Psapi.h>// ModuleInfo, DEBUGNOW
 
 extern void LoadImguiBindings(lua_State* lState);
 
@@ -37,13 +35,13 @@ namespace IHHook {
 	extern void TestHooks_Lua(lua_State* L);
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
 
-	//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
+	//tex CULL lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 	//extern int luaopen_winapi(lua_State* L);
 
 
 	std::shared_ptr<spdlog::logger> luaLog;
 
-	void TestSigScan() {
+	void TestSigScan() {//DEBUGNOW
 		auto tstart = std::chrono::high_resolution_clock::now();
 			//Get all module related information
 		//MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
