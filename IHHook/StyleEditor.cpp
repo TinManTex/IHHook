@@ -16,6 +16,31 @@
 #include "StyleEditor.h"
 
 namespace IHHook {
+	std::string fontsPath = "mod\\fonts\\";
+	std::string defaultFont = "ProggyClean.ttf, 13px";
+
+	//DEBUGNOW actually select the font in combobox, ala styles combo?
+	bool SelectFont(std::string selectFontName) {
+		bool foundFont = false;
+		ImGuiIO& io = ImGui::GetIO();
+		ImFont* font_current = ImGui::GetFont();
+		for (int n = 0; n < io.Fonts->Fonts.Size; n++) {
+			ImFont* font = io.Fonts->Fonts[n];
+			std::string fontName = font->GetDebugName();
+			if (fontName == selectFontName) {
+				io.FontDefault = font;
+				foundFont = true;
+				break;
+			}
+		}
+
+		if (!foundFont) {
+			spdlog::warn("SelectFont: Could not find font {}", selectFontName);
+		}
+
+		return foundFont;
+	}//SelectFont
+
 	//Style to string>
 	std::string BoolToString(bool b) {
 		return b ? "true" : "false";
@@ -134,6 +159,15 @@ namespace IHHook {
 		}//for ImGuiCol_COUNT
 	}//GetColors
 
+	//tex not part of style struct
+	void GetOther(std::list<std::string>& savedOther, ImGuiStyle* src) {
+		ImGuiIO& io = ImGui::GetIO();
+		ImFont* font_default = io.FontDefault;//tex is set in ShowFontSelector
+		//ImFont* font_current = ImGui::GetFont();
+		std::string fontName = font_default->GetDebugName();
+		savedOther.push_back("Font=\"" + fontName + "\"");
+	}//GetOther
+
 	//DEBUGNOW encoding utf8?
 	void SaveGuiStyle(std::string fileName) {
 		spdlog::debug("SaveGuiStyle {}", fileName);
@@ -142,6 +176,8 @@ namespace IHHook {
 		GetStyle(dumpedStyle, NULL);
 		std::list<std::string> dumpedColors{};
 		GetColors(dumpedColors, NULL);
+		std::list<std::string> dumpedOther{};
+		GetOther(dumpedOther, NULL);
 
 		std::ofstream styleFile;
 		styleFile.open(fileName, std::ios::out | std::ios::trunc);
@@ -158,6 +194,10 @@ namespace IHHook {
 				styleFile << "\t\t" << line << ",\n";
 			}
 			//styleFile << "\t},\n";
+
+			for each (std::string line in dumpedOther) {
+				styleFile << "\t" << line << ",\n";
+			}
 
 			styleFile << "}\n";
 			styleFile << "return this\n";
@@ -214,6 +254,12 @@ namespace IHHook {
 		}
 	}//ParseBool
 
+	std::string ParseString(std::string valueStr) {
+		//TODO: verify it actually has quotes
+		//strip leading and trailing quotes
+		return valueStr.substr(1, valueStr.length() - 2);
+	}//ParseString
+
 	//REF
 	//--styledumptest.lua
 	//--saved by gui style editor
@@ -230,6 +276,8 @@ namespace IHHook {
 	//	ImGuiCol_Text={1.000000,1.0000001.000000,1.000000},
 	//	ImGuiCol_TextDisabled={0.500000,0.5000000.500000,1.000000},
 	//	ImGuiCol_WindowBg={0.060000,0.0600000.060000,0.940000},
+	//	--stuff not in style struct
+	//	Font="Cousine-Regular.ttf, 18px",
 	//}
 	//return this
 
@@ -241,6 +289,8 @@ namespace IHHook {
 			spdlog::warn("ParseGuiStyle ifstream.fail for {}", fileName);
 			return false;
 		}
+
+		std::string fontName = defaultFont;
 
 		std::string line;
 		while (std::getline(infile, line)) {
@@ -406,6 +456,9 @@ namespace IHHook {
 			else if (varName == "CircleSegmentMaxError") {
 				ref->CircleSegmentMaxError = std::stof(valueStr);
 			}
+			else if (varName == "Font") {
+				fontName = ParseString(valueStr);//DEBUGNOW
+			}
 			else {
 				int ImGuiCol = EnumForStr(ImGuiCol_str, varName);
 				if (ImGuiCol != -1) {
@@ -414,6 +467,8 @@ namespace IHHook {
 				}
 			}
 		}//while line
+
+		SelectFont(fontName);
 
 		return true;
 	}//ParseGuiStyle
@@ -429,7 +484,6 @@ namespace IHHook {
 	char inputBuffer[1024] = "";//SaveBox
 	bool showSaveBox = false;
 	std::string currentStyle = "Default";//DEBUGNOW
-
 
 	int FindIndexForCurrentStyle() {
 		int index = -1;
@@ -542,7 +596,7 @@ namespace IHHook {
 	//IN: stylesPath
 	//OUT: fileList, selectedSetting
 	void RefreshFileList() {
-		int prevNumFiles = fileList.size();
+		int prevNumFiles = (int)fileList.size();
 		fileList.clear();
 
 		if (!std::filesystem::exists(stylesPath)) {
@@ -558,7 +612,7 @@ namespace IHHook {
 			}
 		}
 
-		int numFiles = fileList.size();
+		int numFiles = (int)fileList.size();
 		if (numFiles == 0) {
 			selectedSetting = -1;
 		}
@@ -585,6 +639,57 @@ namespace IHHook {
 		}
 		return ok;
 	}//LoadSelected
+	//IN/SIDE defaultFont
+	void LoadFonts() {
+		std::string filesPath = fontsPath;
+		std::vector<std::filesystem::path> fileList{};
+
+		if (!std::filesystem::exists(filesPath)) {
+			spdlog::error("LoadFonts: path does not exist: {}", filesPath);
+			return;
+		}
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.Fonts->Clear();
+
+		if (std::filesystem::is_empty(filesPath)) {
+			spdlog::warn("LoadFonts: fonts folder empty: {}", filesPath);
+			io.Fonts->AddFontDefault();		
+			io.Fonts->Build();
+			ImGuiStyle style = ImGui::GetStyle();
+			style.ScaleAllSizes(1.0f);
+			return;
+		}
+
+		//tex yeah I'm aware that I'm doing common font pt sizes which arent pixel sizes
+		auto fontSizes = std::list<int>{
+			10,
+			13,//imguis default font is 13
+			15,
+			18,
+			24,
+			36,
+			48,
+			60,
+			72,
+		};
+
+		for (const auto& entry : std::filesystem::directory_iterator(filesPath)) {
+			std::string extension = entry.path().extension().string();
+			if (extension == ".ttf" || extension == ".TTF") {
+				std::string fileName = entry.path().string();
+				for each (int fontSizePx in fontSizes) {
+					io.Fonts->AddFontFromFileTTF(fileName.c_str(), (float)fontSizePx);
+				}	
+			}
+		}//for directory
+
+		io.Fonts->Build();
+		ImGuiStyle style = ImGui::GetStyle();
+		style.ScaleAllSizes(1.0f);
+
+		SelectFont(defaultFont);
+	}//LoadFonts
 
 	// Helper to display a little (?) mark which shows a tooltip when hovered.
 	// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
@@ -746,6 +851,7 @@ namespace IHHook {
 			return;
 		}
 		RefreshFileList();
+		LoadFonts();
 		if (selectedSetting != -1) {
 			std::string fileName = fileList[selectedSetting].string();
 			bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
@@ -760,6 +866,29 @@ namespace IHHook {
 			}
 		}
 	}//LoadSelectedInitial
+
+	// Demo helper function to select among loaded fonts.
+	// Here we use the regular BeginCombo()/EndCombo() api which is more the more flexible one.
+	void ShowFontSelector(const char* label) {
+		ImGuiIO& io = ImGui::GetIO();
+		ImFont* font_current = ImGui::GetFont();
+		if (ImGui::BeginCombo(label, font_current->GetDebugName())) {
+			for (int n = 0; n < io.Fonts->Fonts.Size; n++) {
+				ImFont* font = io.Fonts->Fonts[n];
+				ImGui::PushID((void*)font);
+				if (ImGui::Selectable(font->GetDebugName(), font == font_current)) {
+					io.FontDefault = font;
+					//defaultFont = font->GetDebugName();
+				}
+				ImGui::PopID();
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::SameLine();
+		HelpMarker(
+			"- Additional fonts can be added to MGS_TPP\\mod\fonts\n"
+		);
+	}//ShowFontSelector
 
 	//tex REWORKED imgui_demo to allow load/save
 	void ShowStyleEditor(bool* p_open, bool openPrev, ImGuiStyle* ref) {
@@ -803,7 +932,7 @@ namespace IHHook {
 		//	RefreshFileList();
 		//}
 
-		//tex >
+		//tex style combo >
 		std::string comboLabel = "";// Label to preview before opening the combo (technically it could be anything)
 		if (fileList.size() > 0 && selectedSetting < fileList.size()) {
 			comboLabel = fileList[selectedSetting].stem().string();
@@ -823,7 +952,7 @@ namespace IHHook {
 				ImGui::PopID();
 			}
 			ImGui::EndCombo();
-		}//if Combo
+		}//style Combo<
 
 		bool modifyOK = false;
 		std::string fileName = "";
@@ -896,7 +1025,7 @@ namespace IHHook {
 		//if (ImGui::ShowStyleSelector("Colors##Selector"))
 		//	ref_saved_style = style;
 
-		//OFF ImGui::ShowFontSelector("Fonts##Selector"); //tex no much sense showing this unless I actually add a font loading system
+		ShowFontSelector("Fonts##Selector");
 
 		// Simplified Settings (expose floating-pointer border sizes as boolean representing 0.0f or 1.0f)
 		//OFF if (ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 12.0f, "%.0f"))
@@ -949,7 +1078,7 @@ namespace IHHook {
 				ImGui::SameLine(); HelpMarker("Adjust if you cannot see the edges of your screen (e.g. on a TV where scaling has not been configured).");
 				ImGui::SliderFloat2("DisplaySafeAreaPadding", (float*)&style.DisplaySafeAreaPadding, 0.0f, 30.0f, "%.0f");
 				ImGui::EndTabItem();
-			}
+			}//TabItem Sizes
 
 			if (ImGui::BeginTabItem("Colors")) {
 				/* OFF
@@ -1008,7 +1137,7 @@ namespace IHHook {
 				ImGui::EndChild();
 
 				ImGui::EndTabItem();
-			}
+			}//TabItem Colors
 
 			/* //tex OFF DEBUGNOW think this through
 			if (ImGui::BeginTabItem("Fonts")) {
@@ -1045,7 +1174,7 @@ namespace IHHook {
 				ImGui::PopItemWidth();
 
 				ImGui::EndTabItem();
-			}
+			}//TabItem Fonts
 			*/
 
 			if (ImGui::BeginTabItem("Rendering")) {
@@ -1086,10 +1215,10 @@ namespace IHHook {
 				ImGui::PopItemWidth();
 
 				ImGui::EndTabItem();
-			}
+			}//TabItem Rendering
 
 			ImGui::EndTabBar();
-		}
+		}//TabBar
 
 		ImGui::PopItemWidth();
 
