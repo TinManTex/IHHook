@@ -851,7 +851,6 @@ namespace IHHook {
 			return;
 		}
 		RefreshFileList();
-		LoadFonts();
 		if (selectedSetting != -1) {
 			std::string fileName = fileList[selectedSetting].string();
 			bool ok = ParseGuiStyle(fileName, ref);//tex DEBUGNOW sets the saved ref? pass in style to set current?
@@ -1225,4 +1224,10 @@ namespace IHHook {
 		ImGui::End();
 	}//ShowStyleEditor
 	//style editor windows<
+
+
+	void InitStyleEditor() {
+		LoadFonts();
+		LoadSelectedInitial(NULL);
+	}//Init
 }//namespace IHHook
