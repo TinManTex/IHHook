@@ -3,14 +3,15 @@
 
 #include "windowsapi.h"
 #include "IHHook.h"
+#include <filesystem>
+
+#include "Hooks_FOV.h"//DEBUGNOW
 
 HMODULE g_thisModule;
 extern HMODULE origDll;//dinputproxy
 
 DWORD WINAPI InitThread(LPVOID lpParameter) {
-	//IHHook::thisModule = static_cast<HMODULE>(lpParameter);
-
-	g_ihhook = std::make_unique<IHHook::IHH>();
+	g_ihhook->Initialize();
 
 	return 0;
 }//InitThread
@@ -24,14 +25,19 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
 		g_thisModule = hModule;
 
+		//tex bulk of IHHook initialization that can be done at this point of fox engine execution (when it loads this dinput8 proxy) 
+		g_ihhook = std::make_unique<IHHook::IHH>();
+
 		//tex generally CreateThread in DllMain is bad form, 
 		//https://docs.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-best-practices
 		//'Some reasons not to do anything scary in your DllMain': https://devblogs.microsoft.com/oldnewthing/20040127-00/?p=40873
 		//and Initializing IHHook from the thread is kinda just shifting the goalposts in some respects as it spins up threads too (spdlog, pipeserver)
 		//but it should shift execution till after DllMain is exited at least: https://devblogs.microsoft.com/oldnewthing/20070904-00/?p=25283
-		//Ideally I should be just initializing hooks in dll main, 
-		//and hooking some good spot in mgsvs execution then doing the rest of initialization there.
-		//DEBUGNOW HANDLE hInitThread = CreateThread(nullptr, 0, IHHook::Initialize, hModule, 0, nullptr);
+
+		//GOTCHA: KLUDGE: for setting up stuff after dinput8 dll has returned, 
+		//but it's a fuzzy to what point of execution fox engine will be at the point any of this is run
+		//so in theory if someone manages to delay the main fox engine thread, but this InitThread continues you'll have issues
+		//DEBUGNOW actual solution is to hook fox engine functions at the relevant points of execution then run what you need inited
 		HANDLE hInitThread = CreateThread(nullptr, 0, InitThread, hModule, 0, nullptr);
 		if (hInitThread == NULL) {
 

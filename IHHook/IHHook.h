@@ -56,6 +56,8 @@ namespace IHHook {
 		IHH();
 		virtual ~IHH();
 
+		void Initialize();
+
 		HMODULE GetModule() {
 			return thisModule;
 		}//GetModule
@@ -100,6 +102,8 @@ namespace IHHook {
 		}//ToggleStyleEditor
 
 		//Dx11
+		void CreateD3DHook();
+		
 		void OnFrame();
 		void OnReset();
 
