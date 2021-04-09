@@ -1,8 +1,12 @@
 IHHook changelog 
 - just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
 
+r13
+Style Editor: Font/size selection, copy fonts to MGS_TPP\mod\fonts to add more - thanks IroquoisPliskin, others for the request.
+Fix: Alt-tabbing or doing anything else that would reset the d3d device would apply the menu InitialText again, which would only fix once you went into a menu to reset the menu list - thanks Yooungi for the report.
+
 r12 IH r248 - 2021-04-08
-Support for mgsvtpp JP audio version.
+Support for mgsvtpp JP audio version - thanks everyone for the reports.
 
 r11 IHr247 - 2021-04-05
 Hooks_FOV - cribbing from https://github.com/mon/MGSV-TPP-FoV , supported by IH InfCamHook.lua
