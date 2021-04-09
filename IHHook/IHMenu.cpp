@@ -306,6 +306,7 @@ namespace IHHook {
 			messagesIn.push(message);
 		}//QueueMessageIn
 
+		//CALLER: FramInitialize firstFrame
 		void SetInitialText() {
 			windowTitle = "Infinite Heaven";
 
