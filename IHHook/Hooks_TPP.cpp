@@ -28,12 +28,35 @@ namespace IHHook {
 	};
 
 	namespace Hooks_TPP {
+		//tex from here
+		//https://discord.com/channels/364177293133873153/364178190588968970/698650439817625691
+		//(though still not sure how partoftheworlD recognised this in the first place)
+		//If you memory dump the exe after execution of this point ghidra recognises this as entry point in the dumped exe
+		//eyeballing the function it seems to be _mainCRTStartup
+		//https://stackoverflow.com/questions/22934206/what-is-the-difference-between-main-and-maincrtstartup
+		//"mainCRTStartup basically looks like this: 
+		//init_tls(); 
+		//init_crt(); 
+		//run_global_constructors(); 
+		//get_args(&argc, &argv); 
+		//ret = main(argc, argv); 
+		//run_global_destructors(); 
+		//exit(ret); 
+		//.So, main is in there, some place.– Damon Apr 8 '14 at 11:03"
+		//tex so you can find actual main from this
+		//not much point hooking it or actual main (lets call it FoxMain to be clearer) at the moment since IHHook is currently a dinput8 proxy which is obviously well past the _crtMain/FoxMain execute point
+		FUNCPTRDEF(long long, _mainCRTStartup, void)
+		FUNC_DECL_ADDR(_mainCRTStartup)
+		FUNC_DECL_SIG(_mainCRTStartup,
+			"\x48\x89\x00\x00\x00\x48\x89\x00\x00\x00\x57\x48\x83\xEC\x00\x83\x64\x24\x20",
+			"xx???xx???xxxx?xxxx")
+
 		uintptr_t missionCode_Addr = 0x142A58A00;
 		//uint32_t* missionCode;//tex in header
 
 		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)
-		
+		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from?
+
 		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
 			spdlog::trace(__func__);
 			UnkSomePlayerUpdateFunc(unkPlayerClass, playerIndex);
@@ -112,6 +135,12 @@ namespace IHHook {
 			//	spdlog::error("CHP: missionCode==NULL");
 			//}
 			//DEBUGNOW
+
+			//DEBUGNOW
+			//GET_SIG_ADDR(_mainCRTStartup)
+			//if (_mainCRTStartupAddr == NULL) {
+			//	bool bleh = true;
+			//}
 
 			if (isTargetExe) {
 				GET_REBASED_ADDR(StrCode64)
