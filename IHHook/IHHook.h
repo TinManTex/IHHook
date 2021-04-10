@@ -22,6 +22,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <atomic>
 #include <mutex>
 #include <spdlog/spdlog.h>
 #include "D3D11Hook.hpp"
@@ -49,6 +50,7 @@ namespace IHHook {
 
 	extern std::vector<std::string> errorMessages;
 
+	extern std::atomic<bool> doShutDown;
 	void Shutdown();
 
 	class IHH {

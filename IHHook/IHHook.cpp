@@ -38,6 +38,8 @@ std::unique_ptr<IHHook::IHH> g_ihhook{};
 
 
 namespace IHHook {
+	std::atomic<bool> doShutDown = false;
+
 	std::vector<std::string> errorMessages{};
 
 	size_t RealBaseAddr;
@@ -113,7 +115,8 @@ namespace IHHook {
 
 	void Shutdown() {
 		spdlog::debug("IHHook DLL_PROCESS_DETACH");
-
+		doShutDown = true;
+		PipeServer::ShutDownPipeServer();
 		spdlog::shutdown();
 	}//Shutdown
 
@@ -674,25 +677,6 @@ namespace IHHook {
 			IHMenu::QueueMessageIn("menuoff");
 		}
 		menuOpenPrev = menuOpen;
-
-		//ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
-		//ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
-
-		//ImGui::Begin("Infinite Heaven", &drawUI);
-		//ImGui::Text("Menu Key: Insert");
-
-		//DrawAbout();
-		//DEBUGNOW
-		/*if (errorString.empty() && m_game_data_initialized) {
-			m_mods->on_draw_ui();
-		}
-		else if (!m_game_data_initialized) {
-			ImGui::TextWrapped("IHHook is currently initializing...");
-		}
-		else if*/
-		//if (!errorString.empty()) {
-		//	ImGui::TextWrapped("IHHook error: %s", errorString.c_str());
-		//}
 
 		//ImGui::End();
 	}//DrawUI

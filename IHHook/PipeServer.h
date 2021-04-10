@@ -9,6 +9,7 @@ namespace IHHook {
 		static const std::wstring pipeOutName = L"\\\\.\\pipe\\mgsv_out";
 
 		void StartPipeServer();
+		void ShutDownPipeServer();
 		void QueueMessageOut(std::string message);
 
 		extern SafeQueue<std::string> messagesOut;
