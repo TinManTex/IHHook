@@ -336,18 +336,17 @@ namespace IHHook {
 		}//SetInitialText
 
 		void DrawMenu(bool* p_open, bool openPrev) {
-			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_::ImGuiCond_Once);
-			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
+			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_::ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
 
 			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-			//DEBUGNOW ImGui::SetNextWindowSize(ImVec2(0, 0));
-			//ImGui::SetNextWindowBgAlpha(0.30f);
-
 			ImGuiWindowFlags windowFlags = 0;
 			//windowFlags |= ImGuiWindowFlags_AlwaysAutoResize;
 			//windowFlags |= ImGuiWindowFlags_NoSavedSettings;
+			windowFlags |= ImGuiWindowFlags_NoScrollbar;
+			windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
 		
 			//tex: GOTCHA name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
 			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
@@ -358,38 +357,72 @@ namespace IHHook {
 
 			ImGui::Text(menuTitle.c_str());
 			ImGui::PushItemWidth(-1);//tex push out label
+
+			ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+			ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+
+			float contentHeight = vMax.y - vMin.y;
+
+			//DEBUG draw content bounds
+			//{
+			//	ImVec2 drawMin = vMin;
+			//	ImVec2 drawMax = vMax;
+			//	vMin.x += ImGui::GetWindowPos().x;
+			//	vMin.y += ImGui::GetWindowPos().y;
+			//	vMax.x += ImGui::GetWindowPos().x;
+			//	vMax.y += ImGui::GetWindowPos().y;
+
+			//	ImGui::GetForegroundDrawList()->AddRect(vMin, vMax, IM_COL32(255, 255, 0, 255));
+			//}
+			int helpHeightInItems = 4;
+			if (menuHelp == "") {//tex: 'turning off help' simply sets an empty string
+				helpHeightInItems = 0;
+			}
+
 			if (menuItems.size() > 0) {
-				int listboxHeightInItems = 20;
-				if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
-					for (int i = 0; i < menuItems.size(); i++) {
-						ImGui::PushItemWidth(-1);//tex push out label
-						ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
-						bool selected = (selectedItem == i);
-						//tex putting this before -v- means that ih/lua can set selectedItem (call SelectItem on keyboard scroll)
-						//and have this scroll the selection into the view, but let ImGui::Selectable  //DEBUGNOW unless there's a loop with togamecmd 'selected' that calls SelectItem again?
-						if (selected && prevSelectedItem != selectedItem) {
-							prevSelectedItem = selectedItem;
-							ImGui::SetScrollHereY(0.15f);
-						}
-
-						if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
-							selectedItem = i;
-							prevSelectedItem = selectedItem;//tex to stop autoscroll from kicking off since we changed selectedItem
-							QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
-
-							if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
-								QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+				//float numItemsF = (contentHeight * 0.50f)/ ImGui::GetFontSize();
+				float fontSize = ImGui::GetFontSize();
+				float padding = 4;//tex TODO: calculate from actual padding
+				float otherItems = 4;//tex menu title, setting name, setting value + 1 for a buffer
+				float numItemsF = (contentHeight / (fontSize + padding)) - (otherItems + helpHeightInItems);
+				int listboxHeightInItems = static_cast<int>(std::round(numItemsF));
+				//listboxHeightInItems = std::min(listboxHeightInItems, (int)menuItems.size());//tex still deciding whether size menu to its number of items (this line uncommented), or to fill menu to window (this line commented out), and what to do with the bottom of the window
+				if (listboxHeightInItems > 0) {
+					if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
+						for (int i = 0; i < menuItems.size(); i++) {
+							ImGui::PushItemWidth(-1);//tex push out label
+							ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
+							bool selected = (selectedItem == i);
+							//tex putting this before -v- means that ih/lua can set selectedItem (call SelectItem on keyboard scroll)
+							//and have this scroll the selection into the view, but let ImGui::Selectable  //DEBUGNOW unless there's a loop with togamecmd 'selected' that calls SelectItem again?
+							if (selected && prevSelectedItem != selectedItem) {
+								prevSelectedItem = selectedItem;
+								float center_y_ratio = 0.15f;
+								if (listboxHeightInItems <= 2) {
+									center_y_ratio = 1.0f;
+								}
+								ImGui::SetScrollHereY(center_y_ratio);
 							}
+
+							if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
+								selectedItem = i;
+								prevSelectedItem = selectedItem;//tex to stop autoscroll from kicking off since we changed selectedItem
+								QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
+
+								if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+									QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+								}
+							}
+							//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
+							if (*p_open && *p_open != openPrev) {
+								//DEBUGNOW ImGui::SetItemDefaultFocus();
+								//DEBUGNOW ImGui::SetKeyboardFocusHere();
+							}
+							ImGui::PopID();
 						}
-						//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
-						if (*p_open && *p_open != openPrev) {
-							//DEBUGNOW ImGui::SetItemDefaultFocus();
-							//DEBUGNOW ImGui::SetKeyboardFocusHere();
-						}
-						ImGui::PopID();
-					}
-					ImGui::ListBoxFooter();
-				}//if ListBox
+						ImGui::ListBoxFooter();
+					}//if ListBox
+				}//if listboxHeightInItems>0
 			}//if menuItems
 
 			ImGuiInputTextFlags inputFlags = 0;
@@ -401,9 +434,10 @@ namespace IHHook {
 			}
 			//ImGui::Text(inputBuffer); //DEBUG
 
-			if (menuSettings.size() == 0) {
-				ImGui::Text("");
-			} else if (menuSettings.size() == 1) {//tex just a value
+			/*if (menuSettings.size() == 0) {
+				//DEBUGNOW CULL ImGui::Text("");
+				ImGui::Selectable("menuSettingsDummy", false, 0);
+			} else*/ if (menuSettings.size() == 1) {//tex just a value
 				ImGuiInputTextFlags settingInputFlags = 0;
 				settingInputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
 				if (ImGui::InputText("##menuSettingInput", settingInputBuffer, IM_ARRAYSIZE(settingInputBuffer), settingInputFlags)) {
@@ -437,7 +471,12 @@ namespace IHHook {
 				}//if Combo
 			}//menuSetting
 
-			ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
+			if (helpHeightInItems > 0) {
+				ImGui::BeginChild("ChildHelp", ImVec2(0, ImGui::GetFontSize() * helpHeightInItems), false, 0);
+				ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
+				ImGui::EndChild();
+			}//
+			
 			ImGui::End();
 
 			//ImGui::SetNextWindowSizeConstraints(ImVec2(0, -1), ImVec2(0, -1));//DEBUGNOW
