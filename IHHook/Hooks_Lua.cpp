@@ -24,8 +24,6 @@
 #include "lua/lua_Signatures.h"
 
 #include <string>
-#include "MemoryUtils.h"
-#include <Psapi.h>// ModuleInfo, DEBUGNOW
 
 extern void LoadImguiBindings(lua_State* lState);
 
@@ -37,45 +35,11 @@ namespace IHHook {
 	extern void TestHooks_Lua(lua_State* L);
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
 
-	//tex lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
+	//tex CULL lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 	//extern int luaopen_winapi(lua_State* L);
 
 
 	std::shared_ptr<spdlog::logger> luaLog;
-
-	void TestSigScan() {
-		auto tstart = std::chrono::high_resolution_clock::now();
-			//Get all module related information
-		//MODULEINFO mInfo = MemoryUtils::GetModuleInfo(NULL);
-
-		//Assign our base and module size
-		//uintptr_t base = (uintptr_t)mInfo.lpBaseOfDll;
-
-		//uintptr_t size = (uintptr_t)mInfo.SizeOfImage;
-
-		char* foxmainSig = "\x48\x89\x00\x00\x00\x48\x89\x00\x00\x00\x57\x48\x83\xEC\x00\x83\x64\x24\x20";
-		char* foxMainMask = "xx???xx???xxxx?xxxx";
-
-
-		char* luaI_openlibSig = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xE9";
-		char* luaI_openlibMask = "xx?x????xxxxxxxxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-
-		char* luaI_openlibSigShort = "\x45\x33\x00\xE9\x00\x00\x00\x00\xCC\xCC\xCC\xCC\xCC\xCC\xCC\xCC";
-		char* luaI_openlibMaskShort = "xx?x????xxxxxxxx";
-
-
-		//uintptr_t luaI_openlibOrig = FindPattern(NULL, luaI_openlibSig, luaI_openlibMask);
-
-		//uintptr_t luaI_openlibOrigShort = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
-		//PBYTE luaI_openlibOrigShort = FindSignature(mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
-
-		//uintptr_t foxMainOrigFoundPattern = FindPattern(NULL, luaI_openlibSigShort, luaI_openlibMaskShort);
-		//PBYTE foxMainOrigFoundSig = MemoryUtils::FindSignature("foxMain", mInfo.lpBaseOfDll, mInfo.SizeOfImage, luaI_openlibSigShort, luaI_openlibMaskShort);
-
-		auto tend = std::chrono::high_resolution_clock::now();
-		auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-		spdlog::debug("sig scan total time: {}", durationShort);
-	}//TestSigScan
 
 	namespace Hooks_Lua {
 		lua_State* luaState = NULL;

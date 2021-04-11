@@ -5,19 +5,28 @@
 #include "spdlog/spdlog.h"
 #include <string>
 #include <optional>
+#include <atomic>
 
 namespace IHHook {
+	extern std::atomic<bool> doShutDown;
+
 	namespace PipeServer {
 		//tex: simplest way to allow lua access pipe due to threading
 		SafeQueue<std::string> messagesOut;
 		SafeQueue<std::string> messagesIn;
 
 		void QueueMessageOut(std::string message) {
+			if (doShutDown) {
+				return;
+			}
 			//DEBUGNOW only add if pipe connected (but at moment we have no way of tracking since pipeserverthread is hands off as far as launching a pipe
 			messagesOut.push(message);
 		}//QueueMessageOut
 
 		void QueueMessageIn(std::string message) {
+			if (doShutDown) {
+				return;
+			}
 			messagesIn.push(message);
 		}//QueueMessageIn
 
@@ -69,6 +78,29 @@ namespace IHHook {
 			else CloseHandle(hThread);
 		}//StartPipeServer
 
+		void ShutDownPipeServer() {
+			//tex DEBUGNOW in theory breaks out of ConnectNamedPipe
+			DeleteFile(pipeInName.c_str());
+			DeleteFile(pipeOutName.c_str());
+
+			//tex just run through the queue to clear them so their dtor dont complain
+			std::optional <std::string> messageOpt = messagesIn.pop();//tex waits if empty
+			if (messageOpt) {
+				while (messageOpt) {
+					std::string message = *messageOpt;
+					messageOpt = messagesIn.pop();
+				}//while messageOpt
+			}//if messagesOpt
+
+			messageOpt = messagesOut.pop();//tex waits if empty
+			if (messageOpt) {
+				while (messageOpt) {
+					std::string message = *messageOpt;
+					messageOpt = messagesOut.pop();
+				}//while messageOpt
+			}//if messagesOpt
+		}//ShutDownPipeServer
+
 		//IN/SIDE: pipeInName,pipeOutName
 		DWORD WINAPI PipeServerThread(LPVOID lpvParam) {
 			DWORD  dwThreadId = 0;
@@ -83,7 +115,7 @@ namespace IHHook {
 			// connects, a thread is created to handle communications 
 			// with that client, and this loop is free to wait for the
 			// next client connect request. It is an infinite loop.
-			for (;;) {
+			while (!doShutDown) {
 				//tex security attribute, 
 				//only defined this to try and get around namedpipe client needs InOut even for server out/readonly pipe, but I suppose having it defined rather than using default is better
 				//ultimately just want this for the pipe, but cant hide it away in a function because stuff created on the function stack would be trashed (and figuring out which is is too much pain for the moment)
@@ -194,13 +226,22 @@ namespace IHHook {
 				// the function returns a nonzero value. If the function
 				// returns zero, GetLastError returns ERROR_PIPE_CONNECTED. 
 				// GOTCHA: this means it's waiting for first pipe (pipein) to connect before it tries to connect the second (pipeout)
+				//DEBUGNOW dont know how to kill thread if its waiting
 				spdlog::info(L"Pipe Server: Main thread awaiting client connection on {}", lpszPipenameIn);
 				bool fConnectedIn = ConnectNamedPipe(hPipeIn, NULL) ?
 					TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
+				if (doShutDown) {
+					break;
+				}
+
 				spdlog::info(L"Pipe Server: Main thread awaiting client connection on {}", lpszPipenameOut);
 				bool fConnectedOut = ConnectNamedPipe(hPipeOut, NULL) ?
 					TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
+
+				if (doShutDown) {
+					break;
+				}
 
 				if (fConnectedIn && fConnectedOut) {
 					spdlog::info("Pipe Server: Client connected, creating a processing thread.");
@@ -242,7 +283,7 @@ namespace IHHook {
 					CloseHandle(hPipeIn);
 					CloseHandle(hPipeOut);
 				}//if fConnected
-			}//for ;;
+			}//while !doShutDown
 
 			return 1;
 		}//PipeServerThread
@@ -289,7 +330,7 @@ namespace IHHook {
 				NULL);  // don't set maximum time (only applies to client)
 
 			//tex thread loop
-			while (1) {
+			while (!doShutDown) {
 				fSuccess = true;
 
 				std::optional <std::string> messageOpt = messagesOut.pop();//tex waits if empty
@@ -408,7 +449,7 @@ namespace IHHook {
 				NULL,   // don't set maximum bytes (only applies to client)
 				NULL);  // don't set maximum time (only applies to client)
 
-			while (1) {
+			while (!doShutDown) {
 				/*//DEBUG
 				fSuccess = PeekNamedPipe(
 					hPipeIn,        // handle to pipe

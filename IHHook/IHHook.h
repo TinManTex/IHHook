@@ -22,6 +22,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <atomic>
 #include <mutex>
 #include <spdlog/spdlog.h>
 #include "D3D11Hook.hpp"
@@ -32,7 +33,7 @@ namespace IHHook {
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
 
-	static const int Version = 12; //SYNC: fileVersion
+	static const int Version = 13; //SYNC: fileVersion
 	static const DWORD GameVersion[4] = { 1, 0, 15, 3 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
 
@@ -49,12 +50,15 @@ namespace IHHook {
 
 	extern std::vector<std::string> errorMessages;
 
+	extern std::atomic<bool> doShutDown;
 	void Shutdown();
 
 	class IHH {
 	public:
 		IHH();
 		virtual ~IHH();
+
+		void Initialize();
 
 		HMODULE GetModule() {
 			return thisModule;
@@ -100,6 +104,8 @@ namespace IHHook {
 		}//ToggleStyleEditor
 
 		//Dx11
+		void CreateD3DHook();
+		
 		void OnFrame();
 		void OnReset();
 

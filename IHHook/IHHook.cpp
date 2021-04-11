@@ -28,7 +28,6 @@
 #include "IHMenu.h"
 #include "StyleEditor.h"
 
-//DEBUGNOW
 #include "mgsvtpp_adresses_1_0_15_3_en.h"
 #include "mgsvtpp_adresses_1_0_15_3_jp.h"
 
@@ -39,6 +38,8 @@ std::unique_ptr<IHHook::IHH> g_ihhook{};
 
 
 namespace IHHook {
+	std::atomic<bool> doShutDown = false;
+
 	std::vector<std::string> errorMessages{};
 
 	size_t RealBaseAddr;
@@ -114,10 +115,13 @@ namespace IHHook {
 
 	void Shutdown() {
 		spdlog::debug("IHHook DLL_PROCESS_DETACH");
-
+		doShutDown = true;
+		PipeServer::ShutDownPipeServer();
 		spdlog::shutdown();
 	}//Shutdown
 
+	//GOTCHA: only set up stuff that can be done in this point of fox engine execution (when it's loading this dinput8.dll proxy)
+	//see Initialize for stuff after
 	IHH::IHH()
 		: thisModule{ GetModuleHandle(0) } {
 		RealBaseAddr = (size_t)GetModuleHandle(NULL);
@@ -273,36 +277,6 @@ namespace IHHook {
 
 		PipeServer::StartPipeServer();
 
-		d3d11Hook = std::make_unique<D3D11Hook>();
-		d3d11Hook->on_present([this](D3D11Hook& hook) { OnFrame(); });
-		d3d11Hook->on_resize_buffers([this](D3D11Hook& hook) { OnReset(); });
-
-		d3dHooked = d3d11Hook->hook();
-		if (d3dHooked) {
-			spdlog::info("Hooked D3D11");
-		}
-		else {
-			if (std::filesystem::exists("d3d11.dll")) {
-				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
-				std::wstring message =
-					L"ERROR: Could not hook D3D11\n"
-					L"Unknown d3d11.dll in MGS_TPP folder\n"
-					//DEBUGNOW L"If this is from the FOV Modifier dll you can remove it\n"
-					//L"as IHHook now has it intergrated\n"
-					;
-				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
-			}
-			else {
-				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
-				std::wstring message = 
-					L"ERROR: Could not hook D3D11\n"
-					L"See ihhook_log.txt in MGS_TPP folder for details.\n"
-				;
-				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
-			}//exists d3d11.dll
-
-		}//d3dHooked
-
 		spdlog::debug("IHH ctor complete");
 		log->flush();
 	}//IHH
@@ -310,6 +284,12 @@ namespace IHHook {
 	IHH::~IHH() {
 		MH_Uninitialize();
 	}//~IHH
+
+	//CALLER: thread spawned by dllmain
+	//GOTCHA: KLUDGE: see comment in dllmain
+	void IHH::Initialize() {
+		CreateD3DHook();
+	}//
 
 	//OUT/SIDE: log file, log file prev
 	//OUT/SIDE: log
@@ -343,6 +323,38 @@ namespace IHHook {
 		log->flush();
 		spdlog::debug("Note: ihhook_log is multithreaded to accept logging from multiple threads so order of entries may not be sequential.");
 	}//SetupLog
+
+	void IHH::CreateD3DHook() {
+		d3d11Hook = std::make_unique<D3D11Hook>();
+		d3d11Hook->on_present([this](D3D11Hook& hook) { OnFrame(); });
+		d3d11Hook->on_resize_buffers([this](D3D11Hook& hook) { OnReset(); });
+
+		d3dHooked = d3d11Hook->hook();
+		if (d3dHooked) {
+			spdlog::info("Hooked D3D11");
+		}
+		else {
+			if (std::filesystem::exists("d3d11.dll")) {
+				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
+				std::wstring message =
+					L"ERROR: Could not hook D3D11\n"
+					L"Unknown d3d11.dll in MGS_TPP folder\n"
+					//DEBUGNOW L"If this is from the FOV Modifier dll you can remove it\n"
+					//L"as IHHook now has it intergrated\n"
+					;
+				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
+			}
+			else {
+				std::wstring title = L"MGSTPP - Infinite Heaven IHHook";
+				std::wstring message =
+					L"ERROR: Could not hook D3D11\n"
+					L"See ihhook_log.txt in MGS_TPP folder for details.\n"
+					;
+				MessageBox(NULL, message.c_str(), title.c_str(), NULL);
+			}//exists d3d11.dll
+
+		}//d3dHooked
+	}//CreateD3DHook
 
 	std::string IHH::GetLangVersion() {
 		//DEBUGNOW So jp voice version is actually different exe, so cant just rely on exe version info.
@@ -394,14 +406,12 @@ namespace IHHook {
 		//spdlog::trace("OnFrame");
 		auto frameTimeStart = std::chrono::high_resolution_clock::now();
 
+		//GOTCHA: frameInitialized is reset in OnReset, so if you want something to run only once a session use firstFrame in FramInisialize instead
 		if (!frameInitialized) {
 			if (!FrameInitialize()) {
 				spdlog::error("Failed to frame initialize IHHook");
 				return;
 			}
-
-			//tex IHMenu initial text DEBUGNOW
-			IHMenu::SetInitialText();
 
 			spdlog::info("IHHook frame initialized");
 			frameInitialized = true;
@@ -587,8 +597,10 @@ namespace IHHook {
 
 			//init_thread.detach();
 
-			LoadSelectedInitial(NULL);//StyleEditor
-		}
+			InitStyleEditor();//StyleEditor
+
+			IHMenu::SetInitialText();
+		}//if firstFrame
 
 		spdlog::info("frame initialized");
 		return true;
@@ -665,25 +677,6 @@ namespace IHHook {
 			IHMenu::QueueMessageIn("menuoff");
 		}
 		menuOpenPrev = menuOpen;
-
-		//ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_::ImGuiCond_Once);
-		//ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_Once);
-
-		//ImGui::Begin("Infinite Heaven", &drawUI);
-		//ImGui::Text("Menu Key: Insert");
-
-		//DrawAbout();
-		//DEBUGNOW
-		/*if (errorString.empty() && m_game_data_initialized) {
-			m_mods->on_draw_ui();
-		}
-		else if (!m_game_data_initialized) {
-			ImGui::TextWrapped("IHHook is currently initializing...");
-		}
-		else if*/
-		//if (!errorString.empty()) {
-		//	ImGui::TextWrapped("IHHook error: %s", errorString.c_str());
-		//}
 
 		//ImGui::End();
 	}//DrawUI
