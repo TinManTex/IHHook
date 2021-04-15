@@ -376,7 +376,7 @@ namespace IHHook {
 			//}
 			int helpHeightInItems = 4;
 			if (menuHelp == "") {//tex: 'turning off help' simply sets an empty string
-				helpHeightInItems = 0;
+				helpHeightInItems = 1;//tex leave a lines worth of buffer otherwise the window drag corner icon clashes visually with the combo box
 			}
 
 			if (menuItems.size() > 0) {
@@ -471,11 +471,9 @@ namespace IHHook {
 				}//if Combo
 			}//menuSetting
 
-			if (helpHeightInItems > 0) {
-				ImGui::BeginChild("ChildHelp", ImVec2(0, ImGui::GetFontSize() * helpHeightInItems), false, 0);
-				ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
-				ImGui::EndChild();
-			}//
+			ImGui::BeginChild("ChildHelp", ImVec2(0, ImGui::GetFontSize() * helpHeightInItems), false, 0);
+			ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
+			ImGui::EndChild();
 			
 			ImGui::End();
 
