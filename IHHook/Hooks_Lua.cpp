@@ -54,6 +54,33 @@ namespace IHHook {
 		static int OnPanic(lua_State* L);
 		void SetLuaVarMenuInitialized(lua_State* L);
 
+		//http://www.lua.org/manual/5.1/manual.html#lua_pcall (also see the other functions that call HandleLuaError)
+		void HandleLuaError(lua_State* L, int errcode, int errfunc) {
+			switch (errcode) {
+				case LUA_ERRMEM: {
+					spdlog::error("LUA_ERRMEM: not enough memory");
+					luaLog->error("LUA_ERRMEM: not enough memory");
+					break;
+				}
+				case LUA_ERRERR: {
+					spdlog::error("LUA_ERRERR: error in error handling");
+					luaLog->error("LUA_ERRERR: error in error handling");
+					break;
+				}
+				case LUA_ERRSYNTAX:
+				case LUA_ERRRUN: {
+					if (errfunc == 0) {
+						std::string errormsg = lua_tostring(L, -1);
+						spdlog::error(errormsg);
+						luaLog->error(errormsg);
+					}
+					else {
+						bool bleh = true;//DEBUGNOW
+					}
+					break;
+				}
+			}//switch errcode
+		}//HandleLuaError
 
 		//tex actual detoured functions
 
@@ -93,13 +120,24 @@ namespace IHHook {
 			ReplaceStubedOutLua(L);
 
 			spdlog::debug("luaL_openlibsHook complete");
-		}//lua_newstateHook
+		}//luaL_openlibsHook
+
+		int lua_loadHook(lua_State* L, lua_Reader reader,void* data, const char* chunkname) {
+			spdlog::trace("lua_loadHook {}", chunkname);
+			int errcode = lua_load(L, reader, data, chunkname);
+			if (errcode != 0) {
+				spdlog::error(__func__);
+				HandleLuaError(L, errcode, 0);
+			}//if errcode != 0
+			return errcode;
+		}//lua_loadHook
 
 		//tex not doing anything with this, but it may be interesting to see everything that mgsv lua is loading.
+		//and dumping the buffer of stuff that's not from a lua file
+		//not doing error handling here as lua_loadHook has that
 		int luaL_loadbufferHook(lua_State *L, const char *buff, size_t size, const char *name) {
-			spdlog::trace(__func__);
-			spdlog::trace(name);
-			//spdlog::trace(buff);
+			spdlog::trace("luaL_loadbufferHook {}", name);
+			//spdlog::trace(buff);//TODO: dump stuff that's not from a file 
 			
 			return luaL_loadbuffer(L, buff, size, name);
 		}//luaL_loadbufferHook
@@ -110,6 +148,32 @@ namespace IHHook {
 			lua_CFunction oldPanicFunc = lua_atpanic(L, OnPanic);
 			return oldPanicFunc;
 		}//lua_atpanicDetour
+
+		//DEBUGNOW
+		int lua_errorHook(lua_State* L) {
+			std::string errormsg = lua_tostring(L, -1);
+			spdlog::error("lua_error: {}", errormsg);
+			luaLog->error("lua_error: {}", errormsg);
+			return lua_error(L);
+		}//lua_errorHook
+
+		int lua_pcallHook(lua_State* L, int nargs, int nresults, int errfunc) {
+			int errcode = lua_pcall(L, nargs, nresults, errfunc);
+			if (errcode != 0) {
+				spdlog::error(__func__);
+				HandleLuaError(L, errcode, errfunc);
+			}//errcode != 0
+			return errcode;
+		}//lua_pcallHook
+
+		int lua_cpcallHook(lua_State* L, lua_CFunction func, void* ud) {
+			int errcode = lua_cpcall(L, func, ud);
+			if (errcode != 0) {
+				spdlog::error(__func__);
+				HandleLuaError(L, errcode, 0);
+			}
+			return errcode;
+		}//lua_cpcallHook
 
 		void SetupLog() {
 			//tex create ih_log
@@ -143,29 +207,53 @@ namespace IHHook {
 			if (isTargetExe) {
 				GET_REBASED_ADDR(luaL_openlibs)
 				GET_REBASED_ADDR(lua_newstate)
+				GET_REBASED_ADDR(lua_load)
 				GET_REBASED_ADDR(luaL_loadbuffer)
 				GET_REBASED_ADDR(lua_atpanic)
+				GET_REBASED_ADDR(lua_error)
+				GET_REBASED_ADDR(lua_pcall)
+				GET_REBASED_ADDR(lua_cpcall)
 			}
 			else {
 				GET_SIG_ADDR(luaL_openlibs)
 				GET_SIG_ADDR(lua_newstate)
+				GET_SIG_ADDR(lua_load)
 				GET_SIG_ADDR(luaL_loadbuffer)
 				GET_SIG_ADDR(lua_atpanic)
+				GET_SIG_ADDR(lua_error)
+				GET_SIG_ADDR(lua_pcall)
+				GET_SIG_ADDR(lua_cpcall)
 			}
 
-			if (luaL_openlibsAddr == NULL || lua_newstateAddr == NULL || luaL_loadbufferAddr == NULL || lua_atpanicAddr == NULL) {//DEBUGNOW 
+			if (luaL_openlibsAddr == NULL 
+				|| lua_newstateAddr == NULL 
+				|| lua_loadAddr == NULL
+				|| luaL_loadbufferAddr == NULL 
+				|| lua_atpanicAddr == NULL
+				|| lua_errorAddr == NULL
+				|| lua_pcallAddr == NULL
+				|| lua_cpcallAddr == NULL
+				) {//DEBUGNOW 
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}
 			else {
 				CREATE_HOOK(luaL_openlibs)
 				CREATE_HOOK(lua_newstate)
+				CREATE_HOOK(lua_load)
 				CREATE_HOOK(luaL_loadbuffer)
-				//OFF CREATE_HOOK(lua_atpanic)
+				CREATE_HOOK(lua_atpanic)//DEBUGNOW
+				CREATE_HOOK(lua_error)
+				CREATE_HOOK(lua_pcall)
+				CREATE_HOOK(lua_cpcall)
 
-				ENABLEHOOK(lua_newstate)
-				ENABLEHOOK(luaL_loadbuffer)
-				//OFF ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
 				ENABLEHOOK(luaL_openlibs)
+				ENABLEHOOK(lua_newstate)
+				ENABLEHOOK(lua_load)
+				ENABLEHOOK(luaL_loadbuffer)
+				ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
+				ENABLEHOOK(lua_error)
+				ENABLEHOOK(lua_pcall)
+				ENABLEHOOK(lua_cpcall)
 			}//if name##Addr != NULL
 		}//CreateHooks
 
