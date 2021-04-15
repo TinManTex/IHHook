@@ -885,7 +885,7 @@ namespace IHHook {
 		}
 		ImGui::SameLine();
 		HelpMarker(
-			"- Additional fonts can be added to MGS_TPP\\mod\fonts\n"
+			"- Additional fonts can be added to MGS_TPP\\mod\\fonts\n"
 		);
 	}//ShowFontSelector
 
