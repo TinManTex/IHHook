@@ -644,6 +644,11 @@ namespace IHHook {
 			return;
 		}
 
+		//tex disable mouse input to game
+		if (unlockCursor) {
+			ImGui::CaptureMouseFromApp(true);
+		}
+
 		if (io.WantCaptureMouse) {
 			RawInput::BlockMouseClick();
 		}
