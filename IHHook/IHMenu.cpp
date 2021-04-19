@@ -10,6 +10,9 @@
 
 namespace IHHook {
 	namespace IHMenu {
+		std::string modTitle = "IH";
+		std::string titleHelp = "[F3] Menu, [F2] Cursor";
+
 		//tex would like to keep it const char* all the way through from lua to imgui instead of back and forthing bewtween char* and string, but imgui shits the bed at some point when I try that
 		//try converting just menuItems to see
 		std::string windowTitle{ "windowTitle" };
@@ -110,7 +113,7 @@ namespace IHHook {
 			else if (name == "menuTitle") {
 				if (visible == 1) {
 					g_ihhook->SetDrawUI(true);
-					g_ihhook->SetCursor(true);
+					//DEBUGNOW g_ihhook->SetCursor(true);//tex now handled by ivars.menu_enableCursorOnMenuOpen
 				}
 				else {
 					g_ihhook->SetDrawUI(false);
@@ -244,6 +247,10 @@ namespace IHHook {
 			g_ihhook->ToggleImguiDemo();
 		}//ToggleImguiDemo
 
+		void EnableCursor(std::vector<std::string> args) {
+			g_ihhook->SetCursor(true);
+		}//EnableCursor
+
 		typedef void(*MenuCommandFunc) (std::vector<std::string> args);
 		std::map<std::string, MenuCommandFunc> menuCommands;
 		void AddMenuCommands() {
@@ -260,6 +267,7 @@ namespace IHHook {
 			menuCommands["SelectCombo"] = SelectCombo;
 			menuCommands["ToggleStyleEditor"] = ToggleStyleEditor;
 			menuCommands["ToggleImguiDemo"] = ToggleImguiDemo;
+			menuCommands["EnableCursor"] = EnableCursor;
 			//SelectAllText
 		}//AddMenuCommands
 
@@ -347,6 +355,10 @@ namespace IHHook {
 			//windowFlags |= ImGuiWindowFlags_NoSavedSettings;
 			windowFlags |= ImGuiWindowFlags_NoScrollbar;
 			windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
+
+			if (ihVersion != 0) {
+				windowTitle = modTitle + " r" + std::to_string(ihVersion) + " : " + titleHelp;
+			}
 		
 			//tex: GOTCHA name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
 			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
@@ -376,7 +388,7 @@ namespace IHHook {
 			//}
 			int helpHeightInItems = 4;
 			if (menuHelp == "") {//tex: 'turning off help' simply sets an empty string
-				helpHeightInItems = 0;
+				helpHeightInItems = 1;//tex leave a lines worth of buffer otherwise the window drag corner icon clashes visually with the combo box
 			}
 
 			if (menuItems.size() > 0) {
@@ -471,11 +483,9 @@ namespace IHHook {
 				}//if Combo
 			}//menuSetting
 
-			if (helpHeightInItems > 0) {
-				ImGui::BeginChild("ChildHelp", ImVec2(0, ImGui::GetFontSize() * helpHeightInItems), false, 0);
-				ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
-				ImGui::EndChild();
-			}//
+			ImGui::BeginChild("ChildHelp", ImVec2(0, ImGui::GetFontSize() * helpHeightInItems), false, 0);
+			ImGui::TextWrapped("%s", menuHelp.c_str());//tex WORKAROUND: Text widget takes fmted text, so slap it in like this so it doesn't choke on stuff like %, there's also ::TextUnformatted that's more performant, but it doesn't wrap.
+			ImGui::EndChild();
 			
 			ImGui::End();
 

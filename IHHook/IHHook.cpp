@@ -479,22 +479,27 @@ namespace IHHook {
 
 		if (!frameInitialized) {
 			return true;
-		}
+		}				
 
-		bool ret = RawInput::OnMessage(wnd, message, w_param, l_param);
-		if (!ret) {
-			return false;
-		}
+		bool handledMessage = !RawInput::OnMessage(wnd, message, w_param, l_param);
 
 		if (drawUI && ImGui_ImplWin32_WndProcHandler(wnd, message, w_param, l_param) != 0) {
 			//RE2FW: If the user is interacting with the UI we block the message from going to the game.
 			auto& io = ImGui::GetIO();
 
 			if (io.WantCaptureMouse || io.WantCaptureKeyboard || io.WantTextInput) {
-				return false;
+				handledMessage = true;
 			}
 		}
 
+		if (handledMessage) {
+			//tex DEBUGNOW WORKAROUND: having menu eat all game can cause a problem if user was holding a key at the time as the keyup even will be eaten
+			if (w_param == WM_KEYUP) {
+				return true;
+			}
+
+			return false;//tex eat the message
+		}
 		return true;
 	}//OnMessage
 
@@ -642,6 +647,11 @@ namespace IHHook {
 			unlockCursor = false;
 			io.MouseDrawCursor = false;
 			return;
+		}
+
+		//tex disable mouse input to game
+		if (unlockCursor) {
+			ImGui::CaptureMouseFromApp(true);
 		}
 
 		if (io.WantCaptureMouse) {

@@ -143,6 +143,8 @@ name = (name##Func*)name##Addr;
 MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)name##Addr, name##Hook, (LPVOID*)&name);\
 if (name##CreateStatus != MH_OK) {\
 	spdlog::error("MH_CreateHook failed for {} with code {}", #name, name##CreateStatus);\
+} else {\
+	spdlog::debug("MH_CreateHook MH_OK for {}", #name);\
 }
 //Example use:
 //CREATE_HOOK(lua_newstate);
@@ -157,6 +159,8 @@ if (name##CreateStatus != MH_OK) {\
 MH_STATUS name##EnableStatus = MH_EnableHook((LPVOID*)name##Addr);\
 if (name##EnableStatus != MH_OK) {\
 	spdlog::error("MH_EnableHook failed for {} with code {}", #name, name##EnableStatus);\
+} else {\
+	spdlog::debug("MH_EnableHook MH_OK for {}", #name);\
 }
 //Example use:
 //ENABLEHOOK(lua_newstate);
@@ -171,6 +175,8 @@ if (name##EnableStatus != MH_OK) {\
 MH_STATUS name##DisableStatus = MH_DisableHook((LPVOID*)name##Addr);\
 if (name##DisableStatus != MH_OK) {\
 	spdlog::error("MH_DisableHook failed for {} with code {}", #name, name##DisableStatus);\
+} else {\
+	spdlog::debug("MH_DisableHook MH_OK for {}", #name);\
 }
 //Example use:
 //ENABLEHOOK(lua_newstate);
