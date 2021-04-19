@@ -38,6 +38,7 @@ namespace IHHook {
 	//tex CULL lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 	//extern int luaopen_winapi(lua_State* L);
 
+	int ihVersion = 0;
 
 	std::shared_ptr<spdlog::logger> luaLog;
 
@@ -136,7 +137,7 @@ namespace IHHook {
 		//and dumping the buffer of stuff that's not from a lua file
 		//not doing error handling here as lua_loadHook has that
 		int luaL_loadbufferHook(lua_State *L, const char *buff, size_t size, const char *name) {
-			spdlog::trace("luaL_loadbufferHook {}", name);
+			//spdlog::trace("luaL_loadbufferHook {}", name);//tex OFF since lua_loadHook grabs it fine, but not diabling the hook in case I want to breakpoint this on a whim
 			//spdlog::trace(buff);//TODO: dump stuff that's not from a file 
 			
 			return luaL_loadbuffer(L, buff, size, name);
@@ -329,8 +330,10 @@ namespace IHHook {
 
 		//tex called inside-out from InitMain.lua via IH
 		int l_FoxLua_InitMain(lua_State* L) {
-		//DEBUGNOW	int modVersion = (int)lua_tointeger(L, -1);
-		//DEBUGNOW	spdlog::debug("InitMain IHr{}", modVersion);
+			//tex TODO: a SetIHVersion called from InfCore itself may be better
+			ihVersion = (int)lua_tointeger(L, -1);
+			lua_pop(L, -1);
+			spdlog::debug("InitMain IHr{}", ihVersion);
 
 			//tex according to logging d3d (and imgui in ihhook) is initialized
 			SetLuaVarMenuInitialized(L);
