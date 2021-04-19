@@ -1,6 +1,23 @@
 IHHook changelog 
 - just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
 
+r14 - 2021-04-19
+Disable mouse input to game when cursor enabled.
+
+Fix: Keys being stuck on when opening menu.
+
+log MH_OK
+
+Hook a bunch of lua functions for error handling (basically just logging)
+lua_load
+lua_error
+lua_pcall
+lua_cpcall
+re enable lua_atpanic
+Gives error logging for all lua files loading by default (including those in fpks), and runtime error logging for anything that's pcalled by the engine.
+
+Fix: font helpmarker font folder text - thanks OldBoss for the report
+
 r13 - 2021-04-12
 Style Editor: Font/size selection, copy fonts to MGS_TPP\mod\fonts to add more - thanks IroquoisPliskin, others for the request.
 [youtube]pZRcPNlZmng[/youtube]
