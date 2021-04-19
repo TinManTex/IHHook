@@ -491,7 +491,13 @@ namespace IHHook {
 			auto& io = ImGui::GetIO();
 
 			if (io.WantCaptureMouse || io.WantCaptureKeyboard || io.WantTextInput) {
-				return false;
+				//tex DEBUGNOW WORKAROUND: having menu eat all game can cause a problem if user was holding a key at the time as the keyup even will be eaten
+				if (w_param == WM_KEYUP) {
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 		}
 
