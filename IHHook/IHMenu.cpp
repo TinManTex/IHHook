@@ -113,7 +113,7 @@ namespace IHHook {
 			else if (name == "menuTitle") {
 				if (visible == 1) {
 					g_ihhook->SetDrawUI(true);
-					g_ihhook->SetCursor(true);
+					//DEBUGNOW g_ihhook->SetCursor(true);//tex now handled by ivars.menu_enableCursorOnMenuOpen
 				}
 				else {
 					g_ihhook->SetDrawUI(false);
@@ -247,6 +247,10 @@ namespace IHHook {
 			g_ihhook->ToggleImguiDemo();
 		}//ToggleImguiDemo
 
+		void EnableCursor(std::vector<std::string> args) {
+			g_ihhook->SetCursor(true);
+		}//EnableCursor
+
 		typedef void(*MenuCommandFunc) (std::vector<std::string> args);
 		std::map<std::string, MenuCommandFunc> menuCommands;
 		void AddMenuCommands() {
@@ -263,6 +267,7 @@ namespace IHHook {
 			menuCommands["SelectCombo"] = SelectCombo;
 			menuCommands["ToggleStyleEditor"] = ToggleStyleEditor;
 			menuCommands["ToggleImguiDemo"] = ToggleImguiDemo;
+			menuCommands["EnableCursor"] = EnableCursor;
 			//SelectAllText
 		}//AddMenuCommands
 
