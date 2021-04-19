@@ -10,6 +10,9 @@
 
 namespace IHHook {
 	namespace IHMenu {
+		std::string modTitle = "IH";
+		std::string titleHelp = "[F3] Menu, [F2] Cursor";
+
 		//tex would like to keep it const char* all the way through from lua to imgui instead of back and forthing bewtween char* and string, but imgui shits the bed at some point when I try that
 		//try converting just menuItems to see
 		std::string windowTitle{ "windowTitle" };
@@ -347,6 +350,10 @@ namespace IHHook {
 			//windowFlags |= ImGuiWindowFlags_NoSavedSettings;
 			windowFlags |= ImGuiWindowFlags_NoScrollbar;
 			windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
+
+			if (ihVersion != 0) {
+				windowTitle = modTitle + " r" + std::to_string(ihVersion) + " : " + titleHelp;
+			}
 		
 			//tex: GOTCHA name acts as id by default so setting it to something dynamic like menuTitle means each submenu is a new window so it will have individual position and size if user changes it.
 			//Alternative is to menuTitle + "##menuTitle"? or pushID, popID
