@@ -282,7 +282,7 @@ void TestHooks_Lua(lua_State* L) {
 	}
 	lua_pop(L, 1);
 
-	//
+	// iterate a table
 	spdlog::debug("lua_getfield _IHHook_TestTable");
 	lua_getfield(L, LUA_GLOBALSINDEX, "_IHHook_TestTable");
 	spdlog::debug("while lua_next");
