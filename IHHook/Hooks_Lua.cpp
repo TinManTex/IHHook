@@ -97,6 +97,13 @@ namespace IHHook {
 			return L;
 		}//lua_newstateHook
 
+		lua_State* lua_newthreadHook(lua_State* L) {
+			spdlog::debug(__func__);
+			lua_State* nL = lua_newthread(L);
+
+			return nL;
+		}//lua_newthreadHook
+
 		//tex may be better to hook the fox engine OpenLuawhatever that calls newstate and sets up the lua libraries
 		//but don't know fox OpenLuas return type
 		void __fastcall luaL_openlibsHook(lua_State* L) {
@@ -176,6 +183,67 @@ namespace IHHook {
 			return errcode;
 		}//lua_cpcallHook
 
+		//DEBUGNOW move somewhere usefull
+		static void dumpstack(lua_State* L) {
+			int top = lua_gettop(L);
+			if (top <= 0) {
+				return;
+			}
+			if (top > 10) {
+				spdlog::debug("dumpstack lua_gettop == {}. is > 10, returning",top);//DEBUGNOW
+				return;
+			}
+			for (int i = 1; i <= top; i++) {
+				//spdlog::debug("{}\t{}\t", i, luaL_typename(L, i));
+				switch (lua_type(L, i)) {
+				case LUA_TNUMBER:
+					luaLog->debug("{} number:\t {}", i, lua_tonumber(L, i));
+					break;
+				case LUA_TSTRING:
+					luaLog->debug("{} string:\t {}", i, lua_tostring(L, i));
+					break;
+				case LUA_TBOOLEAN:
+					luaLog->debug("{} bool:\t {}", i, (lua_toboolean(L, i) ? "true" : "false"));
+					break;
+				case LUA_TNIL:
+					luaLog->debug("{} nil:\t {}", "nil");
+					break;
+				default:
+					luaLog->debug("{} pointer:\t {}", i, lua_topointer(L, i));
+					break;
+				}
+			}
+		}//dumpstack
+
+
+		FUNCPTRDEF(int, l_StubbedOut, lua_State* L)
+		FUNC_DECL_ADDR(l_StubbedOut)
+
+		//tex retail build of MGSV stubs out a lot of functions (changes the function name > l_ function to point to same stubbed out function), 
+		//unfortunately since they cut it off this way the only viable functions to replace are ones we already know about 
+		//(like luaB_print, see ReplaceStubedOutFox below)
+		//see in exe the function base_funcs "print" points to, then see all other references to that func to see others that were treated that way
+		//DEBUGNOW there's a lot of uses of this replaced function that have alternate code paths if something other than 0 is returned
+		static int l_StubbedOutHook(lua_State* L) {
+			//spdlog::debug(__func__);
+			//DEBUGNOW don't like this, this function is being called before lua is up suggesting its stubbing out non lua stuff?
+			if( luaState == NULL) {
+				return 0;
+			}
+			int top = lua_gettop(L);
+			if (top <= 0) {
+				return 0;
+			}
+			//KLUDGE:
+			if (top > 10) {
+				return 0;
+			}
+			spdlog::debug(__func__);
+			dumpstack(L);
+
+			return 0;
+		}//l_StubbedOutHook
+
 		void SetupLog() {
 			//tex create ih_log
 			DeleteFile(luaLogNamePrev.c_str());
@@ -203,63 +271,73 @@ namespace IHHook {
 			CreateHooks_Lua(BaseAddr, RealBaseAddr);
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
-
-
+			
 			if (isTargetExe) {
 				GET_REBASED_ADDR(luaL_openlibs)
 				GET_REBASED_ADDR(lua_newstate)
+				GET_REBASED_ADDR(lua_newthread)
 				GET_REBASED_ADDR(lua_load)
 				GET_REBASED_ADDR(luaL_loadbuffer)
 				GET_REBASED_ADDR(lua_atpanic)
 				GET_REBASED_ADDR(lua_error)
 				GET_REBASED_ADDR(lua_pcall)
 				GET_REBASED_ADDR(lua_cpcall)
+				GET_REBASED_ADDR(l_StubbedOut)
 			}
 			else {
 				GET_SIG_ADDR(luaL_openlibs)
 				GET_SIG_ADDR(lua_newstate)
+				GET_SIG_ADDR(lua_newthread)
 				GET_SIG_ADDR(lua_load)
 				GET_SIG_ADDR(luaL_loadbuffer)
 				GET_SIG_ADDR(lua_atpanic)
 				GET_SIG_ADDR(lua_error)
 				GET_SIG_ADDR(lua_pcall)
 				GET_SIG_ADDR(lua_cpcall)
+				//DEBUGNOW GET_SIG_ADDR(l_StubbedOut)
 			}
 
 			if (luaL_openlibsAddr == NULL 
 				|| lua_newstateAddr == NULL 
+				|| lua_newthreadAddr == NULL
 				|| lua_loadAddr == NULL
 				|| luaL_loadbufferAddr == NULL 
 				|| lua_atpanicAddr == NULL
 				|| lua_errorAddr == NULL
 				|| lua_pcallAddr == NULL
 				|| lua_cpcallAddr == NULL
+				|| l_StubbedOutAddr == NULL
 				) {//DEBUGNOW 
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}
 			else {
 				CREATE_HOOK(luaL_openlibs)
 				CREATE_HOOK(lua_newstate)
+				CREATE_HOOK(lua_newthread)
 				CREATE_HOOK(lua_load)
 				CREATE_HOOK(luaL_loadbuffer)
-				CREATE_HOOK(lua_atpanic)//DEBUGNOW
+				CREATE_HOOK(lua_atpanic)
 				CREATE_HOOK(lua_error)
 				CREATE_HOOK(lua_pcall)
 				CREATE_HOOK(lua_cpcall)
+				CREATE_HOOK(l_StubbedOut)
 
 				ENABLEHOOK(luaL_openlibs)
 				ENABLEHOOK(lua_newstate)
+				ENABLEHOOK(lua_newthread)
 				ENABLEHOOK(lua_load)
 				ENABLEHOOK(luaL_loadbuffer)
 				ENABLEHOOK(lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
 				ENABLEHOOK(lua_error)
 				ENABLEHOOK(lua_pcall)
 				ENABLEHOOK(lua_cpcall)
+				ENABLEHOOK(l_StubbedOut)
 			}//if name##Addr != NULL
 		}//CreateHooks
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
 		static int luaB_print(lua_State* L) {
+			spdlog::trace(__func__);
 			int n = lua_gettop(L);  /* number of arguments */
 			int i;
 			lua_getglobal(L, "tostring");
@@ -356,8 +434,7 @@ namespace IHHook {
 		}//l_onupdate
 		//game lua to IHHook callbacks<
 
-		//tex retail build of MGSV stubs out a lot of functions, fortunately lua functions are often just entries in a table so we can try replace them.
-		//base lua dist functions that were stubbed
+		//tex see l_StubbedOutHook
 		void ReplaceStubedOutLua(lua_State* L) {
 			lua_pushcfunction(L, luaB_print);
 			lua_setglobal(L, "print");
