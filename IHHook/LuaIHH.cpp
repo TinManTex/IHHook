@@ -9,7 +9,7 @@
 #include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
 #include "OS.h"
 #include "PipeServer.h" // QueueMessageOut, messagesIn
-
+#include <filesystem>
 #include <string>
 #include <optional>
 #include <map>
@@ -92,6 +92,16 @@ namespace IHHook {
 
 			return 1;
 		}//l_getmodfileslist
+
+		static int l_FileExists(lua_State* L) {
+			//spdlog::trace(__func__);
+			std::string fileName = lua_tostring(L, 1);
+			lua_pop(L, 1);
+			bool exists=std::filesystem::exists(fileName);
+			spdlog::trace("l_FileExists {} = {}", fileName, exists);
+			lua_pushboolean(L, exists);
+			return 1;
+		}//l_FileExists
 
 		//SetLogFlushLevel(int level)
 		//By default spdlog is very lazy with it's flush, which really helps performance wise
@@ -233,6 +243,7 @@ namespace IHHook {
 				{ "Log_Flush", l_Log_Flush},
 				{ "GetGamePath", l_GetGamePath},
 				{ "GetModFilesList", l_GetModFilesList},
+				{ "FileExists", l_FileExists },
 				{ "QueuePipeOutMessage", l_QueuePipeOutMessage },
 				{ "GetPipeInMessages", l_GetPipeInMessages },
 				{ "MenuMessage", l_MenuMessage },
