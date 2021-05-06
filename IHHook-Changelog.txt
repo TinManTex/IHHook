@@ -1,6 +1,9 @@
 IHHook changelog 
 - just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
 
+r15 - 2021-04-06
+Hook and log a couple of stubbed out functions.
+
 r14 - 2021-04-19
 Disable mouse input to game when cursor enabled.
 

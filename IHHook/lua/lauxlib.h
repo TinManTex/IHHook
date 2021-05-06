@@ -17,8 +17,8 @@
 
 
 #if defined(LUA_COMPAT_GETN)
-//OFF LUALIB_API int (luaL_getn) (lua_State *L, int t);
-//OFF LUALIB_API void (luaL_setn) (lua_State *L, int t, int n);
+LUALIB_API int (luaL_getn) (lua_State *L, int t);
+LUALIB_API void (luaL_setn) (lua_State *L, int t, int n);
 #else
 #define luaL_getn(L,i)          ((int)lua_objlen(L, i))
 #define luaL_setn(L,i,j)        ((void)0)  /* no op! */

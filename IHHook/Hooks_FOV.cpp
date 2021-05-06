@@ -167,7 +167,7 @@ namespace IHHook {
 			}
 
 			CREATE_HOOK(UpdateFOVLerp)
-			ENABLEHOOK(UpdateFOVLerp)
+			//DEBUGNOW ENABLEHOOK(UpdateFOVLerp)
 		}//CreateHooks
 
 		void SetFocalLength(CamMode camMode, float focalLength) {
@@ -193,7 +193,7 @@ namespace IHHook {
 			spdlog::trace(__func__);
 			if (lua_type(L, -1) != LUA_TNUMBER) {
 				spdlog::warn("SetCamHook expects integer 0,1");
-				return 1;
+				return 0;
 			}
 
 			int enable = (int)lua_tointeger(L, -1);
@@ -207,24 +207,24 @@ namespace IHHook {
 			else {
 				ENABLEHOOK(UpdateFOVLerp)
 			}
-			return 1;
+			return 0;
 		}//l_SetCamHook
 
 		int l_UpdateCamHook(lua_State* L) {
 			spdlog::trace(__func__);
 			if (lua_type(L, -2) != LUA_TNUMBER) {
 				spdlog::warn("SetCamHook expects integer camMode Enum");
-				return 1;
+				return 0;
 			}
 			if (lua_type(L, -1) != LUA_TNUMBER) {
 				spdlog::warn("SetCamHook expects float focalLength");
-				return 1;
+				return 0;
 			}
 
 			CamMode camMode = (CamMode)lua_tointeger(L, -2);
 			float focalLength = (float)lua_tonumber(L, -1);
 			SetFocalLength(camMode, focalLength);
-			return 1;
+			return 0;
 		}//l_UpdateCamHook
 	}//namespace Hooks_FOV
 }//namespace IHHook

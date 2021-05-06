@@ -7,9 +7,13 @@
 
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
+		{"_mainCRTStartup", 0x14c1b9710},
+		{"FoxMain", 0x142e5cd30},
 		{"StrCode64", 0x14c1bd730},
 		{"GetFreeRoamLangId", 0x145e60f40},
 		{"UpdateFOVLerp", 0x141116800},
+		{"UnkSomePrintFunction", 0x142ef2bf0},//Some info printing function that has been stubbed out
+		{"l_StubbedOut", 0x14024a8e0},
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},
@@ -69,7 +73,7 @@ namespace IHHook {
 		{"lua_pcall", 0x14c1daff0},
 		{"lua_cpcall", 0x146c7dd00},
 		{"lua_load", 0x14c1d99c0},
-		{"lua_dump", 0x14c217460},
+		{"lua_dump", 0x14c1d6690},
 //		{"lua_yield", USING_CODE},
 		{"lua_resume", 0x14c1f0d80},
 //		{"lua_status", USING_CODE},//tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)

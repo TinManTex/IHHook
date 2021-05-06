@@ -55,7 +55,11 @@ namespace IHHook {
 		//uint32_t* missionCode;//tex in header
 
 		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from?
+		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from? 15.1,  0x146900690 = 15.3 DEBUGNOW
+		FUNC_DECL_SIG(UnkSomePlayerUpdateFunc,
+			"\x55\x53\x57\x41\x00\x41\x00\x41\x00\x48\x8D\x00\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x31\x00\x48\x89\x00\x00\x00\x00\x00\x48\x8B", 
+			"xxxx?x?x?xx??????xxx????xx?????xx?xx?????xx")
+		FUNC_DECL_PATTERN(UnkSomePlayerUpdateFunc, "55 53 57 41 ? 41 ? 41 ? 48 8D ? ? ? ? ? ? 48 81 EC ? ? ? ? 48 8B ? ? ? ? ? 48 31 ? 48 89 ? ? ? ? ? 48 8B")
 
 		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
 			spdlog::trace(__func__);
@@ -64,6 +68,17 @@ namespace IHHook {
 			intptr_t playerClass = unkPlayerClass;
 			
 		}//UnkSomePlayerUpdateFuncHook
+
+		//Address of signature = mgsvtpp_1_0_15_1_en.exe + 0x012C7570//15.1
+		FUNCPTRDEF(void, UnkAnotherPlayerUpdateFuncButHuge, long long unkP1)
+		FUNC_DECL_ADDR(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
+		FUNC_DECL_SIG(UnkAnotherPlayerUpdateFuncButHuge,
+			"\x48\x8B\x00\x48\x89\x00\x00\x48\x89\x00\x00\x48\x89\x00\x00\x55\x41\x00\x41\x00\x41\x00\x41\x00\x48\x8D\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x0F\x29\x00\x00\x0F\x29\x00\x00\x44\x0F\x00\x00\x00\x44\x0F\x00\x00\x00\x44\x0F\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x33\x00\x48\x89\x00\x00\x00\x00\x00\x48\x8B", 
+			"xx?xx??xx??xx??xx?x?x?x?xx?????xxx????xx??xx??xx???xx???xx???xx??????xx??????xx??????xx??????xx??????xx?????xx?xx?????xx")
+		FUNC_DECL_PATTERN(UnkAnotherPlayerUpdateFuncButHuge, "48 8B ? 48 89 ? ? 48 89 ? ? 48 89 ? ? 55 41 ? 41 ? 41 ? 41 ? 48 8D ? ? ? ? ? 48 81 EC ? ? ? ? 0F 29 ? ? 0F 29 ? ? 44 0F ? ? ? 44 0F ? ? ? 44 0F ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 48 8B ? ? ? ? ? 48 33 ? 48 89 ? ? ? ? ? 48 8B")
+
+		
+			
 
 		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
 		FUNC_DECL_ADDR(GetFreeRoamLangId)
@@ -119,6 +134,41 @@ namespace IHHook {
 			return langId;
 		}//GetFreeRoamLangIdHook
 
+	
+
+		FUNCPTRDEF(void, UnkSomePrintFunction, char* fmt, ...)
+		FUNC_DECL_ADDR(UnkSomePrintFunction)
+
+		//DEBUGNOW not really tpp only Hooks_Fox?
+		static void UnkSomePrintFunctionHook(char* fmt, ...) {
+			spdlog::trace(__func__);
+			va_list args;
+			va_start(args, fmt);
+
+			int size = 100;
+			std::string message;
+			va_list ap;
+
+			while (1) {
+				message.resize(size);
+				va_start(ap, fmt);
+				int n = vsnprintf(&message[0], size, fmt, ap);
+				va_end(ap);
+
+				if (n > -1 && n < size) {
+					message.resize(n); // Make sure there are no trailing zero char
+					break;
+				}
+				if (n > -1)
+					size = n + 1;
+				else
+					size *= 2;
+			}//while(1)
+
+
+			spdlog::debug(message);
+		}//UnkSomePrintFunctionHook
+
 		void CreateHooks(size_t RealBaseAddr) {
 			spdlog::trace(__func__);
 			//DEBUGNOW hitting some kind of exception on caps machine
@@ -141,6 +191,18 @@ namespace IHHook {
 			//if (_mainCRTStartupAddr == NULL) {
 			//	bool bleh = true;
 			//}
+
+			GET_SIG_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW
+				if (UnkSomePlayerUpdateFuncAddr == NULL) {
+					spdlog::warn("addr fail: UnkSomePlayerUpdateFunc == NULL");
+				}
+
+
+			GET_SIG_ADDR(UnkAnotherPlayerUpdateFuncButHuge)
+				if (UnkAnotherPlayerUpdateFuncButHugeAddr == NULL) {
+					spdlog::warn("addr fail: UnkSomePlayerUpdateFunc == NULL");
+				}
+
 
 			if (isTargetExe) {
 				GET_REBASED_ADDR(StrCode64)
@@ -174,17 +236,24 @@ namespace IHHook {
 	
 			if (isTargetExe) {
 				GET_REBASED_ADDR(GetFreeRoamLangId)
+				GET_REBASED_ADDR(UnkSomePrintFunction)
 			}
 			else {
 				GET_SIG_ADDR(GetFreeRoamLangId)
+				//DEBUGNOW GET_SIG_ADDR(UnkSomePrintFunction)
 			}
-			if (GetFreeRoamLangIdAddr == NULL) {
-				spdlog::warn("addr fail: GetFreeRoamLangIdAddr == NULL");
+			if (GetFreeRoamLangIdAddr == NULL
+				|| UnkSomePrintFunctionAddr == NULL
+			) {
+				spdlog::warn("addr == NULL");
 			}
 			else {
 				CREATE_HOOK(GetFreeRoamLangId)
+				CREATE_HOOK(UnkSomePrintFunction)
+
 				ENABLEHOOK(GetFreeRoamLangId)
-			}
+				ENABLEHOOK(UnkSomePrintFunction)//DEBUGNOW
+			}//if addr
 
 			//DEBUGNOW
 			//CREATE_HOOK(UnkSomeUpdateFunc)

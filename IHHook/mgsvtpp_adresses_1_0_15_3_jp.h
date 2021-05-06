@@ -7,9 +7,13 @@
 
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_jp{
+		{"_mainCRTStartup", 0x14c966b20},
+		{"FoxMain", 0x142e5efe0},
 		{"StrCode64", 0x14c96c490},
 		{"GetFreeRoamLangId", 0x147a6b040},
 		{"UpdateFOVLerp", 0x141116890},
+		{"UnkSomePrintFunction", 0x142ee2a90},//Some info printing function that has been stubbed out
+		{"l_StubbedOut", 0x141a92a30},
 		{"lua_newstate", 0x14c9a52c0},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c9a5100},
 		{"lua_newthread", 0x14c989a70},
