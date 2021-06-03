@@ -55,6 +55,9 @@ namespace IHHook {
 		static int OnPanic(lua_State* L);
 		void SetLuaVarMenuInitialized(lua_State* L);
 
+		FUNCPTRDEF(int, l_StubbedOut, lua_State* L)
+		FUNC_DECL_ADDR(l_StubbedOut)
+
 		//http://www.lua.org/manual/5.1/manual.html#lua_pcall (also see the other functions that call HandleLuaError)
 		void HandleLuaError(lua_State* L, int errcode, int errfunc) {
 			switch (errcode) {
@@ -126,6 +129,9 @@ namespace IHHook {
 
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
+#ifdef _DEBUG
+			ENABLEHOOK(l_StubbedOut)//tex: see l_StubbedOutHook
+#endif // DEBUG
 
 			spdlog::debug("luaL_openlibsHook complete");
 		}//luaL_openlibsHook
@@ -185,14 +191,22 @@ namespace IHHook {
 
 		//DEBUGNOW move somewhere usefull
 		static void dumpstack(lua_State* L) {
+			//spdlog::trace(__func__);//DEBUG
 			int top = lua_gettop(L);
-			if (top <= 0) {
+			if (top < 0) {
+				spdlog::warn("dumpstack lua_gettop == {}. is < 0, returning", top);
 				return;
 			}
-			if (top > 10) {
-				spdlog::debug("dumpstack lua_gettop == {}. is > 10, returning",top);//DEBUGNOW
+
+			if (top > 100) {
+				spdlog::warn("dumpstack lua_gettop == {}. is > 100, returning",top);
 				return;
 			}
+
+			if (top == 0) {
+				return;
+			}
+			//DEBUGNOW
 			for (int i = 1; i <= top; i++) {
 				//spdlog::debug("{}\t{}\t", i, luaL_typename(L, i));
 				switch (lua_type(L, i)) {
@@ -206,7 +220,7 @@ namespace IHHook {
 					luaLog->debug("{} bool:\t {}", i, (lua_toboolean(L, i) ? "true" : "false"));
 					break;
 				case LUA_TNIL:
-					luaLog->debug("{} nil:\t {}", "nil");
+					luaLog->debug("{} nil:\t nil", i);
 					break;
 				default:
 					luaLog->debug("{} pointer:\t {}", i, lua_topointer(L, i));
@@ -215,19 +229,19 @@ namespace IHHook {
 			}
 		}//dumpstack
 
-
-		FUNCPTRDEF(int, l_StubbedOut, lua_State* L)
-		FUNC_DECL_ADDR(l_StubbedOut)
-
 		//tex retail build of MGSV stubs out a lot of functions (changes the function name > l_ function to point to same stubbed out function), 
 		//unfortunately since they cut it off this way the only viable functions to replace are ones we already know about 
 		//(like luaB_print, see ReplaceStubedOutFox below)
 		//see in exe the function base_funcs "print" points to, then see all other references to that func to see others that were treated that way
+		//Also 
+		//DEBUGNOW it's being called before lua is even inited? only enabling hook after for now (the current ENABLEHOOK(l_StubbedOut) and commented out ENABLEHOOK(l_StubbedOut))
 		//DEBUGNOW there's a lot of uses of this replaced function that have alternate code paths if something other than 0 is returned
 		static int l_StubbedOutHook(lua_State* L) {
-			//spdlog::debug(__func__);
+			//tex DEBUGNOW crashing on some peoples machines
+#ifdef DEBUG
+			//spdlog::debug(__func__);//DEBUG also logging func after the guards below
 			//DEBUGNOW don't like this, this function is being called before lua is up suggesting its stubbing out non lua stuff?
-			if( luaState == NULL) {
+			if(luaState == NULL) {
 				return 0;
 			}
 			int top = lua_gettop(L);
@@ -239,8 +253,8 @@ namespace IHHook {
 				return 0;
 			}
 			spdlog::debug(__func__);
-			dumpstack(L);
-
+			//DEBUGNOW dumpstack(L);//tex GOTCHA: logs to lualog/ih_log not ihhook_log
+#endif // DEBUG
 			return 0;
 		}//l_StubbedOutHook
 
@@ -331,7 +345,7 @@ namespace IHHook {
 				ENABLEHOOK(lua_error)
 				ENABLEHOOK(lua_pcall)
 				ENABLEHOOK(lua_cpcall)
-				ENABLEHOOK(l_StubbedOut)
+				//ENABLEHOOK(l_StubbedOut)//DEBUGNOW enabling after lua is init in openlibs see l_StubbedOutHook
 			}//if name##Addr != NULL
 		}//CreateHooks
 

@@ -169,6 +169,22 @@ namespace IHHook {
 			spdlog::debug(message);
 		}//UnkSomePrintFunctionHook
 
+		FUNCPTRDEF(void, nullsub_2, char* unkSomeIdStr, unsigned long long unkSomeIdNum)
+		FUNC_DECL_ADDR(nullsub_2)
+		void nullsub_2Hook(char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
+			//spdlog::trace(__func__);
+			if (unkSomeIdStr != NULL) {
+				try {
+					char idStr[1024];
+					sprintf(idStr, "%s", unkSomeIdStr);
+					spdlog::debug("nullsub_2 {}", idStr);
+				}
+				catch(...)  {
+
+				}
+			}
+		}//nullsub_2Hook
+
 		void CreateHooks(size_t RealBaseAddr) {
 			spdlog::trace(__func__);
 			//DEBUGNOW hitting some kind of exception on caps machine
@@ -191,18 +207,6 @@ namespace IHHook {
 			//if (_mainCRTStartupAddr == NULL) {
 			//	bool bleh = true;
 			//}
-
-			GET_SIG_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW
-				if (UnkSomePlayerUpdateFuncAddr == NULL) {
-					spdlog::warn("addr fail: UnkSomePlayerUpdateFunc == NULL");
-				}
-
-
-			GET_SIG_ADDR(UnkAnotherPlayerUpdateFuncButHuge)
-				if (UnkAnotherPlayerUpdateFuncButHugeAddr == NULL) {
-					spdlog::warn("addr fail: UnkSomePlayerUpdateFunc == NULL");
-				}
-
 
 			if (isTargetExe) {
 				GET_REBASED_ADDR(StrCode64)
@@ -237,22 +241,30 @@ namespace IHHook {
 			if (isTargetExe) {
 				GET_REBASED_ADDR(GetFreeRoamLangId)
 				GET_REBASED_ADDR(UnkSomePrintFunction)
+				GET_REBASED_ADDR(nullsub_2)
 			}
 			else {
 				GET_SIG_ADDR(GetFreeRoamLangId)
 				//DEBUGNOW GET_SIG_ADDR(UnkSomePrintFunction)
+				//GET_SIG_ADDR(nullsub_2)
 			}
 			if (GetFreeRoamLangIdAddr == NULL
 				|| UnkSomePrintFunctionAddr == NULL
+				|| nullsub_2Addr == NULL
 			) {
 				spdlog::warn("addr == NULL");
 			}
 			else {
 				CREATE_HOOK(GetFreeRoamLangId)
 				CREATE_HOOK(UnkSomePrintFunction)
+				CREATE_HOOK(nullsub_2)
 
 				ENABLEHOOK(GetFreeRoamLangId)
+
 				ENABLEHOOK(UnkSomePrintFunction)//DEBUGNOW
+#ifdef _DEBUG
+				//ENABLEHOOK(nullsub_2)//DEBUGNOW
+#endif // DEBUG
 			}//if addr
 
 			//DEBUGNOW
