@@ -1,5 +1,11 @@
 IHHook changelog 
 - just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
+r15b - 2021-05-05
+some more of the hooked null/stubbed functions shifted to DEBUG build.
+Split to a seperate install from Infinite Heaven
+
+r15a - 2021-04-07
+Disable StubbedOut hook since it crashes out some users.
 
 r15 - 2021-04-06
 Hook and log a couple of stubbed out functions.
