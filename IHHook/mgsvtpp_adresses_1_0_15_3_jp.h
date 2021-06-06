@@ -14,6 +14,9 @@ namespace IHHook {
 		{"UpdateFOVLerp", 0x141116890},
 		{"UnkSomePrintFunction", 0x142ee2a90},//Some info printing function that has been stubbed out
 		{"l_StubbedOut", 0x141a92a30},
+		{"UnkSomePlayerUpdateFunc", 0x1484ebbf0},
+		{"UnkAnotherPlayerUpdateFuncButHuge", 0x1412cf230},
+		{"nullsub_2", 0x141934f30},
 		{"lua_newstate", 0x14c9a52c0},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c9a5100},
 		{"lua_newthread", 0x14c989a70},
