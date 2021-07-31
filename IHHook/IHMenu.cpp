@@ -45,6 +45,7 @@ namespace IHHook {
 		char inputBuffer[bufferSize] = "";
 		char settingInputBuffer[bufferSize] = "";
 
+		void DrawList(float contentHeight, int helpHeightInItems);
 		bool TextInputComboBox(const char* id, char* buffer, size_t maxInputSize, std::vector<std::string> items, short showMaxItems);
 
 		//IH/Lua > IHMenu
@@ -396,49 +397,7 @@ namespace IHHook {
 			}
 
 			if (menuItems.size() > 0) {
-				//float numItemsF = (contentHeight * 0.50f)/ ImGui::GetFontSize();
-				float fontSize = ImGui::GetFontSize();
-				float padding = 4;//tex TODO: calculate from actual padding
-				float otherItems = 4;//tex menu title, setting name, setting value + 1 for a buffer
-				float numItemsF = (contentHeight / (fontSize + padding)) - (otherItems + helpHeightInItems);
-				int listboxHeightInItems = static_cast<int>(std::round(numItemsF));
-				//listboxHeightInItems = std::min(listboxHeightInItems, (int)menuItems.size());//tex still deciding whether size menu to its number of items (this line uncommented), or to fill menu to window (this line commented out), and what to do with the bottom of the window
-				if (listboxHeightInItems > 0) {
-					if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
-						for (int i = 0; i < menuItems.size(); i++) {
-							ImGui::PushItemWidth(-1);//tex push out label
-							ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
-							bool selected = (selectedItem == i);
-							//tex putting this before -v- means that ih/lua can set selectedItem (call SelectItem on keyboard scroll)
-							//and have this scroll the selection into the view, but let ImGui::Selectable  //DEBUGNOW unless there's a loop with togamecmd 'selected' that calls SelectItem again?
-							if (selected && prevSelectedItem != selectedItem) {
-								prevSelectedItem = selectedItem;
-								float center_y_ratio = 0.15f;
-								if (listboxHeightInItems <= 2) {
-									center_y_ratio = 1.0f;
-								}
-								ImGui::SetScrollHereY(center_y_ratio);
-							}
-
-							if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
-								selectedItem = i;
-								prevSelectedItem = selectedItem;//tex to stop autoscroll from kicking off since we changed selectedItem
-								QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
-
-								if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
-									QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
-								}
-							}
-							//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
-							if (*p_open && *p_open != openPrev) {
-								//DEBUGNOW ImGui::SetItemDefaultFocus();
-								//DEBUGNOW ImGui::SetKeyboardFocusHere();
-							}
-							ImGui::PopID();
-						}
-						ImGui::ListBoxFooter();
-					}//if ListBox
-				}//if listboxHeightInItems>0
+				DrawList(contentHeight, helpHeightInItems);
 			}//if menuItems
 
 			ImGuiInputTextFlags inputFlags = 0;
@@ -514,6 +473,52 @@ namespace IHHook {
 
 			//ImGui::SetNextWindowSizeConstraints(ImVec2(0, -1), ImVec2(0, -1));//DEBUGNOW
 		}//DrawMenu
+
+		void DrawList(float contentHeight, int helpHeightInItems) {
+			//float numItemsF = (contentHeight * 0.50f)/ ImGui::GetFontSize();
+			float fontSize = ImGui::GetFontSize();
+			float padding = 4;//tex TODO: calculate from actual padding
+			float otherItems = 4;//tex menu title, setting name, setting value + 1 for a buffer
+			float numItemsF = (contentHeight / (fontSize + padding)) - (otherItems + helpHeightInItems);
+			int listboxHeightInItems = static_cast<int>(std::round(numItemsF));
+			//listboxHeightInItems = std::min(listboxHeightInItems, (int)menuItems.size());//tex still deciding whether size menu to its number of items (this line uncommented), or to fill menu to window (this line commented out), and what to do with the bottom of the window
+			if (listboxHeightInItems > 0) {
+				if (ImGui::ListBoxHeader("##menuItems", (int)menuItems.size(), listboxHeightInItems)) {
+					for (int i = 0; i < menuItems.size(); i++) {
+						ImGui::PushItemWidth(-1);//tex push out label
+						ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
+						bool selected = (selectedItem == i);
+						//tex putting this before -v- means that ih/lua can set selectedItem (call SelectItem on keyboard scroll)
+						//and have this scroll the selection into the view, but let ImGui::Selectable  //DEBUGNOW unless there's a loop with togamecmd 'selected' that calls SelectItem again?
+						if (selected && prevSelectedItem != selectedItem) {
+							prevSelectedItem = selectedItem;
+							float center_y_ratio = 0.15f;
+							if (listboxHeightInItems <= 2) {
+								center_y_ratio = 1.0f;
+							}
+							ImGui::SetScrollHereY(center_y_ratio);
+						}
+
+						if (ImGui::Selectable(menuItems[i].c_str(), selected, ImGuiSelectableFlags_AllowDoubleClick)) {
+							selectedItem = i;
+							prevSelectedItem = selectedItem;//tex to stop autoscroll from kicking off since we changed selectedItem
+							QueueMessageIn("selected|menuItems|" + std::to_string(selectedItem));
+
+							if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
+								QueueMessageIn("activate|menuItems|" + std::to_string(selectedItem));
+							}
+						}
+						//tex set selected as focus otherwise if inputtext has focus on menu open it's annoying
+						//if (*p_open && *p_open != openPrev) {
+							//DEBUGNOW ImGui::SetItemDefaultFocus();
+							//DEBUGNOW ImGui::SetKeyboardFocusHere();
+						//}
+						ImGui::PopID();
+					}
+					ImGui::ListBoxFooter();
+				}//if ListBox
+			}//if listboxHeightInItems>0
+		}//DrawList
 
 		//TextInputComboBox https://github.com/ocornut/imgui/issues/2057 
 		bool identical(const char* buf, const char* item) {
