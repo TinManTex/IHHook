@@ -204,6 +204,7 @@ namespace IHHook {
 
 			if (name == "menuSetting") {
 				menuSettings.clear();
+				settingInputBuffer[0] = '\0';
 			}
 		}//ClearCombo
 
@@ -449,18 +450,23 @@ namespace IHHook {
 
 			//DEBUGNOW
 			int maxItemsShown = 7;//0 == show all, but you don't get a scroll bar so it's unusable and will be off screen for large lists anyhoo
-			if (TextInputComboBox("##menuSettingsWIP", settingInputBuffer, bufferSize, menuSettings, maxItemsShown)) {
+			if (TextInputComboBox("##menuSettings", settingInputBuffer, bufferSize, menuSettings, maxItemsShown)) {
 				if (menuSettings.size() == 1) {
 					menuSettings[0] = settingInputBuffer;
 					QueueMessageIn("input|menuSetting|" + menuSettings[0]);
 				}
 				else {
+					bool didSelect = false;
 					for (int i = 0; i < menuSettings.size(); i++) {
-						if (menuSettings[i].compare(settingInputBuffer) == 0) {
+						if (menuSettings[i].compare(settingInputBuffer) == 0) {//tex settingInputBuffer matches a setting
 							selectedSetting = i;
+							didSelect = true;
 							QueueMessageIn("selectedcombo|menuSetting|" + std::to_string(selectedSetting));
 							break;
 						}
+					}
+					if (!didSelect) {
+						QueueMessageIn("input|menuSetting|" + std::string(settingInputBuffer));
 					}
 				}//if menuSettings.size
 			}//if TextInputComboBox
@@ -546,16 +552,15 @@ namespace IHHook {
 			}
 
 			//We need to give the user a chance to remove wrong input
-			//We use SFML Keycodes here, because the Imgui Keys aren't working the way I thought they do...
-			//if (key == sf::Keyboard::BackSpace) { //TODO: Replace with imgui key //DEBUGNOW
-			//	//We delete the last char automatically, since it is what the user wants to delete, but only if there is something (selected/marked/hovered)
-			//	//FIXME: This worked fine, when not used as helper function
-			//	if (data->SelectionEnd != data->SelectionStart)
-			//		if (data->BufTextLen > 0) //...and the buffer isn't empty			
-			//			if (data->CursorPos > 0) //...and the cursor not at pos 0
-			//				data->DeleteChars(data->CursorPos - 1, 1);
-			//	return 0;
-			//}
+			if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Backspace))) {
+				//We delete the last char automatically, since it is what the user wants to delete, but only if there is something (selected/marked/hovered)
+				//FIXME: This worked fine, when not used as helper function
+				if (data->SelectionEnd != data->SelectionStart)
+					if (data->BufTextLen > 0) //...and the buffer isn't empty			
+						if (data->CursorPos > 0) //...and the cursor not at pos 0
+							data->DeleteChars(data->CursorPos - 1, 1);
+				return 0;
+			}
 			//if (key == sf::Keyboard::Key::Delete) return 0; //TODO: Replace with imgui key
 
 			for (int i = 0; i < items->size(); i++) {
