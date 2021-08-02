@@ -541,6 +541,8 @@ namespace IHHook {
 		}//identical
 
 		int propose(ImGuiInputTextCallbackData* data) {
+			//tex TODO: needs a lot more work
+
 			//We don't want to "preselect" anything
 			if (strlen(data->Buf) == 0) return 0;
 
@@ -561,8 +563,10 @@ namespace IHHook {
 							data->DeleteChars(data->CursorPos - 1, 1);
 				return 0;
 			}
-			//if (key == sf::Keyboard::Key::Delete) return 0; //TODO: Replace with imgui key
+			//if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete))) return 0;
 
+			//tex TODO: will pretty much just override deletions
+			//only does exact match
 			for (int i = 0; i < items->size(); i++) {
 				if (identical(data->Buf, items->at(i).c_str())) {
 					const int cursor = data->CursorPos;
