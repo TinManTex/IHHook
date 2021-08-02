@@ -327,6 +327,12 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
     case WM_KILLFOCUS:
         memset(io.KeysDown, 0, sizeof(io.KeysDown));
         return 0;
+    //tex: as above DEBUGNOW test
+    case WM_SETFOCUS:
+        for (int i = 0; i < 512; i++) {
+            keybd_event((BYTE)i, MapVirtualKeyA((BYTE)i, 0), 0x0002, 0);
+        }
+        return 0;
     case WM_CHAR:
         // You can also use ToAscii()+GetKeyboardState() to retrieve characters.
         if (wParam > 0 && wParam < 0x10000)
