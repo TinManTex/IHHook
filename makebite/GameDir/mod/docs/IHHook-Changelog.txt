@@ -1,5 +1,9 @@
 IHHook changelog 
 - just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
+r16  - 
+InfCamHook/FOV module moved from IH.
+Settings line combined InputText plus Combobox.
+
 r15b - 2021-05-05
 some more of the hooked null/stubbed functions shifted to DEBUG build.
 Split to a seperate install from Infinite Heaven
