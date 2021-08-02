@@ -3,7 +3,9 @@ r15b - 2021-05-05
 For MGSV version 1.15 (in title screen), 1.0.15.3 in exe
 For Infinite Heaven r252
 
-https://github.com/TinManTex/IHHook
+IHHook source: https://github.com/TinManTex/IHHook
+IHHook mod: https://www.nexusmods.com/metalgearsolidvtpp/mods/1226
+Infinite Heaven mod: https://www.nexusmods.com/metalgearsolidvtpp/mods/45
 
 A proxy dll (to MGS_TPP\dinput8.dll) that loads with MGSV to provide extended features for modding.
 
