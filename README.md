@@ -1,7 +1,9 @@
 # IHHook 
+https://github.com/TinManTex/IHHook
+
 A proxy dll (of dinput8.dll) that loads with MGSV to provide extended features for modding.
 
-## Dependancies
+## Dependencies
 Microsoft Visual C++ Redistributable for Visual Studio 2019, x64  
 Dowload from Other tools and Frameworks:  
 https://visualstudio.microsoft.com/downloads/  
