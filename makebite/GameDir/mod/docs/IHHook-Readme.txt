@@ -1,7 +1,7 @@
 # IHHook 
-r15b - 2021-05-05
+r6 - 2021-08-04
 For MGSV version 1.15 (in title screen), 1.0.15.3 in exe
-For Infinite Heaven r252
+For Infinite Heaven r257
 
 IHHook source: https://github.com/TinManTex/IHHook
 IHHook mod: https://www.nexusmods.com/metalgearsolidvtpp/mods/1226
