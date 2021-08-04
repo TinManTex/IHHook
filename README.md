@@ -1,11 +1,19 @@
 # IHHook 
+https://github.com/TinManTex/IHHook
+
 A proxy dll (of dinput8.dll) that loads with MGSV to provide extended features for modding.
 
-## Dependancies
+## Dependencies
+##Runtime
 Microsoft Visual C++ Redistributable for Visual Studio 2019, x64  
 Dowload from Other tools and Frameworks:  
 https://visualstudio.microsoft.com/downloads/  
 (The current redistributable now supports VC 2015,2017 and 2019 in one package).  
+
+##Development
+MSVS v141 - VS 2017 C++ x64/x86 build tools (v14.16)
+Windows 10 SDK (10.0.17763.0)
+(Install via Visual Studio Installer > Individual Components)
 
 ## IHHook features
 Lua C API support (mostly complete)  
