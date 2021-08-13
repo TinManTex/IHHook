@@ -10,6 +10,7 @@ namespace IHHook {
 		{"_mainCRTStartup", 0x14c1b9710},
 		{"FoxMain", 0x142e5cd30},
 		{"StrCode64", 0x14c1bd730},
+		{"FNVHash32", 0x143f33a20},
 		{"GetFreeRoamLangId", 0x145e60f40},
 		{"UpdateFOVLerp", 0x141116800},
 		{"UnkSomePrintFunction", 0x142ef2bf0},//Some info printing function that has been stubbed out

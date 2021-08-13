@@ -156,7 +156,7 @@
     </Link>
     <ProjectReference />
     <PostBuildEvent>
-      <Command>$(SolutionDir)copytogame.bat "$(TargetDir)" "$(TargetFileName)"</Command>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)makebite\GameDir\dinput8.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -164,6 +164,7 @@
     <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h" />
     <ClInclude Include="HookMacros.h" />
     <ClInclude Include="Hooks_CityHash.h" />
+    <ClInclude Include="Hooks_FNVHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
     <ClInclude Include="Hooks_Lua.h" />
     <ClInclude Include="Hooks_TPP.h" />
@@ -229,6 +230,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Hooks_FNVHash.cpp" />
     <ClCompile Include="Hooks_FOV.cpp" />
     <ClCompile Include="Hooks_Lua.cpp" />
     <ClCompile Include="Hooks_Lua_Test.cpp" />

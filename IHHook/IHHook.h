@@ -32,6 +32,7 @@ namespace IHHook {
 	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
 	static const bool openConsole = false;//DEBUG CONFIG
 	static const bool enableCityHook = false;//DEBUG CONFIG
+	static const bool enableFnvHook = false;//DEBUG CONFIG
 
 	static const int Version = 16; //SYNC: fileVersion
 	extern int ihVersion;

@@ -8,6 +8,7 @@
 #include <signal.h>
 
 #include "Hooks_CityHash.h"
+#include "Hooks_FnvHash.h"
 #include "Hooks_Lua.h"
 #include "Hooks_TPP.h"
 #include "Hooks_FOV.h"
@@ -266,6 +267,7 @@ namespace IHHook {
 			auto tstart = std::chrono::high_resolution_clock::now();
 
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
+			Hooks_FNVHash::CreateHooks(RealBaseAddr);
 			Hooks_Lua::CreateHooks(RealBaseAddr);
 			Hooks_TPP::CreateHooks(RealBaseAddr);
 			Hooks_FOV::CreateHooks(RealBaseAddr);

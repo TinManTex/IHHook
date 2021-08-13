@@ -195,6 +195,9 @@
     <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h">
       <Filter>Source Files\Hooking.Patterns</Filter>
     </ClInclude>
+    <ClInclude Include="Hooks_FNVHash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -328,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp">
       <Filter>Source Files\Hooking.Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_FNVHash.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
