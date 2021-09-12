@@ -152,7 +152,7 @@ namespace IHHook {
 			spdlog::debug(__func__);
 
 			if (!enableCityHook) {
-				spdlog::debug("Disabled, returning");
+				spdlog::debug("!enableCityHook, returning");
 				return;
 			}
 
