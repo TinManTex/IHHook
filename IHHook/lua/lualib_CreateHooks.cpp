@@ -1,5 +1,6 @@
 #include "../HookMacros.h"
 #include <lualib.h>
+#include "lua_Signatures.h"
 
 namespace IHHook {
 	namespace lualib {

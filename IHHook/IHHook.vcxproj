@@ -204,6 +204,7 @@
     <ClInclude Include="spdlog\tweakme.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StyleEditor.h" />
+    <ClInclude Include="mgsvtpp_signatures.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="utility\Address.hpp" />
     <ClInclude Include="utility\FunctionHook.hpp" />

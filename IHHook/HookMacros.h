@@ -59,10 +59,7 @@ namespace IHHook {
 typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
 extern name##Func* name;\
 extern intptr_t* name##BaseAddr;\
-extern intptr_t* name##Addr;\
-extern const char* name##Sig;\
-extern const char* name##Mask;\
-extern const char* name##Pattern;
+extern intptr_t* name##Addr;
 //Example use:
 //FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
@@ -70,14 +67,11 @@ extern const char* name##Pattern;
 //extern lua_newstateFunc lua_newstate;
 //extern intptr_t* lua_newstateBaseAddr;
 //extern intptr_t* lua_newstateAddr;
-//extern const char* lua_newstateSig;
-//extern const char * lua_newstateMask;
-//extern const char * lua_newstatePattern;
 
 //Define signature and mask
 #define FUNC_DECL_SIG(name, sig, mask)\
-const char * name##Sig = sig;\
-const char * name##Mask = mask;
+static const char * name##Sig = sig;\
+static const char * name##Mask = mask;
 //Example use:
 //FUNC_DECL_SIG(lua_newstate, 
 //FUNC_DECL_SIG(lua_newstate,
@@ -89,7 +83,7 @@ const char * name##Mask = mask;
 
 //Define pattern
 #define FUNC_DECL_PATTERN(name, pattern)\
-const char * name##Pattern = pattern;
+static const char * name##Pattern = pattern;
 //Example use:
 //FUNC_DECL_PATTERN(lua_newstate, "4C 8B ? 49 89 ? ? 55 56 57 41 ? 41")
 //Expands to:

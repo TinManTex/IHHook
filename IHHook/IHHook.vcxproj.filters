@@ -198,6 +198,9 @@
     <ClInclude Include="Hooks_FNVHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mgsvtpp_signatures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
