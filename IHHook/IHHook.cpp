@@ -162,6 +162,7 @@ namespace IHHook {
 		std::wstring gameDir = OS::GetGameDir();
 		SetCurrentDirectory(gameDir.c_str());//tex so this dll and lua can use reletive paths
 
+		config.debugMode = true;//DEBUGNOW -v
 		SetupLog();
 		ParseConfig(hookConfigName);//TODO: set log level via config.debugMode
 
