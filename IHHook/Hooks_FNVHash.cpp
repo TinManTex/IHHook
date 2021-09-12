@@ -21,7 +21,7 @@ namespace IHHook {
 		void CreateHooks(size_t RealBaseAddr) {
 			spdlog::debug(__func__);
 
-			if (!enableFnvHook) {
+			if (!config.enableFnvHook) {
 				spdlog::debug("!enableFnvHook, returning");
 				return;
 			}

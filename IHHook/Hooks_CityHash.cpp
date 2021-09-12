@@ -151,7 +151,7 @@ namespace IHHook {
 		void CreateHooks(size_t RealBaseAddr) {
 			spdlog::debug(__func__);
 
-			if (!enableCityHook) {
+			if (!config.enableCityHook) {
 				spdlog::debug("!enableCityHook, returning");
 				return;
 			}
@@ -175,7 +175,7 @@ namespace IHHook {
 				MH_CreateHook(CityHash1_rebased, CityHash1Hook, (LPVOID*)&origCityHash1);
 				MH_CreateHook(CityHash2_rebased, CityHash2Hook, (LPVOID*)&origCityHash2);
 
-				if (enableCityHook) {
+				if (config.enableCityHook) {
 					MH_EnableHook(CityHash1_rebased);
 					MH_EnableHook(CityHash2_rebased);
 				}

@@ -29,10 +29,14 @@
 #include "WindowsMessageHook.hpp"
 
 namespace IHHook {
-	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
-	static const bool openConsole = false;//DEBUG CONFIG
-	static const bool enableCityHook = false;//DEBUG CONFIG
-	static const bool enableFnvHook = false;//DEBUG CONFIG
+	struct Config {
+		bool debugMode;//TODO debug level instead
+		bool openConsole;
+		bool enableCityHook;
+		bool enableFnvHook;
+	};
+	extern struct Config config;
+	static const std::string hookConfigName = "ihhook_config.lua";
 
 	static const int Version = 16; //SYNC: fileVersion
 	extern int ihVersion;

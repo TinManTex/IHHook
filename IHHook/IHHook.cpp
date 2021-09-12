@@ -29,6 +29,8 @@
 #include "IHMenu.h"
 #include "StyleEditor.h"
 
+#include "Util.h"//config 
+
 #include "mgsvtpp_adresses_1_0_15_3_en.h"
 #include "mgsvtpp_adresses_1_0_15_3_jp.h"
 
@@ -37,8 +39,10 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
-
 namespace IHHook {
+	struct Config config;
+	bool ParseConfig(std::string fileName);
+
 	std::atomic<bool> doShutDown = false;
 
 	std::vector<std::string> errorMessages{};
@@ -141,7 +145,7 @@ namespace IHHook {
 		//MH_EnableHook(SetUnhandledExceptionFilter);
 
 
-		if (openConsole) {
+		if (config.openConsole) {
 			AllocConsole();
 			SetConsoleTitle(L"IHHook");
 			freopen("CONOUT$", "w", stdout);
@@ -159,6 +163,7 @@ namespace IHHook {
 		SetCurrentDirectory(gameDir.c_str());//tex so this dll and lua can use reletive paths
 
 		SetupLog();
+		ParseConfig(hookConfigName);//TODO: set log level via config.debugMode
 
 		//tex DEBUGNOW mgo is a seperate exe in the same dir, so bail out on exe name
 		HMODULE hExe = GetModuleHandle(NULL);
@@ -307,7 +312,7 @@ namespace IHHook {
 		log->flush();
 
 		spdlog::set_default_logger(log);
-		if (debugMode) {
+		if (config.debugMode) {
 			spdlog::set_level(spdlog::level::trace);
 			spdlog::flush_on(spdlog::level::trace);
 		}
@@ -693,5 +698,85 @@ namespace IHHook {
 		//ImGui::End();
 	}//DrawUI
 
+	//TODO: move to own file
+	//tex: even though it's saved as valid lua, we'll just parse it as text on IHHook side rather than dealing with back and forth through lua, and so IHHook can use it before lua is stood up
+	bool ParseConfig(std::string fileName) {
+		spdlog::debug("ParseConfig {}", fileName);
+		std::ifstream infile(fileName);
+		if (infile.fail()) {
+			spdlog::warn("ParseConfig ifstream.fail for {}", fileName);
+			return false;
+		}
 
+		config.debugMode = true;//TODO debug level instead
+		config.openConsole = false;
+		config.enableCityHook = false;
+		config.enableFnvHook = false;
+
+		std::string line;
+		while (std::getline(infile, line)) {
+			std::istringstream iss(line);
+			//tex trim leading/trailing whitespace
+			line = trim(line);
+			if (line.size() == 0) {
+				continue;
+			}
+
+			//tex trim to before comment
+			std::size_t found = line.find("--");
+			if (found == 0) {
+				continue;
+			}
+			if (found != std::string::npos) {
+				line = line.substr(0, found - 1);
+			}
+			if (line.size() == 0) {
+				continue;
+			}
+
+			//tex just skip the specific cases outright
+			found = line.find("local this");
+			if (found != std::string::npos) {
+				continue;
+			}
+			found = line.find("return this");
+			if (found != std::string::npos) {
+				continue;
+			}
+			if (line == "}") {
+				continue;
+			}
+
+			//tex trim trailing comma
+			if (line[line.size() - 1] == ',') {
+				line = line.substr(0, line.size() - 1);
+			}
+
+			found = line.find("=");
+			if (found == std::string::npos) {
+				continue;
+			}
+
+			std::string varName = line.substr(0, found);
+			std::string valueStr = line.substr(found + 1);
+			varName = trim(varName);
+			valueStr = trim(valueStr);
+
+			//tex ugh
+			if (varName == "debugMode") {
+				config.debugMode = valueStr == "true";
+			}
+			else if (varName == "openConsole") {
+				config.openConsole = valueStr == "true";
+			}
+			else if (varName == "enableCityHook") {
+				config.enableCityHook = valueStr == "true";
+			}
+			else if (varName == "enableFnvHook") {
+				config.enableFnvHook = valueStr == "true";
+			}
+		}//while line
+
+		return true;
+	}//ParseConfig
 }//namespace IHHook

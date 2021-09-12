@@ -113,7 +113,7 @@ namespace IHHook {
 			spdlog::debug(__func__);
 			luaL_openlibs(L);
 
-			if (debugMode) {
+			if (config.debugMode) {
 				TestHooks_Lua(L);
 			}
 			lua_pushinteger(L, Version);
@@ -123,7 +123,7 @@ namespace IHHook {
 
 			//OFF luaopen_winapi(L);
 			LoadImguiBindings(L);
-			if (debugMode) {
+			if (config.debugMode) {
 				TestHooks_Lua_PostLibs(L);
 			}
 
@@ -267,7 +267,7 @@ namespace IHHook {
 			luaLog = spdlog::basic_logger_st("lua", luaLogName);//tex st/single threaded since we want to preserver order, it's better performance, and we wont be logging from different threads
 			luaLog->set_pattern("|%H:%M:%S:%e|%l: %v");
 
-			if (debugMode) {
+			if (config.debugMode) {
 				luaLog->set_level(spdlog::level::trace);
 				luaLog->flush_on(spdlog::level::trace);
 			}
