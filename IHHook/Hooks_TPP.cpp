@@ -41,27 +41,28 @@ namespace IHHook {
 		//.So, main is in there, some place.– Damon Apr 8 '14 at 11:03"
 		//tex so you can find actual main from this
 		//not much point hooking it or actual main (lets call it FoxMain to be clearer) at the moment since IHHook is currently a dinput8 proxy which is obviously well past the _crtMain/FoxMain execute point
-		FUNCPTRDEF(long long, _mainCRTStartup, void)
-		FUNC_DECL_ADDR(_mainCRTStartup)
+		/*FUNCPTRDEF(long long, _mainCRTStartup, void)
+		FUNC_DECL_ADDR(_mainCRTStartup)*/
 
 
 		uintptr_t missionCode_Addr = 0x142A58A00;
 		//uint32_t* missionCode;//tex in header
 
-		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from? 15.1,  0x146900690 = 15.3 DEBUGNOW
+		//TODO: move to exploration
+		//FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
+		//FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from? 15.1,  0x146900690 = 15.3 DEBUGNOW
 
-		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
-			spdlog::trace(__func__);
-			UnkSomePlayerUpdateFunc(unkPlayerClass, playerIndex);
+		//void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
+		//	spdlog::trace(__func__);
+		//	UnkSomePlayerUpdateFunc(unkPlayerClass, playerIndex);
 
-			intptr_t playerClass = unkPlayerClass;
-			
-		}//UnkSomePlayerUpdateFuncHook
+		//	intptr_t playerClass = unkPlayerClass;
+		//	
+		//}//UnkSomePlayerUpdateFuncHook
 
-		//Address of signature = mgsvtpp_1_0_15_1_en.exe + 0x012C7570//15.1
-		FUNCPTRDEF(void, UnkAnotherPlayerUpdateFuncButHuge, long long unkP1)
-		FUNC_DECL_ADDR(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
+		////Address of signature = mgsvtpp_1_0_15_1_en.exe + 0x012C7570//15.1
+		//FUNCPTRDEF(void, UnkAnotherPlayerUpdateFuncButHuge, long long unkP1)
+		//FUNC_DECL_ADDR(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
 
 		
 			
