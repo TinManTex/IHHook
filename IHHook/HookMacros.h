@@ -63,8 +63,8 @@ extern intptr_t* name##Addr;
 //Example use:
 //FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:
-//typedef lua_State* (__fastcall *lua_newstateFunc)(lua_Alloc f, void *ud);
-//extern lua_newstateFunc lua_newstate;
+//typedef lua_State* (__fastcall lua_newstateFunc)(lua_Alloc f, void *ud);
+//extern lua_newstateFunc* lua_newstate;
 //extern intptr_t* lua_newstateBaseAddr;
 //extern intptr_t* lua_newstateAddr;
 
