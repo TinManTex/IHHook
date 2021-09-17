@@ -24,6 +24,7 @@
 #include "lua/lua_Signatures.h"
 
 #include <string>
+#include "mgsvtpp_func_typedefs.h"
 
 extern void LoadImguiBindings(lua_State* lState);
 

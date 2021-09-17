@@ -18,6 +18,7 @@
 
 #include "IHHook.h"//DEBUGNOW
 #include "mgsvtpp_signatures.h"
+#include "mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
 	namespace Hooks_FOV {

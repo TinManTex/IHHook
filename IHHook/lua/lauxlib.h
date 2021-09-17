@@ -5,6 +5,7 @@
 */
 //tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF, mix of original declarations and hook replacements, search LUALIB_API vs FUNCPTRDEF
 #include "../HookMacros.h" //tex
+#include "mgsvtpp_func_typedefs.h"
 
 #ifndef lauxlib_h
 #define lauxlib_h

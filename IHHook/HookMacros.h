@@ -51,15 +51,18 @@ namespace IHHook {
 #define TOKENPASTE(x, y) STRINGIFY(x ## y)
 
 
-
+//DEBUGNOW CULL
 //typedef for the function pointer, 
 //and an extern function pointer of the type
 //so you can include a header with the hookfunc in other files and use the function
-#define FUNCPTRDEF(ret, name, ...)\
-typedef ret ( __fastcall name##Func ) (__VA_ARGS__);\
-extern name##Func* name;\
-extern intptr_t* name##BaseAddr;\
-extern intptr_t* name##Addr;
+#define FUNCPTRDEF(ret, name, ...)
+
+
+//DEBUGNOW WAS
+//typedef ret(__fastcall name##Func) (__VA_ARGS__); \
+//extern name##Func* name; \
+//extern intptr_t* name##BaseAddr; \
+//extern intptr_t* name##Addr;
 //Example use:
 //FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
 //Expands to:

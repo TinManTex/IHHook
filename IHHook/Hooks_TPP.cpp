@@ -10,10 +10,13 @@
 #include <iostream>
 #include <sstream>   
 #include "mgsvtpp_signatures.h"
+#include "mgsvtpp_func_typedefs.h"
+
+//tex DEBUGNOW figure out scope issues with using this (LuaIHH), the extern func pointers are declared with no scope (which is what lua wants)
+FUNCPTRDEF(long long, StrCode64, const char* str, long long len)
+FUNC_DECL_ADDR(StrCode64)
 
 namespace IHHook {
-	FUNC_DECL_ADDR(StrCode64)
-
 	std::map<int, long long> locationLangIds{
 		{10,0x1b094033d45d},//afgh,tpp_loc_afghan
 		{20,0x7114b69e71e7},//mafr,tpp_loc_africa
@@ -206,7 +209,7 @@ namespace IHHook {
 				CREATE_FUNCPTR(StrCode64)			
 					
 				//DEBUGNOW TEST
-				const char* langId = "tpp_loc_afghan";
+				char* langId = "tpp_loc_afghan";
 				long long tpp_loc_afghanS64 = StrCode64(langId, strlen(langId));
 
 				std::stringstream stream;

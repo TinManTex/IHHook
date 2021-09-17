@@ -4,6 +4,7 @@
 #include "IHHook.h"//BaseAddr,enableCityHook
 #include "MinHook/MinHook.h"
 #include "HookMacros.h"
+#include "mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
 	namespace Hooks_FNVHash {

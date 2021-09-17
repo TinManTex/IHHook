@@ -8,6 +8,7 @@
 #NOTE: make sure the function signature (not to be confused with sig string/pattern) 
 #for the function you want to export is correct in ghidra, or at least understandable for IHHook, no data types set as 'undefined'
 #then right click the function in decompile window (or press P) and choose 'Commit Params/Return'
+#GOTCHA: ghidra signature doesnt have const keyword, so theres some WORKAROUND
 
 from java.io import PrintWriter
 
@@ -139,7 +140,7 @@ exportInfo=[
 	#lua<
 
 	#lauxlib.h>
-	{"name":"luaI_openlib", },
+	{"name":"luaI_openlib", "constParams": ["l"]},
 	{"name":"luaL_register", "noAddress":"USING_CODE",},
 	{"name":"luaL_getmetafield",},
 	{"name":"luaL_callmeta",},
@@ -257,10 +258,26 @@ def BuildSignatures():
 				ret=signature.getReturnType().getName()
 				arguments=signature.getArguments()
 				signatureLine=ret+" "+name
-				typedefLine="typedef "+ret+" (__fastcall "+name+"Func)("
+				typedefLine="typedef "+ret+" (__fastcall "+name+"Func)("#TODO: pull calling convention too?
+				#WORKAROUND: tex ghidra signature doesnt have const keyword
+				noConstChar=entry.get("noConstChar")#tex currently will apply const to char * by default, or noConstChar to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
+				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
 				for idx,parameter in enumerate(arguments):
-					signatureLine=signatureLine+parameter.getDataType().getName()+" "+parameter.getName()
-					typedefLine=typedefLine+parameter.getDataType().getName()+" "+parameter.getName()
+					paramName=parameter.getName()
+					dataTypeName=parameter.getDataType().getName()
+					#print(paramName)
+					#print(dataTypeName)
+					if noConstChar==None:
+						if dataTypeName=="char *":
+							dataTypeName="const "+dataTypeName
+					if constParams!=None:
+						for constParam in constParams:
+							#print(constParam)
+							if constParam==paramName:
+								dataTypeName="const "+dataTypeName
+								break
+					signatureLine=signatureLine+dataTypeName+" "+paramName
+					typedefLine=typedefLine+dataTypeName+" "+paramName
 					if idx!=len(arguments)-1:
 						signatureLine=signatureLine+", "
 						typedefLine=typedefLine+", "
@@ -277,6 +294,49 @@ def BuildSignatures():
 		#print(signatureLine)
 		#print(typedefLine)
 	return typedefLines
+
+def BuildExternPointers():
+	lines=[]
+	for entry in exportInfo:
+		name=entry["name"]
+		noAddress=entry.get("noAddress")
+		invalidReason=None
+		if noAddress!=None:
+			invalidReason=noAddress
+		else:
+			function=foundFunctions.get(name)
+			if function==None:
+				invalidReason="NOT_FOUND"
+
+		externLine="extern "+name+"Func* "+name+";"
+
+		if invalidReason!=None:
+			lines.append("//"+externLine+"//"+invalidReason)
+		else:
+			lines.append(externLine)
+	return lines
+
+def BuildExternAddr():
+	lines=[]
+	for entry in exportInfo:
+		name=entry["name"]
+		noAddress=entry.get("noAddress")
+		invalidReason=None
+		if noAddress!=None:
+			invalidReason=noAddress
+		else:
+			function=foundFunctions.get(name)
+			if function==None:
+				invalidReason="NOT_FOUND"
+
+		externLine="extern intptr_t * "+name+"Addr;"
+
+		if invalidReason!=None:
+			lines.append("//"+externLine+"//"+invalidReason)
+		else:
+			lines.append(externLine)
+	return lines
+
 
 #tex existing/adapted AddressCSVToMacroHeader
 def BuildAddressMap():
@@ -348,7 +408,7 @@ def WriteAddressHFile():
 	file = PrintWriter(headerFilePath);
 	for line in hLines:
 		file.println(line)
-		#print(line)
+		print(line)
 
 	file.flush()
 	file.close()
@@ -358,19 +418,50 @@ def WriteFuncTypeDefHFile():
 	headerFilePath=hDestPath+fileName+".h"
 
 	signatures=BuildSignatures()
+	externPointersLines=BuildExternPointers()
+	externAddrLines=BuildExternAddr()
 
 	header=[
 		"#pragma once",
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
 		"",
+		"//GOTCHA: ghidra signature doesnt have const keyword",
+	]
+
+	#TODO: is a per category thing
+	includes=[
+		'#include "lua/lua.h"',
+		'#include "lua/lauxlib.h"',
+	]
+
+	macros=[
+		"//macros for ghidra data type names > c++",
+		"#define longlong long long",
+		"#define ulonglong unsigned long long",
+		"#define uint unsigned int",
 	]
 
 	file = PrintWriter(headerFilePath);
 	for line in header:
 		file.println(line)
 	file.println("")
-
+	for line in includes:
+		file.println(line)
+	file.println("")
+	for line in macros:
+		file.println(line)
+	file.println("")
 	for line in signatures:
+		file.println(line)
+		print(line)
+	file.println("")
+	file.println("//tex the (extern of the) function pointers")
+	for line in externPointersLines:
+		file.println(line)
+		print(line)
+	file.println("")
+	file.println("//tex for want of a better place, used by ENABLE/DISABLEHOOK")
+	for line in externAddrLines:
 		file.println(line)
 		print(line)
 

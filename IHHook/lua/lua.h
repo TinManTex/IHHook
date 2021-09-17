@@ -6,6 +6,7 @@
 */
 //tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF
 #include "../HookMacros.h" //tex
+#include "mgsvtpp_func_typedefs.h"
 
 #ifndef lua_h
 #define lua_h
