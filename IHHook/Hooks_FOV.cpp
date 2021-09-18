@@ -139,15 +139,13 @@ namespace IHHook {
 			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
 
 			if (isTargetExe) {
-				GET_REBASED_ADDR(UpdateFOVLerp)
-				//UpdateFOVLerpAddr = (void*)(((size_t)UpdateFOVLerpBaseAddr - BaseAddr) + RealBaseAddr);//DEBUGNOW
 			}
 			else {
 				GET_SIG_ADDR(UpdateFOVLerp)
 				//DEBUGNOW UpdateFOVLerpAddr = (intptr_t*)MemoryUtils::PatternScan("UpdateFOVLerp", UpdateFOVLerpPattern);
 			}
 
-			if (UpdateFOVLerpAddr == NULL) {
+			if (addressSet["UpdateFOVLerp"] == NULL) {
 				spdlog::warn("FOV addr fail: UpdateFOVLerpAddr == NULL");
 				return;
 			}

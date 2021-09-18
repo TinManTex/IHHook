@@ -4,28 +4,6 @@
 
 namespace IHHook {
 	namespace lualib {
-		void GetRebasedAddresses(size_t BaseAddr, size_t RealBaseAddr) {
-			//lualib.h
-
-			GET_REBASED_ADDR(luaopen_base)//TEST
-
-			GET_REBASED_ADDR(luaopen_table)//TEST
-
-			GET_REBASED_ADDR(luaopen_io)//TEST
-
-			GET_REBASED_ADDR(luaopen_os)//TEST
-
-			GET_REBASED_ADDR(luaopen_string)//TEST
-
-			GET_REBASED_ADDR(luaopen_math)//TEST
-
-			GET_REBASED_ADDR(luaopen_debug)//TEST
-
-			GET_REBASED_ADDR(luaopen_package)//TEST
-
-			GET_REBASED_ADDR(luaL_openlibs)
-		}//GetRebasedAddresses
-
 		void GetSigAddresses(size_t BaseAddr, size_t RealBaseAddr) {
 			//lualib.h
 
@@ -73,7 +51,6 @@ namespace IHHook {
 	extern bool isTargetExe;
 	void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr) {
 		if (isTargetExe) {
-			lualib::GetRebasedAddresses(BaseAddr, RealBaseAddr);
 		}
 		else {
 			lualib::GetSigAddresses(BaseAddr, RealBaseAddr);

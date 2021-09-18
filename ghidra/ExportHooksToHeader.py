@@ -316,28 +316,6 @@ def BuildExternPointers():
 			lines.append(externLine)
 	return lines
 
-def BuildExternAddr():
-	lines=[]
-	for entry in exportInfo:
-		name=entry["name"]
-		noAddress=entry.get("noAddress")
-		invalidReason=None
-		if noAddress!=None:
-			invalidReason=noAddress
-		else:
-			function=foundFunctions.get(name)
-			if function==None:
-				invalidReason="NOT_FOUND"
-
-		externLine="extern intptr_t * "+name+"Addr;"
-
-		if invalidReason!=None:
-			lines.append("//"+externLine+"//"+invalidReason)
-		else:
-			lines.append(externLine)
-	return lines
-
-
 #tex existing/adapted AddressCSVToMacroHeader
 def BuildAddressMap():
 	outLines=[]
@@ -419,7 +397,6 @@ def WriteFuncTypeDefHFile():
 
 	signatures=BuildSignatures()
 	externPointersLines=BuildExternPointers()
-	externAddrLines=BuildExternAddr()
 
 	header=[
 		"#pragma once",
@@ -460,10 +437,6 @@ def WriteFuncTypeDefHFile():
 		file.println(line)
 		print(line)
 	file.println("")
-	file.println("//tex for want of a better place, used by ENABLE/DISABLEHOOK")
-	for line in externAddrLines:
-		file.println(line)
-		print(line)
 
 	file.flush()
 	file.close()

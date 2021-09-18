@@ -287,16 +287,6 @@ namespace IHHook {
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 			
 			if (isTargetExe) {
-				GET_REBASED_ADDR(luaL_openlibs)
-				GET_REBASED_ADDR(lua_newstate)
-				GET_REBASED_ADDR(lua_newthread)
-				GET_REBASED_ADDR(lua_load)
-				GET_REBASED_ADDR(luaL_loadbuffer)
-				GET_REBASED_ADDR(lua_atpanic)
-				GET_REBASED_ADDR(lua_error)
-				GET_REBASED_ADDR(lua_pcall)
-				GET_REBASED_ADDR(lua_cpcall)
-				GET_REBASED_ADDR(l_StubbedOut)
 			}
 			else {
 				GET_SIG_ADDR(luaL_openlibs)
@@ -311,16 +301,16 @@ namespace IHHook {
 				//DEBUGNOW GET_SIG_ADDR(l_StubbedOut)
 			}
 
-			if (luaL_openlibsAddr == NULL 
-				|| lua_newstateAddr == NULL 
-				|| lua_newthreadAddr == NULL
-				|| lua_loadAddr == NULL
-				|| luaL_loadbufferAddr == NULL 
-				|| lua_atpanicAddr == NULL
-				|| lua_errorAddr == NULL
-				|| lua_pcallAddr == NULL
-				|| lua_cpcallAddr == NULL
-				|| l_StubbedOutAddr == NULL
+			if (addressSet["luaL_openlibs"] == NULL
+				|| addressSet["lua_newstate"] == NULL
+				|| addressSet["lua_newthread"] == NULL
+				|| addressSet["lua_load"] == NULL
+				|| addressSet["luaL_loadbuffer"] == NULL
+				|| addressSet["lua_atpanic"] == NULL
+				|| addressSet["lua_error"] == NULL
+				|| addressSet["lua_pcall"] == NULL
+				|| addressSet["lua_cpcall"] == NULL
+				|| addressSet["l_StubbedOut"] == NULL
 				) {//DEBUGNOW 
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}

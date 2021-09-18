@@ -190,13 +190,12 @@ namespace IHHook {
 			//}
 
 			if (isTargetExe) {
-				GET_REBASED_ADDR(StrCode64)
 			}
 			else {
 				GET_SIG_ADDR(StrCode64)
 			}
-			if (StrCode64Addr == NULL) {
-				spdlog::warn("addr fail: StrCode64Addr == NULL");
+			if (addressSet["StrCode64"] == NULL) {
+				spdlog::warn("addr fail: addressSet[\"StrCode64\"] == NULL");
 			}
 			else {
 				CREATE_FUNCPTR(StrCode64)			
@@ -220,18 +219,15 @@ namespace IHHook {
 
 	
 			if (isTargetExe) {
-				GET_REBASED_ADDR(GetFreeRoamLangId)
-				GET_REBASED_ADDR(UnkSomePrintFunction)
-				GET_REBASED_ADDR(nullsub_2)
 			}
 			else {
 				GET_SIG_ADDR(GetFreeRoamLangId)
 				//DEBUGNOW GET_SIG_ADDR(UnkSomePrintFunction)
 				//GET_SIG_ADDR(nullsub_2)
 			}
-			if (GetFreeRoamLangIdAddr == NULL
-				|| UnkSomePrintFunctionAddr == NULL
-				|| nullsub_2Addr == NULL
+			if (addressSet["GetFreeRoamLangId"] == NULL
+				|| addressSet["UnkSomePrintFunction"] == NULL
+				|| addressSet["nullsub_2"] == NULL
 			) {
 				spdlog::warn("addr == NULL");
 			}

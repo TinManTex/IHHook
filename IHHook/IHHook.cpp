@@ -242,16 +242,19 @@ namespace IHHook {
 			}
 			else {
 				//tex for using listed address vs sigscan
+				//TODO: a debug config option to force this off
 				isTargetExe = true;
 			}//
 		}// ChecKVersion
 
-		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
-		//bool doHooks = true;
-
 		bool doHooks = isTargetExe;//tex in theory could fall back to signature scanning, however it takes a litteral minute for 100+ signatures to be found 
 		//plus if you did go that route you'd have to put it at an earlier blocking point (like off dllmain itself)
 		//since this function we're in is run by a thread so the exe will continue past the point we need our hooks up and running
+
+		//TODO: make config option
+		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
+		//doHooks = true;//DEBUGNOW
+
 		if (doHooks) {//tex hook em up boys
 			Hooks_Lua::SetupLog();
 
@@ -269,6 +272,14 @@ namespace IHHook {
 					//tex unknown exe lang, should already be handled by isTargetExe
 				}
 			}//if lang
+
+			//tex Rebase adresses //DEBUGNOW
+			for (auto const& entry : addressSet) {
+				std::string key = entry.first;
+				int64_t addr = entry.second;
+				int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+				addressSet[key] = rebasedAddr;
+			}//for addressSet
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 

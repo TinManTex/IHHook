@@ -29,14 +29,13 @@ namespace IHHook {
 			log = spdlog::basic_logger_st("fnvhash", logName);
 			log->set_pattern("%v");//tex raw logging
 
-			if (isTargetExe) {
-				GET_REBASED_ADDR(FNVHash32)		
+			if (isTargetExe) {	
 			}
 			else {
 				//GET_SIG_ADDR(FNVHash32)//TODO sigs	
 			}
 
-			if (FNVHash32Addr == NULL) {
+			if (addressSet["FNVHash32"] == NULL) {
 				spdlog::warn("FNVHash32 == NULL");
 				return;
 			}
