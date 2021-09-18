@@ -51,14 +51,14 @@ namespace IHHook {
 #define TOKENPASTE(x, y) STRINGIFY(x ## y)
 
 
-//DEBUGNOW CULL
+//TODO CULL
 //typedef for the function pointer, 
 //and an extern function pointer of the type
 //so you can include a header with the hookfunc in other files and use the function
-#define FUNCPTRDEF(ret, name, ...)
+#define FUNCPTRDEF(ret, name, ...)\
+//
 
-
-//DEBUGNOW WAS
+//CULL WAS
 //typedef ret(__fastcall name##Func) (__VA_ARGS__); \
 //extern name##Func* name; \
 //extern intptr_t* name##BaseAddr; \
@@ -132,7 +132,7 @@ name = (name##Func*)name##Addr;
 //Expands to:
 //lua_newstate = (lua_newstateFunc*)lua_newstateFuncAddr;
 
-//detour and trampoline via MH_CreateHook
+//detour and trampoline via MH_CreateHook,
 //original function is at the <name> function ptr (just like createptr)
 //while the hook/detour is at <name>Hook function pointer.
 //ASSUMPTION must have a name##Addr of the runtime location of the function, either via GET_REBASED_ADDR or some other means (like a sig scan or other method)

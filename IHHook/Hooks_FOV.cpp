@@ -22,7 +22,6 @@
 
 namespace IHHook {
 	namespace Hooks_FOV {
-		FUNCPTRDEF(void, UpdateFOVLerp, const uintptr_t thisptr)
 		FUNC_DECL_ADDR(UpdateFOVLerp)
 
 		enum class gametype { mgsv, mgo };

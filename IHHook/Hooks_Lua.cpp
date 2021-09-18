@@ -1,7 +1,7 @@
 /*
 	tex: msgvtpp has lua 5.1.5 statically linked
 	IHHook hooks lua by function addresses (defined in lua/*_Addresses.h), using (macros wrapping) MH_Hook initialised in CreateHooks() below
-	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it.
+	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it. TODO: this is no longer true, they currently in func_typedefs
 	In some cases uses actual lua lib implementation.
 	See comments on CREATE_FUNCPTR entries in *_Creathooks.cpp.
 
@@ -56,7 +56,6 @@ namespace IHHook {
 		static int OnPanic(lua_State* L);
 		void SetLuaVarMenuInitialized(lua_State* L);
 
-		FUNCPTRDEF(int, l_StubbedOut, lua_State* L)
 		FUNC_DECL_ADDR(l_StubbedOut)
 
 		//http://www.lua.org/manual/5.1/manual.html#lua_pcall (also see the other functions that call HandleLuaError)

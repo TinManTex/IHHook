@@ -11,7 +11,6 @@ namespace IHHook {
 		std::wstring logName = L"fnvhash_log.txt";
 		std::shared_ptr<spdlog::logger> log;
 
-		FUNCPTRDEF(unsigned __int32, FNVHash32, char* str)
 		FUNC_DECL_ADDR(FNVHash32)
 
 		unsigned __int32 FNVHash32Hook(char* str) {
