@@ -182,7 +182,6 @@
     <ClInclude Include="lua\lua.h" />
     <ClInclude Include="lua\luaconf.h" />
     <ClInclude Include="lua\lualib.h" />
-    <ClInclude Include="lua\lua_AddressesGEN.h" />
     <ClInclude Include="MemoryUtils.h" />
     <ClInclude Include="mgsvtpp_adresses_1_0_15_3_en.h" />
     <ClInclude Include="mgsvtpp_adresses_1_0_15_3_jp.h" />
@@ -255,6 +254,7 @@
     <ClCompile Include="lua\lualib_CreateHooks.cpp" />
     <ClCompile Include="lua\lua_CreateHooks.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
+    <ClCompile Include="mgsvtpp_func_ptrs.cpp" />
     <ClCompile Include="MinHook\buffer.c" />
     <ClCompile Include="MinHook\hde\hde32.c" />
     <ClCompile Include="MinHook\hde\hde64.c" />

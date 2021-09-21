@@ -1,4 +1,4 @@
-#Writes mgsvtpp_adresses_<version>_<lang>.h and mgsvtpp_func_typedefs.h
+#Writes mgsvtpp_adresses_<version>_<lang>.h, mgsvtpp_func_typedefs.h, mgsvtpp_func_ptrs.cpp
 #using function names defined in ExportInfo.py
 #edit hDestPath to change export location
 #@author tex
@@ -6,6 +6,8 @@
 #@keybinding 
 #@menupath 
 #@toolbar 
+
+#TODO: this has a lot of redundancy in the build/write functions
 
 from java.io import PrintWriter
 from ExportInfo import * #ExportInfo.py for exportInfo list
@@ -48,7 +50,7 @@ for function in listing.getFunctions(True):
 
 #TODO: fill out typedefs for noAddress that have found functions anyway? (but still have them commented them out)
 def BuildSignatures():
-	signatureLines=[]
+	signatureLines=[]#unused
 	typedefLines=[]
 
 	for entry in exportInfo:
@@ -111,25 +113,28 @@ def BuildSignatures():
 	return typedefLines
 
 def BuildExternPointers():
-	lines=[]
+	outLines=[]
 	for entry in exportInfo:
 		name=entry["name"]
+		#print(name)
 		noAddress=entry.get("noAddress")
-		invalidReason=None
+		reason=None
 		if noAddress!=None:
-			invalidReason=noAddress
+			reason=noAddress
 		else:
 			function=foundFunctions.get(name)
 			if function==None:
-				invalidReason="NOT_FOUND"
+				reason="NOT_FOUND"
+		#REF output
+		#extern StrCode64Func* StrCode64;
+		line="extern "+name+"Func* "+name+";"
 
-		externLine="extern "+name+"Func* "+name+";"
+		if reason!=None:
+			line='//'+line+'//'+reason#tex commented out
 
-		if invalidReason!=None:
-			lines.append("//"+externLine+"//"+invalidReason)
-		else:
-			lines.append(externLine)
-	return lines
+		outLines.append(line)
+		#print(line)
+	return outLines
 
 def BuildAddressMap():
 	outLines=[]
@@ -138,17 +143,16 @@ def BuildAddressMap():
 		#print(name)
 		noAddress=entry.get("noAddress")
 		note=entry.get("note")
+		reason=None
 		address=""
 		invalid=False
 		if noAddress!=None:
-			address=noAddress
-			invalid=True
+			reason=noAddress
 		else:
 			function=foundFunctions.get(name)
 			#print("function:"+str(function))
 			if function==None:
-				address="NOT_FOUND"
-				invalid=True
+				reason="NOT_FOUND"
 			else:
 				address="0x"+str(function.getEntryPoint())
 		if note==None:
@@ -156,14 +160,65 @@ def BuildAddressMap():
 		else:
 			note="//"+note
 
-		commentOut=""
-		if invalid:
-			commentOut="//"
+		if reason!=None:
+			address=reason
 
 		#address map
 		#REF output
 		#{"StrCode64", 0x14c1bd730},
-		line=commentOut+'{"'+name+'", '+str(address)+'},'+note
+		line='{"'+name+'", '+address+'},'+note
+		if reason!=None:
+			line="//"+line
+		outLines.append(line)
+		#print(line)
+	return outLines
+
+def BuildFuncPtrDefs():
+	outLines=[]
+	for entry in exportInfo:
+		name=entry["name"]
+		#print(name)
+		noAddress=entry.get("noAddress")
+		reason=None
+		if noAddress!=None:
+			reason=noAddress
+		else:
+			function=foundFunctions.get(name)
+			#print("function:"+str(function))
+			if function==None:
+				reason="NOT_FOUND"
+
+		#REF output
+		#StrCode64Func* StrCode64;
+		line=name+'Func* '+name+';'
+		if reason!=None:
+			line='//'+line+'//'+reason
+
+		outLines.append(line)
+		#print(line)
+	return outLines
+
+def BuildFuncPtrSet():
+	outLines=[]
+	for entry in exportInfo:
+		name=entry["name"]
+		#print(name)
+		noAddress=entry.get("noAddress")
+		reason=None
+		if noAddress!=None:
+			reason=noAddress
+		else:
+			function=foundFunctions.get(name)
+			#print("function:"+str(function))
+			if function==None:
+				reason="NOT_FOUND"
+
+		#REF output
+		#StrCode64 = (StrCode64Func*)addressSet["StrCode64"];
+		line=name+' = ('+name+'Func*)addressSet["'+name+'"];'
+		if reason!=None:
+			line='//'+line+'//'+reason
+
 		outLines.append(line)
 		#print(line)
 	return outLines
@@ -189,12 +244,15 @@ def WriteAddressHFile():
 		hLines.append(line)
 
 	hLines.append("namespace IHHook {")
-	hLines.append("\t"+"std::map<std::string, int64_t> "+fileName+"{")
+	indent="\t"
+	hLines.append(indent+"std::map<std::string, int64_t> "+fileName+"{")
 
+	indent="\t\t"
 	for line in addressLines:
-		hLines.append("\t\t"+line)
+		hLines.append(indent+line)
 
-	hLines.append("\t};//map "+fileName)
+	indent="\t"
+	hLines.append(indent+"};//map "+fileName)
 	hLines.append("}//namespace IHHook")
 
 	file = PrintWriter(headerFilePath);
@@ -255,6 +313,41 @@ def WriteFuncTypeDefHFile():
 	file.flush()
 	file.close()
 
+def WriteFuncPtrsHFile():
+	fileName=exeName+"_func_ptrs"+".cpp"
+	headerFilePath=hDestPath+fileName
+
+	funcPtrLines=BuildFuncPtrDefs()
+
+	header=[
+		"//GENERATED: by ghidra script ExportHooksToHeader.py",
+		"",
+		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
+		"// NO_USE - something we dont really want to use for whatever reason",
+		"// USING_CODE - using the default lapi code implementation instead of hooking",
+	]
+
+	hLines=[]
+
+	for line in header:
+		hLines.append(line)
+	hLines.append("")
+	hLines.append('#include "mgsvtpp_func_typedefs.h"',)
+	hLines.append("")
+
+	indent=""
+	for line in funcPtrLines:
+		hLines.append(indent+line)
+
+	file = PrintWriter(headerFilePath);
+	for line in hLines:
+		file.println(line)
+		print(line)
+
+	file.flush()
+	file.close()
+
+
 #exec
 lang = askChoice("ExportHooksToHeader", "Select lang of this exe:", ["en","jp"], "en")
 
@@ -262,4 +355,6 @@ print("----")
 WriteAddressHFile()
 print("----")
 WriteFuncTypeDefHFile()
+print("----")
+WriteFuncPtrsHFile()
 

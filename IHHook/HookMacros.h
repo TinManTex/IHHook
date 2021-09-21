@@ -92,15 +92,6 @@ static const char * name##Pattern = pattern;
 //Expands to:
 //const char * lua_newstate = "4C 8B ? 49 89 ? ? 55 56 57 41 ? 41";
 
-//DEBUGNOW review, at least rename
-//base address of func, and actually declare the function pointer -- can be in header or code (as long as later code using it can see its declaration)
-#define FUNC_DECL_ADDR(name)\
-name##Func* name;
-//Example use:
-//FUNC_DECL_ADDR(lua_newstate);
-//Expands to:
-//lua_newstateFunc lua_newstate;
-
 //just want to use original function
 //sets the pointer to the rebased address so the function pointer is usable
 #define CREATE_FUNCPTR(name)\

@@ -11,9 +11,6 @@
 #include <sstream>   
 #include "mgsvtpp_func_typedefs.h"
 
-//tex DEBUGNOW figure out scope issues with using this (LuaIHH), the extern func pointers are declared with no scope (which is what lua wants)
-FUNC_DECL_ADDR(StrCode64)
-
 namespace IHHook {
 	std::map<int, long long> locationLangIds{
 		{10,0x1b094033d45d},//afgh,tpp_loc_afghan
@@ -42,15 +39,12 @@ namespace IHHook {
 		//.So, main is in there, some place.– Damon Apr 8 '14 at 11:03"
 		//tex so you can find actual main from this
 		//not much point hooking it or actual main (lets call it FoxMain to be clearer) at the moment since IHHook is currently a dinput8 proxy which is obviously well past the _crtMain/FoxMain execute point
-		//FUNC_DECL_ADDR(_mainCRTStartup)
 
 
 		uintptr_t missionCode_Addr = 0x142A58A00;
 		//uint32_t* missionCode;//tex in header
 
 		//TODO: move to exploration
-		//FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from? 15.1,  0x146900690 = 15.3 DEBUGNOW
-
 		//void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
 		//	spdlog::trace(__func__);
 		//	UnkSomePlayerUpdateFunc(unkPlayerClass, playerIndex);
@@ -60,14 +54,12 @@ namespace IHHook {
 		//}//UnkSomePlayerUpdateFuncHook
 
 		////Address of signature = mgsvtpp_1_0_15_1_en.exe + 0x012C7570//15.1
-		//FUNC_DECL_ADDR(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
+		//(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
 
 		
 			
 	
 
-
-		FUNC_DECL_ADDR(GetFreeRoamLangId)
 
 		//tex the idroid free roam mission tab had an issue where it wouldn't show the name of custom free roam missions
 		//despite there being a map_location_parameter - locationNameLangId = "tpp_loc_<whatever> (that matches tpp_common lng for vanilla free)
@@ -116,10 +108,6 @@ namespace IHHook {
 			return langId;
 		}//GetFreeRoamLangIdHook
 
-	
-
-		FUNC_DECL_ADDR(UnkSomePrintFunction)
-
 		//DEBUGNOW not really tpp only Hooks_Fox?
 		static void UnkSomePrintFunctionHook(char* fmt, ...) {
 			spdlog::trace(__func__);
@@ -150,7 +138,6 @@ namespace IHHook {
 			spdlog::debug(message);
 		}//UnkSomePrintFunctionHook
 
-		FUNC_DECL_ADDR(nullsub_2)
 		void nullsub_2Hook(char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
 			//spdlog::trace(__func__);
 			if (unkSomeIdStr != NULL) {

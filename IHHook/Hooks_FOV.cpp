@@ -21,8 +21,6 @@
 
 namespace IHHook {
 	namespace Hooks_FOV {
-		FUNC_DECL_ADDR(UpdateFOVLerp)
-
 		enum class gametype { mgsv, mgo };
 
 		gametype game = gametype::mgsv;

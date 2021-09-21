@@ -20,8 +20,6 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 
-#include "lua/lua_AddressesGEN.h"
-
 #include <string>
 #include "mgsvtpp_func_typedefs.h"
 
@@ -54,8 +52,6 @@ namespace IHHook {
 		void ReplaceStubedOutFox(lua_State* L);
 		static int OnPanic(lua_State* L);
 		void SetLuaVarMenuInitialized(lua_State* L);
-
-		FUNC_DECL_ADDR(l_StubbedOut)
 
 		//http://www.lua.org/manual/5.1/manual.html#lua_pcall (also see the other functions that call HandleLuaError)
 		void HandleLuaError(lua_State* L, int errcode, int errfunc) {

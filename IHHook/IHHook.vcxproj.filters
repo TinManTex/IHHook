@@ -174,9 +174,6 @@
     <ClInclude Include="StyleEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lua\lua_AddressesGEN.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
     <ClInclude Include="Hooks_FOV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -336,6 +333,9 @@
       <Filter>Source Files\Hooking.Patterns</Filter>
     </ClCompile>
     <ClCompile Include="Hooks_FNVHash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mgsvtpp_func_ptrs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
