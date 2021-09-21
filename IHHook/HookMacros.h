@@ -101,17 +101,6 @@ name##Func* name;
 //Expands to:
 //lua_newstateFunc lua_newstate;
 
-//ASSUMPTION name##Addr defined, FUNC_DECL_SIG declared
-//sigscans for an address an puts it in var for CREATE_HOOK macro
-#define GET_SIG_ADDR(name)\
-addressSet[#name] = MemoryUtils::sigscan(#name, name##Sig, name##Mask);
-//ALT name##Addr = (intptr_t*)MemoryUtils::PatternScan(#name, name##Pattern);
-//ALT name##Addr = (intptr_t*)MemoryUtils::ScanModIn(name##Sig, name##Mask, "mgsvtpp.exe");//DEBUG exeName?
-//Example use:
-//GET_SIG_ADDR(lua_newstate);
-//Expands to:
-//addressSet["lua_newstate"] = (intptr_t*)MemoryUtils::sigscan("lua_newstate", lua_newstateSig, lua_newstateMask);
-
 //just want to use original function
 //sets the pointer to the rebased address so the function pointer is usable
 #define CREATE_FUNCPTR(name)\

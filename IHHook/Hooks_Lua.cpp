@@ -21,7 +21,6 @@
 #include "MinHook/MinHook.h"
 
 #include "lua/lua_AddressesGEN.h"
-#include "lua/lua_Signatures.h"
 
 #include <string>
 #include "mgsvtpp_func_typedefs.h"
@@ -286,21 +285,6 @@ namespace IHHook {
 			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
 			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 			
-			if (isTargetExe) {
-			}
-			else {
-				GET_SIG_ADDR(luaL_openlibs)
-				GET_SIG_ADDR(lua_newstate)
-				GET_SIG_ADDR(lua_newthread)
-				GET_SIG_ADDR(lua_load)
-				GET_SIG_ADDR(luaL_loadbuffer)
-				GET_SIG_ADDR(lua_atpanic)
-				GET_SIG_ADDR(lua_error)
-				GET_SIG_ADDR(lua_pcall)
-				GET_SIG_ADDR(lua_cpcall)
-				//DEBUGNOW GET_SIG_ADDR(l_StubbedOut)
-			}
-
 			if (addressSet["luaL_openlibs"] == NULL
 				|| addressSet["lua_newstate"] == NULL
 				|| addressSet["lua_newthread"] == NULL

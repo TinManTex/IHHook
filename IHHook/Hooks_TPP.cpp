@@ -9,7 +9,6 @@
 #include <string>
 #include <iostream>
 #include <sstream>   
-#include "mgsvtpp_signatures.h"
 #include "mgsvtpp_func_typedefs.h"
 
 //tex DEBUGNOW figure out scope issues with using this (LuaIHH), the extern func pointers are declared with no scope (which is what lua wants)
@@ -184,16 +183,10 @@ namespace IHHook {
 			//DEBUGNOW
 
 			//DEBUGNOW
-			//GET_SIG_ADDR(_mainCRTStartup)
 			//if (_mainCRTStartupAddr == NULL) {
 			//	bool bleh = true;
 			//}
 
-			if (isTargetExe) {
-			}
-			else {
-				GET_SIG_ADDR(StrCode64)
-			}
 			if (addressSet["StrCode64"] == NULL) {
 				spdlog::warn("addr fail: addressSet[\"StrCode64\"] == NULL");
 			}
@@ -216,15 +209,6 @@ namespace IHHook {
 					//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 			}
 
-
-	
-			if (isTargetExe) {
-			}
-			else {
-				GET_SIG_ADDR(GetFreeRoamLangId)
-				//DEBUGNOW GET_SIG_ADDR(UnkSomePrintFunction)
-				//GET_SIG_ADDR(nullsub_2)
-			}
 			if (addressSet["GetFreeRoamLangId"] == NULL
 				|| addressSet["UnkSomePrintFunction"] == NULL
 				|| addressSet["nullsub_2"] == NULL

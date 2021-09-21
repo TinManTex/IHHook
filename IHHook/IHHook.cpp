@@ -33,6 +33,7 @@
 
 #include "mgsvtpp_adresses_1_0_15_3_en.h"
 #include "mgsvtpp_adresses_1_0_15_3_jp.h"
+#include "mgsvtpp_patterns.h"
 
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//tex see note in imgui_impl_win32.h
@@ -50,6 +51,7 @@ namespace IHHook {
 	size_t RealBaseAddr;
 	bool isTargetExe = false;
 	std::map<std::string, int64_t> addressSet{};
+	std::map<std::string, char*> patterns{};
 
 	terminate_function terminate_Original;
 
@@ -252,15 +254,15 @@ namespace IHHook {
 		//since this function we're in is run by a thread so the exe will continue past the point we need our hooks up and running
 
 		//TODO: make config option
-		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
-		//doHooks = true;//DEBUGNOW
+		isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
+		doHooks = true;//DEBUGNOW
 
 		if (doHooks) {//tex hook em up boys
 			Hooks_Lua::SetupLog();
 
 			MH_Initialize();
 
-			//DEBUGNOW TODO: an addresset map too I guess
+			//DEBUGNOW TODO: an adresset map too I guess
 			if (lang == "en") {
 				addressSet = mgsvtpp_adresses_1_0_15_3_en;
 			}
@@ -273,15 +275,55 @@ namespace IHHook {
 				}
 			}//if lang
 
+			auto tstart = std::chrono::high_resolution_clock::now();
+
 			//tex Rebase adresses //DEBUGNOW
+			bool foundAllAddresses = true;
 			for (auto const& entry : addressSet) {
-				std::string key = entry.first;
-				int64_t addr = entry.second;
-				int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
-				addressSet[key] = rebasedAddr;
+				std::string name = entry.first;
+				if (isTargetExe) {
+					spdlog::info("isTargetExe, rebasing addr {}", name);
+					int64_t addr = entry.second;
+					int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+					addressSet[name] = rebasedAddr;
+				}
+				else {
+					//spdlog::info("!isTargetExe, sig scanning");
+					addressSet[name] = 0;
+					auto it = mgsvtpp_patterns.find(name);
+					if (it != mgsvtpp_patterns.end()) {
+						//found
+						//const char* sig = it->second;
+						//const char* mask = mgsvtpp_masks[name];//ASSUMPTION: if sig exists then mask does
+						//uintptr_t addr = MemoryUtils::sigscan(name.c_str(), sig, mask);//tex returns null if not found
+
+						const char* pattern = it->second.c_str();
+						auto tstart = std::chrono::high_resolution_clock::now();
+						uintptr_t addr = (uintptr_t)MemoryUtils::PatternScan(pattern);//tex returns null if not found
+						auto tend = std::chrono::high_resolution_clock::now();
+						auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+						if (addr == NULL) {
+							spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
+							foundAllAddresses = false;
+						}
+						else {
+							spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
+						}
+
+						addressSet[name] = addr;
+					}
+					else {
+						spdlog::warn("Could not find sig for {}", name);
+					}
+				}//if isTargetExe
 			}//for addressSet
 
-			auto tstart = std::chrono::high_resolution_clock::now();
+			if (!foundAllAddresses) {
+				spdlog::warn("Could not find all addresses");
+			}
+			else {
+
+			}
 
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
 			Hooks_FNVHash::CreateHooks(RealBaseAddr);
@@ -292,7 +334,7 @@ namespace IHHook {
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
 			spdlog::debug("IHHook::CreateHooks total time(microseconds): {}µs", durationShort);
-		}
+		}//if doHooks
 
 		PipeServer::StartPipeServer();
 

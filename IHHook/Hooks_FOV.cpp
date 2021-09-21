@@ -17,7 +17,6 @@
 #include <MemoryUtils.h>
 
 #include "IHHook.h"//DEBUGNOW
-#include "mgsvtpp_signatures.h"
 #include "mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
@@ -137,13 +136,6 @@ namespace IHHook {
 			//tex since updateFOVLerpRef is at the address part of of the E8 CALL rel32 (see REF above again), it needs to jump to the next instruction (+4)
 			//then add the dereferenced rel32
 			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
-
-			if (isTargetExe) {
-			}
-			else {
-				GET_SIG_ADDR(UpdateFOVLerp)
-				//DEBUGNOW UpdateFOVLerpAddr = (intptr_t*)MemoryUtils::PatternScan("UpdateFOVLerp", UpdateFOVLerpPattern);
-			}
 
 			if (addressSet["UpdateFOVLerp"] == NULL) {
 				spdlog::warn("FOV addr fail: UpdateFOVLerpAddr == NULL");

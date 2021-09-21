@@ -196,7 +196,7 @@ namespace IHHook {
 		//https://github.com/ThirteenAG/Hooking.Patterns
 		//DEBUGNOW hint system seems interesting, but if you're going to serialize stuff just for performance why arent you dumping addresses themselves?
 		//also its 10x slower than basic sig scan for some reason
-		uint32_t* PatternScan(const char* name, const char* pattern) {
+		uint32_t* PatternScanWithHint(const char* name, const char* pattern) {
 			auto tstart = std::chrono::high_resolution_clock::now();
 
 			auto pattern_result = hook::pattern(pattern);
@@ -214,6 +214,60 @@ namespace IHHook {
 			}
 
 			return NULL;
+		}//PatternScan
+
+		/*
+		 * @brief Scan for a given byte pattern on a module
+		 *
+		 * @Param module    Base of the module to search
+		 * @Param signature IDA-style byte array pattern ex: "48 89 ? ? ? 57 48 83 EC ? 48 8B ? ? ? ? ? 48 89 ? 48 8D ? ? ? ? ? 48 85"
+		 *
+		 * @Returns Address of the first occurence
+		 */
+		std::uint8_t* PatternScan(const char* pattern) {
+			static auto pattern_to_byte = [](const char* pattern) {
+				auto bytes = std::vector<int>{};
+				auto start = const_cast<char*>(pattern);
+				auto end = const_cast<char*>(pattern) + strlen(pattern);
+
+				for (auto current = start; current < end; ++current) {
+					if (*current == '?') {
+						++current;
+						if (*current == '?')
+							++current;
+						bytes.push_back(-1);
+					}
+					else {
+						bytes.push_back(strtoul(current, &current, 16));
+					}
+				}
+				return bytes;
+			};
+
+			const auto module = GetModuleHandleA(NULL);
+			auto dosHeader = (PIMAGE_DOS_HEADER)module;
+			auto ntHeaders = (PIMAGE_NT_HEADERS)((std::uint8_t*)module + dosHeader->e_lfanew);
+
+			auto sizeOfImage = ntHeaders->OptionalHeader.SizeOfImage;
+			auto patternBytes = pattern_to_byte(pattern);
+			auto scanBytes = reinterpret_cast<std::uint8_t*>(module);
+
+			auto patternSize = patternBytes.size();
+			auto patternData = patternBytes.data();
+
+			for (auto i = 0ul; i < sizeOfImage - patternSize; ++i) {
+				bool found = true;
+				for (auto j = 0ul; j < patternSize; ++j) {
+					if (scanBytes[i + j] != patternData[j] && patternData[j] != -1) {
+						found = false;
+						break;
+					}
+				}
+				if (found) {
+					return &scanBytes[i];
+				}
+			}
+			return nullptr;
 		}//PatternScan
 
 		//IN/SIDE: BaseAddr, RealBaseAddr

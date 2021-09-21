@@ -180,9 +180,6 @@
     <ClInclude Include="Hooks_FOV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lua\lua_Signatures.h">
-      <Filter>Source Files\lua</Filter>
-    </ClInclude>
     <ClInclude Include="ntdll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -198,10 +195,10 @@
     <ClInclude Include="Hooks_FNVHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mgsvtpp_signatures.h">
+    <ClInclude Include="mgsvtpp_func_typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mgsvtpp_func_typedefs.h">
+    <ClInclude Include="mgsvtpp_patterns.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
