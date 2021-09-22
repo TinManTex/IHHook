@@ -1,4 +1,4 @@
-#Writes mgsvtpp_adresses_<version>_<lang>.h, mgsvtpp_func_typedefs.h, mgsvtpp_func_ptrs.cpp
+#Writes mgsvtpp_adresses_<version>_<lang>.h, mgsvtpp_func_typedefs.h, mgsvtpp_funcptr_defs.cpp
 #using function names defined in ExportInfo.py
 #edit hDestPath to change export location
 #@author tex
@@ -313,8 +313,8 @@ def WriteFuncTypeDefHFile():
 	file.flush()
 	file.close()
 
-def WriteFuncPtrsHFile():
-	fileName=exeName+"_func_ptrs"+".cpp"
+def WriteFuncPtrDefsFile():
+	fileName=exeName+"_funcptr_defs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
 	funcPtrLines=BuildFuncPtrDefs()
@@ -341,12 +341,54 @@ def WriteFuncPtrsHFile():
 
 	file = PrintWriter(headerFilePath);
 	for line in hLines:
-		file.println(line)
+		file.println(indent+line)
 		print(line)
 
 	file.flush()
 	file.close()
 
+def WriteFuncPtrSetFile():
+	fileName=exeName+"_funcptr_set"+".cpp"
+	headerFilePath=hDestPath+fileName
+
+	funcPtrLines=BuildFuncPtrSet()
+
+	header=[
+		"//GENERATED: by ghidra script ExportHooksToHeader.py",
+		"",
+		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
+		"// NO_USE - something we dont really want to use for whatever reason",
+		"// USING_CODE - using the default lapi code implementation instead of hooking",
+	]
+
+	hLines=[]
+
+	for line in header:
+		hLines.append(line)
+	hLines.append("")
+	hLines.append('#include "mgsvtpp_func_typedefs.h"',)
+	hLines.append("")
+	hLines.append("extern std::map<std::string, int64_t> addressSet;")
+	hLines.append("")
+	hLines.append("namespace IHHook {")
+	indent="\t"
+	hLines.append(indent+"void SetFuncPtrs() {")
+
+	indent="\t\t"
+	for line in funcPtrLines:
+		hLines.append(indent+line)
+	indent="\t"
+	hLines.append(indent+"}//SetFuncPtrs")
+	indent=""
+	hLines.append(indent+"}//namespace IHHook")
+
+	file = PrintWriter(headerFilePath);
+	for line in hLines:
+		file.println(indent+line)
+		print(line)
+
+	file.flush()
+	file.close()
 
 #exec
 lang = askChoice("ExportHooksToHeader", "Select lang of this exe:", ["en","jp"], "en")
@@ -356,5 +398,7 @@ WriteAddressHFile()
 print("----")
 WriteFuncTypeDefHFile()
 print("----")
-WriteFuncPtrsHFile()
+WriteFuncPtrDefsFile()
+print("----")
+WriteFuncPtrSetFile()
 

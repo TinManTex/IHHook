@@ -254,7 +254,8 @@
     <ClCompile Include="lua\lualib_CreateHooks.cpp" />
     <ClCompile Include="lua\lua_CreateHooks.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
-    <ClCompile Include="mgsvtpp_func_ptrs.cpp" />
+    <ClCompile Include="mgsvtpp_funcptr_defs.cpp" />
+    <ClCompile Include="mgsvtpp_funcptr_set.cpp" />
     <ClCompile Include="MinHook\buffer.c" />
     <ClCompile Include="MinHook\hde\hde32.c" />
     <ClCompile Include="MinHook\hde\hde64.c" />

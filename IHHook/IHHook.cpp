@@ -40,7 +40,11 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
+
+
 namespace IHHook {
+	extern void SetFuncPtrs();
+
 	struct Config config;
 	bool ParseConfig(std::string fileName);
 
@@ -322,7 +326,7 @@ namespace IHHook {
 				spdlog::warn("Could not find all addresses");
 			}
 			else {
-
+				SetFuncPtrs();
 			}
 
 			Hooks_CityHash::CreateHooks(RealBaseAddr);

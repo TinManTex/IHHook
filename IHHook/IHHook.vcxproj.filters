@@ -335,7 +335,10 @@
     <ClCompile Include="Hooks_FNVHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mgsvtpp_func_ptrs.cpp">
+    <ClCompile Include="mgsvtpp_funcptr_defs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mgsvtpp_funcptr_set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
