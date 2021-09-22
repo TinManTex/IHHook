@@ -26,9 +26,6 @@
 extern void LoadImguiBindings(lua_State* lState);
 
 namespace IHHook {
-	extern void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr);
-	extern void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr);
-	extern void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr);
 	//Hooks_Lua_Test
 	extern void TestHooks_Lua(lua_State* L);
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
@@ -276,10 +273,6 @@ namespace IHHook {
 		//IN/SIDE: IHHook::BaseAddr
 		void CreateHooks(size_t RealBaseAddr) {
 			spdlog::debug(__func__);
-
-			CreateHooks_Lua(BaseAddr, RealBaseAddr);
-			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
-			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 			
 			if (addressSet["luaL_openlibs"] == NULL
 				|| addressSet["lua_newstate"] == NULL

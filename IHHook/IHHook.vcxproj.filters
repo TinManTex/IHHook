@@ -239,15 +239,6 @@
     <ClCompile Include="Hooks_Lua_Test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lua\lualib_CreateHooks.cpp">
-      <Filter>Source Files\lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\lauxlib_CreateHooks.cpp">
-      <Filter>Source Files\lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\lua_CreateHooks.cpp">
-      <Filter>Source Files\lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\lauxlib.cpp">
       <Filter>Source Files\lua</Filter>
     </ClCompile>

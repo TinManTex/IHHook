@@ -177,9 +177,7 @@ namespace IHHook {
 			if (addressSet["StrCode64"] == NULL) {
 				spdlog::warn("addr fail: addressSet[\"StrCode64\"] == NULL");
 			}
-			else {
-				CREATE_FUNCPTR(StrCode64)			
-					
+			else {					
 				//DEBUGNOW TEST
 				char* langId = "tpp_loc_afghan";
 				long long tpp_loc_afghanS64 = StrCode64(langId, strlen(langId));

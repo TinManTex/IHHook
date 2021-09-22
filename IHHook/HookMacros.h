@@ -55,16 +55,6 @@ namespace IHHook {
 #define FUNCPTRDEF(ret, name, ...)\
 //
 
-
-//just want to use original function
-//sets the pointer to the rebased address so the function pointer is usable
-#define CREATE_FUNCPTR(name)\
-name = (name##Func*)addressSet[#name];
-//Example use:
-//CREATE_FUNCPTR(lua_newstate);
-//Expands to:
-//lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
-
 //detour and trampoline via MH_CreateHook,
 //original function is at the <name> function ptr (just like createptr)
 //while the hook/detour is at <name>Hook function pointer.

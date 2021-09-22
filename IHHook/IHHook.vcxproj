@@ -248,13 +248,10 @@
     <ClCompile Include="LuaIHH.cpp" />
     <ClCompile Include="lua\lapi.cpp" />
     <ClCompile Include="lua\lauxlib.cpp" />
-    <ClCompile Include="lua\lauxlib_CreateHooks.cpp" />
     <ClCompile Include="lua\ldebug.cpp" />
     <ClCompile Include="lua\ldo.cpp" />
     <ClCompile Include="lua\lobject.cpp" />
     <ClCompile Include="lua\ltm.cpp" />
-    <ClCompile Include="lua\lualib_CreateHooks.cpp" />
-    <ClCompile Include="lua\lua_CreateHooks.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
     <ClCompile Include="MinHook\buffer.c" />
     <ClCompile Include="MinHook\hde\hde32.c" />
