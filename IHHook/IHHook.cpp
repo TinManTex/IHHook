@@ -31,9 +31,9 @@
 
 #include "Util.h"//config 
 
-#include "mgsvtpp_adresses_1_0_15_3_en.h"
-#include "mgsvtpp_adresses_1_0_15_3_jp.h"
-#include "mgsvtpp_patterns.h"
+#include "hooks/mgsvtpp_adresses_1_0_15_3_en.h"
+#include "hooks/mgsvtpp_adresses_1_0_15_3_jp.h"
+#include "hooks/mgsvtpp_patterns.h"
 
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//tex see note in imgui_impl_win32.h

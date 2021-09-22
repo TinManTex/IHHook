@@ -21,7 +21,7 @@
 #include "MinHook/MinHook.h"
 
 #include <string>
-#include "mgsvtpp_func_typedefs.h"
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 extern void LoadImguiBindings(lua_State* lState);
 

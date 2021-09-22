@@ -17,7 +17,7 @@
 #include "IHMenu.h" // MenuMessage, messagesIn
 #include "Hooks_TPP.h"
 #include "Hooks_FOV.h"
-#include "mgsvtpp_func_typedefs.h"//StrCode64
+#include "hooks/mgsvtpp_func_typedefs.h"//StrCode64
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;

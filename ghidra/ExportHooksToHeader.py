@@ -12,7 +12,7 @@
 from java.io import PrintWriter
 from ExportInfo import * #ExportInfo.py for exportInfo list
 
-hDestPath="D:/GitHub/IHHook/IHHook/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
+hDestPath="D:/GitHub/IHHook/IHHook/hooks/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
 
 version="1_0_15_3"
 exeName="mgsvtpp"

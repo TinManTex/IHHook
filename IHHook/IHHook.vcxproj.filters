@@ -46,6 +46,12 @@
     <Filter Include="Source Files\Hooking.Patterns">
       <UniqueIdentifier>{baa6b5c2-e13a-46a0-b92f-60d9ddee4702}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hooks">
+      <UniqueIdentifier>{de7d084a-b20f-4231-b467-0fed5a59a4d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\hooks">
+      <UniqueIdentifier>{d1040a34-669e-4141-accb-247b74af781c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="spdlog\tweakme.h">
@@ -180,23 +186,23 @@
     <ClInclude Include="ntdll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_en.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_jp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h">
       <Filter>Source Files\Hooking.Patterns</Filter>
     </ClInclude>
     <ClInclude Include="Hooks_FNVHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mgsvtpp_func_typedefs.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="hooks\mgsvtpp_patterns.h">
+      <Filter>Header Files\hooks</Filter>
     </ClInclude>
-    <ClInclude Include="mgsvtpp_patterns.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_en.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_jp.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\mgsvtpp_func_typedefs.h">
+      <Filter>Header Files\hooks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -335,11 +341,11 @@
     <ClCompile Include="Hooks_FNVHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mgsvtpp_funcptr_defs.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="hooks\mgsvtpp_funcptr_defs.cpp">
+      <Filter>Source Files\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="mgsvtpp_funcptr_set.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="hooks\mgsvtpp_funcptr_set.cpp">
+      <Filter>Source Files\hooks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

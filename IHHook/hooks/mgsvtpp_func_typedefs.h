@@ -143,6 +143,7 @@ typedef int (__fastcall luaopen_debugFunc)(lua_State * L);
 typedef int (__fastcall luaopen_packageFunc)(lua_State * L);
 typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 
+//tex the (extern of the) function pointers
 extern StrCode64Func* StrCode64;
 extern FNVHash32Func* FNVHash32;
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
@@ -274,3 +275,4 @@ extern luaopen_mathFunc* luaopen_math;
 extern luaopen_debugFunc* luaopen_debug;
 extern luaopen_packageFunc* luaopen_package;
 extern luaL_openlibsFunc* luaL_openlibs;
+

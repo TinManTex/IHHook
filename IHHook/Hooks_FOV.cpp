@@ -17,7 +17,7 @@
 #include <MemoryUtils.h>
 
 #include "IHHook.h"//DEBUGNOW
-#include "mgsvtpp_func_typedefs.h"
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
 	namespace Hooks_FOV {

@@ -38,7 +38,7 @@ import ghidra.program.model.lang.OperandType as OperandType
 import ghidra.program.model.lang.Register as Register
 import ghidra.program.model.address.AddressSet as AddressSet
 
-hDestPath="D:/GitHub/IHHook/IHHook/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
+hDestPath="D:/GitHub/IHHook/IHHook/hooks/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
 
 exeName="mgsvtpp"
 
