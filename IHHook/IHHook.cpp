@@ -247,19 +247,19 @@ namespace IHHook {
 				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
 			else {
-				//tex for using listed address vs sigscan
-				//TODO: a debug config option to force this off
+				//tex for using listed address vs sigscan (but not actually currently doing so, see doHooks comment)
 				isTargetExe = true;
 			}//
 		}// ChecKVersion
 
-		bool doHooks = isTargetExe;//tex in theory could fall back to signature scanning, however it takes a litteral minute for 100+ signatures to be found 
+		bool doHooks = isTargetExe;//tex not actually doing hooks if not target exe. in theory could fall back to signature scanning, however it takes a litteral minute for 100+ signatures to be found 
 		//plus if you did go that route you'd have to put it at an earlier blocking point (like off dllmain itself)
 		//since this function we're in is run by a thread so the exe will continue past the point we need our hooks up and running
-
-		//TODO: make config option
-		isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
-		doHooks = true;//DEBUGNOW
+		//But heres a config option to test
+		if (config.forceUsePatterns) {
+			isTargetExe = false;//tex use sig scanning instead
+			doHooks = true;
+		}
 
 		if (doHooks) {//tex hook em up boys
 			Hooks_Lua::SetupLog();
@@ -770,6 +770,7 @@ namespace IHHook {
 		config.openConsole = false;
 		config.enableCityHook = false;
 		config.enableFnvHook = false;
+		config.forceUsePatterns = false;
 
 		std::string line;
 		while (std::getline(infile, line)) {
@@ -832,6 +833,9 @@ namespace IHHook {
 			}
 			else if (varName == "enableFnvHook") {
 				config.enableFnvHook = valueStr == "true";
+			}
+			else if (varName == "forceUsePatterns") {
+				config.forceUsePatterns = valueStr == "true";
 			}
 		}//while line
 

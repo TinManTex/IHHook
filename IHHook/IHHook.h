@@ -34,6 +34,7 @@ namespace IHHook {
 		bool openConsole;
 		bool enableCityHook;
 		bool enableFnvHook;
+		bool forceUsePatterns;
 	};
 	extern struct Config config;
 	static const std::string hookConfigName = "ihhook_config.lua";
