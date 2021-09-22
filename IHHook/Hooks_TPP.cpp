@@ -9,7 +9,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>   
-#include "mgsvtpp_func_typedefs.h"
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
 	std::map<int, long long> locationLangIds{
