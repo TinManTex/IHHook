@@ -77,14 +77,14 @@ def BuildSignatures():
 				signatureLine=ret+" "+name
 				typedefLine="typedef "+ret+" (__fastcall "+name+"Func)("#TODO: pull calling convention too?
 				#WORKAROUND: tex ghidra signature doesnt have const keyword
-				noConstChar=entry.get("noConstChar")#tex currently will apply const to char * by default, or noConstChar to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
+				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
 				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
 				for idx,parameter in enumerate(arguments):
 					paramName=parameter.getName()
 					dataTypeName=parameter.getDataType().getName()
 					#print(paramName)
 					#print(dataTypeName)
-					if noConstChar==None:
+					if constCharPtr!=False:
 						if dataTypeName=="char *":
 							dataTypeName="const "+dataTypeName
 					if constParams!=None:
@@ -118,6 +118,7 @@ def BuildExternPointers():
 		name=entry["name"]
 		#print(name)
 		noAddress=entry.get("noAddress")
+		usingDetour=entry.get("usingDetour")
 		reason=None
 		if noAddress!=None:
 			reason=noAddress
@@ -130,10 +131,21 @@ def BuildExternPointers():
 		line="extern "+name+"Func* "+name+";"
 
 		if reason!=None:
-			line='//'+line+'//'+reason#tex commented out
+			line='//'+line+'//'+reason#tex commented out			
 
 		outLines.append(line)
 		#print(line)
+
+		if usingDetour!=None:
+			#REF output
+			#extern StrCode64Func* StrCode64Hook;
+			line="extern "+name+"Func "+name+"Hook;//declaration"
+
+			if reason!=None:
+				line='//'+line+'//'+reason#tex commented out			
+
+			outLines.append(line)
+			#print(line)			
 	return outLines
 
 def BuildAddressMap():
@@ -232,6 +244,7 @@ def WriteAddressHFile():
 	header=[
 		"#pragma once",
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
+		"//via WriteAddressHFile",
 		"",
 		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
 		"// NO_USE - something we dont really want to use for whatever reason",
@@ -273,12 +286,13 @@ def WriteFuncTypeDefHFile():
 	header=[
 		"#pragma once",
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
-		"",
-		"//GOTCHA: ghidra signature doesnt have const keyword",
+		"//via WriteFuncTypeDefHFile",
+		"//Typdefs and externs for the function pointers as well as detour function declaration (not func ptrs)",
 	]
 
-	#TODO: is a per category thing
 	includes=[
+		'//TODO: this is a per category thing/will likely want to manage includes ',
+		'//as the number of functions being hooked with various data types expands',
 		'#include "lua/lua.h"',
 		'#include "lua/lauxlib.h"',
 	]
@@ -321,6 +335,7 @@ def WriteFuncPtrDefsFile():
 
 	header=[
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
+		"//via WriteFuncPtrDefsFile",
 		"",
 		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
 		"// NO_USE - something we dont really want to use for whatever reason",
@@ -355,6 +370,7 @@ def WriteFuncPtrSetFile():
 
 	header=[
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
+		"//via WriteFuncPtrSetFile",
 		"",
 		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
 		"// NO_USE - something we dont really want to use for whatever reason",

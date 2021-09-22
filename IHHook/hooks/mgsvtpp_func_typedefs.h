@@ -1,8 +1,10 @@
 #pragma once
 //GENERATED: by ghidra script ExportHooksToHeader.py
+//via WriteFuncTypeDefHFile
+//Typdefs and externs for the function pointers as well as detour function declaration (not func ptrs)
 
-//GOTCHA: ghidra signature doesnt have const keyword
-
+//TODO: this is a per category thing/will likely want to manage includes 
+//as the number of functions being hooked with various data types expands
 #include "lua/lua.h"
 #include "lua/lauxlib.h"
 
@@ -146,16 +148,25 @@ typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 //tex the (extern of the) function pointers
 extern StrCode64Func* StrCode64;
 extern FNVHash32Func* FNVHash32;
+extern FNVHash32Func FNVHash32Hook;//declaration
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
+extern GetFreeRoamLangIdFunc GetFreeRoamLangIdHook;//declaration
 extern UpdateFOVLerpFunc* UpdateFOVLerp;
+extern UpdateFOVLerpFunc UpdateFOVLerpHook;//declaration
 extern UnkSomePrintFunctionFunc* UnkSomePrintFunction;
+extern UnkSomePrintFunctionFunc UnkSomePrintFunctionHook;//declaration
 extern l_StubbedOutFunc* l_StubbedOut;
+extern l_StubbedOutFunc l_StubbedOutHook;//declaration
 extern nullsub_2Func* nullsub_2;
+extern nullsub_2Func nullsub_2Hook;//declaration
 extern LoadFileFunc* LoadFile;
 extern lua_newstateFunc* lua_newstate;
+extern lua_newstateFunc lua_newstateHook;//declaration
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;
+extern lua_newthreadFunc lua_newthreadHook;//declaration
 extern lua_atpanicFunc* lua_atpanic;
+extern lua_atpanicFunc lua_atpanicHook;//declaration
 //extern lua_gettopFunc* lua_gettop;//USING_CODE
 extern lua_settopFunc* lua_settop;
 extern lua_pushvalueFunc* lua_pushvalue;
@@ -209,14 +220,18 @@ extern lua_setmetatableFunc* lua_setmetatable;
 extern lua_setfenvFunc* lua_setfenv;
 extern lua_callFunc* lua_call;
 extern lua_pcallFunc* lua_pcall;
+extern lua_pcallFunc lua_pcallHook;//declaration
 extern lua_cpcallFunc* lua_cpcall;
+extern lua_cpcallFunc lua_cpcallHook;//declaration
 extern lua_loadFunc* lua_load;
+extern lua_loadFunc lua_loadHook;//declaration
 extern lua_dumpFunc* lua_dump;
 //extern lua_yieldFunc* lua_yield;//USING_CODE
 extern lua_resumeFunc* lua_resume;
 //extern lua_statusFunc* lua_status;//USING_CODE
 extern lua_gcFunc* lua_gc;
 extern lua_errorFunc* lua_error;
+extern lua_errorFunc lua_errorHook;//declaration
 extern lua_nextFunc* lua_next;
 extern lua_concatFunc* lua_concat;
 //extern lua_getallocfFunc* lua_getallocf;//NO_USE
@@ -256,6 +271,7 @@ extern luaL_checkoptionFunc* luaL_checkoption;
 //extern luaL_unrefFunc* luaL_unref;//USING_CODE
 extern luaL_loadfileFunc* luaL_loadfile;
 extern luaL_loadbufferFunc* luaL_loadbuffer;
+extern luaL_loadbufferFunc luaL_loadbufferHook;//declaration
 //extern luaL_loadstringFunc* luaL_loadstring;//USING_CODE
 extern luaL_newstateFunc* luaL_newstate;
 extern luaL_gsubFunc* luaL_gsub;
@@ -275,4 +291,5 @@ extern luaopen_mathFunc* luaopen_math;
 extern luaopen_debugFunc* luaopen_debug;
 extern luaopen_packageFunc* luaopen_package;
 extern luaL_openlibsFunc* luaL_openlibs;
+extern luaL_openlibsFunc luaL_openlibsHook;//declaration
 
