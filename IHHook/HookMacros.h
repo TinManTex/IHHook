@@ -51,7 +51,7 @@ namespace IHHook {
 #define TOKENPASTE(x, y) STRINGIFY(x ## y)
 
 
-//TODO CULL
+//TODO CULL still in the lua headers, which I can revert/comment out the hooked
 #define FUNCPTRDEF(ret, name, ...)\
 //
 

@@ -17,7 +17,8 @@
 #noAddress for stuff that's not actually exported for whatever reason, but will still write it out as commented out entries
 #USING_CODE is where I use actual lua implementation instead of hooking
 
-#notes are appended as comments in mgsv_tpp_addresses_<>.h
+#notes are appended as comments in mgsv_tpp_addresses_<version>_en.h 
+#for want of a better place, entries there are short enough to tack on comment at end and be discoverable at a glance
 
 #TODO add NO_USE to getllocf,setallocf, actually give reason why not (dont want to mess with allocator function)
 #todo namespaces - not actual, just to split into different files
@@ -30,8 +31,10 @@ exportInfo=[
 	{"name":"FNVHash32","usingDetour":True,},
 	#{"name":"FNVHash64",},
 	{"name":"GetFreeRoamLangId", "usingDetour":True,},
-	{"name":"UpdateFOVLerp", "usingDetour":True, "enableDetourOnInit":False, "note":"TODO: verify the return AL>RAX"},
-	{"name":"UnkSomePrintFunction", "usingDetour":True, "note":"Some info printing function that has been stubbed out"},
+	{"name":"UpdateFOVLerp", "usingDetour":True, "enableDetourOnInit":False, 
+		"note":"tex: TODO: verify the return AL>RAX"},
+	{"name":"UnkSomePrintFunction", "usingDetour":True, 
+		"note":"tex: Some info printing function that has been stubbed out"},
 	{"name":"l_StubbedOut", "usingDetour":True,},
 	#{"name":"UnkSomePlayerUpdateFunc", "usingDetour":True, "note":"exploration"},
 	#{"name":"UnkAnotherPlayerUpdateFuncButHuge", "usingDetour":True, "note":"exploration"},
@@ -39,7 +42,8 @@ exportInfo=[
 	{"name":"LoadFile",},
 	#<
 	#lua>
-	{"name":"lua_newstate", "usingDetour":True, "note":"tex could use default implementation, but may want to hook if we want to see what the engine is up to"},
+	{"name":"lua_newstate", "usingDetour":True, 
+		"note":"tex could use default implementation, but may want to hook if we want to see what the engine is up to"},
 	{"name":"lua_close",},
 	{"name":"lua_newthread", "usingDetour":True,},
 
@@ -57,11 +61,13 @@ exportInfo=[
 	{"name":"lua_isnumber",},
 	{"name":"lua_isstring",},
 	{"name":"lua_iscfunction",},
-	{"name":"lua_isuserdata", "noAddress":"USING_CODE", "note":"tex: No calls in lua distro, so may be hard to find, or have been culled by compilation",},
+	{"name":"lua_isuserdata", "noAddress":"USING_CODE", 
+		"note":"tex: No calls in lua distro, so may be hard to find, or have been culled by compilation",},
 	{"name":"lua_type",},
 	{"name":"lua_typename", "noAddress":"USING_CODE",},
 
-	{"name":"lua_equal", "note":"tex: lua implementation goes a bit deeper than I'm happy with to use at the moment. No calls in lua distro, so may be hard to find, or have been culled by compilation" },
+	{"name":"lua_equal", 
+		"note":"tex: lua implementation goes a bit deeper than I'm happy with to use at the moment. No calls in lua distro, so may be hard to find, or have been culled by compilation" },
 	{"name":"lua_rawequal",},
 	{"name":"lua_lessthan",},
 	{"name":"lua_tonumber",},
@@ -89,7 +95,7 @@ exportInfo=[
 	{"name":"lua_gettable",},
 	{"name":"lua_getfield",},
 	{"name":"lua_rawget",},
-	{"name":"lua_rawgeti","note":"via MACRO lua_getref",},
+	{"name":"lua_rawgeti", "note":"via MACRO lua_getref",},
 	{"name":"lua_createtable",},
 	{"name":"lua_newuserdata",},
 	{"name":"lua_getmetatable",},
@@ -109,9 +115,11 @@ exportInfo=[
 
 	{"name":"lua_dump",},
 
-	{"name":"lua_yield", "noAddress":"USING_CODE", "note":"tex: DEBUGNOW uses lua_lock, may not be a good idea due to thread issues and not knowing what the engine is doing to the state. Seems to be inlined in luaB_yield (it's only call in lua distro)",},
+	{"name":"lua_yield", "noAddress":"USING_CODE", 
+		"note":"tex: DEBUGNOW uses lua_lock, may not be a good idea due to thread issues and not knowing what the engine is doing to the state. Seems to be inlined in luaB_yield (it's only call in lua distro)",},
 	{"name":"lua_resume",},
-	{"name":"lua_status", "noAddress":"USING_CODE", "note":"tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)",},
+	{"name":"lua_status", "noAddress":"USING_CODE", 
+		"note":"tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)",},
 
 	{"name":"lua_gc",},
 	{"name":"lua_error", "usingDetour":True,},
@@ -119,11 +127,13 @@ exportInfo=[
 	{"name":"lua_next",},
 	{"name":"lua_concat",},
 
-	{"name":"lua_getallocf", "noAddress":"NO_USE","note":"tex don't really want to mess with allocator function anyway, DEBUGNOW no calls in lua distro, so may be hard to find, or have been culled by compilation" },
-	{"name":"lua_setallocf", "noAddress":"NO_USE","note":"tex don't really want to mess with allocator function anyway"},
+	{"name":"lua_getallocf", "noAddress":"NO_USE", 
+		"note":"tex don't really want to mess with allocator function anyway, DEBUGNOW no calls in lua distro, so may be hard to find, or have been culled by compilation" },
+	{"name":"lua_setallocf", "noAddress":"NO_USE", 
+		"note":"tex don't really want to mess with allocator function anyway"},
 
 
-	{"name":"lua_setlevel", "noAddress":"NO_USE","note":"tex: labeled by lua as a hack to be removed in lua 5.2",},
+	{"name":"lua_setlevel", "noAddress":"NO_USE", "note":"tex: labeled by lua as a hack to be removed in lua 5.2",},
 
 	{"name":"lua_getstack",},
 	{"name":"lua_getinfo",},
@@ -165,7 +175,8 @@ exportInfo=[
 
 	{"name":"luaL_checkoption",},
 
-	{"name":"luaL_ref", "noAddress":"USING_CODE", "note":"tex: Unsure on this address. No uses in lua dist, found a function that looks much like it, but it was undefined, and has a errant param",},
+	{"name":"luaL_ref", "noAddress":"USING_CODE", 
+		"note":"tex: Unsure on this address. No uses in lua dist, found a function that looks much like it, but it was undefined, and has a errant param",},
 	{"name":"luaL_unref", "noAddress":"USING_CODE",},
 
 	{"name":"luaL_loadfile",},
@@ -181,7 +192,8 @@ exportInfo=[
 	{"name":"luaL_buffinit", "noAddress":"USING_CODE",},
 	{"name":"luaL_prepbuffer",},
 	{"name":"luaL_addlstring",},
-	{"name":"luaL_addstring", "noAddress":"USING_CODE", "note":"tex: Only call is in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring",},
+	{"name":"luaL_addstring", "noAddress":"USING_CODE", 
+		"note":"tex: Only call is in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring",},
 	{"name":"luaL_addvalue",},
 	{"name":"luaL_pushresult",},
 	#lauxlib.h<

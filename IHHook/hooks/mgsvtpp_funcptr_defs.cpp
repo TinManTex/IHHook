@@ -1,5 +1,6 @@
 //GENERATED: by ghidra script ExportHooksToHeader.py
 //via WriteFuncPtrDefsFile
+//declares function pointers of exported functions
 
 // NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list
 // NO_USE - something we dont really want to use for whatever reason

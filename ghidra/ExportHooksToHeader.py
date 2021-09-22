@@ -167,7 +167,7 @@ def BuildAddressMap():
 				reason="NOT_FOUND"
 			else:
 				address="0x"+str(function.getEntryPoint())
-		if note==None:
+		if note==None or lang!="en":#GOTCHA: only on en, see comment about notes in ExportInfo.py
 			note=""
 		else:
 			note="//"+note
@@ -336,6 +336,7 @@ def WriteFuncPtrDefsFile():
 	header=[
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
 		"//via WriteFuncPtrDefsFile",
+		"//declares function pointers of exported functions",
 		"",
 		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
 		"// NO_USE - something we dont really want to use for whatever reason",
@@ -371,6 +372,8 @@ def WriteFuncPtrSetFile():
 	header=[
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
 		"//via WriteFuncPtrSetFile",
+		"//function for setting function pointers of exported functions.",
+		"//addresses in addressset should be rebased or found by sig scan before this is called"
 		"",
 		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
 		"// NO_USE - something we dont really want to use for whatever reason",

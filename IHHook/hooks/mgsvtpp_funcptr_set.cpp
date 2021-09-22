@@ -1,6 +1,7 @@
 //GENERATED: by ghidra script ExportHooksToHeader.py
 //via WriteFuncPtrSetFile
-
+//function for setting function pointers of exported functions.
+//addresses in addressset should be rebased or found by sig scan before this is called
 // NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list
 // NO_USE - something we dont really want to use for whatever reason
 // USING_CODE - using the default lapi code implementation instead of hooking
