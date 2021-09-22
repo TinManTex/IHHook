@@ -1,5 +1,6 @@
 #pragma once
 //GENERATED: by ghidra script ExportHooksToHeader.py
+//via WriteAddressHFile
 
 // NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list
 // NO_USE - something we dont really want to use for whatever reason
@@ -29,7 +30,7 @@ namespace IHHook {
 		{"lua_isnumber", 0x14c1d8c90},
 		{"lua_isstring", 0x14c1d9250},
 		{"lua_iscfunction", 0x141a11650},
-		//{"lua_isuserdata", USING_CODE},
+		//{"lua_isuserdata", USING_CODE},//tex: No calls in lua distro, so may be hard to find, or have been culled by compilation
 		{"lua_type", 0x14c1ed760},
 		//{"lua_typename", USING_CODE},
 		//{"lua_equal", NOT_FOUND},//tex: lua implementation goes a bit deeper than I'm happy with to use at the moment. No calls in lua distro, so may be hard to find, or have been culled by compilation
@@ -74,7 +75,7 @@ namespace IHHook {
 		{"lua_cpcall", 0x146c7dd00},
 		{"lua_load", 0x14c1d99c0},
 		{"lua_dump", 0x14c1d6690},
-		//{"lua_yield", USING_CODE},
+		//{"lua_yield", USING_CODE},//tex: DEBUGNOW uses lua_lock, may not be a good idea due to thread issues and not knowing what the engine is doing to the state. Seems to be inlined in luaB_yield (it's only call in lua distro)
 		{"lua_resume", 0x14c1f0d80},
 		//{"lua_status", USING_CODE},//tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)
 		{"lua_gc", 0x141a11220},
@@ -103,7 +104,7 @@ namespace IHHook {
 		{"luaL_checklstring", 0x14c1ff790},
 		{"luaL_optlstring", 0x14c201de0},
 		{"luaL_checknumber", 0x14c1ffb30},
-		//{"luaL_optnumber", USING_CODE},
+		//{"luaL_optnumber", USING_CODE},//tex: Only use in os_difftime, but decompilation is giving a bunch more params than it usually takes
 		{"luaL_checkinteger", 0x14c1ff430},
 		{"luaL_optinteger", 0x14c201a70},
 		{"luaL_checkstack", 0x14c200010},
@@ -114,7 +115,7 @@ namespace IHHook {
 		{"luaL_where", 0x14c203350},
 		{"luaL_error", 0x14c2008f0},
 		{"luaL_checkoption", 0x14c1ffd60},
-		//{"luaL_ref", USING_CODE},//tex: Unsure on this address, see lauxlib_Creathooks CREATE_FUNCPTR(luaL_ref) for more info
+		//{"luaL_ref", USING_CODE},//tex: Unsure on this address. No uses in lua dist, found a function that looks much like it, but it was undefined, and has a errant param
 		//{"luaL_unref", USING_CODE},
 		{"luaL_loadfile", 0x141a17b90},
 		{"luaL_loadbuffer", 0x14c200f90},
@@ -125,7 +126,7 @@ namespace IHHook {
 		//{"luaL_buffinit", USING_CODE},
 		{"luaL_prepbuffer", 0x14c202140},
 		{"luaL_addlstring", 0x141a16e70},
-		//{"luaL_addstring", USING_CODE},
+		//{"luaL_addstring", USING_CODE},//tex: Only call is in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring
 		{"luaL_addvalue", 0x14c1fd9b0},
 		{"luaL_pushresult", 0x14c202280},
 		{"luaopen_base", 0x14c21d5c0},

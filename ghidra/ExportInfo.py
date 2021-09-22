@@ -1,10 +1,23 @@
 #exportInfo - list with info on what to export to IHHook headers
 #used by other scripts rather than doing anything itself
 
+#GOTCHA: assumes that function names in ghdira for the exe are unique (ignoring thunks)
+
 #NOTE: make sure the function signature (not to be confused with sig string/pattern) 
 #for the function you want to export is correct in ghidra, or at least understandable for IHHook, no data types set as 'undefined'
 #then right click the function in decompile window (or press P) and choose 'Commit Params/Return'
-#GOTCHA: ghidra signature doesnt have const keyword, so theres some WORKAROUND
+
+#GOTCHA: ghidra function signature doesnt have const keyword, so you have to use constParams as a workaround
+#all char * are assumed const char *, use "constCharPtr":False to leave it as char * 
+
+#By default all exported functions are set up as function pointers under their original names
+#usingDetour:True means you are using a <name>Hook function to actually intercept the function
+#enableDetourOnInit:False (defaults to true) means detour will be enabled from the start 
+
+#noAddress for stuff that's not actually exported for whatever reason, but will still write it out as commented out entries
+#USING_CODE is where I use actual lua implementation instead of hooking
+
+#notes are appended as comments in mgsv_tpp_addresses_<>.h
 
 #TODO add NO_USE to getllocf,setallocf, actually give reason why not (dont want to mess with allocator function)
 #todo namespaces - not actual, just to split into different files
@@ -12,24 +25,25 @@
 exportInfo=[
 	#{"name":"_mainCRTStartup","note: since its the entry point no point trying hooking since it's already done"},
 	#{"name":"FoxMain","note: since its the entry point no point trying hooking since it's already done"},
+	
 	{"name":"StrCode64",},
-	{"name":"FNVHash32",},
+	{"name":"FNVHash32","usingDetour":True,},
 	#{"name":"FNVHash64",},
-	{"name":"GetFreeRoamLangId",},
-	{"name":"UpdateFOVLerp","note":"TODO: verify the return AL>RAX"},
-	{"name":"UnkSomePrintFunction","note":"Some info printing function that has been stubbed out"},
-	{"name":"l_StubbedOut",},
-	#{"name":"UnkSomePlayerUpdateFunc","note":"exploration"},
-	#{"name":"UnkAnotherPlayerUpdateFuncButHuge","note":"exploration"},
-	{"name":"nullsub_2"},
-	{"name":"LoadFile"},
+	{"name":"GetFreeRoamLangId", "usingDetour":True,},
+	{"name":"UpdateFOVLerp", "usingDetour":True, "enableDetourOnInit":False, "note":"TODO: verify the return AL>RAX"},
+	{"name":"UnkSomePrintFunction", "usingDetour":True, "note":"Some info printing function that has been stubbed out"},
+	{"name":"l_StubbedOut", "usingDetour":True,},
+	#{"name":"UnkSomePlayerUpdateFunc", "usingDetour":True, "note":"exploration"},
+	#{"name":"UnkAnotherPlayerUpdateFuncButHuge", "usingDetour":True, "note":"exploration"},
+	{"name":"nullsub_2", "usingDetour":True,},
+	{"name":"LoadFile",},
 	#<
 	#lua>
-	{"name":"lua_newstate","note":"tex could use default implementation, but may want to hook if we want to see what the engine is up to"},
+	{"name":"lua_newstate", "usingDetour":True, "note":"tex could use default implementation, but may want to hook if we want to see what the engine is up to"},
 	{"name":"lua_close",},
-	{"name":"lua_newthread",},
+	{"name":"lua_newthread", "usingDetour":True,},
 
-	{"name":"lua_atpanic",},
+	{"name":"lua_atpanic", "usingDetour":True,},
 
 	{"name":"lua_gettop", "noAddress":"USING_CODE",},
 	{"name":"lua_settop",},
@@ -43,7 +57,7 @@ exportInfo=[
 	{"name":"lua_isnumber",},
 	{"name":"lua_isstring",},
 	{"name":"lua_iscfunction",},
-	{"name":"lua_isuserdata", "noAddress":"USING_CODE",},
+	{"name":"lua_isuserdata", "noAddress":"USING_CODE", "note":"tex: No calls in lua distro, so may be hard to find, or have been culled by compilation",},
 	{"name":"lua_type",},
 	{"name":"lua_typename", "noAddress":"USING_CODE",},
 
@@ -89,18 +103,18 @@ exportInfo=[
 	{"name":"lua_setfenv",},
 
 	{"name":"lua_call",},
-	{"name":"lua_pcall",},
-	{"name":"lua_cpcall",},
-	{"name":"lua_load",},
+	{"name":"lua_pcall", "usingDetour":True,},
+	{"name":"lua_cpcall", "usingDetour":True,},
+	{"name":"lua_load", "usingDetour":True,},
 
 	{"name":"lua_dump",},
 
-	{"name":"lua_yield", "noAddress":"USING_CODE",},
+	{"name":"lua_yield", "noAddress":"USING_CODE", "note":"tex: DEBUGNOW uses lua_lock, may not be a good idea due to thread issues and not knowing what the engine is doing to the state. Seems to be inlined in luaB_yield (it's only call in lua distro)",},
 	{"name":"lua_resume",},
 	{"name":"lua_status", "noAddress":"USING_CODE", "note":"tex DEBUGNOW hmm, address range. ida finds this as sig though, but the prior functions have entries in .pdata which put them in the same range (0x14cdb)",},
 
 	{"name":"lua_gc",},
-	{"name":"lua_error",},
+	{"name":"lua_error", "usingDetour":True,},
 
 	{"name":"lua_next",},
 	{"name":"lua_concat",},
@@ -134,7 +148,7 @@ exportInfo=[
 	{"name":"luaL_checklstring",},
 	{"name":"luaL_optlstring",},
 	{"name":"luaL_checknumber",},
-	{"name":"luaL_optnumber", "noAddress":"USING_CODE",},
+	{"name":"luaL_optnumber", "noAddress":"USING_CODE", "note":"tex: Only use in os_difftime, but decompilation is giving a bunch more params than it usually takes",},
 
 	{"name":"luaL_checkinteger",},
 	{"name":"luaL_optinteger",},
@@ -151,11 +165,11 @@ exportInfo=[
 
 	{"name":"luaL_checkoption",},
 
-	{"name":"luaL_ref", "noAddress":"USING_CODE", "note":"tex: Unsure on this address, see lauxlib_Creathooks CREATE_FUNCPTR(luaL_ref) for more info",},
+	{"name":"luaL_ref", "noAddress":"USING_CODE", "note":"tex: Unsure on this address. No uses in lua dist, found a function that looks much like it, but it was undefined, and has a errant param",},
 	{"name":"luaL_unref", "noAddress":"USING_CODE",},
 
 	{"name":"luaL_loadfile",},
-	{"name":"luaL_loadbuffer",},
+	{"name":"luaL_loadbuffer", "usingDetour":True,},
 	{"name":"luaL_loadstring", "noAddress":"USING_CODE",},
 
 	{"name":"luaL_newstate",},
@@ -167,7 +181,7 @@ exportInfo=[
 	{"name":"luaL_buffinit", "noAddress":"USING_CODE",},
 	{"name":"luaL_prepbuffer",},
 	{"name":"luaL_addlstring",},
-	{"name":"luaL_addstring", "noAddress":"USING_CODE",},
+	{"name":"luaL_addstring", "noAddress":"USING_CODE", "note":"tex: Only call is in luaL_gsub, seems to have been optimized out as the function just wraps luaL_addlstring",},
 	{"name":"luaL_addvalue",},
 	{"name":"luaL_pushresult",},
 	#lauxlib.h<
@@ -181,6 +195,6 @@ exportInfo=[
 	{"name":"luaopen_math",},
 	{"name":"luaopen_debug",},
 	{"name":"luaopen_package",},
-	{"name":"luaL_openlibs",},
+	{"name":"luaL_openlibs","usingDetour":True,},
 	#luaLib.h<
 ]#exportInfo
