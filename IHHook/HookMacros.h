@@ -52,45 +52,9 @@ namespace IHHook {
 
 
 //TODO CULL
-//typedef for the function pointer, 
-//and an extern function pointer of the type
-//so you can include a header with the hookfunc in other files and use the function
 #define FUNCPTRDEF(ret, name, ...)\
 //
 
-//CULL WAS
-//typedef ret(__fastcall name##Func) (__VA_ARGS__); \
-//extern name##Func* name; \
-//extern intptr_t* name##BaseAddr; \
-//extern intptr_t* name##Addr;
-//Example use:
-//FUNCPTRDEF(lua_newstate, 0x14cdd7ab0, LuaState*, lua_Alloc f, void *ud);
-//Expands to:
-//typedef lua_State* (__fastcall lua_newstateFunc)(lua_Alloc f, void *ud);
-//extern lua_newstateFunc* lua_newstate;
-//extern intptr_t* lua_newstateBaseAddr;
-//extern intptr_t* lua_newstateAddr;
-
-//Define signature and mask
-#define FUNC_DECL_SIG(name, sig, mask)\
-static const char * name##Sig = sig;\
-static const char * name##Mask = mask;
-//Example use:
-//FUNC_DECL_SIG(lua_newstate, 
-//FUNC_DECL_SIG(lua_newstate,
-//	"\x4C\x8B\x00\x49\x89\x00\x00\x55\x56\x57\x41\x00\x41",
-//	"xx?xx??xxxx?x")
-//Expands to:
-//const char* lua_newstateSig = "\x4C\x8B\x00\x49\x89\x00\x00\x55\x56\x57\x41\x00\x41";
-//const char * lua_newstateMask = "xx?xx??xxxx?x";
-
-//Define pattern
-#define FUNC_DECL_PATTERN(name, pattern)\
-static const char * name##Pattern = pattern;
-//Example use:
-//FUNC_DECL_PATTERN(lua_newstate, "4C 8B ? 49 89 ? ? 55 56 57 41 ? 41")
-//Expands to:
-//const char * lua_newstate = "4C 8B ? 49 89 ? ? 55 56 57 41 ? 41";
 
 //just want to use original function
 //sets the pointer to the rebased address so the function pointer is usable
