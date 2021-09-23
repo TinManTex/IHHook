@@ -109,7 +109,7 @@ namespace IHHook {
 		}//GetFreeRoamLangIdHook
 
 		//DEBUGNOW not really tpp only Hooks_Fox?
-		static void UnkSomePrintFunctionHook(char* fmt, ...) {
+		static void UnkSomePrintFunctionHook(const char* fmt, ...) {
 			spdlog::trace(__func__);
 			va_list args;
 			va_start(args, fmt);
@@ -138,7 +138,7 @@ namespace IHHook {
 			spdlog::debug(message);
 		}//UnkSomePrintFunctionHook
 
-		void nullsub_2Hook(char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
+		void nullsub_2Hook(const char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
 			//spdlog::trace(__func__);
 			if (unkSomeIdStr != NULL) {
 				try {
