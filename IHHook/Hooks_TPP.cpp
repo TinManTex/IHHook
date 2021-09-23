@@ -152,7 +152,7 @@ namespace IHHook {
 			}
 		}//nullsub_2Hook
 
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			spdlog::trace(__func__);
 			//DEBUGNOW hitting some kind of exception on caps machine
 			//missionCode = NULL;

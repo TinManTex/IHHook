@@ -6,6 +6,6 @@ namespace IHHook {
 	namespace Hooks_TPP {
 		static uint32_t* missionCode;
 
-		void CreateHooks(size_t RealBaseAddr);
+		void CreateHooks();
 	}//namespace Hooks_TPP
 }//namespace IHHook

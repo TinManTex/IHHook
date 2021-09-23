@@ -271,7 +271,7 @@ namespace IHHook {
 
 		//tex: caller DLLMain
 		//IN/SIDE: IHHook::BaseAddr
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			spdlog::debug(__func__);
 			
 			if (addressSet["luaL_openlibs"] == NULL

@@ -43,7 +43,9 @@ std::unique_ptr<IHHook::IHH> g_ihhook{};
 
 
 namespace IHHook {
+	//mgsvtpp_funcptr_set.cpp
 	extern void SetFuncPtrs();
+	extern void CreateHooks();
 
 	struct Config config;
 	bool ParseConfig(std::string fileName);
@@ -327,13 +329,14 @@ namespace IHHook {
 			}
 			else {
 				SetFuncPtrs();
+				//DEBUGNOW CreateHooks();
 			}
 
 			Hooks_CityHash::CreateHooks(RealBaseAddr);
-			Hooks_FNVHash::CreateHooks(RealBaseAddr);
-			Hooks_Lua::CreateHooks(RealBaseAddr);
-			Hooks_TPP::CreateHooks(RealBaseAddr);
-			Hooks_FOV::CreateHooks(RealBaseAddr);
+			Hooks_FNVHash::CreateHooks();
+			Hooks_Lua::CreateHooks();
+			Hooks_TPP::CreateHooks();
+			Hooks_FOV::CreateHooks();
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();

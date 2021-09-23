@@ -88,7 +88,7 @@ namespace IHHook {
 			return newFocalLength;
 		}//CalculateFocalLength
 
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			HMODULE hExe = GetModuleHandle(NULL);
 			WCHAR fullPath[MAX_PATH]{ 0 };
 			GetModuleFileNameW(hExe, fullPath, MAX_PATH);

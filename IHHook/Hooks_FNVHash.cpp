@@ -16,7 +16,7 @@ namespace IHHook {
 			return FNVHash32(str);
 		}//FNVHash32Hook
 
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			spdlog::debug(__func__);
 
 			if (!config.enableFnvHook) {

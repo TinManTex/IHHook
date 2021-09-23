@@ -2,7 +2,7 @@
 
 namespace IHHook {
 	namespace Hooks_FNVHash {
-		void CreateHooks(size_t RealBaseAddr);
+		void CreateHooks();
 	}//namespace Hooks_FNVHash
 }//namespace IHHook
 
