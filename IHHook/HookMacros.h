@@ -6,6 +6,8 @@
 
 #include "Hooking.Patterns/Hooking.Patterns.h"//DEBUGNOW
 
+#include "spdlog/spdlog.h"
+
 namespace IHHook {
 	extern std::map<std::string, int64_t> addressSet;
 }
@@ -58,13 +60,17 @@ namespace IHHook {
 //detour and trampoline via MH_CreateHook,
 //original function is at the <name> function ptr (just like createptr)
 //while the hook/detour is at <name>Hook function pointer.
-//ASSUMPTION must have a name##Addr of the runtime location of the function, either via GET_REBASED_ADDR or some other means (like a sig scan or other method)
+//TODO: rethink, could iterate over a map if I have a lookup of name to detour function (name##Hook)
 #define CREATE_HOOK(name)\
-MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)addressSet[#name], name##Hook, (LPVOID*)&name);\
-if (name##CreateStatus != MH_OK) {\
-	spdlog::error("MH_CreateHook failed for {} with code {}", #name, name##CreateStatus);\
+if (addressSet[#name]==NULL) {\
+	spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
 } else {\
-	spdlog::debug("MH_CreateHook MH_OK for {}", #name);\
+	MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)addressSet[#name], name##Hook, (LPVOID*)&name);\
+	if (name##CreateStatus != MH_OK) {\
+		spdlog::error("MH_CreateHook failed for {} with code {}", #name, name##CreateStatus);\
+	} else {\
+		spdlog::debug("MH_CreateHook MH_OK for {}", #name);\
+	}\
 }
 //Example use:
 //CREATE_HOOK(lua_newstate);
