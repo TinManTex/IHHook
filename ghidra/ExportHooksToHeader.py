@@ -129,8 +129,8 @@ def BuildExternPointers():
 		reason=None
 		if noAddress!=None:
 			reason=noAddress
-		elif exportFunc==False:
-			reason="EXPORT_FUNC_FALSE"			
+		#elif exportFunc==False:
+			#reason="EXPORT_FUNC_FALSE"	#TODO: don't know if I want to have to handle this in func_typedefs_manual.h	
 		else:
 			function=foundFunctions.get(name)
 			if function==None:
@@ -293,7 +293,8 @@ def WriteFuncTypeDefHFile():
 		"//Typdefs and externs for the function pointers as well as detour function declaration (not func ptrs)",
 	]
 
-	includes=[
+	includes=[	
+		'#include "mgsvtpp_func_typedefs_manual.h"',
 		'//TODO: this is a per category thing/will likely want to manage includes ',
 		'//as the number of functions being hooked with various data types expands',
 		'#include "lua/lua.h"',
@@ -307,14 +308,16 @@ def WriteFuncTypeDefHFile():
 		"#define uint unsigned int",
 	]
 
+
+
 	file = PrintWriter(headerFilePath);
 	for line in header:
 		file.println(line)
 	file.println("")
-	for line in includes:
+	for line in macros:
 		file.println(line)
 	file.println("")
-	for line in macros:
+	for line in includes:
 		file.println(line)
 	file.println("")
 	for line in signatures:
