@@ -12,10 +12,13 @@
 
 #By default all exported functions are set up as function pointers under their original names
 #usingDetour:True means you are using a <name>Hook function to actually intercept the function
-#enableDetourOnInit:False (defaults to true) means detour will be enabled from the start 
+#enableDetourOnInit:False means detour will be enabled from the start TODO: not yet implemented
 
 #noAddress for stuff that's not actually exported for whatever reason, but will still write it out as commented out entries
 #USING_CODE is where I use actual lua implementation instead of hooking
+
+#exportFunc: False to not actually export the ghidra function signature / typdef, 
+#for manually defining it on the IHHook side and stuff like the retail stubbed out/empty functions that are a mess because they collide a bunch of parameter types/returns.
 
 #notes are appended as comments in mgsv_tpp_addresses_<version>_en.h 
 #for want of a better place, entries there are short enough to tack on comment at end and be discoverable at a glance
@@ -35,11 +38,10 @@ exportInfo=[
 		"note":"tex: TODO: verify the return AL>RAX"},
 	{"name":"UnkSomePrintFunction", "usingDetour":True, 
 		"note":"tex: Some info printing function that has been stubbed out"},
-	{"name":"l_StubbedOut", "usingDetour":True,},
+	{"name":"l_StubbedOut", "exportFunc":False, "note":"tex: another retail stubb out to wrangle",},
 	#{"name":"UnkSomePlayerUpdateFunc", "usingDetour":True, "note":"exploration"},
 	#{"name":"UnkAnotherPlayerUpdateFuncButHuge", "usingDetour":True, "note":"exploration"},
-	{"name":"nullsub_2", "usingDetour":True,},
-	{"name":"LoadFile",},
+	{"name":"nullsub_2", "exportFunc":False, "note":"tex: another retail stubb out to wrangle",},
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 
