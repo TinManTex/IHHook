@@ -57,12 +57,15 @@ def BuildSignatures():
 		name=entry["name"]
 
 		noAddress=entry.get("noAddress")
+		exportFunc=entry.get("exportFunc")
 		address=""
 		invalidReason=None
 		signatureLine=""#not actually output, just a pretty-printed/normal declaration of the function
 		typedefLine=""
 		if noAddress!=None:
 			invalidReason=noAddress
+		elif exportFunc==False:
+			invalidReason="EXPORT_FUNC_FALSE"
 		else:
 			function=foundFunctions.get(name)
 			if function==None:
@@ -118,14 +121,17 @@ def BuildExternPointers():
 		name=entry["name"]
 		#print(name)
 		noAddress=entry.get("noAddress")
-		usingDetour=entry.get("usingDetour")
+		exportFunc=entry.get("exportFunc")
 		reason=None
 		if noAddress!=None:
 			reason=noAddress
+		elif exportFunc==False:
+			reason="EXPORT_FUNC_FALSE"			
 		else:
 			function=foundFunctions.get(name)
 			if function==None:
 				reason="NOT_FOUND"
+
 		#REF output
 		#extern StrCode64Func* StrCode64;
 		line="extern "+name+"Func* "+name+";"
@@ -134,18 +140,7 @@ def BuildExternPointers():
 			line='//'+line+'//'+reason#tex commented out			
 
 		outLines.append(line)
-		#print(line)
-
-		if usingDetour!=None:
-			#REF output
-			#extern StrCode64Func* StrCode64Hook;
-			line="extern "+name+"Func "+name+"Hook;//declaration"
-
-			if reason!=None:
-				line='//'+line+'//'+reason#tex commented out			
-
-			outLines.append(line)
-			#print(line)			
+		#print(line)		
 	return outLines
 
 def BuildAddressMap():
@@ -386,18 +381,22 @@ def WriteFuncPtrSetFile():
 		hLines.append(line)
 	hLines.append("")
 	hLines.append('#include "mgsvtpp_func_typedefs.h"',)
+
 	hLines.append("")
 	hLines.append("extern std::map<std::string, int64_t> addressSet;")
 	hLines.append("")
 	hLines.append("namespace IHHook {")
 	indent="\t"
-	hLines.append(indent+"void SetFuncPtrs() {")
 
+	hLines.append(indent+"void SetFuncPtrs() {")
 	indent="\t\t"
 	for line in funcPtrLines:
 		hLines.append(indent+line)
 	indent="\t"
 	hLines.append(indent+"}//SetFuncPtrs")
+
+	hLines.append("")
+
 	indent=""
 	hLines.append(indent+"}//namespace IHHook")
 
