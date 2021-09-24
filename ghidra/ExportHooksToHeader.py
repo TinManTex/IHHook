@@ -48,6 +48,7 @@ for function in listing.getFunctions(True):
 			#test#print("found " + function.getName())
 			foundFunctions[function.getName()]=function
 
+#Build function typdef from ghidra function signature
 #TODO: fill out typedefs for noAddress that have found functions anyway? (but still have them commented them out)
 def BuildSignatures():
 	signatureLines=[]#unused
@@ -101,6 +102,9 @@ def BuildSignatures():
 					if idx!=len(arguments)-1:
 						signatureLine=signatureLine+", "
 						typedefLine=typedefLine+", "
+				if function.hasVarArgs()==True:
+					signatureLine=signatureLine+", ..."
+					typedefLine=typedefLine+", ..."
 				signatureLine=signatureLine+");"
 				typedefLine=typedefLine+");"
 				signatureLines.append(signatureLines)
