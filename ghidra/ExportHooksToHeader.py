@@ -251,6 +251,10 @@ def WriteAddressHFile():
 	for line in header:
 		hLines.append(line)
 
+	hLines.append("")
+	hLines.append("#include <map>")
+	hLines.append("")
+
 	hLines.append("namespace IHHook {")
 	indent="\t"
 	hLines.append(indent+"std::map<std::string, int64_t> "+fileName+"{")
