@@ -3,23 +3,24 @@
 //via WriteFuncTypeDefHFile
 //Typdefs and externs for the function pointers as well as detour function declaration (not func ptrs)
 
-//TODO: this is a per category thing/will likely want to manage includes 
-//as the number of functions being hooked with various data types expands
-#include "lua/lua.h"
-#include "lua/lauxlib.h"
-
 //macros for ghidra data type names > c++
 #define longlong long long
 #define ulonglong unsigned long long
 #define uint unsigned int
 
+#include "mgsvtpp_func_typedefs_manual.h"
+//TODO: this is a per category thing/will likely want to manage includes 
+//as the number of functions being hooked with various data types expands
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
+
 typedef ulonglong (__fastcall StrCode64Func)(const char * buf, longlong len);
-typedef uint (__fastcall FNVHash32Func)(const char * str);
-typedef longlong * (__fastcall GetFreeRoamLangIdFunc)(longlong * langId, short locationCode, short missionCode);
-typedef void (__fastcall UpdateFOVLerpFunc)(longlong param_1);
-typedef void (__fastcall UnkSomePrintFunctionFunc)(const char * strToPrint);
-typedef int (__fastcall l_StubbedOutFunc)(lua_State * L);
-typedef void (__fastcall nullsub_2Func)(const char * unkSomeIdStr, longlong unkSomeIdNum);
+typedef uint (__fastcall FNVHash32Func)(const char * strToHash);
+typedef ulonglong * (__fastcall GetFreeRoamLangIdFunc)(ulonglong * langId, short locationCode, short missionCode);
+typedef void (__fastcall UpdateFOVLerpFunc)(ulonglong param_1);
+typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, ...);
+// l_StubbedOut EXPORT_FUNC_FALSE
+// nullsub_2 EXPORT_FUNC_FALSE
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
 typedef void (__fastcall lua_closeFunc)(lua_State * L);
@@ -57,7 +58,7 @@ typedef void (__fastcall lua_pushintegerFunc)(lua_State * L, lua_Integer n);
 typedef void (__fastcall lua_pushlstringFunc)(lua_State * L, const char * s, size_t l);
 typedef void (__fastcall lua_pushstringFunc)(lua_State * L, const char * s);
 typedef char * (__fastcall lua_pushvfstringFunc)(lua_State * L, const char * fmt, void * argp);
-typedef char * (__fastcall lua_pushfstringFunc)(lua_State * L, const char * fmt);
+typedef char * (__fastcall lua_pushfstringFunc)(lua_State * L, const char * fmt, ...);
 typedef void (__fastcall lua_pushcclosureFunc)(lua_State * L, lua_CFunction fn, int n);
 typedef void (__fastcall lua_pushbooleanFunc)(lua_State * L, int b);
 typedef void (__fastcall lua_pushlightuserdataFunc)(lua_State * L, void * p);
@@ -101,7 +102,7 @@ typedef int (__fastcall lua_sethookFunc)(lua_State * L, lua_Hook func, int mask,
 // lua_gethook USING_CODE
 // lua_gethookmask USING_CODE
 // lua_gethookcount USING_CODE
-typedef void (__fastcall luaI_openlibFunc)(lua_State * L, const char * libname, const luaL_Reg * l, int nup);
+typedef void (__fastcall luaI_openlibFunc)(lua_State * L, const char * libName, const luaL_Reg * l, int nup);
 // luaL_register USING_CODE
 typedef int (__fastcall luaL_getmetafieldFunc)(lua_State * L, int obj, const char * e);
 typedef int (__fastcall luaL_callmetaFunc)(lua_State * L, int obj, const char * e);
@@ -119,7 +120,7 @@ typedef void (__fastcall luaL_checkanyFunc)(lua_State * L, int narg);
 typedef int (__fastcall luaL_newmetatableFunc)(lua_State * L, const char * tname);
 typedef void * (__fastcall luaL_checkudataFunc)(lua_State * L, int ud, const char * tname);
 typedef void (__fastcall luaL_whereFunc)(lua_State * L, int lvl);
-typedef int (__fastcall luaL_errorFunc)(lua_State * L, const char * fmt);
+typedef int (__fastcall luaL_errorFunc)(lua_State * L, const char * fmt, ...);
 typedef int (__fastcall luaL_checkoptionFunc)(lua_State * L, int narg, const char * def, char * * lst);
 // luaL_ref USING_CODE
 // luaL_unref USING_CODE
@@ -148,25 +149,16 @@ typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 //tex the (extern of the) function pointers
 extern StrCode64Func* StrCode64;
 extern FNVHash32Func* FNVHash32;
-extern FNVHash32Func FNVHash32Hook;//declaration
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
-extern GetFreeRoamLangIdFunc GetFreeRoamLangIdHook;//declaration
 extern UpdateFOVLerpFunc* UpdateFOVLerp;
-extern UpdateFOVLerpFunc UpdateFOVLerpHook;//declaration
-extern UnkSomePrintFunctionFunc* UnkSomePrintFunction;
-extern UnkSomePrintFunctionFunc UnkSomePrintFunctionHook;//declaration
+extern UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 extern l_StubbedOutFunc* l_StubbedOut;
-extern l_StubbedOutFunc l_StubbedOutHook;//declaration
 extern nullsub_2Func* nullsub_2;
-extern nullsub_2Func nullsub_2Hook;//declaration
 extern LoadFileFunc* LoadFile;
 extern lua_newstateFunc* lua_newstate;
-extern lua_newstateFunc lua_newstateHook;//declaration
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;
-extern lua_newthreadFunc lua_newthreadHook;//declaration
 extern lua_atpanicFunc* lua_atpanic;
-extern lua_atpanicFunc lua_atpanicHook;//declaration
 //extern lua_gettopFunc* lua_gettop;//USING_CODE
 extern lua_settopFunc* lua_settop;
 extern lua_pushvalueFunc* lua_pushvalue;
@@ -220,18 +212,14 @@ extern lua_setmetatableFunc* lua_setmetatable;
 extern lua_setfenvFunc* lua_setfenv;
 extern lua_callFunc* lua_call;
 extern lua_pcallFunc* lua_pcall;
-extern lua_pcallFunc lua_pcallHook;//declaration
 extern lua_cpcallFunc* lua_cpcall;
-extern lua_cpcallFunc lua_cpcallHook;//declaration
 extern lua_loadFunc* lua_load;
-extern lua_loadFunc lua_loadHook;//declaration
 extern lua_dumpFunc* lua_dump;
 //extern lua_yieldFunc* lua_yield;//USING_CODE
 extern lua_resumeFunc* lua_resume;
 //extern lua_statusFunc* lua_status;//USING_CODE
 extern lua_gcFunc* lua_gc;
 extern lua_errorFunc* lua_error;
-extern lua_errorFunc lua_errorHook;//declaration
 extern lua_nextFunc* lua_next;
 extern lua_concatFunc* lua_concat;
 //extern lua_getallocfFunc* lua_getallocf;//NO_USE
@@ -271,7 +259,6 @@ extern luaL_checkoptionFunc* luaL_checkoption;
 //extern luaL_unrefFunc* luaL_unref;//USING_CODE
 extern luaL_loadfileFunc* luaL_loadfile;
 extern luaL_loadbufferFunc* luaL_loadbuffer;
-extern luaL_loadbufferFunc luaL_loadbufferHook;//declaration
 //extern luaL_loadstringFunc* luaL_loadstring;//USING_CODE
 extern luaL_newstateFunc* luaL_newstate;
 extern luaL_gsubFunc* luaL_gsub;
@@ -291,5 +278,4 @@ extern luaopen_mathFunc* luaopen_math;
 extern luaopen_debugFunc* luaopen_debug;
 extern luaopen_packageFunc* luaopen_package;
 extern luaL_openlibsFunc* luaL_openlibs;
-extern luaL_openlibsFunc luaL_openlibsHook;//declaration
 

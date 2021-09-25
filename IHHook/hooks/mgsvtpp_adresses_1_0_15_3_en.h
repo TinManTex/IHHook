@@ -5,16 +5,19 @@
 // NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list
 // NO_USE - something we dont really want to use for whatever reason
 // USING_CODE - using the default lapi code implementation instead of hooking
+
+#include <map>
+
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
 		{"StrCode64", 0x14c1bd730},
 		{"FNVHash32", 0x143f33a20},
 		{"GetFreeRoamLangId", 0x145e60f40},
-		{"UpdateFOVLerp", 0x141116800},//TODO: verify the return AL>RAX
-		{"UnkSomePrintFunction", 0x142ef2bf0},//Some info printing function that has been stubbed out
-		{"l_StubbedOut", 0x14024a8e0},
-		{"nullsub_2", 0x1409c8f90},
-		{"LoadFile", 0x14319ea20},
+		{"UpdateFOVLerp", 0x141116800},//tex: TODO: verify the return AL>RAX
+		{"UnkPrintFuncStubbedOut", 0x142ef2bf0},//tex: Some info printing function that has been stubbed out
+		{"l_StubbedOut", 0x14024a8e0},//tex: another retail stubb out to wrangle
+		{"nullsub_2", 0x1409c8f90},//tex: another retail stubb out to wrangle
+		{"LoadFile", 0x14319ea20},//tex WIP exploring
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},

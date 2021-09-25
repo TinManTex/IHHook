@@ -5,6 +5,8 @@
 // NO_USE - something we dont really want to use for whatever reason - TODO addt to getllocf,setallocf, actually give reason why not (dont want to mess with allocator function)
 // USING_CODE - using the default lapi code implementation instead of hooking
 
+#include <map>
+
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_jp{
 		{"_mainCRTStartup", 0x14c966b20},
@@ -13,7 +15,7 @@ namespace IHHook {
 		{"FNVHash32", 0x143f6ee50},
 		{"GetFreeRoamLangId", 0x147a6b040},
 		{"UpdateFOVLerp", 0x141116890},
-		{"UnkSomePrintFunction", 0x142ee2a90},//Some info printing function that has been stubbed out
+		{"UnkPrintFuncStubbedOut", 0x142ee2a90},//Some info printing function that has been stubbed out
 		{"l_StubbedOut", 0x141a92a30},
 		{"UnkSomePlayerUpdateFunc", 0x1484ebbf0},
 		{"UnkAnotherPlayerUpdateFuncButHuge", 0x1412cf230},

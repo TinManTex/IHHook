@@ -16,7 +16,7 @@ namespace IHHook {
 		FNVHash32 = (FNVHash32Func*)addressSet["FNVHash32"];
 		GetFreeRoamLangId = (GetFreeRoamLangIdFunc*)addressSet["GetFreeRoamLangId"];
 		UpdateFOVLerp = (UpdateFOVLerpFunc*)addressSet["UpdateFOVLerp"];
-		UnkSomePrintFunction = (UnkSomePrintFunctionFunc*)addressSet["UnkSomePrintFunction"];
+		UnkPrintFuncStubbedOut = (UnkPrintFuncStubbedOutFunc*)addressSet["UnkPrintFuncStubbedOut"];
 		l_StubbedOut = (l_StubbedOutFunc*)addressSet["l_StubbedOut"];
 		nullsub_2 = (nullsub_2Func*)addressSet["nullsub_2"];
 		LoadFile = (LoadFileFunc*)addressSet["LoadFile"];
@@ -144,4 +144,5 @@ namespace IHHook {
 		luaopen_package = (luaopen_packageFunc*)addressSet["luaopen_package"];
 		luaL_openlibs = (luaL_openlibsFunc*)addressSet["luaL_openlibs"];
 	}//SetFuncPtrs
+
 }//namespace IHHook

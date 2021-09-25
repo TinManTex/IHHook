@@ -12,7 +12,7 @@ StrCode64Func* StrCode64;
 FNVHash32Func* FNVHash32;
 GetFreeRoamLangIdFunc* GetFreeRoamLangId;
 UpdateFOVLerpFunc* UpdateFOVLerp;
-UnkSomePrintFunctionFunc* UnkSomePrintFunction;
+UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 l_StubbedOutFunc* l_StubbedOut;
 nullsub_2Func* nullsub_2;
 LoadFileFunc* LoadFile;
