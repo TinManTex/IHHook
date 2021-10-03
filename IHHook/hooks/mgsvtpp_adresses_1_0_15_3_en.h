@@ -11,13 +11,23 @@
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
 		{"StrCode64", 0x14c1bd730},
+		{"PathCode64", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64
 		{"FNVHash32", 0x143f33a20},
 		{"GetFreeRoamLangId", 0x145e60f40},
 		{"UpdateFOVLerp", 0x141116800},//tex: TODO: verify the return AL>RAX
 		{"UnkPrintFuncStubbedOut", 0x142ef2bf0},//tex: Some info printing function that has been stubbed out
 		{"l_StubbedOut", 0x14024a8e0},//tex: another retail stubb out to wrangle
 		{"nullsub_2", 0x1409c8f90},//tex: another retail stubb out to wrangle
-		{"LoadFile", 0x14319ea20},//tex WIP exploring
+		{"LoadFile", 0x14319ea20},
+		{"LoadPlayerPartsFpk", 0x146866c80},
+		{"LoadPlayerPartsParts", 0x146865f80},
+		{"LoadPlayerCamoFpk", 0x146864180},
+		{"LoadPlayerCamoFv2", 0x146863f80},
+		{"LoadPlayerFacialMotionFpk", 0x1468656c0},
+		{"LoadPlayerFacialMotionMtar", 0x146865370},
+		{"LoadPlayerBionicArmFpk", 0x140ae90f0},
+		{"LoadPlayerBionicArmFv2", 0x140ae9040},
+		{"LoadPlayerPartsSkinToneFv2", 0x140ae8560},
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},
