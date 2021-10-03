@@ -15,6 +15,7 @@
 #include "lua/lauxlib.h"
 
 typedef ulonglong (__fastcall StrCode64Func)(const char * buf, longlong len);
+typedef ulonglong (__fastcall PathCode64Func)(const char * strToHash);
 typedef uint (__fastcall FNVHash32Func)(const char * strToHash);
 typedef ulonglong * (__fastcall GetFreeRoamLangIdFunc)(ulonglong * langId, short locationCode, short missionCode);
 typedef void (__fastcall UpdateFOVLerpFunc)(ulonglong param_1);
@@ -22,6 +23,15 @@ typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, ...);
 // l_StubbedOut EXPORT_FUNC_FALSE
 // nullsub_2 EXPORT_FUNC_FALSE
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
+typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
+typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
+typedef ulonglong * (__fastcall LoadPlayerCamoFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
+typedef ulonglong * (__fastcall LoadPlayerCamoFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
+typedef ulonglong * (__fastcall LoadPlayerFacialMotionFpkFunc)(ulonglong * fileSlotIndex, uint playerType);
+typedef ulonglong * (__fastcall LoadPlayerFacialMotionMtarFunc)(ulonglong * fileSlotIndex, int playerType);
+typedef ulonglong * (__fastcall LoadPlayerBionicArmFpkFunc)(ulonglong * fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType);
+typedef ulonglong * (__fastcall LoadPlayerBionicArmFv2Func)(ulonglong * fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType);
+typedef ulonglong * (__fastcall LoadPlayerPartsSkinToneFv2Func)(ulonglong * loadFile, uint playerType, uint playerPartsType);
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
 typedef void (__fastcall lua_closeFunc)(lua_State * L);
 typedef lua_State * (__fastcall lua_newthreadFunc)(lua_State * L);
@@ -148,6 +158,7 @@ typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 
 //tex the (extern of the) function pointers
 extern StrCode64Func* StrCode64;
+extern PathCode64Func* PathCode64;
 extern FNVHash32Func* FNVHash32;
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
 extern UpdateFOVLerpFunc* UpdateFOVLerp;
@@ -155,6 +166,15 @@ extern UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 extern l_StubbedOutFunc* l_StubbedOut;
 extern nullsub_2Func* nullsub_2;
 extern LoadFileFunc* LoadFile;
+extern LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
+extern LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
+extern LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
+extern LoadPlayerCamoFv2Func* LoadPlayerCamoFv2;
+extern LoadPlayerFacialMotionFpkFunc* LoadPlayerFacialMotionFpk;
+extern LoadPlayerFacialMotionMtarFunc* LoadPlayerFacialMotionMtar;
+extern LoadPlayerBionicArmFpkFunc* LoadPlayerBionicArmFpk;
+extern LoadPlayerBionicArmFv2Func* LoadPlayerBionicArmFv2;
+extern LoadPlayerPartsSkinToneFv2Func* LoadPlayerPartsSkinToneFv2;
 extern lua_newstateFunc* lua_newstate;
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;
