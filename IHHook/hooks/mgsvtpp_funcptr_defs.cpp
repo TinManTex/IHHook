@@ -9,6 +9,7 @@
 #include "mgsvtpp_func_typedefs.h"
 
 StrCode64Func* StrCode64;
+PathCode64Func* PathCode64;
 FNVHash32Func* FNVHash32;
 GetFreeRoamLangIdFunc* GetFreeRoamLangId;
 UpdateFOVLerpFunc* UpdateFOVLerp;
@@ -16,6 +17,15 @@ UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 l_StubbedOutFunc* l_StubbedOut;
 nullsub_2Func* nullsub_2;
 LoadFileFunc* LoadFile;
+LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
+LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
+LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
+LoadPlayerCamoFv2Func* LoadPlayerCamoFv2;
+LoadPlayerFacialMotionFpkFunc* LoadPlayerFacialMotionFpk;
+LoadPlayerFacialMotionMtarFunc* LoadPlayerFacialMotionMtar;
+LoadPlayerBionicArmFpkFunc* LoadPlayerBionicArmFpk;
+LoadPlayerBionicArmFv2Func* LoadPlayerBionicArmFv2;
+LoadPlayerPartsSkinToneFv2Func* LoadPlayerPartsSkinToneFv2;
 lua_newstateFunc* lua_newstate;
 lua_closeFunc* lua_close;
 lua_newthreadFunc* lua_newthread;
