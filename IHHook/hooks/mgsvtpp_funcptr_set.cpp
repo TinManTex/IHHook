@@ -13,6 +13,7 @@ extern std::map<std::string, int64_t> addressSet;
 namespace IHHook {
 	void SetFuncPtrs() {
 		StrCode64 = (StrCode64Func*)addressSet["StrCode64"];
+		PathCode64 = (PathCode64Func*)addressSet["PathCode64"];
 		FNVHash32 = (FNVHash32Func*)addressSet["FNVHash32"];
 		GetFreeRoamLangId = (GetFreeRoamLangIdFunc*)addressSet["GetFreeRoamLangId"];
 		UpdateFOVLerp = (UpdateFOVLerpFunc*)addressSet["UpdateFOVLerp"];
@@ -20,6 +21,15 @@ namespace IHHook {
 		l_StubbedOut = (l_StubbedOutFunc*)addressSet["l_StubbedOut"];
 		nullsub_2 = (nullsub_2Func*)addressSet["nullsub_2"];
 		LoadFile = (LoadFileFunc*)addressSet["LoadFile"];
+		LoadPlayerPartsFpk = (LoadPlayerPartsFpkFunc*)addressSet["LoadPlayerPartsFpk"];
+		LoadPlayerPartsParts = (LoadPlayerPartsPartsFunc*)addressSet["LoadPlayerPartsParts"];
+		LoadPlayerCamoFpk = (LoadPlayerCamoFpkFunc*)addressSet["LoadPlayerCamoFpk"];
+		LoadPlayerCamoFv2 = (LoadPlayerCamoFv2Func*)addressSet["LoadPlayerCamoFv2"];
+		LoadPlayerFacialMotionFpk = (LoadPlayerFacialMotionFpkFunc*)addressSet["LoadPlayerFacialMotionFpk"];
+		LoadPlayerFacialMotionMtar = (LoadPlayerFacialMotionMtarFunc*)addressSet["LoadPlayerFacialMotionMtar"];
+		LoadPlayerBionicArmFpk = (LoadPlayerBionicArmFpkFunc*)addressSet["LoadPlayerBionicArmFpk"];
+		LoadPlayerBionicArmFv2 = (LoadPlayerBionicArmFv2Func*)addressSet["LoadPlayerBionicArmFv2"];
+		LoadPlayerPartsSkinToneFv2 = (LoadPlayerPartsSkinToneFv2Func*)addressSet["LoadPlayerPartsSkinToneFv2"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];
