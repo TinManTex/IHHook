@@ -17,6 +17,7 @@
 #include "IHMenu.h" // MenuMessage, messagesIn
 #include "Hooks_TPP.h"
 #include "Hooks_FOV.h"
+#include "Hooks_Character.h"
 #include "hooks/mgsvtpp_func_typedefs.h"//StrCode64
 
 namespace IHHook {
@@ -255,6 +256,8 @@ namespace IHHook {
 				{ "UpdateChangeLocationMenu", l_UpdateChangeLocationMenu},
 				{ "SetCamHook", Hooks_FOV::l_SetCamHook },
 				{ "UpdateCamHook", Hooks_FOV::l_UpdateCamHook },
+				{ "SetPlayerPartsFpk", Hooks_Character::l_SetPlayerPartsFpk },
+				{ "SetPlayerPartsPart", Hooks_Character::l_SetPlayerPartsPart },
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }
 			};

@@ -166,10 +166,13 @@
     <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_en.h" />
     <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_jp.h" />
     <ClInclude Include="hooks\mgsvtpp_func_typedefs.h" />
+    <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h" />
     <ClInclude Include="hooks\mgsvtpp_patterns.h" />
+    <ClInclude Include="Hooks_Character.h" />
     <ClInclude Include="Hooks_CityHash.h" />
     <ClInclude Include="Hooks_FNVHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
+    <ClInclude Include="Hooks_LoadFile.h" />
     <ClInclude Include="Hooks_Lua.h" />
     <ClInclude Include="Hooks_TPP.h" />
     <ClInclude Include="IHHook.h" />
@@ -217,6 +220,7 @@
     <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp" />
     <ClCompile Include="hooks\mgsvtpp_funcptr_defs.cpp" />
     <ClCompile Include="hooks\mgsvtpp_funcptr_set.cpp" />
+    <ClCompile Include="Hooks_Character.cpp" />
     <ClCompile Include="Hooks_CityHash.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -234,6 +238,7 @@
     </ClCompile>
     <ClCompile Include="Hooks_FNVHash.cpp" />
     <ClCompile Include="Hooks_FOV.cpp" />
+    <ClCompile Include="Hooks_LoadFile.cpp" />
     <ClCompile Include="Hooks_Lua.cpp" />
     <ClCompile Include="Hooks_Lua_Test.cpp" />
     <ClCompile Include="IHHook.cpp" />

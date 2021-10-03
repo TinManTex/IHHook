@@ -204,6 +204,15 @@
     <ClInclude Include="hooks\mgsvtpp_func_typedefs.h">
       <Filter>Header Files\hooks</Filter>
     </ClInclude>
+    <ClInclude Include="Hooks_LoadFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h">
+      <Filter>Header Files\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -337,6 +346,12 @@
     </ClCompile>
     <ClCompile Include="hooks\mgsvtpp_funcptr_set.cpp">
       <Filter>Source Files\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_LoadFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Character.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

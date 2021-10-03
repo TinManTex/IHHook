@@ -12,6 +12,8 @@
 #include "Hooks_Lua.h"
 #include "Hooks_TPP.h"
 #include "Hooks_FOV.h"
+#include "Hooks_LoadFile.h"
+#include "Hooks_Character.h"
 
 #include "RawInput.h"
 
@@ -337,6 +339,8 @@ namespace IHHook {
 			Hooks_Lua::CreateHooks();
 			Hooks_TPP::CreateHooks();
 			Hooks_FOV::CreateHooks();
+			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
+			Hooks_Character::CreateHooks();
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
