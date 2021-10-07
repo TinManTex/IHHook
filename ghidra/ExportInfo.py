@@ -44,6 +44,7 @@ exportInfo=[
 	#{"name":"UnkSomePlayerUpdateFunc", "usingDetour":True, "note":"exploration"},
 	#{"name":"UnkAnotherPlayerUpdateFuncButHuge", "usingDetour":True, "note":"exploration"},
 	{"name":"nullsub_2", "exportFunc":False, "note":"tex: another retail stubb out to wrangle",},
+	{"name":"LoadFileSub", "usingDetour":True,},
 	{"name":"LoadFile", "usingDetour":True,},
 	{"name":"LoadPlayerPartsFpk", "usingDetour":True,},
 	{"name":"LoadPlayerPartsParts", "usingDetour":True,},
@@ -55,6 +56,10 @@ exportInfo=[
 	{"name":"LoadPlayerBionicArmFv2", "usingDetour":True,},
 	#{"name":"CheckPlayerPartsIfShouldApplySkinToneFv2", "usingDetour":True,},#//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
 	{"name":"LoadPlayerPartsSkinToneFv2", "usingDetour":True,},
+	{"name":"IsHeadNeededForPartsType", "usingDetour":True,},
+	{"name":"IsHeadNeededForPartsTypeAndAvatar", "usingDetour":True,},
+	{"name":"LoadPlayerSnakeFaceFpk", "usingDetour":True,},
+	{"name":"LoadPlayerSnakeFaceFv2", "usingDetour":True,},
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 

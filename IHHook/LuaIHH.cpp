@@ -256,8 +256,6 @@ namespace IHHook {
 				{ "UpdateChangeLocationMenu", l_UpdateChangeLocationMenu},
 				{ "SetCamHook", Hooks_FOV::l_SetCamHook },
 				{ "UpdateCamHook", Hooks_FOV::l_UpdateCamHook },
-				{ "SetPlayerPartsFpk", Hooks_Character::l_SetPlayerPartsFpk },
-				{ "SetPlayerPartsPart", Hooks_Character::l_SetPlayerPartsPart },
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }
 			};

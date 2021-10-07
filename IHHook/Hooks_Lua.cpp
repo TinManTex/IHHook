@@ -19,6 +19,7 @@
 #include "OS.h"
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
+#include "Hooks_Character.h"//CreateLibs //TODO: don't like this in here
 
 #include <string>
 #include "hooks/mgsvtpp_func_typedefs.h"
@@ -29,7 +30,7 @@ namespace IHHook {
 	//Hooks_Lua_Test
 	extern void TestHooks_Lua(lua_State* L);
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
-
+	
 	//tex CULL lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 	//extern int luaopen_winapi(lua_State* L);
 
@@ -38,6 +39,8 @@ namespace IHHook {
 	std::shared_ptr<spdlog::logger> luaLog;
 
 	namespace Hooks_Lua {
+		void CreateLibs(lua_State* L);
+
 		lua_State* luaState = NULL;
 		lua_CFunction foxPanic;
 		bool firstUpdate = false;
@@ -111,7 +114,7 @@ namespace IHHook {
 			lua_pushinteger(L, Version);
 			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
-			LuaIHH::luaopen_ihh(L);
+			CreateLibs(L);
 
 			//OFF luaopen_winapi(L);
 			LoadImguiBindings(L);
@@ -311,6 +314,12 @@ namespace IHHook {
 				//ENABLEHOOK(l_StubbedOut)//DEBUGNOW enabling after lua is init in openlibs see l_StubbedOutHook
 			}//if name##Addr != NULL
 		}//CreateHooks
+
+		//TODO: document/make more discoverable
+		void CreateLibs(lua_State* L) {
+			LuaIHH::luaopen_ihh(L);
+			Hooks_Character::CreateLibs(L);
+		}//CreateLibs
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
 		static int luaB_print(lua_State* L) {

@@ -20,6 +20,7 @@ namespace IHHook {
 		UnkPrintFuncStubbedOut = (UnkPrintFuncStubbedOutFunc*)addressSet["UnkPrintFuncStubbedOut"];
 		l_StubbedOut = (l_StubbedOutFunc*)addressSet["l_StubbedOut"];
 		nullsub_2 = (nullsub_2Func*)addressSet["nullsub_2"];
+		LoadFileSub = (LoadFileSubFunc*)addressSet["LoadFileSub"];
 		LoadFile = (LoadFileFunc*)addressSet["LoadFile"];
 		LoadPlayerPartsFpk = (LoadPlayerPartsFpkFunc*)addressSet["LoadPlayerPartsFpk"];
 		LoadPlayerPartsParts = (LoadPlayerPartsPartsFunc*)addressSet["LoadPlayerPartsParts"];
@@ -30,6 +31,10 @@ namespace IHHook {
 		LoadPlayerBionicArmFpk = (LoadPlayerBionicArmFpkFunc*)addressSet["LoadPlayerBionicArmFpk"];
 		LoadPlayerBionicArmFv2 = (LoadPlayerBionicArmFv2Func*)addressSet["LoadPlayerBionicArmFv2"];
 		LoadPlayerPartsSkinToneFv2 = (LoadPlayerPartsSkinToneFv2Func*)addressSet["LoadPlayerPartsSkinToneFv2"];
+		IsHeadNeededForPartsType = (IsHeadNeededForPartsTypeFunc*)addressSet["IsHeadNeededForPartsType"];
+		IsHeadNeededForPartsTypeAndAvatar = (IsHeadNeededForPartsTypeAndAvatarFunc*)addressSet["IsHeadNeededForPartsTypeAndAvatar"];
+		LoadPlayerSnakeFaceFpk = (LoadPlayerSnakeFaceFpkFunc*)addressSet["LoadPlayerSnakeFaceFpk"];
+		LoadPlayerSnakeFaceFv2 = (LoadPlayerSnakeFaceFv2Func*)addressSet["LoadPlayerSnakeFaceFv2"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

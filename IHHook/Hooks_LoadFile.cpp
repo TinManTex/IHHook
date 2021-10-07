@@ -15,7 +15,7 @@ namespace IHHook {
 		std::shared_ptr<spdlog::logger> log;
 
 		uint64_t * LoadFileHook(uint64_t* fileSlotIndex, uint64_t filePath64) {
-			if (config.enableFnvHook) {//DEBUGNOW
+			if (config.enableFnvHook) {
 				log->info(filePath64);
 			}
 
@@ -29,22 +29,27 @@ namespace IHHook {
 			return hash;
 		}*/
 
-	
+		void LoadFileSubHook(ulonglong filePath64, ulonglong filePath64_01) {
+			if (config.logFileLoad) {
+				log->info(filePath64);
+				log->info(filePath64_01);
+			}
+
+			return LoadFileSub(filePath64, filePath64_01);
+		}//LoadFileSubHook
 
 		void CreateHooks() {
-			spdlog::debug(__func__);			
+			spdlog::debug("Hooks_LoadFile::CreateHooks");			
 
-			if (config.enableFnvHook) {//DEBUGNOW
-				if (addressSet["LoadFile"] == NULL) {
-					spdlog::warn("LoadFile == NULL");
-				}
-				else {
-					log = spdlog::basic_logger_st("loadfile", logName);
-					log->set_pattern("%v");//tex raw logging
-					//CREATE_HOOK(LoadFile)
-
-					//ENABLEHOOK(LoadFile)
-				}
+			if (config.logFileLoad) {//DEBUGNOW
+				log = spdlog::basic_logger_st("loadfile", logName);
+				log->set_pattern("%v");//tex raw logging
+					
+				CREATE_HOOK(LoadFileSub)
+				CREATE_HOOK(LoadFile)
+					
+				ENABLEHOOK(LoadFileSub)
+				//ENABLEHOOK(LoadFile)
 			}
 
 			//CREATE_HOOK(PathCode64)

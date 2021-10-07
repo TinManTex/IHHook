@@ -18,6 +18,7 @@ namespace IHHook {
 		{"UnkPrintFuncStubbedOut", 0x142ef2bf0},//tex: Some info printing function that has been stubbed out
 		{"l_StubbedOut", 0x14024a8e0},//tex: another retail stubb out to wrangle
 		{"nullsub_2", 0x1409c8f90},//tex: another retail stubb out to wrangle
+		{"LoadFileSub", 0x142f784a0},
 		{"LoadFile", 0x14319ea20},
 		{"LoadPlayerPartsFpk", 0x146866c80},
 		{"LoadPlayerPartsParts", 0x146865f80},
@@ -28,6 +29,10 @@ namespace IHHook {
 		{"LoadPlayerBionicArmFpk", 0x140ae90f0},
 		{"LoadPlayerBionicArmFv2", 0x140ae9040},
 		{"LoadPlayerPartsSkinToneFv2", 0x140ae8560},
+		{"IsHeadNeededForPartsType", 0x140ae84b0},
+		{"IsHeadNeededForPartsTypeAndAvatar", 0x140ae8500},
+		{"LoadPlayerSnakeFaceFpk", 0x140ae8df0},
+		{"LoadPlayerSnakeFaceFv2", 0x140ae8ce0},
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},

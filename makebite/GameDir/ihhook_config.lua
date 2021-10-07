@@ -4,6 +4,7 @@ local this={
 	openConsole=false,
 	enableCityHook=false,
 	enableFnvHook=false,
+	logFileLoad=false,
 	forceUsePatterns=false,
 }--this
 return this

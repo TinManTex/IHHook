@@ -777,6 +777,7 @@ namespace IHHook {
 		config.openConsole = false;
 		config.enableCityHook = false;
 		config.enableFnvHook = false;
+		config.logFileLoad = false;
 		config.forceUsePatterns = false;
 
 		std::string line;
@@ -840,6 +841,9 @@ namespace IHHook {
 			}
 			else if (varName == "enableFnvHook") {
 				config.enableFnvHook = valueStr == "true";
+			}
+			else if (varName == "logFileLoad") {
+				config.logFileLoad = valueStr == "true";
 			}
 			else if (varName == "forceUsePatterns") {
 				config.forceUsePatterns = valueStr == "true";

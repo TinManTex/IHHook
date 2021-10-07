@@ -10,21 +10,138 @@ namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
 
 	namespace Hooks_Character {
-		//UNUSED
-		std::map<std::string, uint> PlayerType {
-			{"SNAKE",0},
-			{"DD_MALE",1},
-			{"DD_FEMALE",2},
-			{"AVATAR",3},
-			{"LIQUID",4},
-			{"OCELOT",5},
-			{"QUIET",6},
+		bool overrideCharacterSystem = false;//tex TODO: dont know if I want just an overall 'using ih overrides' or per-type override values
+
+		struct Character {
+			bool useHead = false;
+			bool useBionicHand = false;
+			const char* playerPartsFpkPath = "";
+			const char* playerPartsPartsPath = "";
+			const char* skinToneFv2Path = "";
+			const char* playerCamoFpkPath = "";
+			const char* playerCamoFv2Path = "";
 		};
+
+		Character character;
+
+		//lua SetOverrideCharacterSystem(bool override)
+		int l_SetOverrideCharacterSystem(lua_State* L) {
+			spdlog::trace(__func__);
+
+			overrideCharacterSystem = lua_toboolean(L, -1);
+			
+			spdlog::debug("l_SetOverrideCharacterSystem override:{}, ", overrideCharacterSystem);
+
+			return 0;
+		}//l_SetOverrideCharacterSystem
+		//lua SetUseHeadForPlayerParts(bool override)
+		int l_SetUseHeadForPlayerParts(lua_State* L) {
+			spdlog::trace(__func__);
+
+			character.useHead = lua_toboolean(L, -1);
+
+			spdlog::debug("l_SetUseHeadForPlayerParts useHeadForPlayerParts:{}, ", character.useHead);
+
+			return 0;
+		}//l_SetUseHeadForPlayerParts
+		//lua SetUseBionicHandForPlayerParts(bool override)
+		int l_SetUseBionicHandForPlayerParts(lua_State* L) {
+			spdlog::trace(__func__);
+
+			character.useBionicHand = lua_toboolean(L, -1);
+
+			spdlog::debug("l_SetUseBionicHandForPlayerParts useBionicHand:{}, ", character.useBionicHand);
+
+			return 0;
+		}//l_SetUseBionicHandForPlayerParts
 
 		//GOTCHA: AVATAR player parts not being identical to SNAKE cause the change to fail to load in ACC
 		//something to do with 2nd player instance for the 'reflection' i guess
 		//does not seem to cause an issue in-mission where there is only the singular player instance
 
+		int l_SetPlayerPartsFpkPath(lua_State* L) {
+
+			const char* filePath = lua_tostring(L, -1);
+			character.playerPartsFpkPath = filePath;
+
+			return 0;
+		}//l_SetPlayerPartsFpkPath
+
+		int l_SetPlayerPartsPartsPath(lua_State* L) {
+
+			const char* filePath = lua_tostring(L, -1);
+			character.playerPartsPartsPath = filePath;
+
+			return 0;
+		}//l_SetPlayerPartsPartsPath
+
+		int l_SetSkinToneFv2Path(lua_State* L) {
+
+			const char* filePath = lua_tostring(L, -1);
+			character.skinToneFv2Path = filePath;
+
+			return 0;
+		}//l_SetSkinToneFv2Path
+
+		int l_SetPlayerCamoFpkPath(lua_State* L) {
+
+			const char* filePath = lua_tostring(L, -1);
+			character.playerCamoFpkPath = filePath;
+
+			return 0;
+		}//l_SetPlayerCamoFpkPath
+
+		int l_SetPlayerCamoFv2Path(lua_State* L) {
+
+			const char* filePath = lua_tostring(L, -1);
+			character.playerCamoFv2Path = filePath;
+
+			return 0;
+		}//l_SetPlayerCamoFv2Path
+
+		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			uint64_t filePath64 = 0;
+
+			if (overrideCharacterSystem) {
+				if (character.playerPartsFpkPath != "") {
+					//TODO: if I ever get a 'does file exist' check
+					spdlog::debug("character.playerPartsFpkPath: {}", character.playerPartsFpkPath);
+					filePath64 = PathCode64(character.playerPartsFpkPath);
+				}
+				//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsFpkPath to "")
+				LoadFile(fileSlotIndex, filePath64);
+
+				return fileSlotIndex;
+			}
+
+			//tex fall back to original function
+			LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
+			return fileSlotIndex;
+		}//LoadPlayerPartsFpkHook
+
+		uint64_t* LoadPlayerPartsPartsHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			uint64_t filePath64 = 0;
+
+			if (overrideCharacterSystem) {
+				if (character.playerPartsPartsPath != "") {
+					//TODO: if I ever get a 'does file exist' check
+					spdlog::debug("character.playerPartsPartsPath: {}", character.playerPartsPartsPath);
+					filePath64 = PathCode64(character.playerPartsPartsPath);
+				}
+				//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsPartsPath to "")
+				LoadFile(fileSlotIndex, filePath64);
+
+				return fileSlotIndex;
+			}
+
+			//tex fall back to original function
+			LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
+			return fileSlotIndex;
+		}//LoadPlayerPartsPartsHook
+
+		//UNUSED parts/fpk alternate > 
 		//[playerType][playerPartsType]=PathCodeExt64.
 		std::map<uint, std::map<uint, std::string>> playerPartsFpk = {
 			{0,{//SNAKE
@@ -48,7 +165,6 @@ namespace IHHook {
 			{5,{}},//OCELOT
 			{6,{}},//QUIET
 		};
-
 		std::map<uint, std::map<uint, std::string>> playerPartsParts = {
 			{0,{//SNAKE
 					//{4,"/Assets/tpp/parts/chara/nin/nin0_main0_def_v00.parts"},//MGS1 > ninja test swap
@@ -71,8 +187,6 @@ namespace IHHook {
 			{6,{}},//QUIET
 		};
 
-
-		//
 		//input: uint playerType, uint playerPartsType, string fpkPath
 		//REF IH InfMission.UpdateChangeLocationMenu //DEBUGNOW
 		int l_SetPlayerPartsFpk(lua_State* L) {
@@ -139,7 +253,9 @@ namespace IHHook {
 			return 0;
 		}//l_SetPlayerPartsPart
 
-		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+		//tex OFF a better way to allow swapping and extending to other playerPartsType values
+		//but because of that will hit the saved at no longer valid value if user uninstalls mod problem.
+		uint64_t* LoadPlayerPartsFpkAlt(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			uint64_t filePath64 = 0;
 
@@ -169,9 +285,9 @@ namespace IHHook {
 			//tex fall back to original function
 			LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 			return fileSlotIndex;
-		}//LoadPlayerPartsFpkHook
+		}//LoadPlayerPartsFpkAlt
 
-		uint64_t* LoadPlayerPartsPartsHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+		uint64_t* LoadPlayerPartsPartsAlt(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			uint64_t filePath64 = 0;
 
@@ -200,7 +316,8 @@ namespace IHHook {
 			//tex fall back to original function
 			LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
 			return fileSlotIndex;
-		}//LoadPlayerPartsPartsHook
+		}//LoadPlayerPartsPartsAlt
+		//parts/fpk alternate<
 
 		//TODO: extend. just vanilla at the moment
 		ulonglong* LoadPlayerCamoFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType){
@@ -246,7 +363,7 @@ namespace IHHook {
 			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			ulonglong fv2Path = 0;
 
-			if (playerCamoType == 255) {
+			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
 				LoadFile(fileSlotIndex, 0);
 				return fileSlotIndex;
 			}
@@ -330,70 +447,100 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadPlayerFacialMotionMtarHook
 
-		//TODO: extend. just vanilla at the moment
+		//TODO: allow override
+		//indexed by playerHandType
+		std::string bionicHandFpkPaths[]{
+			"",//NONE
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm0_v00.fpk",//NORMAL
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm3_v00.fpk",//STUN_ARM
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm4_v00.fpk",//JEHUTY
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm2_v00.fpk",//STUN_ROCKET
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm1_v00.fpk",//KILL_ROCKET
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm6_v00.fpk",//GOLD
+			"/Assets/tpp/pack/player/fova/plfova_sna0_arm7_v00.fpk",//SILVER
+		};
+		std::string bionicHandFv2Paths[]{
+			"",
+			"/Assets/tpp/fova/chara/sna/sna0_arm0_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_arm3_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_arm4_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_arm2_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_arm1_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_arm6_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_arm7_v00.fv2",
+		};
+	
 		ulonglong* LoadPlayerBionicArmFpkHook(ulonglong* fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType){
 			spdlog::debug("LoadPlayerBionicArmFpkHook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
-			//SNAKE,AVATAR
-			if (((playerType == 0) || (playerType == 3)) && (true)) {//tex NMC uhh why && true
-				switch (playerPartsType) {
-				case 0://NORMAL
-				case 1://NORMAL_SCARF
-				case 2://SNEAKING_SUIT
-				case 7://NAKED
-				case 8://SNEAKING_SUIT_TPP
-				case 9://BATTLEDRESS
-				case 10://PARASITE
-				case 11://LEATHER
-				case 12://GOLD
-				case 13://SILVER
-				case 15://MGS3
-				case 16://MGS3_NAKED
-				case 17://MGS3_SNEAKING
-				case 18://MGS3_TUXEDO
-				case 23://SWIMWEAR
-				case 24://SWIMWEAR_G
-				case 25://SWIMWEAR_H
-					//DEBUGNOW LoadFile(fileSlotIndex, (&BionicArmFpkArray_DAT_142a82750)[(ulonglong)playerArmType * 2]);
-					LoadPlayerBionicArmFpk(fileSlotIndex, playerType, playerPartsType, playerHandType);
-					return fileSlotIndex;
+			
+			if (!overrideCharacterSystem) {
+				return LoadPlayerBionicArmFpk(fileSlotIndex, playerType, playerPartsType, playerHandType);
+			}
+
+			ulonglong filePath64 = 0;
+			if (character.useBionicHand) {
+				auto filePath = bionicHandFpkPaths[playerHandType];
+				spdlog::debug("bionicHandFpkPath: {}", filePath);
+				if (filePath != "") {
+					filePath64 = PathCode64(filePath.c_str());
 				}
 			}
-			LoadFile(fileSlotIndex, 0);
+
+			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFpkHook
 
-		//TODO: extend. just vanilla at the moment
+		//ORIG
+		//ulonglong* LoadPlayerBionicArmFpkORIG(ulonglong* fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType) {
+		//	spdlog::debug("LoadPlayerBionicArmFpkHook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
+		//	//SNAKE,AVATAR
+		//	if (((playerType == 0) || (playerType == 3)) && (true)) {//tex NMC uhh why && true
+		//		switch (playerPartsType) {
+		//		case 0://NORMAL
+		//		case 1://NORMAL_SCARF
+		//		case 2://SNEAKING_SUIT
+		//		case 7://NAKED
+		//		case 8://SNEAKING_SUIT_TPP
+		//		case 9://BATTLEDRESS
+		//		case 10://PARASITE
+		//		case 11://LEATHER
+		//		case 12://GOLD
+		//		case 13://SILVER
+		//		case 15://MGS3
+		//		case 16://MGS3_NAKED
+		//		case 17://MGS3_SNEAKING
+		//		case 18://MGS3_TUXEDO
+		//		case 23://SWIMWEAR
+		//		case 24://SWIMWEAR_G
+		//		case 25://SWIMWEAR_H
+		//			LoadFile(fileSlotIndex, (&BionicArmFpkArray_DAT_142a82750)[(ulonglong)playerHandType * 2]);
+		//			return fileSlotIndex;
+		//		}
+		//	}
+		//	LoadFile(fileSlotIndex, 0);
+		//	return fileSlotIndex;
+		//}//LoadPlayerBionicArmFpkORIG
+
 		ulonglong* LoadPlayerBionicArmFv2Hook(ulonglong* fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType) {
 			spdlog::debug("LoadPlayerBionicArmFv2Hook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
-			//SNAKE,AVATAR
-			if (((playerType == 0) || (playerType == 3)) && (true)) {
-				switch (playerPartsType) {
-				case 0:
-				case 1:
-				case 2:
-				case 7:
-				case 8:
-				case 9:
-				case 10:
-				case 11:
-				case 12:
-				case 13:
-				case 15:
-				case 16:
-				case 17:
-				case 18:
-				case 23:
-				case 24:
-				case 25:
-					//DEBUGNOW LoadFile(fileSlotIndex, (&BionicArmFv2Array_DAT_142a82758)[(ulonglong)playerArmType * 2]);
-					LoadPlayerBionicArmFv2(fileSlotIndex, playerType, playerPartsType, playerHandType);
-					return fileSlotIndex;
+
+			if (!overrideCharacterSystem) {
+				return LoadPlayerBionicArmFv2(fileSlotIndex, playerType, playerPartsType, playerHandType);
+			}
+
+			ulonglong filePath64 = 0;
+			if (character.useBionicHand) {
+				auto filePath = bionicHandFv2Paths[playerHandType];
+				spdlog::debug("bionicHandFv2Path: {}", filePath);
+				if (filePath != "") {
+					filePath64 = PathCode64(filePath.c_str());
 				}
 			}
-			LoadFile(fileSlotIndex, 0);
+
+			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFv2Hook
-
+		//UNUSED REF
 		//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
 		//only called for playerType 1 DD_MALE, 2 DD_FEMALE
 		bool CheckPlayerPartsIfShouldApplySkinToneFv2(uint playerType, uint playerPartsType) {
@@ -438,49 +585,65 @@ namespace IHHook {
 			return false;
 		}//CheckPlayerPartsIfShouldApplySkinToneFv2
 
+		ulonglong* LoadPlayerPartsSkinToneFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType) {
+			spdlog::trace(__func__);
+			if (!overrideCharacterSystem) {
+				return LoadPlayerPartsSkinToneFv2Hook(fileSlotIndex, playerType, playerPartsType);
+			}
+		
+			ulonglong filePath64 = 0;
+			if (character.skinToneFv2Path != "") {
+				spdlog::debug("character.skinToneFv2Path: {}", character.skinToneFv2Path);
+				filePath64 = PathCode64(character.skinToneFv2Path);
+			}
+			LoadFile(fileSlotIndex, filePath64);
+			return fileSlotIndex;
+		}//LoadPlayerPartsSkinToneFv2Hook
+
+		//ORIG
 		//tex these fv2s are in the playerparts fpk VERIFY
 		//TODO: expand. fill out all the data taking CheckPlayerPartsIfShouldApplySkinToneFv2 into account 
 		//then assume if value then apply and CheckPlayerPartsIfShouldApplySkinToneFv2 will no longer be nessesary
 		//TODO: figure out how AVATAR is handled, inital look at LoadPlayerFv2s it doesnt seem to use this for AVAT, then what is its skin tone situation?
-		ulonglong* LoadPlayerPartsSkinToneFv2Hook(ulonglong* loadFile, uint playerType, uint playerPartsType) {
+		ulonglong* LoadPlayerPartsSkinToneFv2ORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsSkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
 			bool shouldApplySkinToneFv2 = false;
-			ulonglong fv2Path = 0;
+			ulonglong filePath64 = 0;
 
 			if (playerType == 0) {//SNAKE
 				if (playerPartsType == 18) {//MGS3_TUXEDO
-					fv2Path = 0x608961e868491c54;////"/Assets/tpp/fova/chara/dld/dld0_main0_sna.fv2";
+					filePath64 = 0x608961e868491c54;////"/Assets/tpp/fova/chara/dld/dld0_main0_sna.fv2";
 				}
 			} else if (playerType == 1) {//DD_MALE
 				shouldApplySkinToneFv2 = CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
 				if (shouldApplySkinToneFv2) {
 					switch (playerPartsType) {
 					case 8://SNEAKING_SUIT_TPP
-						fv2Path = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
 						break;
 					case 9://BATTLEDRESS
-						fv2Path = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
 						break;
 					case 15://MGS3
-						fv2Path = 0x608b3a2e8398415b;// "/Assets/tpp/fova/chara/dla/dla0_plym0_v00.fv2";
+						filePath64 = 0x608b3a2e8398415b;// "/Assets/tpp/fova/chara/dla/dla0_plym0_v00.fv2";
 						break;
 					case 16://MGS3_NAKED
-						fv2Path = 0x608bed35c90a314d;// "/Assets/tpp/fova/chara/dla/dla1_plym0_v00.fv2";
+						filePath64 = 0x608bed35c90a314d;// "/Assets/tpp/fova/chara/dla/dla1_plym0_v00.fv2";
 						break;
 					case 18://MGS3_TUXEDO
-						fv2Path = 0x608872bab5e53bc8; // "/Assets/tpp/fova/chara/dld/dld0_plym0_v00.fv2";
+						filePath64 = 0x608872bab5e53bc8; // "/Assets/tpp/fova/chara/dld/dld0_plym0_v00.fv2";
 						break;
 					case 23://SWIMWEAR
-						fv2Path = 0x608aa0de59bf9572; // "/Assets/tpp/fova/chara/dlf/dlf1_main0_v00.fv2";
+						filePath64 = 0x608aa0de59bf9572; // "/Assets/tpp/fova/chara/dlf/dlf1_main0_v00.fv2";
 						break;
 					case 24://SWIMWEAR_G
-						fv2Path = 0x6088dd7cacaa3fd6; // "/Assets/tpp/fova/chara/dlg/dlg1_main0_v00.fv2";
+						filePath64 = 0x6088dd7cacaa3fd6; // "/Assets/tpp/fova/chara/dlg/dlg1_main0_v00.fv2";
 						break;
 					case 25://SWIMWEAR_H
-						fv2Path = 0x60884821796ed8f0;// "/Assets/tpp/fova/chara/dlh/dlh1_main0_v00.fv2";
+						filePath64 = 0x60884821796ed8f0;// "/Assets/tpp/fova/chara/dlh/dlh1_main0_v00.fv2";
 						break;
 					default:
-						fv2Path = 0x608882ccbb15c7ab;//"/Assets/tpp/fova/chara/sna/dds5_main0_ply_v00.fv2"
+						filePath64 = 0x608882ccbb15c7ab;//"/Assets/tpp/fova/chara/sna/dds5_main0_ply_v00.fv2"
 						break;
 					}//switch(playerPartsType)
 				}//shouldApplySkinToneFv2
@@ -489,76 +652,265 @@ namespace IHHook {
 				if (shouldApplySkinToneFv2) {
 					switch (playerPartsType) {
 					case 8://SNEAKING_SUIT_TPP
-						fv2Path = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
 						break;
 					case 9://BATTLEDRESS
-						fv2Path = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
 						break;
 					case 19://EVA_CLOSE
-						fv2Path = 0x608bc54842becde0;// "/Assets/tpp/fova/chara/dle/dle0_plyf0_v00.fv2";
+						filePath64 = 0x608bc54842becde0;// "/Assets/tpp/fova/chara/dle/dle0_plyf0_v00.fv2";
 						break;
 					case 20://EVA_OPEN
-						fv2Path = 0x608a91e3d60c5980;// "/Assets/tpp/fova/chara/dle/dle1_plyf0_v00.fv2";
+						filePath64 = 0x608a91e3d60c5980;// "/Assets/tpp/fova/chara/dle/dle1_plyf0_v00.fv2";
 						break;
 					case 22://BOSS_OPEN
-						fv2Path = 0x6089e156b2cacad9;// "/Assets/tpp/fova/chara/dlc/dlc1_plyf0_v00.fv2";
+						filePath64 = 0x6089e156b2cacad9;// "/Assets/tpp/fova/chara/dlc/dlc1_plyf0_v00.fv2";
 						break;
 					case 23://SWIMWEAR
-						fv2Path = 0x6088fc6455404f89;// "/Assets/tpp/fova/chara/dlf/dlf1_main0_f_v00.fv2";
+						filePath64 = 0x6088fc6455404f89;// "/Assets/tpp/fova/chara/dlf/dlf1_main0_f_v00.fv2";
 						break;
 					case 24://SWIMWEAR_G
-						fv2Path = 0x6089659d7ee7f080;// "/Assets/tpp/fova/chara/dlg/dlg1_main0_f_v00.fv2";
+						filePath64 = 0x6089659d7ee7f080;// "/Assets/tpp/fova/chara/dlg/dlg1_main0_f_v00.fv2";
 						break;
 					case 25://SWIMWEAR_H
-						fv2Path = 0x6089e8ede46843e9; // "/Assets/tpp/fova/chara/dlh/dlh1_main0_f_v00.fv2";
+						filePath64 = 0x6089e8ede46843e9; // "/Assets/tpp/fova/chara/dlh/dlh1_main0_f_v00.fv2";
 						break;
 					default:
-						fv2Path = 0x608a1c34fefc05c2;// "/Assets/tpp/fova/chara/sna/dds6_main0_ply_v00.fv2";
+						filePath64 = 0x608a1c34fefc05c2;// "/Assets/tpp/fova/chara/sna/dds6_main0_ply_v00.fv2";
 						break;
 					}//switch(playerPartsType)
 				}//shouldApplySkinToneFv2
 			}//if playerType
 
-			LoadFile(loadFile, fv2Path);
-			return loadFile;
+			LoadFile(fileSlotIndex, filePath64);
+			return fileSlotIndex;
 		}//LoadPlayerPartsSkinToneFv2Hook
 
-		//TODO: 
+		//DD_MALE/FEMALE only? VERIFY
+		//tex ghidra doesn't like to decompile this, but except for ppt 3 / HOSPITAL it seems the same as IsHeadNeededForPartsTypeAndAvatarHook 
+		//GOTCHA: is also called in a bunch of other places, aparently at least one constantly/in the update loop
+		bool IsHeadNeededForPartsTypeHook(uint playerPartsType){
+			//DEBUG
+			/*for (uint i = 0; i < 28; i++) {
+				bool testHead = IsHeadNeededForPartsType(i);
+				spdlog::debug("IsHeadNeededForPartsType {} = {}", i, testHead);
+			}*/
+
+			bool headNeeded = false;
+
+			if (overrideCharacterSystem) {
+				headNeeded = character.useHead;
+			}
+			else {
+				headNeeded = IsHeadNeededForPartsType(playerPartsType);//tex fall back to original
+			}
+
+			//OFF, see GOTCHA spdlog::debug("IsHeadNeededForPartsTypeHook playerPartsType:{} headNeeded:{}", playerPartsType, headNeeded);
+			return headNeeded;
+		}//IsHeadNeededForPartsTypeHook
+
+		//AVATAR only? VERIFY
 		bool IsHeadNeededForPartsTypeAndAvatarHook(uint playerPartsType){
-			if (true) {
-				switch (playerPartsType) {
-				case 0:
-				case 1:
-				case 2:
-				case 7:
-				case 8:
-				case 9:
-				case 11:
-				case 12:
-				case 13:
-				case 14:
-				case 15:
-				case 16:
-				case 17:
-				case 18:
-				case 19:
-				case 20:
-				case 21:
-				case 22:
-				case 23:
-				case 24:
-				case 25:
-					return true;
-				}
+			//DEBUGNOW
+			/*for (uint i = 0; i < 28; i++) {
+				bool testHead = IsHeadNeededForPartsType(i);
+				spdlog::debug("IsHeadNeededForPartsTypeAndAvatarHook {} = {}", i, testHead);
+			}*/
+
+			bool headNeeded = false;
+
+			if (overrideCharacterSystem) {
+				headNeeded = character.useHead;
 			}
-			//?
-			if (playerPartsType == 3) {
-				return true;
+			else {
+				headNeeded = IsHeadNeededForPartsTypeAndAvatar(playerPartsType);//tex fall back to original
 			}
-			return false;
+
+			spdlog::debug("IsHeadNeededForPartsTypeHook playerPartsType:{} headNeeded:{}", playerPartsType, headNeeded);
+
+			return headNeeded;
+
+			//ORIG
+			//if (true) {
+			//	switch (playerPartsType) {
+			//	case 0:
+			//	case 1:
+			//	case 2:
+			//	case 7:
+			//	case 8:
+			//	case 9:
+			//	case 11:
+			//	case 12:
+			//	case 13:
+			//	case 14:
+			//	case 15:
+			//	case 16:
+			//	case 17:
+			//	case 18:
+			//	case 19:
+			//	case 20:
+			//	case 21:
+			//	case 22:
+			//	case 23:
+			//	case 24:
+			//	case 25:
+			//		return true;
+			//	}
+			//}
+			//if (playerPartsType == 3) {//HOSPITAL // why?
+			//	return true;
+			//}
+			//return false;
 		}//IsHeadNeededForPartsTypeAndAvatarHook
 
-		//TODO: LoadPlayerSnakeFaceFpk
+		//TODO: allow override
+		std::string snakeFaceFpkPaths[] {
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face1_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face2_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face4_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face5_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face6_v00.fpk",
+		};
+		std::string snakeFaceFv2Paths[] {
+			"/Assets/tpp/fova/chara/sna/sna0_face0_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_face1_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_face2_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_face4_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_face5_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna0_face6_v00.fv2",
+		};
+
+		//tex vanilla does not have seperate IsHeadNeededForPartsTypeSnake, is rolled into LoadPlayerSnakeFaceFpk
+		ulonglong* LoadPlayerSnakeFaceFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
+			spdlog::trace(__func__);
+			if (!overrideCharacterSystem) {
+				return LoadPlayerSnakeFaceFpk(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
+			}
+
+			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
+
+			byte headEquip;
+			ulonglong filePath64 = 0;
+
+			if (playerType != 0) {
+				LoadFile(fileSlotIndex, 0);
+				return fileSlotIndex;
+			}
+
+			//ORIG
+			//switch (playerPartsType) {
+			//case 0:
+			//case 1:
+			//case 2:
+			//case 7:
+			//case 8:
+			//case 9:
+			//case 11:
+			//case 12:
+			//case 13:
+			//case 14:
+			//case 15:
+			//case 16:
+			//case 17:
+			//case 18:
+			//case 19:
+			//case 20:
+			//case 21:
+			//case 22:
+			//case 23:
+			//case 24:
+			//case 25:
+			if (character.useHead) {//tex 
+				headEquip = playerFaceEquipId - 1;
+				if (playerPartsType == 12) {//GOLD
+					if (headEquip < 2) {//BANDANAS
+						filePath64 = 0x522b700cdfa07d64;// "/Assets/tpp/pack/player/fova/plfova_sna9_face2_v00.fpk"
+					}
+					else {
+						filePath64 = 0x522b73a0d18d1507;// "/Assets/tpp/pack/player/fova/plfova_sna9_face0_v00.fpk"
+					}
+				}
+				else {
+					if (playerPartsType == 13) {//SILVER
+						if (headEquip < 2) {//BANDANAS
+							filePath64 = 0x522a615f9f58fe92; // "/Assets/tpp/pack/player/fova/plfova_sna9_face3_v00.fpk"
+						}
+						else {
+							filePath64 = 0x5229ec23af4d25a9;// "/Assets/tpp/pack/player/fova/plfova_sna9_face1_v00.fpk"
+						}
+					}
+					else {
+						if (headEquip < 2) {//BANDANAS
+							playerFaceId = playerFaceId + 3;
+						}
+						//fpk,fv2 array
+						///Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk - plfova_sna0_face6 
+						//no face3 (which is only used in \Assets\tpp\pack\mission2\story\s10280\s10280_d12.fpk)
+						//ORIG filePath64 = (&SnakeFaceFpkArray_DAT_142a827d0)[(ulonglong)playerFaceId * 2];
+						auto filePath = snakeFaceFpkPaths[playerFaceId];
+						filePath64 = PathCode64(filePath.c_str());
+					}
+				}
+			}//switch playerPartsType
+	
+			LoadFile(fileSlotIndex, filePath64);
+			return fileSlotIndex;
+		}//LoadPlayerSnakeFaceFpkHook
+
+		ulonglong* LoadPlayerSnakeFaceFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
+			spdlog::trace(__func__);
+			if (!overrideCharacterSystem) {
+				return LoadPlayerSnakeFaceFv2(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
+			}
+
+			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
+
+			
+			byte headEquip;
+			ulonglong filePath64 = 0;
+
+			if (playerType != 0) {
+				LoadFile(fileSlotIndex, 0);
+				return fileSlotIndex;
+			}
+
+			if (character.useHead) {//tex 
+				headEquip = playerFaceEquipId - 1;
+				if (playerPartsType == 12) {//GOLD
+					if (headEquip < 2) {
+						filePath64 = 0x60885b2578cae87a;// "/Assets/tpp/fova/chara/sna/sna9_face2_v00.fv2"
+					}
+					else {
+						filePath64 = 0x60882fc158a4e01b;// "/Assets/tpp/fova/chara/sna/sna9_face0_v00"
+					}
+				}
+				else {
+					if (playerPartsType == 13) {//SILVER
+						if (headEquip < 2) {
+							filePath64 = 0x608915f6e6d4ce8b;// "/Assets/tpp/fova/chara/sna/sna9_face3_v00.fv2"
+						}
+						else {
+							filePath64 = 0x60891b5295259069;// "/Assets/tpp/fova/chara/sna/sna9_face1_v00.fv2"
+						}
+					}
+					else {
+						if (headEquip < 2) {
+							playerFaceId = playerFaceId + 3;
+						}
+						//fpk,fv2 array
+						///Assets/tpp/fova/chara/sna/sna0_face0_v00.fv2 to sna0_face6
+						//no face3 (which is only used in \Assets\tpp\pack\mission2\story\s10280\s10280_d12.fpk)
+						//ORIG filePath64 = (&SnakeFaceFv2Array_DAT_142a827d8)[(ulonglong)playerFaceId * 2];
+						auto filePath = snakeFaceFv2Paths[playerFaceId];
+						filePath64 = PathCode64(filePath.c_str());
+					}
+				}
+			}//switch playerPartsType
+
+			LoadFile(fileSlotIndex, filePath64);
+			return fileSlotIndex;
+		}//LoadPlayerSnakeFaceFv2Hook
 
 		void CreateHooks() {
 			spdlog::debug(__func__);
@@ -572,6 +924,11 @@ namespace IHHook {
 			CREATE_HOOK(LoadPlayerFacialMotionFpk)
 			CREATE_HOOK(LoadPlayerFacialMotionMtar)
 			CREATE_HOOK(LoadPlayerPartsSkinToneFv2)
+			CREATE_HOOK(IsHeadNeededForPartsType)
+			CREATE_HOOK(IsHeadNeededForPartsTypeAndAvatar)
+			CREATE_HOOK(LoadPlayerSnakeFaceFpk)
+			CREATE_HOOK(LoadPlayerSnakeFaceFv2)	
+				
 				
 			ENABLEHOOK(LoadPlayerPartsFpk)
 			ENABLEHOOK(LoadPlayerPartsParts)
@@ -579,9 +936,33 @@ namespace IHHook {
 			ENABLEHOOK(LoadPlayerCamoFv2)
 			ENABLEHOOK(LoadPlayerBionicArmFpk)
 			ENABLEHOOK(LoadPlayerBionicArmFv2)
-			ENABLEHOOK(LoadPlayerFacialMotionFpk)
-			ENABLEHOOK(LoadPlayerFacialMotionMtar)
+			//ENABLEHOOK(LoadPlayerFacialMotionFpk)
+			//ENABLEHOOK(LoadPlayerFacialMotionMtar)
 			ENABLEHOOK(LoadPlayerPartsSkinToneFv2)
+			ENABLEHOOK(IsHeadNeededForPartsType)
+			ENABLEHOOK(IsHeadNeededForPartsTypeAndAvatar)
+			ENABLEHOOK(LoadPlayerSnakeFaceFpk)
+			ENABLEHOOK(LoadPlayerSnakeFaceFv2)
 		}//CreateHooks
+
+		int CreateLibs(lua_State* L) {
+			spdlog::debug(__func__);
+
+			luaL_Reg libFuncs[] = {
+				{ "SetOverrideCharacterSystem", l_SetOverrideCharacterSystem },
+				{ "SetUseHeadForPlayerParts", l_SetUseHeadForPlayerParts },
+				{ "SetUseBionicHandForPlayerParts", l_SetUseBionicHandForPlayerParts },
+				{ "SetPlayerPartsFpkPath", l_SetPlayerPartsFpkPath },
+				{ "SetPlayerPartsPartsPath", l_SetPlayerPartsPartsPath },
+				{ "SetSkinToneFv2Path", l_SetSkinToneFv2Path },
+				{ "SetPlayerCamoFpkPath", l_SetPlayerCamoFpkPath },
+				{ "SetPlayerCamoFv2Path", l_SetPlayerCamoFv2Path },
+				//{ "SetPlayerPartsFpk", l_SetPlayerPartsFpk },//UNUSED
+				//{ "SetPlayerPartsPart", l_SetPlayerPartsPart },//UNUSED
+				{ NULL, NULL }//GOTCHA: crashes without
+			};
+			luaI_openlib(L, "IHH", libFuncs, 0);
+			return 1;
+		}//CreateLibs
 	}//Hooks_Character
 }//namespace IHHook

@@ -22,6 +22,7 @@ typedef void (__fastcall UpdateFOVLerpFunc)(ulonglong param_1);
 typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, ...);
 // l_StubbedOut EXPORT_FUNC_FALSE
 // nullsub_2 EXPORT_FUNC_FALSE
+typedef void (__fastcall LoadFileSubFunc)(ulonglong filePath64, ulonglong filePath64_01);
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
 typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
@@ -32,6 +33,10 @@ typedef ulonglong * (__fastcall LoadPlayerFacialMotionMtarFunc)(ulonglong * file
 typedef ulonglong * (__fastcall LoadPlayerBionicArmFpkFunc)(ulonglong * fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType);
 typedef ulonglong * (__fastcall LoadPlayerBionicArmFv2Func)(ulonglong * fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType);
 typedef ulonglong * (__fastcall LoadPlayerPartsSkinToneFv2Func)(ulonglong * loadFile, uint playerType, uint playerPartsType);
+typedef bool (__fastcall IsHeadNeededForPartsTypeFunc)(uint playerPartsType);
+typedef bool (__fastcall IsHeadNeededForPartsTypeAndAvatarFunc)(uint playerPartsType);
+typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
+typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
 typedef void (__fastcall lua_closeFunc)(lua_State * L);
 typedef lua_State * (__fastcall lua_newthreadFunc)(lua_State * L);
@@ -165,6 +170,7 @@ extern UpdateFOVLerpFunc* UpdateFOVLerp;
 extern UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 extern l_StubbedOutFunc* l_StubbedOut;
 extern nullsub_2Func* nullsub_2;
+extern LoadFileSubFunc* LoadFileSub;
 extern LoadFileFunc* LoadFile;
 extern LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
 extern LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
@@ -175,6 +181,10 @@ extern LoadPlayerFacialMotionMtarFunc* LoadPlayerFacialMotionMtar;
 extern LoadPlayerBionicArmFpkFunc* LoadPlayerBionicArmFpk;
 extern LoadPlayerBionicArmFv2Func* LoadPlayerBionicArmFv2;
 extern LoadPlayerPartsSkinToneFv2Func* LoadPlayerPartsSkinToneFv2;
+extern IsHeadNeededForPartsTypeFunc* IsHeadNeededForPartsType;
+extern IsHeadNeededForPartsTypeAndAvatarFunc* IsHeadNeededForPartsTypeAndAvatar;
+extern LoadPlayerSnakeFaceFpkFunc* LoadPlayerSnakeFaceFpk;
+extern LoadPlayerSnakeFaceFv2Func* LoadPlayerSnakeFaceFv2;
 extern lua_newstateFunc* lua_newstate;
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;

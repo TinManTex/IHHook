@@ -30,11 +30,12 @@
 
 namespace IHHook {
 	struct Config {
-		bool debugMode;//TODO debug level instead
-		bool openConsole;
-		bool enableCityHook;
-		bool enableFnvHook;
-		bool forceUsePatterns;
+		bool debugMode{ true };//TODO debug level instead
+		bool openConsole{ false };
+		bool enableCityHook{ false };
+		bool enableFnvHook{ false };
+		bool logFileLoad{ false };
+		bool forceUsePatterns{ false };
 	};
 	extern struct Config config;
 	static const std::string hookConfigName = "ihhook_config.lua";
