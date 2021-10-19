@@ -30,11 +30,14 @@ namespace IHHook {
 		LoadPlayerFacialMotionMtar = (LoadPlayerFacialMotionMtarFunc*)addressSet["LoadPlayerFacialMotionMtar"];
 		LoadPlayerBionicArmFpk = (LoadPlayerBionicArmFpkFunc*)addressSet["LoadPlayerBionicArmFpk"];
 		LoadPlayerBionicArmFv2 = (LoadPlayerBionicArmFv2Func*)addressSet["LoadPlayerBionicArmFv2"];
+		CheckPlayerPartsIfShouldApplySkinToneFv2 = (CheckPlayerPartsIfShouldApplySkinToneFv2Func*)addressSet["CheckPlayerPartsIfShouldApplySkinToneFv2"];
 		LoadPlayerPartsSkinToneFv2 = (LoadPlayerPartsSkinToneFv2Func*)addressSet["LoadPlayerPartsSkinToneFv2"];
 		IsHeadNeededForPartsType = (IsHeadNeededForPartsTypeFunc*)addressSet["IsHeadNeededForPartsType"];
 		IsHeadNeededForPartsTypeAndAvatar = (IsHeadNeededForPartsTypeAndAvatarFunc*)addressSet["IsHeadNeededForPartsTypeAndAvatar"];
 		LoadPlayerSnakeFaceFpk = (LoadPlayerSnakeFaceFpkFunc*)addressSet["LoadPlayerSnakeFaceFpk"];
 		LoadPlayerSnakeFaceFv2 = (LoadPlayerSnakeFaceFv2Func*)addressSet["LoadPlayerSnakeFaceFv2"];
+		LoadAvatarOgreHornFpk = (LoadAvatarOgreHornFpkFunc*)addressSet["LoadAvatarOgreHornFpk"];
+		LoadAvatarOgreHornFv2 = (LoadAvatarOgreHornFv2Func*)addressSet["LoadAvatarOgreHornFv2"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

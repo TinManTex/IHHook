@@ -54,12 +54,14 @@ exportInfo=[
 	{"name":"LoadPlayerFacialMotionMtar", "usingDetour":True,},
 	{"name":"LoadPlayerBionicArmFpk", "usingDetour":True,},
 	{"name":"LoadPlayerBionicArmFv2", "usingDetour":True,},
-	#{"name":"CheckPlayerPartsIfShouldApplySkinToneFv2", "usingDetour":True,},#//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
+	{"name":"CheckPlayerPartsIfShouldApplySkinToneFv2", "usingDetour":True,},#//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
 	{"name":"LoadPlayerPartsSkinToneFv2", "usingDetour":True,},
 	{"name":"IsHeadNeededForPartsType", "usingDetour":True,},
 	{"name":"IsHeadNeededForPartsTypeAndAvatar", "usingDetour":True,},
 	{"name":"LoadPlayerSnakeFaceFpk", "usingDetour":True,},
 	{"name":"LoadPlayerSnakeFaceFv2", "usingDetour":True,},
+	{"name":"LoadAvatarOgreHornFpk", "usingDetour":True,},
+	{"name":"LoadAvatarOgreHornFv2", "usingDetour":True,},
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 

@@ -12,6 +12,8 @@ namespace IHHook {
 	namespace Hooks_Character {
 		bool overrideCharacterSystem = false;//tex TODO: dont know if I want just an overall 'using ih overrides' or per-type override values
 
+		static const int MAX_HAND_TYPE = 8;//
+		static const int MAX_HORN_LEVEL = 3;
 		struct Character {
 			bool useHead = false;
 			bool useBionicHand = false;
@@ -20,14 +22,42 @@ namespace IHHook {
 			const char* skinToneFv2Path = "";
 			const char* playerCamoFpkPath = "";
 			const char* playerCamoFv2Path = "";
-		};
+			std::string bionicHandFpks[MAX_HAND_TYPE]{
+				"",//NONE
+				"",//NORMAL
+				"",//STUN_ARM
+				"",//JEHUTY
+				"",//STUN_ROCKET
+				"",//KILL_ROCKET
+				"",//GOLD
+				"",//SILVER
+			};
+			std::string bionicHandFv2s[MAX_HAND_TYPE]{
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
+			std::string avatarHornFpks[MAX_HORN_LEVEL]{
+				"",
+				"",
+				"",
+			};
+			std::string avatarHornFv2s[MAX_HORN_LEVEL]{
+				"",
+				"",
+				"",
+			};
+		};//Character
 
 		Character character;
 
 		//lua SetOverrideCharacterSystem(bool override)
 		int l_SetOverrideCharacterSystem(lua_State* L) {
-			spdlog::trace(__func__);
-
 			overrideCharacterSystem = lua_toboolean(L, -1);
 			
 			spdlog::debug("l_SetOverrideCharacterSystem override:{}, ", overrideCharacterSystem);
@@ -36,8 +66,6 @@ namespace IHHook {
 		}//l_SetOverrideCharacterSystem
 		//lua SetUseHeadForPlayerParts(bool override)
 		int l_SetUseHeadForPlayerParts(lua_State* L) {
-			spdlog::trace(__func__);
-
 			character.useHead = lua_toboolean(L, -1);
 
 			spdlog::debug("l_SetUseHeadForPlayerParts useHeadForPlayerParts:{}, ", character.useHead);
@@ -46,8 +74,6 @@ namespace IHHook {
 		}//l_SetUseHeadForPlayerParts
 		//lua SetUseBionicHandForPlayerParts(bool override)
 		int l_SetUseBionicHandForPlayerParts(lua_State* L) {
-			spdlog::trace(__func__);
-
 			character.useBionicHand = lua_toboolean(L, -1);
 
 			spdlog::debug("l_SetUseBionicHandForPlayerParts useBionicHand:{}, ", character.useBionicHand);
@@ -55,45 +81,105 @@ namespace IHHook {
 			return 0;
 		}//l_SetUseBionicHandForPlayerParts
 
+		//lua SetBionicHandFpkPath(int playerHandType, string fpkPath)
+		int l_SetBionicHandFpkPath(lua_State* L) {
+			uint playerHandType = (uint)lua_tointeger(L, -2);
+			if (playerHandType == 0) {
+				spdlog::debug("l_SetBionicHandFpkPath cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (playerHandType > 7) {//SILVER
+				spdlog::debug("l_SetBionicHandFpkPath playerHandType outside valid range: {}, ", playerHandType);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetBionicHandFpkPath playerHandType:{} = {}, ", playerHandType, filePath);
+			character.bionicHandFpks[playerHandType] = filePath;
+
+			return 0;
+		}//l_SetBionicHandFpkPath
+		//lua SetBionicHandFv2Path(int playerHandType, string fv2Path)
+		int l_SetBionicHandFv2Path(lua_State* L) {
+			uint playerHandType = (uint)lua_tointeger(L, -2);
+			if (playerHandType == 0) {
+				spdlog::debug("l_SetBionicHandFv2Path cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (playerHandType > 7) {//SILVER
+				spdlog::debug("l_SetBionicHandFv2Path playerHandType outside valid range: {}, ", playerHandType);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetBionicHandFv2Path playerHandType:{} = {}, ", playerHandType, filePath);
+			character.bionicHandFv2s[playerHandType] = filePath;
+
+			return 0;
+		}//l_SetBionicHandFv2Path
+
 		//GOTCHA: AVATAR player parts not being identical to SNAKE cause the change to fail to load in ACC
 		//something to do with 2nd player instance for the 'reflection' i guess
 		//does not seem to cause an issue in-mission where there is only the singular player instance
 
 		int l_SetPlayerPartsFpkPath(lua_State* L) {
-
 			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetPlayerPartsFpkPath {}, ", filePath);
 			character.playerPartsFpkPath = filePath;
 
 			return 0;
 		}//l_SetPlayerPartsFpkPath
 
 		int l_SetPlayerPartsPartsPath(lua_State* L) {
-
 			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetPlayerPartsPartsPath {}, ", filePath);
 			character.playerPartsPartsPath = filePath;
 
 			return 0;
 		}//l_SetPlayerPartsPartsPath
 
 		int l_SetSkinToneFv2Path(lua_State* L) {
-
 			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetSkinToneFv2Path {}, ", filePath);
 			character.skinToneFv2Path = filePath;
 
 			return 0;
 		}//l_SetSkinToneFv2Path
 
 		int l_SetPlayerCamoFpkPath(lua_State* L) {
-
 			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetPlayerCamoFpkPath {}, ", filePath);
 			character.playerCamoFpkPath = filePath;
 
 			return 0;
 		}//l_SetPlayerCamoFpkPath
 
 		int l_SetPlayerCamoFv2Path(lua_State* L) {
-
 			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetPlayerCamoFv2Path {}, ", filePath);
 			character.playerCamoFv2Path = filePath;
 
 			return 0;
@@ -101,43 +187,53 @@ namespace IHHook {
 
 		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
-			uint64_t filePath64 = 0;
 
-			if (overrideCharacterSystem) {
-				if (character.playerPartsFpkPath != "") {
-					//TODO: if I ever get a 'does file exist' check
-					spdlog::debug("character.playerPartsFpkPath: {}", character.playerPartsFpkPath);
-					filePath64 = PathCode64(character.playerPartsFpkPath);
-				}
-				//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsFpkPath to "")
-				LoadFile(fileSlotIndex, filePath64);
-
+			//tex fall back to original function
+			if (!overrideCharacterSystem) {
+				LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 				return fileSlotIndex;
 			}
 
-			//tex fall back to original function
-			LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
+			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
+			if (playerPartsType == 3 || playerPartsType == 14) {
+				LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
+				return fileSlotIndex;
+			}
+
+			uint64_t filePath64 = 0;
+			if (character.playerPartsFpkPath[0] != '\0') {
+				//TODO: if I ever get a 'does file exist' check
+				spdlog::debug("character.playerPartsFpkPath: {}", character.playerPartsFpkPath);
+				filePath64 = PathCode64(character.playerPartsFpkPath);
+			}
+			//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsFpkPath to "")
+			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerPartsFpkHook
 
 		uint64_t* LoadPlayerPartsPartsHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
-			uint64_t filePath64 = 0;
+			//tex fall back to original function
+			if (!overrideCharacterSystem) {
+				LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
+				return fileSlotIndex;				
+			}
 
-			if (overrideCharacterSystem) {
-				if (character.playerPartsPartsPath != "") {
-					//TODO: if I ever get a 'does file exist' check
-					spdlog::debug("character.playerPartsPartsPath: {}", character.playerPartsPartsPath);
-					filePath64 = PathCode64(character.playerPartsPartsPath);
-				}
-				//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsPartsPath to "")
-				LoadFile(fileSlotIndex, filePath64);
-
+			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
+			if (playerPartsType == 3 || playerPartsType == 14) {
+				LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
 				return fileSlotIndex;
 			}
 
-			//tex fall back to original function
-			LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
+			uint64_t filePath64 = 0;
+			if (character.playerPartsPartsPath[0] != '\0') {
+				//TODO: if I ever get a 'does file exist' check
+				spdlog::debug("character.playerPartsPartsPath: {}", character.playerPartsPartsPath);
+				filePath64 = PathCode64(character.playerPartsPartsPath);
+			}
+			//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsPartsPath to "")
+			LoadFile(fileSlotIndex, filePath64);
+
 			return fileSlotIndex;
 		}//LoadPlayerPartsPartsHook
 
@@ -319,8 +415,8 @@ namespace IHHook {
 		}//LoadPlayerPartsPartsAlt
 		//parts/fpk alternate<
 
-		//TODO: extend. just vanilla at the moment
-		ulonglong* LoadPlayerCamoFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType){
+		//OFF REF
+		ulonglong* LoadPlayerCamoFpkORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
 			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			uint64_t fpkPath = 0;
 
@@ -356,10 +452,62 @@ namespace IHHook {
 
 			LoadFile(fileSlotIndex, fpkPath);
 			return fileSlotIndex;
+		}//LoadPlayerCamoFpkORIG
+
+		ulonglong* LoadPlayerCamoFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
+			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+
+			if (!overrideCharacterSystem) {
+				return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+			}
+
+			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
+			if (playerPartsType == 3 || playerPartsType == 14) {
+				return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+			}
+
+			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
+				LoadFile(fileSlotIndex, 0);
+				return fileSlotIndex;
+			}
+
+			ulonglong filePath64 = 0;
+			if (character.playerCamoFpkPath[0] != '\0') {
+				filePath64 = PathCode64(character.playerCamoFpkPath);
+			}
+
+			LoadFile(fileSlotIndex, filePath64);
+			return fileSlotIndex;
 		}//LoadPlayerCamoFpkHook
 
-		//TODO: extend
 		ulonglong* LoadPlayerCamoFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
+			spdlog::debug("LoadPlayerCamoFv2Hook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			
+			if (!overrideCharacterSystem) {
+				return LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+			}
+
+			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
+			if (playerPartsType == 3 || playerPartsType == 14) {
+				return LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+			}
+
+			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
+				LoadFile(fileSlotIndex, 0);
+				return fileSlotIndex;
+			}
+
+			ulonglong filePath64 = 0;
+			if (character.playerCamoFv2Path[0] != '\0') {
+				filePath64 = PathCode64(character.playerCamoFv2Path);
+			}
+
+			LoadFile(fileSlotIndex, filePath64);
+			return fileSlotIndex;
+		}//LoadPlayerCamoFv2Hook
+
+		//OFF REF
+		ulonglong* LoadPlayerCamoFv2HookORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
 			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			ulonglong fv2Path = 0;
 
@@ -371,27 +519,23 @@ namespace IHHook {
 				//See LoadPlayerCamoFpk
 				if ((playerPartsType < 2) || (playerPartsType > 22 && playerPartsType < 26)) {
 					//DEBUGNOW fv2Path = (&SnakeNormalCamoFv2Array_DAT_142a80a18)[(ulonglong)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 				}
 				if (playerPartsType == 7) {//NAKED
 					//DEBUGNOW fv2Path = (&SnakeNakedCamoFv2Array_DAT_142a81168)[(ulonglong)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 				}
 			}
 			else {
 				if (playerType == 1) {//DD_MALE
 					//DEBUGNOW fv2Path = (&DDMaleCamoFv2Array_DAT_142a818b8)[(ulonglong)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 				}
 				if (playerType == 2) {//DD_FEMALE
 					//DEBUGNOW fv2Path = (&DDFemaleCamoFv2ArrayDAT_142a82008)[(ulonglong)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 				}
 			}
 
 			LoadFile(fileSlotIndex, fv2Path);
 			return fileSlotIndex;
-		}//LoadPlayerCamoFv2Hook
+		}//LoadPlayerCamoFv2ORIG
 
 		//TODO: there's also facialhelispace to deal with before I'm happy with extending this
 		ulonglong* LoadPlayerFacialMotionFpkHook(ulonglong* fileSlotIndex, uint playerType){
@@ -448,6 +592,7 @@ namespace IHHook {
 		}//LoadPlayerFacialMotionMtarHook
 
 		//TODO: allow override
+		//SNAKE/AVATAR only
 		//indexed by playerHandType
 		std::string bionicHandFpkPaths[]{
 			"",//NONE
@@ -469,20 +614,56 @@ namespace IHHook {
 			"/Assets/tpp/fova/chara/sna/sna0_arm6_v00.fv2",
 			"/Assets/tpp/fova/chara/sna/sna0_arm7_v00.fv2",
 		};
+
+		//tex default values from LoadPlayerBionicArm
+		//SYNC vanilla
+		bool UseBionicArmVanilla(uint playerType, uint playerPartsType, uint playerHandType) {
+			//SNAKE,AVATAR
+			if (playerType == 0 || playerType == 3) {//tex NMC uhh why && true
+				switch (playerPartsType) {
+				case 0://NORMAL
+				case 1://NORMAL_SCARF
+				case 2://SNEAKING_SUIT
+				case 7://NAKED
+				case 8://SNEAKING_SUIT_TPP
+				case 9://BATTLEDRESS
+				case 10://PARASITE
+				case 11://LEATHER
+				case 12://GOLD
+				case 13://SILVER
+				case 15://MGS3
+				case 16://MGS3_NAKED
+				case 17://MGS3_SNEAKING
+				case 18://MGS3_TUXEDO
+				case 23://SWIMWEAR
+				case 24://SWIMWEAR_G
+				case 25://SWIMWEAR_H
+					return true;
+				}
+			}
+			return false;
+		}//UseBionicArmVanilla
 	
-		ulonglong* LoadPlayerBionicArmFpkHook(ulonglong* fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType){
+		ulonglong* LoadPlayerBionicArmFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType){
 			spdlog::debug("LoadPlayerBionicArmFpkHook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
 			
-			if (!overrideCharacterSystem) {
-				return LoadPlayerBionicArmFpk(fileSlotIndex, playerType, playerPartsType, playerHandType);
+			bool useBionicHand = UseBionicArmVanilla(playerType, playerPartsType, playerHandType);
+			if (overrideCharacterSystem) {
+				useBionicHand = character.useBionicHand;
 			}
 
 			ulonglong filePath64 = 0;
-			if (character.useBionicHand) {
-				auto filePath = bionicHandFpkPaths[playerHandType];
-				spdlog::debug("bionicHandFpkPath: {}", filePath);
-				if (filePath != "") {
-					filePath64 = PathCode64(filePath.c_str());
+			if (useBionicHand) {
+				if (character.bionicHandFpks[playerHandType] != "") {
+					filePath64 = PathCode64(character.bionicHandFpks[playerHandType].c_str());
+				}
+				else {
+					//tex vanilla paths
+					auto filePath = bionicHandFpkPaths[playerHandType];
+					spdlog::debug("bionicHandFpkPath: {}", filePath);
+					if (filePath[0] != '\0') {
+						filePath64 = PathCode64(filePath.c_str());
+					}
 				}
 			}
 
@@ -521,29 +702,42 @@ namespace IHHook {
 		//	return fileSlotIndex;
 		//}//LoadPlayerBionicArmFpkORIG
 
-		ulonglong* LoadPlayerBionicArmFv2Hook(ulonglong* fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType) {
+		ulonglong* LoadPlayerBionicArmFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType) {
 			spdlog::debug("LoadPlayerBionicArmFv2Hook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
 
-			if (!overrideCharacterSystem) {
-				return LoadPlayerBionicArmFv2(fileSlotIndex, playerType, playerPartsType, playerHandType);
+			bool useBionicHand = UseBionicArmVanilla(playerType, playerPartsType, playerHandType);
+			if (overrideCharacterSystem) {
+				useBionicHand = character.useBionicHand;
 			}
 
 			ulonglong filePath64 = 0;
-			if (character.useBionicHand) {
-				auto filePath = bionicHandFv2Paths[playerHandType];
-				spdlog::debug("bionicHandFv2Path: {}", filePath);
-				if (filePath != "") {
-					filePath64 = PathCode64(filePath.c_str());
+			if (useBionicHand) {
+				if (character.bionicHandFv2s[playerHandType] != "") {
+					filePath64 = PathCode64(character.bionicHandFv2s[playerHandType].c_str());
+				}
+				else {
+					//tex vanilla paths
+					auto filePath = bionicHandFv2Paths[playerHandType];
+					spdlog::debug("bionicHandFv2Path: {}", filePath);
+					if (filePath[0] != '\0') {
+						filePath64 = PathCode64(filePath.c_str());
+					}
 				}
 			}
 
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFv2Hook
+
+		//DEBUGNOW see ORIG below
+		bool CheckPlayerPartsIfShouldApplySkinToneFv2Hook(uint playerType, uint playerPartsType) {
+			spdlog::debug("CheckPlayerPartsIfShouldApplySkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
+			return CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
+		}
 		//UNUSED REF
 		//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
 		//only called for playerType 1 DD_MALE, 2 DD_FEMALE
-		bool CheckPlayerPartsIfShouldApplySkinToneFv2(uint playerType, uint playerPartsType) {
+		bool CheckPlayerPartsIfShouldApplySkinToneFv2ORIG(uint playerType, uint playerPartsType) {
 			spdlog::debug("CheckPlayerPartsIfShouldApplySkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
 			if (true) {
 				switch (playerPartsType) {
@@ -583,16 +777,23 @@ namespace IHHook {
 				}//switch
 			}
 			return false;
-		}//CheckPlayerPartsIfShouldApplySkinToneFv2
+		}//CheckPlayerPartsIfShouldApplySkinToneFv2ORIG
 
+		//DEBUGNOW there's somewhere else filtering whether it's actually applied, ie it still will only apply if correct playerCamoType is set
+		//you can test this by setting up char values to a normal camo that supports skintone fv2, and chaning between playerCamoId that supports it or not
+		//you'll see this function runs reguardless yet the fv2 is applied or not tomehow
+		//posbly theres a flag for that camoID somewhere to use the fv2 variable data 0x64 https://metalgearmodding.fandom.com/wiki/FV2#Variable_Data_Section or not
+		//but since the LoadFile file reference doesn't seem to be used past it's call, and there doesn't seem to be any setup function before it (theres other loadfv2 functions), I'm not sure how it would be handled
+		//even then it seems to need litterally the exact playerCamoType range (or is it playerpartstype hmm) it was for anyway.
+		//again test dd_male swimwear and change it to another skintone supported camo, it dont work.
 		ulonglong* LoadPlayerPartsSkinToneFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::trace(__func__);
 			if (!overrideCharacterSystem) {
-				return LoadPlayerPartsSkinToneFv2Hook(fileSlotIndex, playerType, playerPartsType);
+				return LoadPlayerPartsSkinToneFv2(fileSlotIndex, playerType, playerPartsType);
 			}
 		
-			ulonglong filePath64 = 0;
-			if (character.skinToneFv2Path != "") {
+			ulonglong filePath64 = 0;	
+			if (character.skinToneFv2Path[0] != '\0') {
 				spdlog::debug("character.skinToneFv2Path: {}", character.skinToneFv2Path);
 				filePath64 = PathCode64(character.skinToneFv2Path);
 			}
@@ -717,7 +918,7 @@ namespace IHHook {
 				spdlog::debug("IsHeadNeededForPartsTypeAndAvatarHook {} = {}", i, testHead);
 			}*/
 
-			bool headNeeded = false;
+			bool headNeeded = false; 
 
 			if (overrideCharacterSystem) {
 				headNeeded = character.useHead;
@@ -912,6 +1113,38 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadPlayerSnakeFaceFv2Hook
 
+		ulonglong * LoadAvatarOgreHornFpkHook(ulonglong *fileSlotIndex,uint ogreLevel) {
+			ulonglong filePath64 = 0;
+  
+			if (ogreLevel == 1) {
+				filePath64 = 0x5229537fba305008;// "/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v01.fpk"
+			}
+			else {
+				if (ogreLevel == 2) {
+					filePath64 = 0x522a9243036e7e3c;// "/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v02.fpk"
+				}
+				//0, anything else
+				filePath64 = 0x5228af6c4c61a4af;// "/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v00.fpk"
+			}
+			LoadFile(fileSlotIndex,filePath64);
+			return fileSlotIndex;
+		}//LoadAvatarOgreHornFpkHook
+		ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong *fileSlotIndex,int ogreLevel) {
+			ulonglong filePath64;
+  
+			if (ogreLevel == 1) {
+				filePath64 = 0x608a0037af8bb475;// "/Assets/tpp/fova/chara/avm/avm_hone_v01.fv2"
+			}
+			else {
+				if (ogreLevel == 2) {
+					filePath64 = 0x608a73699dd3707e;// "/Assets/tpp/fova/chara/avm/avm_hone_v02.fv2"
+				}
+				filePath64 = 0x608bbecb37e840e9;// "/Assets/tpp/fova/chara/avm/avm_hone_v00.fv2"
+			}
+			LoadFile(fileSlotIndex,filePath64);
+			return fileSlotIndex;
+		}//LoadAvatarOgreHornFv2Hook
+
 		void CreateHooks() {
 			spdlog::debug(__func__);
 
@@ -927,9 +1160,11 @@ namespace IHHook {
 			CREATE_HOOK(IsHeadNeededForPartsType)
 			CREATE_HOOK(IsHeadNeededForPartsTypeAndAvatar)
 			CREATE_HOOK(LoadPlayerSnakeFaceFpk)
-			CREATE_HOOK(LoadPlayerSnakeFaceFv2)	
-				
-				
+			CREATE_HOOK(LoadPlayerSnakeFaceFv2)
+			CREATE_HOOK(CheckPlayerPartsIfShouldApplySkinToneFv2)//DEBUGNOW
+			CREATE_HOOK(LoadAvatarOgreHornFpk)
+			CREATE_HOOK(LoadAvatarOgreHornFv2)
+					
 			ENABLEHOOK(LoadPlayerPartsFpk)
 			ENABLEHOOK(LoadPlayerPartsParts)
 			ENABLEHOOK(LoadPlayerCamoFpk)
@@ -943,6 +1178,9 @@ namespace IHHook {
 			ENABLEHOOK(IsHeadNeededForPartsTypeAndAvatar)
 			ENABLEHOOK(LoadPlayerSnakeFaceFpk)
 			ENABLEHOOK(LoadPlayerSnakeFaceFv2)
+			ENABLEHOOK(CheckPlayerPartsIfShouldApplySkinToneFv2)//DEBUGNOW
+			ENABLEHOOK(LoadAvatarOgreHornFpk)
+			ENABLEHOOK(LoadAvatarOgreHornFv2)
 		}//CreateHooks
 
 		int CreateLibs(lua_State* L) {
@@ -957,6 +1195,9 @@ namespace IHHook {
 				{ "SetSkinToneFv2Path", l_SetSkinToneFv2Path },
 				{ "SetPlayerCamoFpkPath", l_SetPlayerCamoFpkPath },
 				{ "SetPlayerCamoFv2Path", l_SetPlayerCamoFv2Path },
+				{ "SetBionicHandFpkPath", l_SetBionicHandFpkPath },
+				{ "SetBionicHandFv2Path", l_SetBionicHandFv2Path },
+				
 				//{ "SetPlayerPartsFpk", l_SetPlayerPartsFpk },//UNUSED
 				//{ "SetPlayerPartsPart", l_SetPlayerPartsPart },//UNUSED
 				{ NULL, NULL }//GOTCHA: crashes without
