@@ -20,7 +20,8 @@ namespace IHHook {
 
 		static const int MAX_HAND_TYPE = 8;//
 		static const int MAX_HORN_LEVEL = 3;
-		static const int MAX_SNAKE_FACEID = 6;
+		static const int MAX_SNAKE_FACEID = 3; 
+		static const int MAX_SNAKE_FACES = 2;//NORMAL/BANDANA
 		struct Character {
 			bool useHead = false;
 			bool useBionicHand = false;
@@ -29,7 +30,7 @@ namespace IHHook {
 			const char* skinToneFv2Path = "";
 			const char* playerCamoFpkPath = "";
 			const char* playerCamoFv2Path = "";
-			std::string snakeFaceFpks[MAX_SNAKE_FACEID]{
+			std::string snakeFaceFpks[MAX_SNAKE_FACEID * MAX_SNAKE_FACES]{
 				"",//Horn 0
 				"",//Horn 1
 				"",//Horn 2
@@ -37,7 +38,7 @@ namespace IHHook {
 				"",//Horn 1 Bandana
 				"",//Horn 2 Bandana
 			};
-			std::string snakeFaceFv2s[MAX_SNAKE_FACEID]{
+			std::string snakeFaceFv2s[MAX_SNAKE_FACEID * MAX_SNAKE_FACES]{
 				"",
 				"",
 				"",
@@ -204,6 +205,51 @@ namespace IHHook {
 
 			return 0;
 		}//l_SetBionicHandFv2Path
+
+		//lua SetSnakeFaceFpkPath(uint faceId, string fpkPath)
+		int l_SetSnakeFaceFpkPath(lua_State* L) {
+			uint faceId = (uint)lua_tointeger(L, -2);
+			if (faceId == 0) {
+				spdlog::debug("l_SetSnakeFaceFpkPath cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (faceId > MAX_SNAKE_FACEID * MAX_SNAKE_FACES) {
+				spdlog::debug("l_SetSnakeFaceFpkPath faceId outside valid range: {}, ", faceId);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetSnakeFaceFpkPath faceId:{} = {}, ", faceId, filePath);
+			character.snakeFaceFpks[faceId] = filePath;
+
+			return 0;
+		}//l_SetSnakeFaceFpkPath
+		//lua SetSnakeFaceFv2Path(uint faceId, string fpkPath)
+		int l_SetSnakeFaceFv2Path(lua_State* L) {
+			uint faceId = (uint)lua_tointeger(L, -2);
+			if (faceId == 0) {
+				spdlog::debug("l_SetSnakeFaceFv2Path cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (faceId > MAX_SNAKE_FACEID * MAX_SNAKE_FACES) {
+				spdlog::debug("l_SetSnakeFaceFv2Path faceId outside valid range: {}, ", faceId);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetSnakeFaceFv2Path faceId:{} = {}, ", faceId, filePath);
+			character.snakeFaceFv2s[faceId] = filePath;
+
+			return 0;
+		}//l_SetSnakeFaceFv2Path
 
 		//lua SetAvatarHornFpkPath(uint hornLevel, string fpkPath)
 		int l_SetAvatarHornFpkPath(lua_State* L) {
@@ -1194,6 +1240,8 @@ namespace IHHook {
 				{ "SetPlayerCamoFv2Path", l_SetPlayerCamoFv2Path },
 				{ "SetBionicHandFpkPath", l_SetBionicHandFpkPath },
 				{ "SetBionicHandFv2Path", l_SetBionicHandFv2Path },
+				{ "SetSnakeFaceFpkPath", l_SetSnakeFaceFpkPath },
+				{ "SetSnakeFaceFv2Path", l_SetSnakeFaceFv2Path },
 				{ "SetAvatarHornFpkPath", l_SetAvatarHornFpkPath },
 				{ "SetAvatarHornFv2Path", l_SetAvatarHornFv2Path },
 				

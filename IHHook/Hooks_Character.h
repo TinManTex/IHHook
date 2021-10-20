@@ -17,6 +17,8 @@ namespace IHHook {
 		int l_SetPlayerCamoFv2Path(lua_State* L);
 		int l_SetBionicHandFpkPath(lua_State* L);
 		int l_SetBionicHandFv2Path(lua_State* L);
+		int l_SetSnakeFaceFpkPath(lua_State* L);
+		int l_SetSnakeFaceFv2Path(lua_State* L);
 		int l_SetAvatarHornFpkPath(lua_State* L);
 		int l_SetAvatarHornFv2Path(lua_State* L);
 		
