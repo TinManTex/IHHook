@@ -20,6 +20,7 @@ namespace IHHook {
 
 		static const int MAX_HAND_TYPE = 8;//
 		static const int MAX_HORN_LEVEL = 3;
+		static const int MAX_SNAKE_FACEID = 6;
 		struct Character {
 			bool useHead = false;
 			bool useBionicHand = false;
@@ -28,6 +29,22 @@ namespace IHHook {
 			const char* skinToneFv2Path = "";
 			const char* playerCamoFpkPath = "";
 			const char* playerCamoFv2Path = "";
+			std::string snakeFaceFpks[MAX_SNAKE_FACEID]{
+				"",//Horn 0
+				"",//Horn 1
+				"",//Horn 2
+				"",//Horn 0 Bandana
+				"",//Horn 1 Bandana
+				"",//Horn 2 Bandana
+			};
+			std::string snakeFaceFv2s[MAX_SNAKE_FACEID]{
+				"",
+				"",
+				"",
+				"",
+				"",
+				"",
+			};
 			std::string bionicHandFpks[MAX_HAND_TYPE]{
 				"",//NONE
 				"",//NORMAL
@@ -87,7 +104,7 @@ namespace IHHook {
 			return 0;
 		}//l_SetUseBionicHandForPlayerParts
 
-		
+
 		int l_SetPlayerPartsFpkPath(lua_State* L) {
 			const char* filePath = lua_tostring(L, -1);
 			if (filePath == NULL) {
@@ -639,7 +656,6 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadPlayerFacialMotionMtarHook
 
-		//TODO: allow override
 		//SNAKE/AVATAR only
 		//indexed by playerHandType
 		std::string bionicHandFpkPaths[]{
@@ -982,15 +998,15 @@ namespace IHHook {
 		}//IsHeadNeededForPartsTypeAndAvatarHook
 
 		//TODO: allow override
-		std::string snakeFaceFpkPaths[] {
-			"/Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk",
-			"/Assets/tpp/pack/player/fova/plfova_sna0_face1_v00.fpk",
-			"/Assets/tpp/pack/player/fova/plfova_sna0_face2_v00.fpk",
-			"/Assets/tpp/pack/player/fova/plfova_sna0_face4_v00.fpk",
-			"/Assets/tpp/pack/player/fova/plfova_sna0_face5_v00.fpk",
-			"/Assets/tpp/pack/player/fova/plfova_sna0_face6_v00.fpk",
+		std::string snakeFaceFpksDefault[] {
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk",//Horn 0
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face1_v00.fpk",//Horn 1
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face2_v00.fpk",//Horn 2
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face4_v00.fpk",//Horn 0 Bandana
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face5_v00.fpk",//Horn 1 Bandana
+			"/Assets/tpp/pack/player/fova/plfova_sna0_face6_v00.fpk",//Horn 2 Bandana
 		};
-		std::string snakeFaceFv2Paths[] {
+		std::string snakeFaceFv2sDefault[] {
 			"/Assets/tpp/fova/chara/sna/sna0_face0_v00.fv2",
 			"/Assets/tpp/fova/chara/sna/sna0_face1_v00.fv2",
 			"/Assets/tpp/fova/chara/sna/sna0_face2_v00.fv2",
@@ -998,6 +1014,37 @@ namespace IHHook {
 			"/Assets/tpp/fova/chara/sna/sna0_face5_v00.fv2",
 			"/Assets/tpp/fova/chara/sna/sna0_face6_v00.fv2",
 		};
+
+		//tex broken out from LoadPlayerSnakeFace
+		//essentially IsHeadNeededForPartsTypeAndSnake
+		//REF UNUSED
+		bool UsePlayerSnakeFaceVanilla(uint playerType, uint playerPartsType) {
+			switch (playerPartsType) {
+			case 0://NORMAL
+			case 1://NORMAL_SCARF
+			case 2://SNEAKING_SUIT
+			case 7://NAKED
+			case 8://SNEAKING_SUIT_TPP
+			case 9://BATTLEDRESS
+			case 11://LEATHER
+			case 12://GOLD
+			case 13://SILVER
+			case 14://AVATAR_EDIT_MAN
+			case 15://MGS3
+			case 16://MGS3_NAKED
+			case 17://MGS3_SNEAKING
+			case 18://MGS3_TUXEDO
+			case 19://EVA_CLOSE
+			case 20://EVA_OPEN
+			case 21://BOSS_CLOSE
+			case 22://BOSS_OPEN
+			case 23://SWIMWEAR
+			case 24://SWIMWEAR_G
+			case 25://SWIMWEAR_H
+				return true;
+			}
+			return false;
+		}//UsePlayerSnakeFaceVanilla
 
 		//tex vanilla does not have seperate IsHeadNeededForPartsTypeSnake, is rolled into LoadPlayerSnakeFaceFpk
 		ulonglong* LoadPlayerSnakeFaceFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
@@ -1008,7 +1055,6 @@ namespace IHHook {
 
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
 
-			byte headEquip;
 			ulonglong filePath64 = 0;
 
 			if (playerType != 0) {
@@ -1016,60 +1062,16 @@ namespace IHHook {
 				return fileSlotIndex;
 			}
 
-			//ORIG
-			//switch (playerPartsType) {
-			//case 0:
-			//case 1:
-			//case 2:
-			//case 7:
-			//case 8:
-			//case 9:
-			//case 11:
-			//case 12:
-			//case 13:
-			//case 14:
-			//case 15:
-			//case 16:
-			//case 17:
-			//case 18:
-			//case 19:
-			//case 20:
-			//case 21:
-			//case 22:
-			//case 23:
-			//case 24:
-			//case 25:
-			if (character.useHead) {//tex 
-				headEquip = playerFaceEquipId - 1;
-				if (playerPartsType == 12) {//GOLD
-					if (headEquip < 2) {//BANDANAS
-						filePath64 = 0x522b700cdfa07d64;// "/Assets/tpp/pack/player/fova/plfova_sna9_face2_v00.fpk"
-					}
-					else {
-						filePath64 = 0x522b73a0d18d1507;// "/Assets/tpp/pack/player/fova/plfova_sna9_face0_v00.fpk"
-					}
+			if (character.useHead) { 
+				bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
+				if (isBandana) {
+					playerFaceId = playerFaceId + 3;
 				}
-				else {
-					if (playerPartsType == 13) {//SILVER
-						if (headEquip < 2) {//BANDANAS
-							filePath64 = 0x522a615f9f58fe92; // "/Assets/tpp/pack/player/fova/plfova_sna9_face3_v00.fpk"
-						}
-						else {
-							filePath64 = 0x5229ec23af4d25a9;// "/Assets/tpp/pack/player/fova/plfova_sna9_face1_v00.fpk"
-						}
-					}
-					else {
-						if (headEquip < 2) {//BANDANAS
-							playerFaceId = playerFaceId + 3;
-						}
-						//fpk,fv2 array
-						///Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk - plfova_sna0_face6 
-						//no face3 (which is only used in \Assets\tpp\pack\mission2\story\s10280\s10280_d12.fpk)
-						//ORIG filePath64 = (&SnakeFaceFpkArray_DAT_142a827d0)[(ulonglong)playerFaceId * 2];
-						auto filePath = snakeFaceFpkPaths[playerFaceId];
-						filePath64 = PathCode64(filePath.c_str());
-					}
+				auto filePath = character.snakeFaceFpks[playerFaceId];
+				if (filePath == "") {
+					filePath = snakeFaceFpksDefault[playerFaceId];
 				}
+				filePath64 = PathCode64(filePath.c_str());
 			}//switch playerPartsType
 	
 			LoadFile(fileSlotIndex, filePath64);
@@ -1084,8 +1086,6 @@ namespace IHHook {
 
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
 
-			
-			byte headEquip;
 			ulonglong filePath64 = 0;
 
 			if (playerType != 0) {
@@ -1094,42 +1094,22 @@ namespace IHHook {
 			}
 
 			if (character.useHead) {//tex 
-				headEquip = playerFaceEquipId - 1;
-				if (playerPartsType == 12) {//GOLD
-					if (headEquip < 2) {
-						filePath64 = 0x60885b2578cae87a;// "/Assets/tpp/fova/chara/sna/sna9_face2_v00.fv2"
-					}
-					else {
-						filePath64 = 0x60882fc158a4e01b;// "/Assets/tpp/fova/chara/sna/sna9_face0_v00"
-					}
+				bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
+				if (isBandana) {
+					playerFaceId = playerFaceId + 3;
 				}
-				else {
-					if (playerPartsType == 13) {//SILVER
-						if (headEquip < 2) {
-							filePath64 = 0x608915f6e6d4ce8b;// "/Assets/tpp/fova/chara/sna/sna9_face3_v00.fv2"
-						}
-						else {
-							filePath64 = 0x60891b5295259069;// "/Assets/tpp/fova/chara/sna/sna9_face1_v00.fv2"
-						}
-					}
-					else {
-						if (headEquip < 2) {
-							playerFaceId = playerFaceId + 3;
-						}
-						//fpk,fv2 array
-						///Assets/tpp/fova/chara/sna/sna0_face0_v00.fv2 to sna0_face6
-						//no face3 (which is only used in \Assets\tpp\pack\mission2\story\s10280\s10280_d12.fpk)
-						//ORIG filePath64 = (&SnakeFaceFv2Array_DAT_142a827d8)[(ulonglong)playerFaceId * 2];
-						auto filePath = snakeFaceFv2Paths[playerFaceId];
-						filePath64 = PathCode64(filePath.c_str());
-					}
+				auto filePath = character.snakeFaceFv2s[playerFaceId];
+				if (filePath == "") {
+					filePath = snakeFaceFv2sDefault[playerFaceId];
 				}
+				filePath64 = PathCode64(filePath.c_str());
 			}//switch playerPartsType
 
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerSnakeFaceFv2Hook
 
+		//TODO:
 		ulonglong * LoadAvatarOgreHornFpkHook(ulonglong *fileSlotIndex,uint ogreLevel) {
 			ulonglong filePath64 = 0;
   
