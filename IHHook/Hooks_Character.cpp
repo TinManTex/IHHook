@@ -1,5 +1,11 @@
 //tex WIP exploring
 // Extending vars.player* character change system
+
+//GOTCHA: AVATAR player parts not being identical to SNAKE cause the change to fail to load in ACC
+//something to do with 2nd player instance for the 'reflection' i guess
+//does not seem to cause an issue in-mission where there is only the singular player instance
+
+
 #include "Hooks_Character.h"
 #include "spdlog/spdlog.h"
 #include "MinHook/MinHook.h"
@@ -81,55 +87,7 @@ namespace IHHook {
 			return 0;
 		}//l_SetUseBionicHandForPlayerParts
 
-		//lua SetBionicHandFpkPath(int playerHandType, string fpkPath)
-		int l_SetBionicHandFpkPath(lua_State* L) {
-			uint playerHandType = (uint)lua_tointeger(L, -2);
-			if (playerHandType == 0) {
-				spdlog::debug("l_SetBionicHandFpkPath cannot override playerHandType 0/NONE");
-				return 0;
-			}
-
-			if (playerHandType > 7) {//SILVER
-				spdlog::debug("l_SetBionicHandFpkPath playerHandType outside valid range: {}, ", playerHandType);
-				return 0;
-			}
-
-			const char* filePath = lua_tostring(L, -1);
-			if (filePath == NULL) {
-				filePath = "";
-			}
-			spdlog::debug("l_SetBionicHandFpkPath playerHandType:{} = {}, ", playerHandType, filePath);
-			character.bionicHandFpks[playerHandType] = filePath;
-
-			return 0;
-		}//l_SetBionicHandFpkPath
-		//lua SetBionicHandFv2Path(int playerHandType, string fv2Path)
-		int l_SetBionicHandFv2Path(lua_State* L) {
-			uint playerHandType = (uint)lua_tointeger(L, -2);
-			if (playerHandType == 0) {
-				spdlog::debug("l_SetBionicHandFv2Path cannot override playerHandType 0/NONE");
-				return 0;
-			}
-
-			if (playerHandType > 7) {//SILVER
-				spdlog::debug("l_SetBionicHandFv2Path playerHandType outside valid range: {}, ", playerHandType);
-				return 0;
-			}
-
-			const char* filePath = lua_tostring(L, -1);
-			if (filePath == NULL) {
-				filePath = "";
-			}
-			spdlog::debug("l_SetBionicHandFv2Path playerHandType:{} = {}, ", playerHandType, filePath);
-			character.bionicHandFv2s[playerHandType] = filePath;
-
-			return 0;
-		}//l_SetBionicHandFv2Path
-
-		//GOTCHA: AVATAR player parts not being identical to SNAKE cause the change to fail to load in ACC
-		//something to do with 2nd player instance for the 'reflection' i guess
-		//does not seem to cause an issue in-mission where there is only the singular player instance
-
+		
 		int l_SetPlayerPartsFpkPath(lua_State* L) {
 			const char* filePath = lua_tostring(L, -1);
 			if (filePath == NULL) {
@@ -184,6 +142,96 @@ namespace IHHook {
 
 			return 0;
 		}//l_SetPlayerCamoFv2Path
+
+		//lua SetBionicHandFpkPath(int playerHandType, string fpkPath)
+		int l_SetBionicHandFpkPath(lua_State* L) {
+			uint playerHandType = (uint)lua_tointeger(L, -2);
+			if (playerHandType == 0) {
+				spdlog::debug("l_SetBionicHandFpkPath cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (playerHandType > 7) {//SILVER
+				spdlog::debug("l_SetBionicHandFpkPath playerHandType outside valid range: {}, ", playerHandType);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetBionicHandFpkPath playerHandType:{} = {}, ", playerHandType, filePath);
+			character.bionicHandFpks[playerHandType] = filePath;
+
+			return 0;
+		}//l_SetBionicHandFpkPath
+		//lua SetBionicHandFv2Path(int playerHandType, string fv2Path)
+		int l_SetBionicHandFv2Path(lua_State* L) {
+			uint playerHandType = (uint)lua_tointeger(L, -2);
+			if (playerHandType == 0) {
+				spdlog::debug("l_SetBionicHandFv2Path cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (playerHandType > 7) {//SILVER
+				spdlog::debug("l_SetBionicHandFv2Path playerHandType outside valid range: {}, ", playerHandType);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetBionicHandFv2Path playerHandType:{} = {}, ", playerHandType, filePath);
+			character.bionicHandFv2s[playerHandType] = filePath;
+
+			return 0;
+		}//l_SetBionicHandFv2Path
+
+		//lua SetAvatarHornFpkPath(uint hornLevel, string fpkPath)
+		int l_SetAvatarHornFpkPath(lua_State* L) {
+			uint hornLevel = (uint)lua_tointeger(L, -2);
+			if (hornLevel == 0) {
+				spdlog::debug("l_SetAvatarHornFpkPath cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (hornLevel > MAX_HORN_LEVEL) {//SILVER
+				spdlog::debug("l_SetAvatarHornFpkPath hornLevel outside valid range: {}, ", hornLevel);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetAvatarHornFpkPath hornLevel:{} = {}, ", hornLevel, filePath);
+			character.avatarHornFpks[hornLevel] = filePath;
+
+			return 0;
+		}//l_SetAvatarHornFpkPath
+		//lua SetAvatarHornFv2Path(uint hornLevel, string fpkPath)
+		int l_SetAvatarHornFv2Path(lua_State* L) {
+			uint hornLevel = (uint)lua_tointeger(L, -2);
+			if (hornLevel == 0) {
+				spdlog::debug("l_SetAvatarHornFv2Path cannot override playerHandType 0/NONE");
+				return 0;
+			}
+
+			if (hornLevel > MAX_HORN_LEVEL) {//SILVER
+				spdlog::debug("l_SetAvatarHornFv2Path hornLevel outside valid range: {}, ", hornLevel);
+				return 0;
+			}
+
+			const char* filePath = lua_tostring(L, -1);
+			if (filePath == NULL) {
+				filePath = "";
+			}
+			spdlog::debug("l_SetAvatarHornFv2Path hornLevel:{} = {}, ", hornLevel, filePath);
+			character.avatarHornFv2s[hornLevel] = filePath;
+
+			return 0;
+		}//l_SetAvatarHornFpkPath
 
 		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
@@ -1197,6 +1245,8 @@ namespace IHHook {
 				{ "SetPlayerCamoFv2Path", l_SetPlayerCamoFv2Path },
 				{ "SetBionicHandFpkPath", l_SetBionicHandFpkPath },
 				{ "SetBionicHandFv2Path", l_SetBionicHandFv2Path },
+				{ "SetAvatarHornFpkPath", l_SetAvatarHornFpkPath },
+				{ "SetAvatarHornFv2Path", l_SetAvatarHornFv2Path },
 				
 				//{ "SetPlayerPartsFpk", l_SetPlayerPartsFpk },//UNUSED
 				//{ "SetPlayerPartsPart", l_SetPlayerPartsPart },//UNUSED
