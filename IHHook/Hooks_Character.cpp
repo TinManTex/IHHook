@@ -464,43 +464,43 @@ namespace IHHook {
 		//parts/fpk alternate<
 
 		//OFF REF
-		ulonglong* LoadPlayerCamoFpkORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
-			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
-			uint64_t fpkPath = 0;
+		//ulonglong* LoadPlayerCamoFpkORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
+		//	spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+		//	uint64_t fpkPath = 0;
 
-			if ((playerType == 0) || (playerType == 3)) {//SNAKE, AVATAR
-				//ORIG
-				if ((20 < playerPartsType - 2) && (playerPartsType < 26)) {
-				//playerPartsType - 2 means 0 NORMAL and 1 SCARF will underflow uint playerPartsType to FFFFF/E, 
-				//so 20 < is true
-				//and then on the other end of the range 23 SWIMWEAR (and above) - 2 == 21 which is 20 <
-				//playerPartsType < 26 OCELLOT is current playerPartsType max
-				//but after all that, snake/avat don't have swimsuit and just has default fatigues for those entries
-				//DEBRAINTEASED
-				//if ((playerPartsType < 2) || (playerPartsType > 22 && playerPartsType < 26)) {
-					//DEBUGNOW fpkPath = (&SnakeNormalCamoFpkArray_DAT_142a80a10)[(uint64_t)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
-				}
+		//	if ((playerType == 0) || (playerType == 3)) {//SNAKE, AVATAR
+		//		//ORIG
+		//		if ((20 < playerPartsType - 2) && (playerPartsType < 26)) {
+		//		//playerPartsType - 2 means 0 NORMAL and 1 SCARF will underflow uint playerPartsType to FFFFF/E, 
+		//		//so 20 < is true
+		//		//and then on the other end of the range 23 SWIMWEAR (and above) - 2 == 21 which is 20 <
+		//		//playerPartsType < 26 OCELLOT is current playerPartsType max
+		//		//but after all that, snake/avat don't have swimsuit and just has default fatigues for those entries
+		//		//DEBRAINTEASED
+		//		//if ((playerPartsType < 2) || (playerPartsType > 22 && playerPartsType < 26)) {
+		//			//DEBUGNOW fpkPath = (&SnakeNormalCamoFpkArray_DAT_142a80a10)[(uint64_t)playerCamoType * 2];
+		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+		//		}
 
-				if (playerPartsType == 7) {//NAKED
-					//DEBUGNOW fpkPath = (&SnakeNakedCamoFpkArray_DAT_142a81160)[(uint64_t)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
-				}
-			}
-			else {
-				if (playerType == 1) {//DD_MALE
-					//DEBUGNOW fpkPath = (&DDMaleCamoFpkArray_DAT_142a818b0)[(uint64_t)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
-				}
-				if (playerType == 2) {//DD_FEMALE
-					//DEBUGNOW fpkPath = (&DDFemaleCamoFpkArray_DAT_142a82000)[(uint64_t)playerCamoType * 2];
-					return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
-				}
-			}
+		//		if (playerPartsType == 7) {//NAKED
+		//			//DEBUGNOW fpkPath = (&SnakeNakedCamoFpkArray_DAT_142a81160)[(uint64_t)playerCamoType * 2];
+		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+		//		}
+		//	}
+		//	else {
+		//		if (playerType == 1) {//DD_MALE
+		//			//DEBUGNOW fpkPath = (&DDMaleCamoFpkArray_DAT_142a818b0)[(uint64_t)playerCamoType * 2];
+		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+		//		}
+		//		if (playerType == 2) {//DD_FEMALE
+		//			//DEBUGNOW fpkPath = (&DDFemaleCamoFpkArray_DAT_142a82000)[(uint64_t)playerCamoType * 2];
+		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+		//		}
+		//	}
 
-			LoadFile(fileSlotIndex, fpkPath);
-			return fileSlotIndex;
-		}//LoadPlayerCamoFpkORIG
+		//	LoadFile(fileSlotIndex, fpkPath);
+		//	return fileSlotIndex;
+		//}//LoadPlayerCamoFpkORIG
 
 		ulonglong* LoadPlayerCamoFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
 			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
@@ -555,35 +555,35 @@ namespace IHHook {
 		}//LoadPlayerCamoFv2Hook
 
 		//OFF REF
-		ulonglong* LoadPlayerCamoFv2HookORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
-			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
-			ulonglong fv2Path = 0;
+		//ulonglong* LoadPlayerCamoFv2HookORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
+		//	spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+		//	ulonglong fv2Path = 0;
 
-			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
-				LoadFile(fileSlotIndex, 0);
-				return fileSlotIndex;
-			}
-			if ((playerType == 0) || (playerType == 3)) {//SNAKE,AVATAR
-				//See LoadPlayerCamoFpk
-				if ((playerPartsType < 2) || (playerPartsType > 22 && playerPartsType < 26)) {
-					//DEBUGNOW fv2Path = (&SnakeNormalCamoFv2Array_DAT_142a80a18)[(ulonglong)playerCamoType * 2];
-				}
-				if (playerPartsType == 7) {//NAKED
-					//DEBUGNOW fv2Path = (&SnakeNakedCamoFv2Array_DAT_142a81168)[(ulonglong)playerCamoType * 2];
-				}
-			}
-			else {
-				if (playerType == 1) {//DD_MALE
-					//DEBUGNOW fv2Path = (&DDMaleCamoFv2Array_DAT_142a818b8)[(ulonglong)playerCamoType * 2];
-				}
-				if (playerType == 2) {//DD_FEMALE
-					//DEBUGNOW fv2Path = (&DDFemaleCamoFv2ArrayDAT_142a82008)[(ulonglong)playerCamoType * 2];
-				}
-			}
+		//	if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
+		//		LoadFile(fileSlotIndex, 0);
+		//		return fileSlotIndex;
+		//	}
+		//	if ((playerType == 0) || (playerType == 3)) {//SNAKE,AVATAR
+		//		//See LoadPlayerCamoFpk
+		//		if ((playerPartsType < 2) || (playerPartsType > 22 && playerPartsType < 26)) {
+		//			//DEBUGNOW fv2Path = (&SnakeNormalCamoFv2Array_DAT_142a80a18)[(ulonglong)playerCamoType * 2];
+		//		}
+		//		if (playerPartsType == 7) {//NAKED
+		//			//DEBUGNOW fv2Path = (&SnakeNakedCamoFv2Array_DAT_142a81168)[(ulonglong)playerCamoType * 2];
+		//		}
+		//	}
+		//	else {
+		//		if (playerType == 1) {//DD_MALE
+		//			//DEBUGNOW fv2Path = (&DDMaleCamoFv2Array_DAT_142a818b8)[(ulonglong)playerCamoType * 2];
+		//		}
+		//		if (playerType == 2) {//DD_FEMALE
+		//			//DEBUGNOW fv2Path = (&DDFemaleCamoFv2ArrayDAT_142a82008)[(ulonglong)playerCamoType * 2];
+		//		}
+		//	}
 
-			LoadFile(fileSlotIndex, fv2Path);
-			return fileSlotIndex;
-		}//LoadPlayerCamoFv2ORIG
+		//	LoadFile(fileSlotIndex, fv2Path);
+		//	return fileSlotIndex;
+		//}//LoadPlayerCamoFv2ORIG
 
 		//TODO: there's also facialhelispace to deal with before I'm happy with extending this
 		ulonglong* LoadPlayerFacialMotionFpkHook(ulonglong* fileSlotIndex, uint playerType){
@@ -719,37 +719,6 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFpkHook
 
-		//ORIG
-		//ulonglong* LoadPlayerBionicArmFpkORIG(ulonglong* fileSlotIndex, int playerType, uint playerPartsType, uint playerHandType) {
-		//	spdlog::debug("LoadPlayerBionicArmFpkHook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
-		//	//SNAKE,AVATAR
-		//	if (((playerType == 0) || (playerType == 3)) && (true)) {//tex NMC uhh why && true
-		//		switch (playerPartsType) {
-		//		case 0://NORMAL
-		//		case 1://NORMAL_SCARF
-		//		case 2://SNEAKING_SUIT
-		//		case 7://NAKED
-		//		case 8://SNEAKING_SUIT_TPP
-		//		case 9://BATTLEDRESS
-		//		case 10://PARASITE
-		//		case 11://LEATHER
-		//		case 12://GOLD
-		//		case 13://SILVER
-		//		case 15://MGS3
-		//		case 16://MGS3_NAKED
-		//		case 17://MGS3_SNEAKING
-		//		case 18://MGS3_TUXEDO
-		//		case 23://SWIMWEAR
-		//		case 24://SWIMWEAR_G
-		//		case 25://SWIMWEAR_H
-		//			LoadFile(fileSlotIndex, (&BionicArmFpkArray_DAT_142a82750)[(ulonglong)playerHandType * 2]);
-		//			return fileSlotIndex;
-		//		}
-		//	}
-		//	LoadFile(fileSlotIndex, 0);
-		//	return fileSlotIndex;
-		//}//LoadPlayerBionicArmFpkORIG
-
 		ulonglong* LoadPlayerBionicArmFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType) {
 			spdlog::debug("LoadPlayerBionicArmFv2Hook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
 
@@ -785,47 +754,47 @@ namespace IHHook {
 		//UNUSED REF
 		//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
 		//only called for playerType 1 DD_MALE, 2 DD_FEMALE
-		bool CheckPlayerPartsIfShouldApplySkinToneFv2ORIG(uint playerType, uint playerPartsType) {
-			spdlog::debug("CheckPlayerPartsIfShouldApplySkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
-			if (true) {
-				switch (playerPartsType) {
-				case 0://NORMAL
-				case 1://NORMAL_SCARF
-				case 2://SNEAKING_SUIT
-				case 7://NAKED
-				case 8://SNEAKING_SUIT_TPP
-				case 9://BATTLEDRESS
-				case 11://LEATHER
-				case 12://GOLD
-				case 13://SILVER
-				case 14://AVATAR_EDIT_MAN
-				case 15://MGS3
-				case 16://MGS3_NAKED
-				case 17://MGS3_SNEAKING
-				case 18://MGS3_TUXEDO
-				case 19://EVA_CLOSE
-				case 20://EVA_OPEN
-				case 21://BOSS_CLOSE
-				case 22://BOSS_OPEN
-				case 23://SWIMWEAR
-				case 24://SWIMWEAR_G
-				case 25://SWIMWEAR_H
-					if (playerType == 1) {//DD_MALE
-						if (playerPartsType != 17) {//MGS3_SNEAKING
-							return true;
-						}
-					}
-					else if (playerType == 2) {//DD_FEMALE
-						if (playerPartsType != 21) {//BOSS_CLOSE
-							return true;
-						}
-					} else {//tex not hit in vanilla
-						return true;
-					}
-				}//switch
-			}
-			return false;
-		}//CheckPlayerPartsIfShouldApplySkinToneFv2ORIG
+		//bool CheckPlayerPartsIfShouldApplySkinToneFv2ORIG(uint playerType, uint playerPartsType) {
+		//	spdlog::debug("CheckPlayerPartsIfShouldApplySkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
+		//	if (true) {
+		//		switch (playerPartsType) {
+		//		case 0://NORMAL
+		//		case 1://NORMAL_SCARF
+		//		case 2://SNEAKING_SUIT
+		//		case 7://NAKED
+		//		case 8://SNEAKING_SUIT_TPP
+		//		case 9://BATTLEDRESS
+		//		case 11://LEATHER
+		//		case 12://GOLD
+		//		case 13://SILVER
+		//		case 14://AVATAR_EDIT_MAN
+		//		case 15://MGS3
+		//		case 16://MGS3_NAKED
+		//		case 17://MGS3_SNEAKING
+		//		case 18://MGS3_TUXEDO
+		//		case 19://EVA_CLOSE
+		//		case 20://EVA_OPEN
+		//		case 21://BOSS_CLOSE
+		//		case 22://BOSS_OPEN
+		//		case 23://SWIMWEAR
+		//		case 24://SWIMWEAR_G
+		//		case 25://SWIMWEAR_H
+		//			if (playerType == 1) {//DD_MALE
+		//				if (playerPartsType != 17) {//MGS3_SNEAKING
+		//					return true;
+		//				}
+		//			}
+		//			else if (playerType == 2) {//DD_FEMALE
+		//				if (playerPartsType != 21) {//BOSS_CLOSE
+		//					return true;
+		//				}
+		//			} else {//tex not hit in vanilla
+		//				return true;
+		//			}
+		//		}//switch
+		//	}
+		//	return false;
+		//}//CheckPlayerPartsIfShouldApplySkinToneFv2ORIG
 
 		//DEBUGNOW there's somewhere else filtering whether it's actually applied, ie it still will only apply if correct playerCamoType is set
 		//you can test this by setting up char values to a normal camo that supports skintone fv2, and chaning between playerCamoId that supports it or not
@@ -854,86 +823,86 @@ namespace IHHook {
 		//TODO: expand. fill out all the data taking CheckPlayerPartsIfShouldApplySkinToneFv2 into account 
 		//then assume if value then apply and CheckPlayerPartsIfShouldApplySkinToneFv2 will no longer be nessesary
 		//TODO: figure out how AVATAR is handled, inital look at LoadPlayerFv2s it doesnt seem to use this for AVAT, then what is its skin tone situation?
-		ulonglong* LoadPlayerPartsSkinToneFv2ORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType) {
-			spdlog::debug("LoadPlayerPartsSkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
-			bool shouldApplySkinToneFv2 = false;
-			ulonglong filePath64 = 0;
+		//ulonglong* LoadPlayerPartsSkinToneFv2ORIG(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType) {
+		//	spdlog::debug("LoadPlayerPartsSkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
+		//	bool shouldApplySkinToneFv2 = false;
+		//	ulonglong filePath64 = 0;
 
-			if (playerType == 0) {//SNAKE
-				if (playerPartsType == 18) {//MGS3_TUXEDO
-					filePath64 = 0x608961e868491c54;////"/Assets/tpp/fova/chara/dld/dld0_main0_sna.fv2";
-				}
-			} else if (playerType == 1) {//DD_MALE
-				shouldApplySkinToneFv2 = CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
-				if (shouldApplySkinToneFv2) {
-					switch (playerPartsType) {
-					case 8://SNEAKING_SUIT_TPP
-						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
-						break;
-					case 9://BATTLEDRESS
-						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
-						break;
-					case 15://MGS3
-						filePath64 = 0x608b3a2e8398415b;// "/Assets/tpp/fova/chara/dla/dla0_plym0_v00.fv2";
-						break;
-					case 16://MGS3_NAKED
-						filePath64 = 0x608bed35c90a314d;// "/Assets/tpp/fova/chara/dla/dla1_plym0_v00.fv2";
-						break;
-					case 18://MGS3_TUXEDO
-						filePath64 = 0x608872bab5e53bc8; // "/Assets/tpp/fova/chara/dld/dld0_plym0_v00.fv2";
-						break;
-					case 23://SWIMWEAR
-						filePath64 = 0x608aa0de59bf9572; // "/Assets/tpp/fova/chara/dlf/dlf1_main0_v00.fv2";
-						break;
-					case 24://SWIMWEAR_G
-						filePath64 = 0x6088dd7cacaa3fd6; // "/Assets/tpp/fova/chara/dlg/dlg1_main0_v00.fv2";
-						break;
-					case 25://SWIMWEAR_H
-						filePath64 = 0x60884821796ed8f0;// "/Assets/tpp/fova/chara/dlh/dlh1_main0_v00.fv2";
-						break;
-					default:
-						filePath64 = 0x608882ccbb15c7ab;//"/Assets/tpp/fova/chara/sna/dds5_main0_ply_v00.fv2"
-						break;
-					}//switch(playerPartsType)
-				}//shouldApplySkinToneFv2
-			} else if (playerType == 2) {
-				shouldApplySkinToneFv2 = CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
-				if (shouldApplySkinToneFv2) {
-					switch (playerPartsType) {
-					case 8://SNEAKING_SUIT_TPP
-						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
-						break;
-					case 9://BATTLEDRESS
-						filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
-						break;
-					case 19://EVA_CLOSE
-						filePath64 = 0x608bc54842becde0;// "/Assets/tpp/fova/chara/dle/dle0_plyf0_v00.fv2";
-						break;
-					case 20://EVA_OPEN
-						filePath64 = 0x608a91e3d60c5980;// "/Assets/tpp/fova/chara/dle/dle1_plyf0_v00.fv2";
-						break;
-					case 22://BOSS_OPEN
-						filePath64 = 0x6089e156b2cacad9;// "/Assets/tpp/fova/chara/dlc/dlc1_plyf0_v00.fv2";
-						break;
-					case 23://SWIMWEAR
-						filePath64 = 0x6088fc6455404f89;// "/Assets/tpp/fova/chara/dlf/dlf1_main0_f_v00.fv2";
-						break;
-					case 24://SWIMWEAR_G
-						filePath64 = 0x6089659d7ee7f080;// "/Assets/tpp/fova/chara/dlg/dlg1_main0_f_v00.fv2";
-						break;
-					case 25://SWIMWEAR_H
-						filePath64 = 0x6089e8ede46843e9; // "/Assets/tpp/fova/chara/dlh/dlh1_main0_f_v00.fv2";
-						break;
-					default:
-						filePath64 = 0x608a1c34fefc05c2;// "/Assets/tpp/fova/chara/sna/dds6_main0_ply_v00.fv2";
-						break;
-					}//switch(playerPartsType)
-				}//shouldApplySkinToneFv2
-			}//if playerType
+		//	if (playerType == 0) {//SNAKE
+		//		if (playerPartsType == 18) {//MGS3_TUXEDO
+		//			filePath64 = 0x608961e868491c54;////"/Assets/tpp/fova/chara/dld/dld0_main0_sna.fv2";
+		//		}
+		//	} else if (playerType == 1) {//DD_MALE
+		//		shouldApplySkinToneFv2 = CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
+		//		if (shouldApplySkinToneFv2) {
+		//			switch (playerPartsType) {
+		//			case 8://SNEAKING_SUIT_TPP
+		//				filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+		//				break;
+		//			case 9://BATTLEDRESS
+		//				filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+		//				break;
+		//			case 15://MGS3
+		//				filePath64 = 0x608b3a2e8398415b;// "/Assets/tpp/fova/chara/dla/dla0_plym0_v00.fv2";
+		//				break;
+		//			case 16://MGS3_NAKED
+		//				filePath64 = 0x608bed35c90a314d;// "/Assets/tpp/fova/chara/dla/dla1_plym0_v00.fv2";
+		//				break;
+		//			case 18://MGS3_TUXEDO
+		//				filePath64 = 0x608872bab5e53bc8; // "/Assets/tpp/fova/chara/dld/dld0_plym0_v00.fv2";
+		//				break;
+		//			case 23://SWIMWEAR
+		//				filePath64 = 0x608aa0de59bf9572; // "/Assets/tpp/fova/chara/dlf/dlf1_main0_v00.fv2";
+		//				break;
+		//			case 24://SWIMWEAR_G
+		//				filePath64 = 0x6088dd7cacaa3fd6; // "/Assets/tpp/fova/chara/dlg/dlg1_main0_v00.fv2";
+		//				break;
+		//			case 25://SWIMWEAR_H
+		//				filePath64 = 0x60884821796ed8f0;// "/Assets/tpp/fova/chara/dlh/dlh1_main0_v00.fv2";
+		//				break;
+		//			default:
+		//				filePath64 = 0x608882ccbb15c7ab;//"/Assets/tpp/fova/chara/sna/dds5_main0_ply_v00.fv2"
+		//				break;
+		//			}//switch(playerPartsType)
+		//		}//shouldApplySkinToneFv2
+		//	} else if (playerType == 2) {
+		//		shouldApplySkinToneFv2 = CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
+		//		if (shouldApplySkinToneFv2) {
+		//			switch (playerPartsType) {
+		//			case 8://SNEAKING_SUIT_TPP
+		//				filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+		//				break;
+		//			case 9://BATTLEDRESS
+		//				filePath64 = 0x608b9ec8eac8437b;// "/Assets/tpp/fova/chara/sna/sna4_plym0_def_v00.fv2";
+		//				break;
+		//			case 19://EVA_CLOSE
+		//				filePath64 = 0x608bc54842becde0;// "/Assets/tpp/fova/chara/dle/dle0_plyf0_v00.fv2";
+		//				break;
+		//			case 20://EVA_OPEN
+		//				filePath64 = 0x608a91e3d60c5980;// "/Assets/tpp/fova/chara/dle/dle1_plyf0_v00.fv2";
+		//				break;
+		//			case 22://BOSS_OPEN
+		//				filePath64 = 0x6089e156b2cacad9;// "/Assets/tpp/fova/chara/dlc/dlc1_plyf0_v00.fv2";
+		//				break;
+		//			case 23://SWIMWEAR
+		//				filePath64 = 0x6088fc6455404f89;// "/Assets/tpp/fova/chara/dlf/dlf1_main0_f_v00.fv2";
+		//				break;
+		//			case 24://SWIMWEAR_G
+		//				filePath64 = 0x6089659d7ee7f080;// "/Assets/tpp/fova/chara/dlg/dlg1_main0_f_v00.fv2";
+		//				break;
+		//			case 25://SWIMWEAR_H
+		//				filePath64 = 0x6089e8ede46843e9; // "/Assets/tpp/fova/chara/dlh/dlh1_main0_f_v00.fv2";
+		//				break;
+		//			default:
+		//				filePath64 = 0x608a1c34fefc05c2;// "/Assets/tpp/fova/chara/sna/dds6_main0_ply_v00.fv2";
+		//				break;
+		//			}//switch(playerPartsType)
+		//		}//shouldApplySkinToneFv2
+		//	}//if playerType
 
-			LoadFile(fileSlotIndex, filePath64);
-			return fileSlotIndex;
-		}//LoadPlayerPartsSkinToneFv2Hook
+		//	LoadFile(fileSlotIndex, filePath64);
+		//	return fileSlotIndex;
+		//}//LoadPlayerPartsSkinToneFv2Hook
 
 		//DD_MALE/FEMALE only? VERIFY
 		//tex ghidra doesn't like to decompile this, but except for ppt 3 / HOSPITAL it seems the same as IsHeadNeededForPartsTypeAndAvatarHook 
