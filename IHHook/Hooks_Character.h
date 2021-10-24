@@ -7,6 +7,7 @@ namespace IHHook {
 		int CreateLibs(lua_State* L);
 		
 		int l_SetOverrideCharacterSystem(lua_State* L);
+		int l_SetPlayerTypeForPartsType(lua_State* L);
 		int l_SetUseHeadForPlayerParts(lua_State* L);
 		int l_SetUseBionicHandForPlayerParts(lua_State* L);
 	

@@ -23,6 +23,7 @@ namespace IHHook {
 		static const int MAX_SNAKE_FACEID = 3; 
 		static const int MAX_SNAKE_FACES = 2;//NORMAL/BANDANA
 		struct Character {
+			uint playerType = 255;
 			bool useHead = false;
 			bool useBionicHand = false;
 			const char* playerPartsFpkPath = "";
@@ -80,11 +81,19 @@ namespace IHHook {
 
 		Character character;
 
-		//lua SetOverrideCharacterSystem(bool override)
 		int l_SetOverrideCharacterSystem(lua_State* L) {
 			overrideCharacterSystem = lua_toboolean(L, -1);
-			
+
 			spdlog::debug("l_SetOverrideCharacterSystem override:{}, ", overrideCharacterSystem);
+
+			return 0;
+		}//l_SetOverrideCharacterSystem
+		//playerType 255 = none
+		//lua l_SetPlayerTypeForPartsType(uint playerType)
+		int l_SetPlayerTypeForPartsType(lua_State* L) {
+			character.playerType = (uint)lua_tointeger(L, -1);
+
+			spdlog::debug("l_SetPlayerTypeForPartsType playerType:{}, ", character.playerType);
 
 			return 0;
 		}//l_SetOverrideCharacterSystem
@@ -299,16 +308,21 @@ namespace IHHook {
 		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 
+			if (character.playerType != 255 && character.playerType != playerType) {
+				//DEBUGNOW ASSUMPTION: this being the first extended function were hooking
+				//tex turn it off entirely if it doesnt match
+				//DEBUGNOW the funcs not gated by overrideCharacterSystem
+				overrideCharacterSystem = false;
+			}
+
 			//tex fall back to original function
 			if (!overrideCharacterSystem) {
-				LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
-				return fileSlotIndex;
+				return LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 			}
 
 			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
 			if (playerPartsType == 3 || playerPartsType == 14) {
-				LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
-				return fileSlotIndex;
+				return LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 			}
 
 			uint64_t filePath64 = 0;
@@ -326,14 +340,17 @@ namespace IHHook {
 			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			//tex fall back to original function
 			if (!overrideCharacterSystem) {
-				LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
-				return fileSlotIndex;				
+				return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);			
 			}
 
 			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
 			if (playerPartsType == 3 || playerPartsType == 14) {
-				LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
-				return fileSlotIndex;
+				return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
+			}
+
+			if (character.playerType != 255 && character.playerType != playerType) {
+				//DEBUGNOW this isn't the right approach, need to hook when playerpartstype is being changed and turn off overrideCharacterSystem before any of the overridden functions are called.
+				//return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
 			}
 
 			uint64_t filePath64 = 0;
@@ -396,134 +413,134 @@ namespace IHHook {
 
 		//input: uint playerType, uint playerPartsType, string fpkPath
 		//REF IH InfMission.UpdateChangeLocationMenu //DEBUGNOW
-		int l_SetPlayerPartsFpk(lua_State* L) {
-			spdlog::trace(__func__);
+		//int l_SetPlayerPartsFpk(lua_State* L) {
+		//	spdlog::trace(__func__);
 
-			//TODO: validate param types
+		//	//TODO: validate param types
 
-			uint playerType = (uint)lua_tointeger(L, -3);
-			uint playerPartsType = (uint)lua_tointeger(L, -2);
-			const char* filePath = lua_tostring(L, -1);
+		//	uint playerType = (uint)lua_tointeger(L, -3);
+		//	uint playerPartsType = (uint)lua_tointeger(L, -2);
+		//	const char* filePath = lua_tostring(L, -1);
 
-			if (playerType > 255) {
-				spdlog::error("l_SetPlayerPartsFpk set playerType > max value of 255");
-				return 0;
-			}
-			if (playerPartsType > 255) {
-				spdlog::error("l_SetPlayerPartsFpk set playerPartsType > max value of 255");
-				return 0;
-			}
+		//	if (playerType > 255) {
+		//		spdlog::error("l_SetPlayerPartsFpk set playerType > max value of 255");
+		//		return 0;
+		//	}
+		//	if (playerPartsType > 255) {
+		//		spdlog::error("l_SetPlayerPartsFpk set playerPartsType > max value of 255");
+		//		return 0;
+		//	}
 
-			try {
-				auto pathsForPlayerType = playerPartsFpk.at(playerType);
-				//TODO: log existing path if its being overwritten
-				//pathsForPlayerType[playerPartsType] = fpkPath;//tex i guess at is returning a new sub map or something because setting it like this doesnt actually change playerPartsFpk
-				playerPartsFpk[playerType][playerPartsType] = std::string(filePath);
-				
-				spdlog::debug("l_SetPlayerPartsFpk set playerType: {} playerPartsType: {} to {}", playerType, playerPartsType, filePath);
-			}
-			catch (const std::out_of_range&) {
-				spdlog::debug("l_SetPlayerPartsFpk playerPartsFpk could not find for playerType: {}", playerType);
-			}
+		//	try {
+		//		auto pathsForPlayerType = playerPartsFpk.at(playerType);
+		//		//TODO: log existing path if its being overwritten
+		//		//pathsForPlayerType[playerPartsType] = fpkPath;//tex i guess at is returning a new sub map or something because setting it like this doesnt actually change playerPartsFpk
+		//		playerPartsFpk[playerType][playerPartsType] = std::string(filePath);
+		//		
+		//		spdlog::debug("l_SetPlayerPartsFpk set playerType: {} playerPartsType: {} to {}", playerType, playerPartsType, filePath);
+		//	}
+		//	catch (const std::out_of_range&) {
+		//		spdlog::debug("l_SetPlayerPartsFpk playerPartsFpk could not find for playerType: {}", playerType);
+		//	}
 
-			return 0;
-		}//l_SetPlayerPartsFpk
+		//	return 0;
+		//}//l_SetPlayerPartsFpk
 		//REF IH InfMission.UpdateChangeLocationMenu //DEBUGNOW
-		int l_SetPlayerPartsPart(lua_State* L) {
-			spdlog::trace(__func__);
+		//int l_SetPlayerPartsPart(lua_State* L) {
+		//	spdlog::trace(__func__);
 
-			//TODO: validate param types
+		//	//TODO: validate param types
 
-			uint playerType = (uint)lua_tointeger(L, -3);
-			uint playerPartsType = (uint)lua_tointeger(L, -2);
-			const char* filePath = lua_tostring(L, -1);
+		//	uint playerType = (uint)lua_tointeger(L, -3);
+		//	uint playerPartsType = (uint)lua_tointeger(L, -2);
+		//	const char* filePath = lua_tostring(L, -1);
 
-			if (playerType > 255) {
-				spdlog::error("l_SetPlayerPartsPart set playerType > max value of 255");
-				return 0;
-			}
-			if (playerPartsType > 255) {
-				spdlog::error("l_SetPlayerPartsPart set playerPartsType > max value of 255");
-				return 0;
-			}
+		//	if (playerType > 255) {
+		//		spdlog::error("l_SetPlayerPartsPart set playerType > max value of 255");
+		//		return 0;
+		//	}
+		//	if (playerPartsType > 255) {
+		//		spdlog::error("l_SetPlayerPartsPart set playerPartsType > max value of 255");
+		//		return 0;
+		//	}
 
-			try {
-				auto pathsForPlayerType = playerPartsParts.at(playerType);
-				//TODO: log existing path if its being overwritten
-				playerPartsParts[playerType][playerPartsType] = std::string(filePath);
-				spdlog::debug("l_SetPlayerPartsPart set playerType: {} playerPartsType: {} to {}", playerType, playerPartsType, filePath);
-			}
-			catch (const std::out_of_range&) {
-				spdlog::debug("l_SetPlayerPartsPart playerPartsParts could not find for playerType: {}", playerType);
-			}
+		//	try {
+		//		auto pathsForPlayerType = playerPartsParts.at(playerType);
+		//		//TODO: log existing path if its being overwritten
+		//		playerPartsParts[playerType][playerPartsType] = std::string(filePath);
+		//		spdlog::debug("l_SetPlayerPartsPart set playerType: {} playerPartsType: {} to {}", playerType, playerPartsType, filePath);
+		//	}
+		//	catch (const std::out_of_range&) {
+		//		spdlog::debug("l_SetPlayerPartsPart playerPartsParts could not find for playerType: {}", playerType);
+		//	}
 
-			return 0;
-		}//l_SetPlayerPartsPart
+		//	return 0;
+		//}//l_SetPlayerPartsPart
 
 		//tex OFF a better way to allow swapping and extending to other playerPartsType values
 		//but because of that will hit the saved at no longer valid value if user uninstalls mod problem.
-		uint64_t* LoadPlayerPartsFpkAlt(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
-			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
-			uint64_t filePath64 = 0;
+		//uint64_t* LoadPlayerPartsFpkAlt(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+		//	spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+		//	uint64_t filePath64 = 0;
 
-			//tex see GOTCHA: above
-			if (playerType == 3) {
-				playerType = 0;
-			}
+		//	//tex see GOTCHA: above
+		//	if (playerType == 3) {
+		//		playerType = 0;
+		//	}
 
-			try {
-				auto pathsForPlayerType = playerPartsFpk.at(playerType);
-				try {
-					auto filePath = pathsForPlayerType.at(playerPartsType);
-					filePath64 = PathCode64(filePath.c_str());
-					//filePath64 = 0x522a5fbda65be993;
-					LoadFile(fileSlotIndex, filePath64);
+		//	try {
+		//		auto pathsForPlayerType = playerPartsFpk.at(playerType);
+		//		try {
+		//			auto filePath = pathsForPlayerType.at(playerPartsType);
+		//			filePath64 = PathCode64(filePath.c_str());
+		//			//filePath64 = 0x522a5fbda65be993;
+		//			LoadFile(fileSlotIndex, filePath64);
 
-					return fileSlotIndex;
-				}
-				catch (const std::out_of_range&) {
-					spdlog::debug("LoadPlayerPartsFpkHook pathsForPlayerType could not find for playerPartsType: {}", playerPartsType);
-					filePath64 = 0;
-				}		
-			}
-			catch (const std::out_of_range&) {
-				spdlog::debug("LoadPlayerPartsFpkHook playerPartsFpk could not find for playerType: {}", playerType);
-			}
-			//tex fall back to original function
-			LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
-			return fileSlotIndex;
-		}//LoadPlayerPartsFpkAlt
+		//			return fileSlotIndex;
+		//		}
+		//		catch (const std::out_of_range&) {
+		//			spdlog::debug("LoadPlayerPartsFpkHook pathsForPlayerType could not find for playerPartsType: {}", playerPartsType);
+		//			filePath64 = 0;
+		//		}		
+		//	}
+		//	catch (const std::out_of_range&) {
+		//		spdlog::debug("LoadPlayerPartsFpkHook playerPartsFpk could not find for playerType: {}", playerType);
+		//	}
+		//	//tex fall back to original function
+		//	LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
+		//	return fileSlotIndex;
+		//}//LoadPlayerPartsFpkAlt
 
-		uint64_t* LoadPlayerPartsPartsAlt(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
-			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
-			uint64_t filePath64 = 0;
+		//uint64_t* LoadPlayerPartsPartsAlt(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+		//	spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+		//	uint64_t filePath64 = 0;
 
-			//tex see GOTCHA: above
-			if (playerType == 3) {
-				playerType = 0;
-			}
+		//	//tex see GOTCHA: above
+		//	if (playerType == 3) {
+		//		playerType = 0;
+		//	}
 
-			try {
-				auto pathsForPlayerType = playerPartsParts.at(playerType);
-				try {
-					auto filePath = pathsForPlayerType.at(playerPartsType);
-					filePath64 = PathCode64(filePath.c_str());
-					LoadFile(fileSlotIndex, filePath64);
+		//	try {
+		//		auto pathsForPlayerType = playerPartsParts.at(playerType);
+		//		try {
+		//			auto filePath = pathsForPlayerType.at(playerPartsType);
+		//			filePath64 = PathCode64(filePath.c_str());
+		//			LoadFile(fileSlotIndex, filePath64);
 
-					return fileSlotIndex;
-				}
-				catch (const std::out_of_range&) {
-					spdlog::debug("LoadPlayerPartsPartsHook pathsForPlayerType could not find for playerPartsType: {}", playerPartsType);
-					filePath64 = 0;
-				}
-			}
-			catch (const std::out_of_range&) {
-				spdlog::debug("LoadPlayerPartsPartsHook playerPartsParts could not find for playerType: {}", playerType);
-			}
-			//tex fall back to original function
-			LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
-			return fileSlotIndex;
-		}//LoadPlayerPartsPartsAlt
+		//			return fileSlotIndex;
+		//		}
+		//		catch (const std::out_of_range&) {
+		//			spdlog::debug("LoadPlayerPartsPartsHook pathsForPlayerType could not find for playerPartsType: {}", playerPartsType);
+		//			filePath64 = 0;
+		//		}
+		//	}
+		//	catch (const std::out_of_range&) {
+		//		spdlog::debug("LoadPlayerPartsPartsHook playerPartsParts could not find for playerType: {}", playerType);
+		//	}
+		//	//tex fall back to original function
+		//	LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
+		//	return fileSlotIndex;
+		//}//LoadPlayerPartsPartsAlt
 		//parts/fpk alternate<
 
 		//OFF REF
@@ -541,22 +558,22 @@ namespace IHHook {
 		//		//but after all that, snake/avat don't have swimsuit and just has default fatigues for those entries
 		//		//DEBRAINTEASED
 		//		//if ((playerPartsType < 2) || (playerPartsType > 22 && playerPartsType < 26)) {
-		//			//DEBUGNOW fpkPath = (&SnakeNormalCamoFpkArray_DAT_142a80a10)[(uint64_t)playerCamoType * 2];
+		//			fpkPath = (&SnakeNormalCamoFpkArray_DAT_142a80a10)[(uint64_t)playerCamoType * 2];
 		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 		//		}
 
 		//		if (playerPartsType == 7) {//NAKED
-		//			//DEBUGNOW fpkPath = (&SnakeNakedCamoFpkArray_DAT_142a81160)[(uint64_t)playerCamoType * 2];
+		//			fpkPath = (&SnakeNakedCamoFpkArray_DAT_142a81160)[(uint64_t)playerCamoType * 2];
 		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 		//		}
 		//	}
 		//	else {
 		//		if (playerType == 1) {//DD_MALE
-		//			//DEBUGNOW fpkPath = (&DDMaleCamoFpkArray_DAT_142a818b0)[(uint64_t)playerCamoType * 2];
+		//			fpkPath = (&DDMaleCamoFpkArray_DAT_142a818b0)[(uint64_t)playerCamoType * 2];
 		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 		//		}
 		//		if (playerType == 2) {//DD_FEMALE
-		//			//DEBUGNOW fpkPath = (&DDFemaleCamoFpkArray_DAT_142a82000)[(uint64_t)playerCamoType * 2];
+		//			fpkPath = (&DDFemaleCamoFpkArray_DAT_142a82000)[(uint64_t)playerCamoType * 2];
 		//			return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 		//		}
 		//	}
@@ -575,6 +592,11 @@ namespace IHHook {
 			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
 			if (playerPartsType == 3 || playerPartsType == 14) {
 				return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+			}
+
+			if (character.playerType != 255 && character.playerType != playerType) {
+				//DEBUGNOW this isn't the right approach, need to hook when playerpartstype is being changed and turn off overrideCharacterSystem before any of the overridden functions are called.
+				//return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 			}
 
 			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
@@ -601,6 +623,11 @@ namespace IHHook {
 			//tex HOSPITAL, AVATAR_EDIT_MAN too much going on with this to be safe
 			if (playerPartsType == 3 || playerPartsType == 14) {
 				return LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+			}
+
+			if (character.playerType != 255 && character.playerType != playerType) {
+				//DEBUGNOW this isn't the right approach, need to hook when playerpartstype is being changed and turn off overrideCharacterSystem before any of the overridden functions are called.
+				//return LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 			}
 
 			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
@@ -1043,7 +1070,6 @@ namespace IHHook {
 			//return false;
 		}//IsHeadNeededForPartsTypeAndAvatarHook
 
-		//TODO: allow override
 		std::string snakeFaceFpksDefault[] {
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk",//Horn 0
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face1_v00.fpk",//Horn 1
@@ -1155,35 +1181,38 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadPlayerSnakeFaceFv2Hook
 
-		//TODO:
+
+		std::string avatarHornFpksDefault[]{
+			"/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v00.fpk",//Horn 0
+			"/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v01.fpk",//Horn 1
+			"/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v02.fpk",//Horn 2
+		};
+		std::string avatarHornFv2sDefault[]{
+			"/Assets/tpp/fova/chara/avm/avm_hone_v00.fv2",
+			"/Assets/tpp/fova/chara/avm/avm_hone_v01.fv2",
+			"/Assets/tpp/fova/chara/avm/avm_hone_v02.fv2",
+		};
 		ulonglong * LoadAvatarOgreHornFpkHook(ulonglong *fileSlotIndex,uint ogreLevel) {
 			ulonglong filePath64 = 0;
   
-			if (ogreLevel == 1) {
-				filePath64 = 0x5229537fba305008;// "/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v01.fpk"
+			auto filePath = character.avatarHornFpks[ogreLevel];
+			if (filePath == "") {
+				filePath = avatarHornFpksDefault[ogreLevel];
 			}
-			else {
-				if (ogreLevel == 2) {
-					filePath64 = 0x522a9243036e7e3c;// "/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v02.fpk"
-				}
-				//0, anything else
-				filePath64 = 0x5228af6c4c61a4af;// "/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v00.fpk"
-			}
+			filePath64 = PathCode64(filePath.c_str());
+
 			LoadFile(fileSlotIndex,filePath64);
 			return fileSlotIndex;
 		}//LoadAvatarOgreHornFpkHook
 		ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong *fileSlotIndex,int ogreLevel) {
 			ulonglong filePath64;
   
-			if (ogreLevel == 1) {
-				filePath64 = 0x608a0037af8bb475;// "/Assets/tpp/fova/chara/avm/avm_hone_v01.fv2"
+			auto filePath = character.avatarHornFv2s[ogreLevel];
+			if (filePath == "") {
+				filePath = avatarHornFv2sDefault[ogreLevel];
 			}
-			else {
-				if (ogreLevel == 2) {
-					filePath64 = 0x608a73699dd3707e;// "/Assets/tpp/fova/chara/avm/avm_hone_v02.fv2"
-				}
-				filePath64 = 0x608bbecb37e840e9;// "/Assets/tpp/fova/chara/avm/avm_hone_v00.fv2"
-			}
+			filePath64 = PathCode64(filePath.c_str());
+
 			LoadFile(fileSlotIndex,filePath64);
 			return fileSlotIndex;
 		}//LoadAvatarOgreHornFv2Hook
@@ -1228,9 +1257,10 @@ namespace IHHook {
 
 		int CreateLibs(lua_State* L) {
 			spdlog::debug(__func__);
-
+			
 			luaL_Reg libFuncs[] = {
 				{ "SetOverrideCharacterSystem", l_SetOverrideCharacterSystem },
+				{ "SetPlayerTypeForPartsType", l_SetPlayerTypeForPartsType },
 				{ "SetUseHeadForPlayerParts", l_SetUseHeadForPlayerParts },
 				{ "SetUseBionicHandForPlayerParts", l_SetUseBionicHandForPlayerParts },
 				{ "SetPlayerPartsFpkPath", l_SetPlayerPartsFpkPath },
