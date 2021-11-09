@@ -305,9 +305,9 @@ namespace IHHook {
 		}//IsPlayerTypeValid
 
 		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
-			spdlog::debug("LoadPlayerPartsFpk playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			spdlog::debug("LoadPlayerPartsFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 
-			if (!IsPlayerTypeValid(playerType)) {
+			if (!IsPlayerTypeValid(playerType) || character.playerPartsFpkPath == "") {
 				//DEBUGNOW ASSUMPTION: this being the first extended function were hooking
 				//tex turn it off entirely if it doesnt match
 				//DEBUGNOW the funcs not gated by overrideCharacterSystem
@@ -324,19 +324,29 @@ namespace IHHook {
 				return LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 			}
 
-			uint64_t filePath64 = 0;
-			if (character.playerPartsFpkPath != "") {
-				//TODO: if I ever get a 'does file exist' check
-				spdlog::debug("character.playerPartsFpkPath: {}", character.playerPartsFpkPath);
-				filePath64 = PathCode64(character.playerPartsFpkPath.c_str());
+			//DEBUGNOW (WORKAROUND breaks valid use of AVATAR plParts 0) trying to figure out crash problem https://github.com/TinManTex/InfiniteHeaven/issues/32
+			//logging exec flow noticed that loading in to ACC there's an extra call to loadplayer for AVATAR only (before the expected calls to both player instance 0, and 1/AVATAR)
+			//which is neither here not there, but for !needHead (talking about underlying property rather than IHH implementation) playerParts it always calls with playerPartsType 0 reguardless of actual playerPartsType. 
+			//the calls following that have the correct playerPartsType, and playerParts with needHead have the correct playerPartsType
+			if (playerType == 3 && playerPartsType == 0) {
+				return LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 			}
-			//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsFpkPath to "")
+
+			//TODO: if I ever get a 'does file exist' check
+			spdlog::debug("character.playerPartsFpkPath: {}", character.playerPartsFpkPath);
+			uint64_t filePath64 = PathCode64(character.playerPartsFpkPath.c_str());
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerPartsFpkHook
 
 		uint64_t* LoadPlayerPartsPartsHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			
+			if (!IsPlayerTypeValid(playerType) || character.playerPartsPartsPath == "") {
+				//tex as above, but to catch odd cases (LoadPlayerPartsParts is called on mission load without LoadPlayerPartsFpk)
+				overrideCharacterSystem = false;
+			}
+
 			//tex fall back to original function
 			if (!overrideCharacterSystem) {
 				return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);			
@@ -347,15 +357,15 @@ namespace IHHook {
 				return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
 			}
 
-			uint64_t filePath64 = 0;
-			if (character.playerPartsPartsPath != "") {
-				//TODO: if I ever get a 'does file exist' check
-				spdlog::debug("character.playerPartsPartsPath: {}", character.playerPartsPartsPath);
-				filePath64 = PathCode64(character.playerPartsPartsPath.c_str());
+			//DEBUGNOW			
+			if (playerType == 3 && playerPartsType == 0) {
+				return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
 			}
-			//tex TEST what happens if we LoadFile 0 (set overrideCharacterSystem and playerPartsPartsPath to "")
-			LoadFile(fileSlotIndex, filePath64);
 
+			//TODO: if I ever get a 'does file exist' check
+			spdlog::debug("character.playerPartsPartsPath: {}", character.playerPartsPartsPath);
+			uint64_t filePath64 = PathCode64(character.playerPartsPartsPath.c_str());
+			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerPartsPartsHook
 
@@ -773,24 +783,22 @@ namespace IHHook {
 			spdlog::debug("LoadPlayerBionicArmFpkHook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
 			
 			bool useBionicHand = UseBionicArmVanilla(playerType, playerPartsType, playerHandType);
+			//tex useBionicHand is defined by the playerParts ..
 			if (overrideCharacterSystem) {
 				useBionicHand = character.useBionicHand;
 			}
 
-			ulonglong filePath64 = 0;
+			ulonglong filePath64 = 0;//tex 0 acts as unload/no hand, vanilla has this for 0/NONE index in it's fpk/fv2 path64 array
 			if (useBionicHand) {
-				//CULL
-				/*if (character.bionicHandFpks[playerHandType] != "") {
-					filePath64 = PathCode64(character.bionicHandFpks[playerHandType].c_str());
-				}*/
+				//tex .. but the actual hand type is independant of overrideCharacterSystem 
 				if (character.bionicHandFpkPath != "") {
 					filePath64 = PathCode64(character.bionicHandFpkPath.c_str());
 				}
 				else {
 					//tex vanilla paths
+					if (playerHandType != 0) {//tex bionicHandFpkPaths has "" as place holder, dont want to hash that, see comment on filePath64 above as to why
 					auto filePath = bionicHandFpkPaths[playerHandType];
 					spdlog::debug("bionicHandFpkPath: {}", filePath);
-					if (filePath[0] != '\0') {
 						filePath64 = PathCode64(filePath.c_str());
 					}
 				}
@@ -804,8 +812,6 @@ namespace IHHook {
 			spdlog::debug("LoadPlayerBionicArmFv2Hook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
 
 			bool useBionicHand = UseBionicArmVanilla(playerType, playerPartsType, playerHandType);
-			bool vanillaUseHand = useBionicHand;
-
 			if (overrideCharacterSystem) {
 				useBionicHand = character.useBionicHand;
 			}
@@ -816,10 +822,9 @@ namespace IHHook {
 					filePath64 = PathCode64(character.bionicHandFv2Path.c_str());
 				}
 				else {
-					//tex vanilla paths
+					if (playerHandType != 0) {
 					auto filePath = bionicHandFv2Paths[playerHandType];
 					spdlog::debug("bionicHandFv2Path: {}", filePath);
-					if (filePath[0] != '\0') {
 						filePath64 = PathCode64(filePath.c_str());
 					}
 				}
@@ -1126,20 +1131,26 @@ namespace IHHook {
 			}
 
 			ulonglong filePath64 = 0;
-			if (character.useHead) { 
-				/*bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
-				if (isBandana) {
-					playerFaceId = playerFaceId + MAX_SNAKE_FACEID;
-				}*/
+			bool useHead = UsePlayerSnakeFaceVanilla(playerType, playerPartsType);
+			//tex playerParts defines useHead ..
+			if (overrideCharacterSystem) {
+				useHead = character.useHead;
+			}
+			if (useHead) {
+				//tex .. but what face is used is independant from overrideCharacterSystem
 				auto filePath = character.snakeFaceFpkPath;
-				/*if (filePath == "") {
-					filePath = snakeFaceFpksDefault[playerFaceId];
-				}*/
 				filePath64 = PathCode64(filePath.c_str());
 			}
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerSnakeFaceFpkHook
+
+		//CULL playerFaceId,playerFaceEquipId logic
+		//		bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
+		//		if (isBandana) {
+		//			playerFaceId = playerFaceId + MAX_SNAKE_FACEID;
+		//		}
+		//		auto filePath  = snakeFaceFpksDefault[playerFaceId];
 
 		ulonglong* LoadPlayerSnakeFaceFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
@@ -1154,15 +1165,12 @@ namespace IHHook {
 			}
 
 			ulonglong filePath64 = 0;
-			if (character.useHead) {//tex 
-				/*bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
-				if (isBandana) {
-					playerFaceId = playerFaceId + 3;
-				}*/
+			bool useHead = UsePlayerSnakeFaceVanilla(playerType, playerPartsType);
+			if (overrideCharacterSystem) {
+				useHead = character.useHead;
+			}
+			if (useHead) {
 				auto filePath = character.snakeFaceFv2Path;
-				/*if (filePath == "") {
-					filePath = snakeFaceFv2sDefault[playerFaceId];
-				}*/
 				filePath64 = PathCode64(filePath.c_str());
 			}
 			LoadFile(fileSlotIndex, filePath64);
@@ -1192,8 +1200,8 @@ namespace IHHook {
 			LoadFile(fileSlotIndex,filePath64);
 			return fileSlotIndex;
 		}//LoadAvatarOgreHornFpkHook
-		ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong *fileSlotIndex, int ogreLevel) {//TODO: update ghidra param to uint
-			ulonglong filePath64;
+		ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong *fileSlotIndex, uint ogreLevel) {
+			ulonglong filePath64 = 0;
   
 			auto filePath = character.avatarHornFv2Path;
 			if (filePath == "") {
