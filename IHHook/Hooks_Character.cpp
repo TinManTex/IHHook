@@ -725,6 +725,7 @@ namespace IHHook {
 
 		//SNAKE/AVATAR only
 		//indexed by playerHandType
+		//SYNC exe
 		std::string bionicHandFpkPaths[]{
 			"",//NONE, 0 in exe
 			"/Assets/tpp/pack/player/fova/plfova_sna0_arm0_v00.fpk",//NORMAL
@@ -774,11 +775,7 @@ namespace IHHook {
 			}
 			return false;
 		}//UseBionicArmVanilla
-	
-		//tex GOTCHA: while turning hand off for partstypes that usually have them works, (ex playerPartsType NORMAL > playerPartsInfo MGS1)
-		//setting a partsType to one that has no hand also sets playerHandType to 0 (ex playerPartsType MGS1 > playerPartsInfo NORMAL)
-		//so there must be some other player it defines hand/not hand per playerType , if not right where the change to playerHandType then likely called there
-		//WORKAROUND is just to set playerHandType[0] path to something, currently handled by IH ivar hand_fovaNONE
+
 		ulonglong* LoadPlayerBionicArmFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType){
 			spdlog::debug("LoadPlayerBionicArmFpkHook playerPartsType:{} playerHandType:{}", playerPartsType, playerHandType);
 			
@@ -788,22 +785,26 @@ namespace IHHook {
 				useBionicHand = character.useBionicHand;
 			}
 
-			ulonglong filePath64 = 0;//tex 0 acts as unload/no hand, vanilla has this for 0/NONE index in it's fpk/fv2 path64 array
+			ulonglong filePath64 = 0;//tex 0 acts as unload/no hand, vanilla has this for 0/NONE index in its fpk/fv2 path64 array
 			if (useBionicHand) {
 				//tex .. but the actual hand type is independant of overrideCharacterSystem 
-				if (character.bionicHandFpkPath != "") {
-					filePath64 = PathCode64(character.bionicHandFpkPath.c_str());
-				}
-				else {
+				std::string filePath = character.bionicHandFpkPath;
+				if ( filePath == "") {
 					//tex vanilla paths
-					if (playerHandType != 0) {//tex bionicHandFpkPaths has "" as place holder, dont want to hash that, see comment on filePath64 above as to why
-					auto filePath = bionicHandFpkPaths[playerHandType];
-					spdlog::debug("bionicHandFpkPath: {}", filePath);
-						filePath64 = PathCode64(filePath.c_str());
+					//TODO: surface this information to player if nessesary
+					//tex WORKAROUND: while turning hand off for partstypes that usually have them works, (ex playerPartsType NORMAL > playerPartsInfo MGS1)
+					//setting a partsType to one that has no hand also sets playerHandType to 0 (ex playerPartsType MGS1 > playerPartsInfo NORMAL)
+					//so there must be some other player it defines hand/not hand per playerType , if not right where the change to playerHandType then likely called there
+					if (playerHandType == 0) {
+						if (overrideCharacterSystem) {
+							playerHandType = 1;//tex just default to NORMAL
+						}
 					}
-				}
+					filePath = bionicHandFpkPaths[playerHandType];
+				}					
+				spdlog::debug("bionicHandFpkPath: {}", filePath);
+				filePath64 = PathCode64(filePath.c_str());
 			}
-
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFpkHook
@@ -818,16 +819,17 @@ namespace IHHook {
 
 			ulonglong filePath64 = 0;
 			if (useBionicHand) {
-				if (character.bionicHandFv2Path != "") {
-					filePath64 = PathCode64(character.bionicHandFv2Path.c_str());
-				}
-				else {
-					if (playerHandType != 0) {
-					auto filePath = bionicHandFv2Paths[playerHandType];
-					spdlog::debug("bionicHandFv2Path: {}", filePath);
-						filePath64 = PathCode64(filePath.c_str());
+				std::string filePath = character.bionicHandFv2Path;
+				if (filePath == "") {
+					if (playerHandType == 0) {
+						if (overrideCharacterSystem) {
+							playerHandType = 1;
+						}
 					}
-				}
+					filePath = bionicHandFv2Paths[playerHandType];
+				}					
+				spdlog::debug("bionicHandFv2Path: {}", filePath);
+				filePath64 = PathCode64(filePath.c_str());
 			}
 
 			LoadFile(fileSlotIndex, filePath64);
@@ -1069,10 +1071,13 @@ namespace IHHook {
 			//return false;
 		}//IsHeadNeededForPartsTypeAndAvatarHook
 
+		//SYNC exe
 		std::string snakeFaceFpksDefault[] {
+			//head 0
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face0_v00.fpk",//Horn 0
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face1_v00.fpk",//Horn 1
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face2_v00.fpk",//Horn 2
+			//head 1
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face4_v00.fpk",//Horn 0 Bandana
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face5_v00.fpk",//Horn 1 Bandana
 			"/Assets/tpp/pack/player/fova/plfova_sna0_face6_v00.fpk",//Horn 2 Bandana
@@ -1118,7 +1123,8 @@ namespace IHHook {
 		}//UsePlayerSnakeFaceVanilla
 
 		//tex vanilla does not have seperate IsHeadNeededForPartsTypeSnake, is rolled into LoadPlayerSnakeFaceFpk
-		ulonglong* LoadPlayerSnakeFaceFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
+		//for playerType SNAKE it uses playerFaceId for hornLevel
+		ulonglong* LoadPlayerSnakeFaceFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint hornLevel, char playerFaceEquipId) {
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
 
 			if (playerType != 0) {
@@ -1126,33 +1132,31 @@ namespace IHHook {
 				return fileSlotIndex;
 			}
 
-			if (character.snakeFaceFpkPath == "") {
-				return LoadPlayerSnakeFaceFpk(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
-			}
-
-			ulonglong filePath64 = 0;
 			bool useHead = UsePlayerSnakeFaceVanilla(playerType, playerPartsType);
 			//tex playerParts defines useHead ..
 			if (overrideCharacterSystem) {
 				useHead = character.useHead;
-			}
+			}		
+
+			ulonglong filePath64 = 0;
 			if (useHead) {
 				//tex .. but what face is used is independant from overrideCharacterSystem
-				auto filePath = character.snakeFaceFpkPath;
+				std::string filePath = character.snakeFaceFpkPath;
+				if (filePath == "") {
+					bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
+					if (isBandana) {
+						hornLevel = hornLevel + MAX_SNAKE_FACEID;//tex not really right descriptive wise, but we've only got two 'heads', normal/bandana (* 3 horn levels)
+					}
+					filePath  = snakeFaceFpksDefault[hornLevel];
+				}
+				spdlog::debug("snakeFaceFpkPath: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());
-			}
+			}				
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerSnakeFaceFpkHook
 
-		//CULL playerFaceId,playerFaceEquipId logic
-		//		bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
-		//		if (isBandana) {
-		//			playerFaceId = playerFaceId + MAX_SNAKE_FACEID;
-		//		}
-		//		auto filePath  = snakeFaceFpksDefault[playerFaceId];
-
-		ulonglong* LoadPlayerSnakeFaceFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
+		ulonglong* LoadPlayerSnakeFaceFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint hornLevel, char playerFaceEquipId) {
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
 
 			if (playerType != 0) {
@@ -1160,24 +1164,29 @@ namespace IHHook {
 				return fileSlotIndex;
 			}
 
-			if (character.snakeFaceFv2Path=="") {
-				return LoadPlayerSnakeFaceFv2(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
-			}
-
-			ulonglong filePath64 = 0;
 			bool useHead = UsePlayerSnakeFaceVanilla(playerType, playerPartsType);
 			if (overrideCharacterSystem) {
 				useHead = character.useHead;
 			}
+			
+			ulonglong filePath64 = 0;
 			if (useHead) {
-				auto filePath = character.snakeFaceFv2Path;
+				std::string filePath = character.snakeFaceFpkPath;
+				if (filePath == "") {
+					bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
+					if (isBandana) {
+						hornLevel = hornLevel + MAX_SNAKE_FACEID;
+					}
+					filePath = snakeFaceFv2sDefault[hornLevel];			
+				}
+				spdlog::debug("snakeFaceFv2Path: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());
 			}
 			LoadFile(fileSlotIndex, filePath64);
-			return fileSlotIndex;
+			return fileSlotIndex;	
 		}//LoadPlayerSnakeFaceFv2Hook
 
-
+		//SYNC exe
 		std::string avatarHornFpksDefault[]{
 			"/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v00.fpk",//Horn 0
 			"/Assets/tpp/pack/player/avatar/hone/plfova_avm_hone_v01.fpk",//Horn 1
@@ -1191,7 +1200,7 @@ namespace IHHook {
 		ulonglong * LoadAvatarOgreHornFpkHook(ulonglong *fileSlotIndex, uint ogreLevel) {
 			ulonglong filePath64 = 0;
   
-			auto filePath = character.avatarHornFpkPath;
+			std::string filePath = character.avatarHornFpkPath;
 			if (filePath == "") {
 				filePath = avatarHornFpksDefault[ogreLevel];
 			}
@@ -1203,7 +1212,7 @@ namespace IHHook {
 		ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong *fileSlotIndex, uint ogreLevel) {
 			ulonglong filePath64 = 0;
   
-			auto filePath = character.avatarHornFv2Path;
+			std::string filePath = character.avatarHornFv2Path;
 			if (filePath == "") {
 				filePath = avatarHornFv2sDefault[ogreLevel];
 			}
