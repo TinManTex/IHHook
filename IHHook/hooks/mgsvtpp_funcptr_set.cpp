@@ -38,6 +38,7 @@ namespace IHHook {
 		LoadPlayerSnakeFaceFv2 = (LoadPlayerSnakeFaceFv2Func*)addressSet["LoadPlayerSnakeFaceFv2"];
 		LoadAvatarOgreHornFpk = (LoadAvatarOgreHornFpkFunc*)addressSet["LoadAvatarOgreHornFpk"];
 		LoadAvatarOgreHornFv2 = (LoadAvatarOgreHornFv2Func*)addressSet["LoadAvatarOgreHornFv2"];
+		LoadBuddyMainFile = (LoadBuddyMainFileFunc*)addressSet["LoadBuddyMainFile"]; //ZIP: For buddies
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

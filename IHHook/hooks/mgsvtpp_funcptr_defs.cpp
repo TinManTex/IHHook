@@ -34,6 +34,7 @@ LoadPlayerSnakeFaceFpkFunc* LoadPlayerSnakeFaceFpk;
 LoadPlayerSnakeFaceFv2Func* LoadPlayerSnakeFaceFv2;
 LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
 LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
+LoadBuddyMainFileFunc* LoadBuddyMainFile; //ZIP: For buddies
 lua_newstateFunc* lua_newstate;
 lua_closeFunc* lua_close;
 lua_newthreadFunc* lua_newthread;

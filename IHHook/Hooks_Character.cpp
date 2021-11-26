@@ -1171,7 +1171,7 @@ namespace IHHook {
 			
 			ulonglong filePath64 = 0;
 			if (useHead) {
-				std::string filePath = character.snakeFaceFpkPath;
+				std::string filePath = character.snakeFaceFv2Path;
 				if (filePath == "") {
 					bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
 					if (isBandana) {

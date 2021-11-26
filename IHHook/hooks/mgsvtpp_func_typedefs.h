@@ -40,6 +40,7 @@ typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFpkFunc)(ulonglong * fileSlot
 typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
 typedef ulonglong * (__fastcall LoadAvatarOgreHornFpkFunc)(ulonglong * fileSlotIndex, uint ogreLevel);
 typedef ulonglong * (__fastcall LoadAvatarOgreHornFv2Func)(ulonglong * fileSlotIndex, int ogreLevel);
+typedef ulonglong* (__fastcall LoadBuddyMainFileFunc)(ulonglong param_1, ulonglong* fileSlotIndex, int buddyType); //ZIP: For buddies
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
 typedef void (__fastcall lua_closeFunc)(lua_State * L);
 typedef lua_State * (__fastcall lua_newthreadFunc)(lua_State * L);
@@ -191,6 +192,7 @@ extern LoadPlayerSnakeFaceFpkFunc* LoadPlayerSnakeFaceFpk;
 extern LoadPlayerSnakeFaceFv2Func* LoadPlayerSnakeFaceFv2;
 extern LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
 extern LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
+extern LoadBuddyMainFileFunc* LoadBuddyMainFile; //ZIP: For buddies
 extern lua_newstateFunc* lua_newstate;
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;

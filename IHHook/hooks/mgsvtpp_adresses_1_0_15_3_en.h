@@ -36,6 +36,8 @@ namespace IHHook {
 		{"LoadPlayerSnakeFaceFv2", 0x140ae8ce0},
 		{"LoadAvatarOgreHornFpk", 0x14685dd50},
 		{"LoadAvatarOgreHornFv2", 0x14685da20},
+		{"LoadBuddyMainFile", 0x140a461d0}, //ZIP: For buddies
+		//{"LoadBuddySubFileFpk", 0x140a46360}, //ZIP: For buddies.
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},

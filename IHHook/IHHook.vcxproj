@@ -168,6 +168,7 @@
     <ClInclude Include="hooks\mgsvtpp_func_typedefs.h" />
     <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h" />
     <ClInclude Include="hooks\mgsvtpp_patterns.h" />
+    <ClInclude Include="Hooks_Buddy.h" />
     <ClInclude Include="Hooks_Character.h" />
     <ClInclude Include="Hooks_CityHash.h" />
     <ClInclude Include="Hooks_FNVHash.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp" />
     <ClCompile Include="hooks\mgsvtpp_funcptr_defs.cpp" />
     <ClCompile Include="hooks\mgsvtpp_funcptr_set.cpp" />
+    <ClCompile Include="Hooks_Buddy.cpp" />
     <ClCompile Include="Hooks_Character.cpp" />
     <ClCompile Include="Hooks_CityHash.cpp" />
     <ClCompile Include="dllmain.cpp">
