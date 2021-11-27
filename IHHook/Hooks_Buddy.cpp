@@ -114,43 +114,59 @@ namespace IHHook {
 		/*
 			Buddy hooks/IHHook setup
 		*/
+		bool IsBuddyTypeValid(int buddyType) {
+			if (buddyType > 4) {
+				return false;
+			}
+
+			if (buddy.buddyType != buddyType) {
+				return false;
+			}
+
+			return true;
+		}//IsBuddyTypeValid
+
 		uint64_t* LoadBuddyMainFileHook(ulonglong param_1, ulonglong* fileSlotIndex, int buddyType) {
 			spdlog::debug("LoadBuddyMainFileHook buddyType:{}", buddyType);
 
-			//ZIP fallback to original
-			if (!overrideBuddySystem || buddy.buddyType != buddyType ) {
+			//ZIP: No override or valid buddy? Fallback
+			if (!overrideBuddySystem || !IsBuddyTypeValid(buddyType) ) {
 				return LoadBuddyMainFile(param_1, fileSlotIndex, buddyType);
 			}
 
-			uint64_t filePath64 = 0;
+			std::string filePath = "";
 			if (buddyType == 1) { //For D-Horse
 				if (buddy.horseFpkPath != "") {
-					spdlog::debug("horseFpkPath: {}", buddy.horseFpkPath);
-					filePath64 = PathCode64(buddy.horseFpkPath.c_str());
+					filePath = buddy.horseFpkPath;
+					spdlog::debug("horseFpkPath: {}", filePath);
 				}
 			}
 			else if (buddyType == 2) { //For D-Dog
 				if (buddy.dogFpkPath != "") {
-					spdlog::debug("dogFpkPath: {}", buddy.dogFpkPath);
-					filePath64 = PathCode64(buddy.dogFpkPath.c_str());
+					filePath = buddy.dogFpkPath;
+					spdlog::debug("dogFpkPath: {}", filePath);
 				}
-			}else if (buddyType == 3) { //For Quiet
+			}
+			else if (buddyType == 3) { //For Quiet
+			   //ZIP: Quiet's costumeType is set to 0 for the mission "A Quiet Exit" ( missionCode 10260 )
 				if (buddy.quietFpkPath != "") {
-					spdlog::debug("quietFpkPath: {}", buddy.quietFpkPath);
-					filePath64 = PathCode64(buddy.quietFpkPath.c_str());
+					filePath = buddy.quietFpkPath;
+					spdlog::debug("quietFpkPath: {}", filePath);
 				}
-			}else if (buddyType == 4) { //For Walker Gear
+			}
+			else if (buddyType == 4) { //For Walker Gear
 				if (buddy.walkerGearFpkPath != "") {
-					spdlog::debug("walkerGearFpkPath: {}", buddy.walkerGearFpkPath);
-					filePath64 = PathCode64(buddy.walkerGearFpkPath.c_str());
+					filePath = buddy.walkerGearFpkPath;
+					spdlog::debug("walkerGearFpkPath: {}", filePath);
 				}
 			}
 			
-			//ZIP: No override? Fall back
-			if (filePath64 == 0) {
+			//ZIP: No file path? Fallback
+			if (filePath == "") {
 				return LoadBuddyMainFile(param_1, fileSlotIndex, buddyType);
 			}
 
+			uint64_t filePath64 = PathCode64(filePath.c_str());
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadBuddyMainFileHook
