@@ -18,6 +18,12 @@ l_StubbedOutFunc* l_StubbedOut;
 nullsub_2Func* nullsub_2;
 LoadFileSubFunc* LoadFileSub;
 LoadFileFunc* LoadFile;
+//ZIP: LoadFile_0*
+LoadFile_01Func* LoadFile_01; 
+LoadFile_02Func* LoadFile_02;
+LoadFile_03Func* LoadFile_03; 
+LoadFile_05Func* LoadFile_05;
+//ZIP: LoadFile_0*
 LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
 LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
 LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
@@ -34,7 +40,9 @@ LoadPlayerSnakeFaceFpkFunc* LoadPlayerSnakeFaceFpk;
 LoadPlayerSnakeFaceFv2Func* LoadPlayerSnakeFaceFv2;
 LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
 LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
-LoadBuddyMainFileFunc* LoadBuddyMainFile; //ZIP: For buddies
+//ZIP: LoadBuddy*
+LoadBuddyMainFileFunc* LoadBuddyMainFile; 
+//ZIP: LoadBuddy*
 lua_newstateFunc* lua_newstate;
 lua_closeFunc* lua_close;
 lua_newthreadFunc* lua_newthread;
