@@ -188,9 +188,13 @@ namespace IHHook {
 					}
 				
 					if (buddyType != 4) { //If not walker gear nor Quiet.
-						ulonglong *filePath64_01 = (ulonglong*)LoadFile_03();
-						fileSlotIndex_01 = LoadFile_01(fileSlotIndex, filePath64_01);
-						return fileSlotIndex;
+						//ZIP: ORIG
+						//ulonglong *filePath64_01 = (ulonglong*)LoadFile_03();
+						//fileSlotIndex_01 = LoadFile_01(fileSlotIndex, filePath64_01);
+						//return fileSlotIndex;
+						fileSlotIndex_01 = LoadFile_03();
+						fileSlotIndex_01 = LoadFile_01(fileSlotIndex, fileSlotIndex_01);
+						return fileSlotIndex_01;
 					}
 			
 					if (buddy.walkerGearFpkPath != "") { //For Walker Gear
