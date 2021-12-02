@@ -46,10 +46,10 @@ exportInfo=[
 	{"name":"nullsub_2", "exportFunc":False, "note":"tex: another retail stubb out to wrangle",},
 	{"name":"LoadFileSub", "usingDetour":True,},
 	{"name":"LoadFile", "usingDetour":True,},
-    {"name":"LoadFile_01", "usingDetour":True,},
-    {"name":"LoadFile_02", "usingDetour":True,},
-    {"name":"LoadFile_03", "usingDetour":True,},
-    {"name":"LoadFile_05", "usingDetour":True,},
+	{"name":"LoadFile_01", "usingDetour":True,},
+	{"name":"LoadFile_02", "usingDetour":True,},
+	{"name":"LoadFile_03", "usingDetour":True,},
+	{"name":"LoadFile_05", "usingDetour":True,},
 	{"name":"LoadPlayerPartsFpk", "usingDetour":True,},
 	{"name":"LoadPlayerPartsParts", "usingDetour":True,},
 	{"name":"LoadPlayerCamoFpk", "usingDetour":True,},
@@ -66,7 +66,7 @@ exportInfo=[
 	{"name":"LoadPlayerSnakeFaceFv2", "usingDetour":True,},
 	{"name":"LoadAvatarOgreHornFpk", "usingDetour":True,},
 	{"name":"LoadAvatarOgreHornFv2", "usingDetour":True,},
-    {"name":"LoadBuddyMainFile", "usingDetour":True,},
+	{"name":"LoadBuddyMainFile", "usingDetour":True,},
     #{"name":"LoadBuddySubFileFpk", "usingDetour":True, "note":"exploration"},
 	#<
 	#lua>
