@@ -22,12 +22,10 @@ namespace IHHook {
 			return LoadFile(fileSlotIndex, filePath64);
 		}//LoadFileHook		
 
-		//ZIP: LoadFile_0*
 		uint64_t * LoadFile_01Hook(uint64_t * param_1, uint64_t * param_2) { return LoadFile_01(param_1, param_2); }//LoadFile_01Hook
-		void LoadFile_02Hook(uint64_t* param_1) { return LoadFile_02(param_1); }//LoadFile_03Hook
+		void LoadFile_02Hook(uint64_t* param_1) { LoadFile_02(param_1); }//LoadFile_02Hook
 		uint64_t * LoadFile_03Hook() { return LoadFile_03(); }//LoadFile_03Hook
 		uint64_t * LoadFile_05Hook(uint64_t* param_1, uint64_t* param_2) { return LoadFile_05(param_1, param_2); }//LoadFile_05Hook
-		//ZIP: LoadFile_0*
 
 		//TODO: move somewhere else
 		//UNUSED, only interesting for specific logging, but cityhash hook will catch everything otherwise
@@ -54,23 +52,18 @@ namespace IHHook {
 					
 				CREATE_HOOK(LoadFileSub)
 				CREATE_HOOK(LoadFile)
-
-				//ZIP: LoadFile_0*
 				CREATE_HOOK(LoadFile_01)
 				CREATE_HOOK(LoadFile_02)
 				CREATE_HOOK(LoadFile_03) 
 				CREATE_HOOK(LoadFile_05)
-				//ZIP: LoadFile_0*
-					
+
 				ENABLEHOOK(LoadFileSub)
 				//ENABLEHOOK(LoadFile)
 
-				//ZIP: LoadFile_0*
 				//ENABLEHOOK(LoadFile_01)
 				//ENABLEHOOK(LoadFile_02)
 				//ENABLEHOOK(LoadFile_03)
 				//ENABLEHOOK(LoadFile_05)
-				//ZIP: LoadFile_0*
 			}
 
 			//CREATE_HOOK(PathCode64)

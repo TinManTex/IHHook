@@ -24,12 +24,10 @@ typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, ...);
 // nullsub_2 EXPORT_FUNC_FALSE
 typedef void (__fastcall LoadFileSubFunc)(ulonglong filePath64, ulonglong filePath64_01);
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
-//ZIP: LoadFile_0*
-typedef ulonglong * (__fastcall LoadFile_01Func)(ulonglong * param_1, ulonglong * param_2); 
-typedef void (__fastcall LoadFile_02Func)(ulonglong* param_1);
-typedef ulonglong * (__fastcall LoadFile_03Func)(); 
-typedef ulonglong * (__fastcall LoadFile_05Func)(ulonglong* param_1, ulonglong* param_2);
-//ZIP: LoadFile_0*
+typedef ulonglong * (__fastcall LoadFile_01Func)(ulonglong * param_1, ulonglong * param_2);
+typedef void (__fastcall LoadFile_02Func)(ulonglong * param_1);
+typedef ulonglong * (__fastcall LoadFile_03Func)();
+typedef ulonglong * (__fastcall LoadFile_05Func)(ulonglong * param_1, ulonglong * param_2);
 typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerCamoFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
@@ -45,10 +43,8 @@ typedef bool (__fastcall IsHeadNeededForPartsTypeAndAvatarFunc)(uint playerParts
 typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
 typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
 typedef ulonglong * (__fastcall LoadAvatarOgreHornFpkFunc)(ulonglong * fileSlotIndex, uint ogreLevel);
-typedef ulonglong * (__fastcall LoadAvatarOgreHornFv2Func)(ulonglong * fileSlotIndex, int ogreLevel);
-//ZIP: LoadBuddy*
-typedef ulonglong * (__fastcall LoadBuddyMainFileFunc)(ulonglong param_1, ulonglong* fileSlotIndex, int buddyType, ulonglong param_4);
-//ZIP: LoadBuddy*
+typedef ulonglong * (__fastcall LoadAvatarOgreHornFv2Func)(ulonglong * fileSlotIndex, uint ogreLevel);
+typedef ulonglong * (__fastcall LoadBuddyMainFileFunc)(ulonglong param_1, ulonglong * fileSlotIndex, uint buddyType, ulonglong param_4);
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
 typedef void (__fastcall lua_closeFunc)(lua_State * L);
 typedef lua_State * (__fastcall lua_newthreadFunc)(lua_State * L);
@@ -184,12 +180,10 @@ extern l_StubbedOutFunc* l_StubbedOut;
 extern nullsub_2Func* nullsub_2;
 extern LoadFileSubFunc* LoadFileSub;
 extern LoadFileFunc* LoadFile;
-//ZIP: LoadFile_0*
 extern LoadFile_01Func* LoadFile_01;
 extern LoadFile_02Func* LoadFile_02;
-extern LoadFile_03Func* LoadFile_03; 
+extern LoadFile_03Func* LoadFile_03;
 extern LoadFile_05Func* LoadFile_05;
-//ZIP: LoadFile_0*
 extern LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
 extern LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
 extern LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
@@ -206,9 +200,7 @@ extern LoadPlayerSnakeFaceFpkFunc* LoadPlayerSnakeFaceFpk;
 extern LoadPlayerSnakeFaceFv2Func* LoadPlayerSnakeFaceFv2;
 extern LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
 extern LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
-//ZIP: LoadBuddy*
-extern LoadBuddyMainFileFunc* LoadBuddyMainFile; 
-//ZIP: LoadBuddy*
+extern LoadBuddyMainFileFunc* LoadBuddyMainFile;
 extern lua_newstateFunc* lua_newstate;
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;
