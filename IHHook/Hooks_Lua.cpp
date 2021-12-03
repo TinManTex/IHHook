@@ -20,6 +20,7 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 #include "Hooks_Character.h"//CreateLibs //TODO: don't like this in here
+#include "Hooks_Buddy.h" //ZIP: For buddies
 
 #include <string>
 #include "hooks/mgsvtpp_func_typedefs.h"
@@ -319,6 +320,7 @@ namespace IHHook {
 		void CreateLibs(lua_State* L) {
 			LuaIHH::luaopen_ihh(L);
 			Hooks_Character::CreateLibs(L);
+			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
 		}//CreateLibs
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c

@@ -14,6 +14,7 @@
 #include "Hooks_FOV.h"
 #include "Hooks_LoadFile.h"
 #include "Hooks_Character.h"
+#include "Hooks_Buddy.h" //ZIP: For buddies
 
 #include "RawInput.h"
 
@@ -341,6 +342,7 @@ namespace IHHook {
 			Hooks_FOV::CreateHooks();
 			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
 			Hooks_Character::CreateHooks();
+			Hooks_Buddy::CreateHooks(); //ZIP: For buddies
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();

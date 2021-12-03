@@ -22,6 +22,10 @@ namespace IHHook {
 		nullsub_2 = (nullsub_2Func*)addressSet["nullsub_2"];
 		LoadFileSub = (LoadFileSubFunc*)addressSet["LoadFileSub"];
 		LoadFile = (LoadFileFunc*)addressSet["LoadFile"];
+		LoadFile_01 = (LoadFile_01Func*)addressSet["LoadFile_01"];
+		LoadFile_02 = (LoadFile_02Func*)addressSet["LoadFile_02"];
+		LoadFile_03 = (LoadFile_03Func*)addressSet["LoadFile_03"];
+		LoadFile_05 = (LoadFile_05Func*)addressSet["LoadFile_05"];
 		LoadPlayerPartsFpk = (LoadPlayerPartsFpkFunc*)addressSet["LoadPlayerPartsFpk"];
 		LoadPlayerPartsParts = (LoadPlayerPartsPartsFunc*)addressSet["LoadPlayerPartsParts"];
 		LoadPlayerCamoFpk = (LoadPlayerCamoFpkFunc*)addressSet["LoadPlayerCamoFpk"];
@@ -38,6 +42,7 @@ namespace IHHook {
 		LoadPlayerSnakeFaceFv2 = (LoadPlayerSnakeFaceFv2Func*)addressSet["LoadPlayerSnakeFaceFv2"];
 		LoadAvatarOgreHornFpk = (LoadAvatarOgreHornFpkFunc*)addressSet["LoadAvatarOgreHornFpk"];
 		LoadAvatarOgreHornFv2 = (LoadAvatarOgreHornFv2Func*)addressSet["LoadAvatarOgreHornFv2"];
+		LoadBuddyMainFile = (LoadBuddyMainFileFunc*)addressSet["LoadBuddyMainFile"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

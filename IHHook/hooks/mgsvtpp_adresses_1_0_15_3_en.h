@@ -20,6 +20,10 @@ namespace IHHook {
 		{"nullsub_2", 0x1409c8f90},//tex: another retail stubb out to wrangle
 		{"LoadFileSub", 0x142f784a0},
 		{"LoadFile", 0x14319ea20},
+		{"LoadFile_01", 0x14319d620},
+		{"LoadFile_02", 0x14319eb70},
+		{"LoadFile_03", 0x1431a0130},
+		{"LoadFile_05", 0x14319ee10},
 		{"LoadPlayerPartsFpk", 0x146866c80},
 		{"LoadPlayerPartsParts", 0x146865f80},
 		{"LoadPlayerCamoFpk", 0x146864180},
@@ -36,6 +40,7 @@ namespace IHHook {
 		{"LoadPlayerSnakeFaceFv2", 0x140ae8ce0},
 		{"LoadAvatarOgreHornFpk", 0x14685dd50},
 		{"LoadAvatarOgreHornFv2", 0x14685da20},
+		{"LoadBuddyMainFile", 0x140a461d0},
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},
