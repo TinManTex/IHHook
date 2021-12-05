@@ -41,6 +41,10 @@ namespace IHHook {
 		{"LoadAvatarOgreHornFpk", 0x14685dd50},
 		{"LoadAvatarOgreHornFv2", 0x14685da20},
 		{"LoadBuddyMainFile", 0x140a461d0},
+		{"LoadBuddyQuietWeaponFpk", 0x1464d5dc0},
+		{"LoadBuddyWalkerGearArmFpk", 0x1464d3fc0},
+		{"LoadBuddyWalkerGearHeadFpk", 0x1464d44a0},
+		{"LoadBuddyWalkerGearWeaponFpk", 0x1464d47f0},
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},

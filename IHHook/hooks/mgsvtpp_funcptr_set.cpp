@@ -43,6 +43,10 @@ namespace IHHook {
 		LoadAvatarOgreHornFpk = (LoadAvatarOgreHornFpkFunc*)addressSet["LoadAvatarOgreHornFpk"];
 		LoadAvatarOgreHornFv2 = (LoadAvatarOgreHornFv2Func*)addressSet["LoadAvatarOgreHornFv2"];
 		LoadBuddyMainFile = (LoadBuddyMainFileFunc*)addressSet["LoadBuddyMainFile"];
+		LoadBuddyQuietWeaponFpk = (LoadBuddyQuietWeaponFpkFunc*)addressSet["LoadBuddyQuietWeaponFpk"];
+		LoadBuddyWalkerGearArmFpk = (LoadBuddyWalkerGearArmFpkFunc*)addressSet["LoadBuddyWalkerGearArmFpk"];
+		LoadBuddyWalkerGearHeadFpk = (LoadBuddyWalkerGearHeadFpkFunc*)addressSet["LoadBuddyWalkerGearHeadFpk"];
+		LoadBuddyWalkerGearWeaponFpk = (LoadBuddyWalkerGearWeaponFpkFunc*)addressSet["LoadBuddyWalkerGearWeaponFpk"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];
