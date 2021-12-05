@@ -218,11 +218,13 @@ namespace IHHook {
 			"/Assets/tpp/pack/buddy/quiet/bq_wp_02.fpk",
 		};
 
+		//ZIP: Main buddy FPKs contain head and arm content. These are FPKs are empty but unsure if they can serve a purpose.
 		std::string buddyWalkerGearArmFpksDefault[]{
 			"/Assets/tpp/pack/buddy/walkergear/bw_am_00.fpk",
 			"/Assets/tpp/pack/buddy/walkergear/bw_am_01.fpk",
 		};
 
+		//ZIP: Main buddy FPKs contain head and arm content. These are FPKs are empty but unsure if they can serve a purpose.
 		std::string buddyWalkerGearHeadFpksDefault[]{
 			"/Assets/tpp/pack/buddy/walkergear/bw_hd_00.fpk",
 			"/Assets/tpp/pack/buddy/walkergear/bw_hd_01.fpk",
@@ -354,6 +356,7 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadBuddyQuietWeaponFpkHook
 
+		//ZIP: Main buddy FPKs contain head and arm content. Leaving this here, just in case.
 		ulonglong* LoadBuddyWalkerGearArmFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 			//ZIP: TODO GetVars for Walker Gear arm type	
 			//ZIP: No override? Fall back
@@ -369,6 +372,7 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadBuddyWalkerGearArmFpkHook
 
+		//ZIP: Main buddy FPKs contain head and arm content. Leaving this here, just in case.
 		ulonglong* LoadBuddyWalkerGearHeadFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 			//ZIP: TODO GetVars for Walker Gear Head type		
 			//ZIP: No override? Fall back
@@ -408,11 +412,13 @@ namespace IHHook {
 
 			CREATE_HOOK(LoadBuddyMainFile)
 			CREATE_HOOK(LoadBuddyQuietWeaponFpk)
+			CREATE_HOOK(LoadBuddyWalkerGearArmFpk)
 			CREATE_HOOK(LoadBuddyWalkerGearHeadFpk)
 			CREATE_HOOK(LoadBuddyWalkerGearWeaponFpk)
 
 			ENABLEHOOK(LoadBuddyMainFile)
 			ENABLEHOOK(LoadBuddyQuietWeaponFpk)
+			ENABLEHOOK(LoadBuddyWalkerGearArmFpk)
 			ENABLEHOOK(LoadBuddyWalkerGearHeadFpk)
 			ENABLEHOOK(LoadBuddyWalkerGearWeaponFpk)
 		}//CreateHooks
