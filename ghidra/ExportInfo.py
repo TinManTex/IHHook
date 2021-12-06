@@ -67,7 +67,11 @@ exportInfo=[
 	{"name":"LoadAvatarOgreHornFpk", "usingDetour":True,},
 	{"name":"LoadAvatarOgreHornFv2", "usingDetour":True,},
 	{"name":"LoadBuddyMainFile", "usingDetour":True,},
-    #{"name":"LoadBuddySubFileFpk", "usingDetour":True, "note":"exploration"},
+	#{"name":"LoadBuddySubFileFpk", "usingDetour":True, "note":"exploration"},
+	{"name":"LoadBuddyQuietWeaponFpk", "usingDetour":True,},
+	{"name":"LoadBuddyWalkerGearArmFpk", "usingDetour":True,},
+	{"name":"LoadBuddyWalkerGearHeadFpk", "usingDetour":True,},
+	{"name":"LoadBuddyWalkerGearWeaponFpk", "usingDetour":True,},
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 
