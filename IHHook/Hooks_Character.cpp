@@ -24,6 +24,7 @@ namespace IHHook {
 		static const int MAX_SNAKE_FACES = 2;//NORMAL/BANDANA
 		struct Character {
 			uint playerType = 255;
+			uint playerPartsType = 255;
 			bool useHead = false;
 			bool useBionicHand = false;
 			std::string playerPartsFpkPath = "";
@@ -104,7 +105,15 @@ namespace IHHook {
 			spdlog::debug("l_SetPlayerTypeForPartsType playerType:{}, ", character.playerType);
 
 			return 0;
-		}//l_SetOverrideCharacterSystem
+		}//l_SetPlayerTypeForPartsType
+		//lua l_SetPlayerTypeForPartsType(uint playerType)
+		int l_SetPlayerPartsTypeForPartsType(lua_State* L) {
+			character.playerPartsType = (uint)lua_tointeger(L, -1);
+
+			spdlog::debug("l_SetPlayerPartsTypeForPartsType playerType:{}, ", character.playerPartsType);
+
+			return 0;
+		}//l_SetPlayerPartsTypeForPartsType
 		//lua SetUseHeadForPlayerParts(bool override)
 		int l_SetUseHeadForPlayerParts(lua_State* L) {
 			character.useHead = lua_toboolean(L, -1);
@@ -303,6 +312,18 @@ namespace IHHook {
 			
 			return false;
 		}//IsPlayerTypeValid
+
+		bool IsPlayerPartsTypeValid(uint playerPartsType) {
+			if (character.playerPartsType == 255) {
+				return true;
+			}
+
+			if (character.playerPartsType == playerPartsType) {
+				return true;
+			}
+
+			return false;
+		}//IsPlayerPartsTypeValid
 
 		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::debug("LoadPlayerPartsFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
@@ -1004,6 +1025,11 @@ namespace IHHook {
 				spdlog::debug("IsHeadNeededForPartsType {} = {}", i, testHead);
 			}*/
 
+			//ZIP: Validate player parts type
+			if (!IsPlayerPartsTypeValid(playerPartsType)) {
+				return IsHeadNeededForPartsType(playerPartsType);
+			}
+
 			bool headNeeded = false;
 
 			if (overrideCharacterSystem) {
@@ -1024,6 +1050,11 @@ namespace IHHook {
 				bool testHead = IsHeadNeededForPartsType(i);
 				spdlog::debug("IsHeadNeededForPartsTypeAndAvatarHook {} = {}", i, testHead);
 			}*/
+
+			//ZIP: Validate player parts type
+			if (!IsPlayerPartsTypeValid(playerPartsType)) {
+				return IsHeadNeededForPartsTypeAndAvatar(playerPartsType);
+			}
 
 			bool headNeeded = false; 
 
@@ -1252,7 +1283,7 @@ namespace IHHook {
 			//ENABLEHOOK(LoadPlayerFacialMotionMtar)
 			ENABLEHOOK(LoadPlayerPartsSkinToneFv2)
 			ENABLEHOOK(IsHeadNeededForPartsType)
-			ENABLEHOOK(IsHeadNeededForPartsTypeAndAvatar)
+			ENABLEHOOK(IsHeadNeededForPartsTypeAndAvatar) 
 			ENABLEHOOK(LoadPlayerSnakeFaceFpk)
 			ENABLEHOOK(LoadPlayerSnakeFaceFv2)
 			ENABLEHOOK(CheckPlayerPartsIfShouldApplySkinToneFv2)//DEBUGNOW
@@ -1266,6 +1297,7 @@ namespace IHHook {
 			luaL_Reg libFuncs[] = {
 				{ "SetOverrideCharacterSystem", l_SetOverrideCharacterSystem },
 				{ "SetPlayerTypeForPartsType", l_SetPlayerTypeForPartsType },
+				{ "SetPlayerPartsTypeForPartsType", l_SetPlayerPartsTypeForPartsType },
 				{ "SetUseHeadForPlayerParts", l_SetUseHeadForPlayerParts },
 				{ "SetUseBionicHandForPlayerParts", l_SetUseBionicHandForPlayerParts },
 				{ "SetPlayerPartsFpkPath", l_SetPlayerPartsFpkPath },
