@@ -47,6 +47,7 @@ namespace IHHook {
 		LoadBuddyWalkerGearArmFpk = (LoadBuddyWalkerGearArmFpkFunc*)addressSet["LoadBuddyWalkerGearArmFpk"];
 		LoadBuddyWalkerGearHeadFpk = (LoadBuddyWalkerGearHeadFpkFunc*)addressSet["LoadBuddyWalkerGearHeadFpk"];
 		LoadBuddyWalkerGearWeaponFpk = (LoadBuddyWalkerGearWeaponFpkFunc*)addressSet["LoadBuddyWalkerGearWeaponFpk"];
+		CreateInPlace = (CreateInPlaceFunc*)addressSet["CreateInPlace"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

@@ -72,6 +72,8 @@ exportInfo=[
 	{"name":"LoadBuddyWalkerGearArmFpk", "usingDetour":True,},
 	{"name":"LoadBuddyWalkerGearHeadFpk", "usingDetour":True,},
 	{"name":"LoadBuddyWalkerGearWeaponFpk", "usingDetour":True,},
+ 	#{"name":"LoadPlayerVehicleFpks", "usingDetour":True,},   
+    {"name":"CreateInPlace", "usingDetour":True,},  
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 

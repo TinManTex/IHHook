@@ -14,6 +14,7 @@
 #include "Hooks_FOV.h"
 #include "Hooks_LoadFile.h"
 #include "Hooks_Character.h"
+#include "Hooks_Fox.h" //ZIP: Fox hook
 #include "Hooks_Buddy.h" //ZIP: For buddies
 
 #include "RawInput.h"
@@ -342,6 +343,7 @@ namespace IHHook {
 			Hooks_FOV::CreateHooks();
 			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
 			Hooks_Character::CreateHooks();
+			Hooks_Fox::CreateHooks(); //ZIP: Fox hooks
 			Hooks_Buddy::CreateHooks(); //ZIP: For buddies
 
 			auto tend = std::chrono::high_resolution_clock::now();
@@ -781,6 +783,7 @@ namespace IHHook {
 		config.enableFnvHook = false;
 		config.logFileLoad = false;
 		config.forceUsePatterns = false;
+		config.logFoxStringCreateInPlace = false; //ZIP: Fox hooks
 
 		std::string line;
 		while (std::getline(infile, line)) {
@@ -849,6 +852,9 @@ namespace IHHook {
 			}
 			else if (varName == "forceUsePatterns") {
 				config.forceUsePatterns = valueStr == "true";
+			}
+			else if (varName == "logFoxStringCreateInPlace") {
+				config.logFoxStringCreateInPlace = valueStr == "true";
 			}
 		}//while line
 
