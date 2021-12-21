@@ -8,12 +8,12 @@
 typedef int (__fastcall l_StubbedOutFunc)(lua_State * L);
 typedef void (__fastcall nullsub_2Func)(const char * unkSomeIdStr, longlong unkSomeIdNum);
 
-//ZIP: Fox hook
+//ZIP: FoxString hook
 namespace fox {
 	struct String {
 		char* cString;
-		uint64_t* length;
-		uint64_t* hash;
+		uint64_t length;
+		uint64_t hash;
 		void* unknown;
 	};
 }

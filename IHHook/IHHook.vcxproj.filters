@@ -216,7 +216,7 @@
     <ClInclude Include="Hooks_Buddy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks_Fox.h">
+    <ClInclude Include="Hooks_FoxString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -362,7 +362,7 @@
     <ClCompile Include="Hooks_Buddy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks_Fox.cpp">
+    <ClCompile Include="Hooks_FoxString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

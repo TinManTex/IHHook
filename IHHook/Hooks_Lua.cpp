@@ -20,8 +20,8 @@
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
 #include "Hooks_Character.h"//CreateLibs //TODO: don't like this in here
-#include "Hooks_Fox.h" //ZIP: Fox hook
 #include "Hooks_Buddy.h" //ZIP: For buddies
+#include "Hooks_FoxString.h" //ZIP: FoxString hook
 
 #include <string>
 #include "hooks/mgsvtpp_func_typedefs.h"
@@ -321,7 +321,7 @@ namespace IHHook {
 		void CreateLibs(lua_State* L) {
 			LuaIHH::luaopen_ihh(L);
 			Hooks_Character::CreateLibs(L);
-			Hooks_Fox::CreateLibs(L); //ZIP: Fox hooks
+			Hooks_FoxString::CreateLibs(L); //ZIP: FoxString hook
 			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
 		}//CreateLibs
 

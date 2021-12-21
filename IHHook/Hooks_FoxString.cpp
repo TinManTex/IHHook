@@ -1,5 +1,5 @@
-//Zip: Fox hooks
-#include "Hooks_Fox.h"
+//ZIP: FoxString hook
+#include "Hooks_FoxString.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "IHHook.h"//BaseAddr,enableCityHook
@@ -15,7 +15,7 @@
 #include "OS.h"
 
 namespace IHHook {
-	namespace Hooks_Fox {
+	namespace Hooks_FoxString {
 		bool overrideFoxString = false;
 		struct foxStringReplace {
 			std::string replaceString = "";
@@ -155,10 +155,10 @@ namespace IHHook {
 			CREATE_HOOK(CreateInPlace)
 			ENABLEHOOK(CreateInPlace)
 
-			//ZIP: Scans info files in /ihhmod/ folder.
+			//ZIP: Scans info files in "\MGS_TPP\mod\ihhook" folder.
 			spdlog::debug("FoxString: Looking for replacement infos");
 			std::vector<std::string> fullFileNames;
-			std::string modDir = OS::GetGameDirA() + "ihhmod";
+			std::string modDir = OS::GetGameDirA() + "mod\\ihhook";
 			bool success = OS::ListFiles(modDir, "*", fullFileNames);
 			unsigned int numNames = static_cast<unsigned int>(fullFileNames.size());
 			if (numNames > 0) {

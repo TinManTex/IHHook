@@ -14,8 +14,8 @@
 #include "Hooks_FOV.h"
 #include "Hooks_LoadFile.h"
 #include "Hooks_Character.h"
-#include "Hooks_Fox.h" //ZIP: Fox hook
 #include "Hooks_Buddy.h" //ZIP: For buddies
+#include "Hooks_FoxString.h" //ZIP: FoxString hook
 
 #include "RawInput.h"
 
@@ -343,7 +343,7 @@ namespace IHHook {
 			Hooks_FOV::CreateHooks();
 			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
 			Hooks_Character::CreateHooks();
-			Hooks_Fox::CreateHooks(); //ZIP: Fox hooks
+			Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
 			Hooks_Buddy::CreateHooks(); //ZIP: For buddies
 
 			auto tend = std::chrono::high_resolution_clock::now();
