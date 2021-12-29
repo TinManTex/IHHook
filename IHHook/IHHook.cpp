@@ -15,6 +15,7 @@
 #include "Hooks_LoadFile.h"
 #include "Hooks_Character.h"
 #include "Hooks_Buddy.h" //ZIP: For buddies
+#include "Hooks_Vehicle.h" 
 
 #include "RawInput.h"
 
@@ -343,6 +344,7 @@ namespace IHHook {
 			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
 			Hooks_Character::CreateHooks();
 			Hooks_Buddy::CreateHooks(); //ZIP: For buddies
+			Hooks_Vehicle::CreateHooks(); 
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();

@@ -47,6 +47,11 @@ namespace IHHook {
 		LoadBuddyWalkerGearArmFpk = (LoadBuddyWalkerGearArmFpkFunc*)addressSet["LoadBuddyWalkerGearArmFpk"];
 		LoadBuddyWalkerGearHeadFpk = (LoadBuddyWalkerGearHeadFpkFunc*)addressSet["LoadBuddyWalkerGearHeadFpk"];
 		LoadBuddyWalkerGearWeaponFpk = (LoadBuddyWalkerGearWeaponFpkFunc*)addressSet["LoadBuddyWalkerGearWeaponFpk"];
+		LoadDefaultFpksFunc = (LoadDefaultFpksFuncFunc*)addressSet["LoadDefaultFpksFunc"];
+		PreparePlayerVehicleInSortie = (PreparePlayerVehicleInSortieFunc*)addressSet["PreparePlayerVehicleInSortie"];
+		PreparePlayerVehicleInGame = (PreparePlayerVehicleInGameFunc*)addressSet["PreparePlayerVehicleInGame"];
+		LoadDefaultFpkPtrFunc = (LoadDefaultFpkPtrFuncFunc*)addressSet["LoadDefaultFpkPtrFunc"];
+		LoadAllVehicleCamoFpks = (LoadAllVehicleCamoFpksFunc*)addressSet["LoadAllVehicleCamoFpks"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

@@ -21,6 +21,7 @@
 #include "MinHook/MinHook.h"
 #include "Hooks_Character.h"//CreateLibs //TODO: don't like this in here
 #include "Hooks_Buddy.h" //ZIP: For buddies
+#include "Hooks_Vehicle.h"
 
 #include <string>
 #include "hooks/mgsvtpp_func_typedefs.h"
@@ -321,6 +322,7 @@ namespace IHHook {
 			LuaIHH::luaopen_ihh(L);
 			Hooks_Character::CreateLibs(L);
 			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
+			Hooks_Vehicle::CreateLibs(L);
 		}//CreateLibs
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
