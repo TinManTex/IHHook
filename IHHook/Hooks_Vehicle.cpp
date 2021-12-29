@@ -1,4 +1,4 @@
-//ZIP: Extending vars.Vehicle*, a Vehicle change system
+//ZIP: Player vehicle override system
 
 #include "Hooks_Vehicle.h"
 #include "spdlog/spdlog.h"
@@ -166,104 +166,84 @@ namespace IHHook {
 		/*
 			Vehicle hooks
 		*/
-		ulonglong GetVehicleOverride(uint vehicleType) {
-			if (vehicleType == 0) {
-				if (Vehicle.vehicleWestLv != "") {
-					spdlog::debug("vehicleWestLv: {}", Vehicle.vehicleWestLv);
-					return PathCode64(Vehicle.vehicleWestLv.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_west_lv.fpk");
-				}
-			}
-			else if (vehicleType == 1) {
-				if (Vehicle.vehicleEastLv != "") {
-					spdlog::debug("vehicleEastLv: {}", Vehicle.vehicleEastLv);
-					return PathCode64(Vehicle.vehicleEastLv.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_east_lv.fpk");
-				}
-			}
-			else if (vehicleType == 2) {
-				if (Vehicle.vehicleWestTrc != "") {
-					spdlog::debug("vehicleWestTrc: {}", Vehicle.vehicleWestTrc);
-					return PathCode64(Vehicle.vehicleWestTrc.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_west_trc.fpk");
-				}
-			}
-			else if (vehicleType == 3) {
-				if (Vehicle.vehicleEastTrc != "") {
-					spdlog::debug("vehicleEastTrc: {}", Vehicle.vehicleEastTrc);
-					return PathCode64(Vehicle.vehicleEastTrc.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_east_trc.fpk");
-				}
-			}
-			else if (vehicleType == 4) {
-				if (Vehicle.vehicleWestWavMachinegun != "") {
-					spdlog::debug("vehicleWestWavMachinegun: {}", Vehicle.vehicleWestWavMachinegun);
-					return PathCode64(Vehicle.vehicleWestWavMachinegun.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_west_wav_machinegun.fpk");
-				}
-			}
-			else if (vehicleType == 5) {
-				if (Vehicle.vehicleWestWavCannon != "") {
-					spdlog::debug("vehicleWestWavCannon: {}", Vehicle.vehicleWestWavCannon);
-					return PathCode64(Vehicle.vehicleWestWavCannon.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_west_wav_cannon.fpk");
-				}
-			}
-			else if (vehicleType == 6) {
-				if (Vehicle.vehicleWestWav != "") {
-					spdlog::debug("vehicleWestWav: {}", Vehicle.vehicleWestWav);
-					return PathCode64(Vehicle.vehicleWestWav.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_east_wav.fpk");
-				}
-			}
-			else if (vehicleType == 7) {
-				if (Vehicle.vehicleWestWavRocket != "") {
-					spdlog::debug("vehicleWestWavRocket: {}", Vehicle.vehicleWestWavRocket);
-					return PathCode64(Vehicle.vehicleWestWavRocket.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_east_wav_rocket.fpk");
-				}
-			}
-			else if (vehicleType == 8) {
-				if (Vehicle.vehicleWestTnk != "") {
-					spdlog::debug("vehicleWestTnk: {}", Vehicle.vehicleWestTnk);
-					return PathCode64(Vehicle.vehicleWestTnk.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_west_tnk.fpk");
-				}
-			}
-			else if (vehicleType == 9) {
-				if (Vehicle.vehicleEastTnk != "") {
-					spdlog::debug("vehicleEastTnk: {}", Vehicle.vehicleEastTnk);
-					return PathCode64(Vehicle.vehicleEastTnk.c_str());
-				}
-				else {
-					return PathCode64("/Assets/tpp/pack/vehicle/veh_rl_east_tnk.fpk");
-				}
+		ulonglong GetVehiclePartsFpk(uint vehicleType) {
+			spdlog::debug("GetVehiclePartsFpk: {}", vehicleType);
+
+			switch (vehicleType) {
+				case 0:
+					if (Vehicle.vehicleWestLv != "") {
+						spdlog::debug("vehicleWestLv: {}", Vehicle.vehicleWestLv);
+						return PathCode64(Vehicle.vehicleWestLv.c_str());
+					}
+				break;
+				case 1:
+					if (Vehicle.vehicleEastLv != "") {
+						spdlog::debug("vehicleEastLv: {}", Vehicle.vehicleEastLv);
+						return PathCode64(Vehicle.vehicleEastLv.c_str());
+					}
+					break;
+				case 2:
+					if (Vehicle.vehicleWestTrc != "") {
+						spdlog::debug("vehicleWestTrc: {}", Vehicle.vehicleWestTrc);
+						return PathCode64(Vehicle.vehicleWestTrc.c_str());
+					}
+					break;
+				case 3:
+					if (Vehicle.vehicleEastTrc != "") {
+						spdlog::debug("vehicleEastTrc: {}", Vehicle.vehicleEastTrc);
+						return PathCode64(Vehicle.vehicleEastTrc.c_str());
+					}
+					break;
+				case 4:
+					if (Vehicle.vehicleWestWavMachinegun != "") {
+						spdlog::debug("vehicleWestWavMachinegun: {}", Vehicle.vehicleWestWavMachinegun);
+						return PathCode64(Vehicle.vehicleWestWavMachinegun.c_str());
+					}
+					break;
+				case 5:
+					if (Vehicle.vehicleWestWavCannon != "") {
+						spdlog::debug("vehicleWestWavCannon: {}", Vehicle.vehicleWestWavCannon);
+						return PathCode64(Vehicle.vehicleWestWavCannon.c_str());
+					}
+					break;
+				case 6:
+					if (Vehicle.vehicleWestWav != "") {
+						spdlog::debug("vehicleWestWav: {}", Vehicle.vehicleWestWav);
+						return PathCode64(Vehicle.vehicleWestWav.c_str());
+					}
+					break;
+				case 7:
+					if (Vehicle.vehicleWestWavRocket != "") {
+						spdlog::debug("vehicleWestWavRocket: {}", Vehicle.vehicleWestWavRocket);
+						return PathCode64(Vehicle.vehicleWestWavRocket.c_str());
+					}
+					break;
+				case 8:
+					if (Vehicle.vehicleWestTnk != "") {
+						spdlog::debug("vehicleWestTnk: {}", Vehicle.vehicleWestTnk);
+						return PathCode64(Vehicle.vehicleWestTnk.c_str());
+					}
+					break;
+				case 9:
+					if (Vehicle.vehicleEastTnk != "") {
+						spdlog::debug("vehicleEastTnk: {}", Vehicle.vehicleEastTnk);
+						return PathCode64(Vehicle.vehicleEastTnk.c_str());
+					}
+					break;
+				default:
+					return 0; //ZIP: vehicleType is outside range, return 0. Can happen with helicopter in sortie.
+					break;
 			}
 
-			return 0;
+			//Return vanilla vehicle fpk
+			std::string filePath = VehicleFpksDefault[vehicleType];
+			return PathCode64(filePath.c_str());
 		}
 
-		//ZIP: Function that loads the player vehicle and the select camo for deployment.
-		char PreparePlayerVehicleInGameHook(longlong param_1, ulonglong param_2)
-		{
+		//ZIP: Function that loads the player vehicle and the selected camo for deployment.
+		char PreparePlayerVehicleInGameHook(longlong param_1, ulonglong param_2){
+			spdlog::debug("PreparePlayerVehicleInGameHook");
+
 			if (!overrideVehicleSystem) {
 				return PreparePlayerVehicleInGame(param_1, param_2);
 			}
@@ -274,57 +254,78 @@ namespace IHHook {
 
 			ulonglong lVar2 = *(longlong*)(param_1 + 0x58);
 			char vehicleType = *(byte*)(lVar2 + 0x2b);
-			ulonglong newVehicleFpk = GetVehicleOverride((ulonglong)(vehicleType - 1));
+			ulonglong newVehicleFpk = GetVehiclePartsFpk(vehicleType - 1);
+			if (newVehicleFpk == 0) {
+				//ZIP: If no vehicle parts returned, fallback
+				return PreparePlayerVehicleInGame(param_1, param_2);
+			}
+
 			return PreparePlayerVehicleInGame(param_1, newVehicleFpk);
 		}//PreparePlayerVehicleInGameHook
 
 		//ZIP: Function that loads the player vehicle and all the camos applicable in sortie.
 		char PreparePlayerVehicleInSortieHook(longlong param_1) {
+			spdlog::debug("PreparePlayerVehicleInSortieHook");
+
 			if (!overrideVehicleSystem) {
 				return PreparePlayerVehicleInSortie(param_1);
 			}
 
-			ulonglong local_318[96];
-			char bVar1 = *(byte*)(param_1 + 0x69);
-			local_318[0] = GetVehicleOverride((ulonglong)(bVar1 - 1));
+			ulonglong fileIndex[96];
+			char vehicleType = *(byte*)(param_1 + 0x69);
+			if (vehicleType != 0) {
+				fileIndex[0] = GetVehiclePartsFpk(vehicleType - 1); //ZIP: Load vehicle fpk first
+			}
+			void* loadPtrFunc = (void*)LoadDefaultFpkPtrFunc(*(longlong*)(param_1 + 0x50), 0);
 
-			int local_res18[4];
-			ulonglong uVar10;
-			void* pvVar7 = (void*)LoadDefaultFpkPtrFunc(*(longlong*)(param_1 + 0x50), 0);
-
-			//ZIP: Loads all camos for players to choose.
-			ulonglong *puVar8 = LoadAllVehicleCamoFpks();
-			longlong lVar11 = 0x5f;
-			ulonglong uVar9 = (ulonglong)(bVar1 != 0);
+			//ZIP: Loads all camos for the player to choose from.
+			ulonglong* camoDatFpkArray = LoadAllVehicleCamoFpks();
+			ulonglong numOfCamos;
+			longlong maxCamoLength = 0x5f; //95
+			ulonglong camoIt = (ulonglong)(vehicleType != 0);
 			do {
-				puVar8 = puVar8 + 2;
-				uVar10 = uVar9;
-				if (*puVar8 != 0) {
-					uVar10 = (ulonglong)(byte)((char)uVar9 + 1);
-					local_318[uVar9] = *puVar8;
+				camoDatFpkArray = camoDatFpkArray + 2;
+				numOfCamos = camoIt;
+				if (*camoDatFpkArray != 0) {
+					numOfCamos = camoIt + 1;
+					fileIndex[camoIt] = *camoDatFpkArray;
 				}
-				lVar11 = lVar11 + -1;
-				uVar9 = uVar10;
-			} while (lVar11 != 0);
+				maxCamoLength = maxCamoLength - 1;
+				camoIt = numOfCamos;
+			} while (maxCamoLength != 0);
 
-			LoadDefaultFpksFunc(pvVar7, local_res18, local_318, (uint)uVar10);
+			//ZIP: Load vehicle FPK and camos fpks
+			int outArray[4];
+			LoadDefaultFpksFunc(loadPtrFunc, outArray, fileIndex, (uint)numOfCamos);
 
 			int *puVar2 = *(int**)(param_1 + 0x58);
-			int iVar2 = puVar2[1];
-			int iVar3 = puVar2[2];
-			int iVar4 = puVar2[3];
 			*(int*)(param_1 + 0x30) = *puVar2;
-			*(int*)(param_1 + 0x34) = iVar2;
-			*(int*)(param_1 + 0x38) = iVar3;
-			*(int*)(param_1 + 0x3c) = iVar4;
+			*(int*)(param_1 + 0x34) = puVar2[1];
+			*(int*)(param_1 + 0x38) = puVar2[2];
+			*(int*)(param_1 + 0x3c) = puVar2[3];
 			longlong lVar10 = *(longlong*)(param_1 + 0x58);
-			int uVar5 = *(int*)(lVar10 + 0x14);
-			int uVar6 = *(int*)(lVar10 + 0x18);
-			int uVar7 = *(int*)(lVar10 + 0x1c);
 			*(int*)(param_1 + 0x40) = *(int*)(lVar10 + 0x10);
-			*(int*)(param_1 + 0x44) = uVar5;
-			*(int*)(param_1 + 0x48) = uVar6;
-			*(int*)(param_1 + 0x4c) = uVar7;
+			*(int*)(param_1 + 0x44) = *(int*)(lVar10 + 0x14);
+			*(int*)(param_1 + 0x48) = *(int*)(lVar10 + 0x18);
+			*(int*)(param_1 + 0x4c) = *(int*)(lVar10 + 0x1c);
+			
+			//ZIP: ORIG
+			//int* puVar2 = *(int**)(param_1 + 0x58);
+			//int iVar2 = puVar2[1];
+			//int iVar3 = puVar2[2];
+			//int iVar4 = puVar2[3];
+			//*(int*)(param_1 + 0x30) = *puVar2;
+			//*(int*)(param_1 + 0x34) = iVar2;
+			//*(int*)(param_1 + 0x38) = iVar3;
+			//*(int*)(param_1 + 0x3c) = iVar4;
+			//longlong lVar10 = *(longlong*)(param_1 + 0x58);
+			//int uVar5 = *(int*)(lVar10 + 0x14);
+			//int uVar6 = *(int*)(lVar10 + 0x18);
+			//int uVar7 = *(int*)(lVar10 + 0x1c);
+			//*(int*)(param_1 + 0x40) = *(int*)(lVar10 + 0x10);
+			//*(int*)(param_1 + 0x44) = uVar5;
+			//*(int*)(param_1 + 0x48) = uVar6;
+			//*(int*)(param_1 + 0x4c) = uVar7;
 
 			return 1;
 		}//PreparePlayerVehicleInSortieHook
