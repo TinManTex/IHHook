@@ -15,7 +15,8 @@
 #include "Hooks_LoadFile.h"
 #include "Hooks_Character.h"
 #include "Hooks_Buddy.h" //ZIP: For buddies
-#include "Hooks_Vehicle.h" 
+#include "Hooks_Vehicle.h" //ZIP: For vehicles
+#include "Hooks_FoxString.h" //ZIP: FoxString hook
 
 #include "RawInput.h"
 
@@ -344,7 +345,8 @@ namespace IHHook {
 			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
 			Hooks_Character::CreateHooks();
 			Hooks_Buddy::CreateHooks(); //ZIP: For buddies
-			Hooks_Vehicle::CreateHooks(); 
+			Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
+			Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
@@ -783,6 +785,7 @@ namespace IHHook {
 		config.enableFnvHook = false;
 		config.logFileLoad = false;
 		config.forceUsePatterns = false;
+		config.logFoxStringCreateInPlace = false; //ZIP: Fox hooks
 
 		std::string line;
 		while (std::getline(infile, line)) {
@@ -851,6 +854,9 @@ namespace IHHook {
 			}
 			else if (varName == "forceUsePatterns") {
 				config.forceUsePatterns = valueStr == "true";
+			}
+			else if (varName == "logFoxStringCreateInPlace") { //ZIP: Fox hooks
+				config.logFoxStringCreateInPlace = valueStr == "true";
 			}
 		}//while line
 
