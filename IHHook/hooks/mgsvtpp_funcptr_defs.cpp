@@ -48,6 +48,7 @@ PreparePlayerVehicleInSortieFunc* PreparePlayerVehicleInSortie;
 PreparePlayerVehicleInGameFunc* PreparePlayerVehicleInGame;
 LoadDefaultFpkPtrFuncFunc* LoadDefaultFpkPtrFunc;
 LoadAllVehicleCamoFpksFunc* LoadAllVehicleCamoFpks;
+CreateInPlaceFunc* CreateInPlace;
 lua_newstateFunc* lua_newstate;
 lua_closeFunc* lua_close;
 lua_newthreadFunc* lua_newthread;

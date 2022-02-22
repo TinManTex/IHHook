@@ -19,7 +19,8 @@
 #include "Hooks_FOV.h"
 #include "Hooks_Character.h"
 #include "Hooks_Buddy.h" //ZIP: For buddies
-#include "Hooks_Vehicle.h"
+#include "Hooks_Vehicle.h" //ZIP: For vehicles
+#include "Hooks_FoxString.h" //ZIP: FoxString hook
 #include "hooks/mgsvtpp_func_typedefs.h"//StrCode64
 
 namespace IHHook {

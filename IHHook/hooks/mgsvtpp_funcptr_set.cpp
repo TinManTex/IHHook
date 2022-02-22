@@ -52,6 +52,7 @@ namespace IHHook {
 		PreparePlayerVehicleInGame = (PreparePlayerVehicleInGameFunc*)addressSet["PreparePlayerVehicleInGame"];
 		LoadDefaultFpkPtrFunc = (LoadDefaultFpkPtrFuncFunc*)addressSet["LoadDefaultFpkPtrFunc"];
 		LoadAllVehicleCamoFpks = (LoadAllVehicleCamoFpksFunc*)addressSet["LoadAllVehicleCamoFpks"];
+		CreateInPlace = (CreateInPlaceFunc*)addressSet["CreateInPlace"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

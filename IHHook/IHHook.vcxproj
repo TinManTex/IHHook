@@ -173,6 +173,7 @@
     <ClInclude Include="Hooks_CityHash.h" />
     <ClInclude Include="Hooks_FNVHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
+    <ClInclude Include="Hooks_FoxString.h" />
     <ClInclude Include="Hooks_LoadFile.h" />
     <ClInclude Include="Hooks_Lua.h" />
     <ClInclude Include="Hooks_TPP.h" />
@@ -241,6 +242,7 @@
     </ClCompile>
     <ClCompile Include="Hooks_FNVHash.cpp" />
     <ClCompile Include="Hooks_FOV.cpp" />
+    <ClCompile Include="Hooks_FoxString.cpp" />
     <ClCompile Include="Hooks_LoadFile.cpp" />
     <ClCompile Include="Hooks_Lua.cpp" />
     <ClCompile Include="Hooks_Lua_Test.cpp" />

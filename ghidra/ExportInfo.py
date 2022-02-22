@@ -72,11 +72,12 @@ exportInfo=[
 	{"name":"LoadBuddyWalkerGearArmFpk", "usingDetour":True,},
 	{"name":"LoadBuddyWalkerGearHeadFpk", "usingDetour":True,},
 	{"name":"LoadBuddyWalkerGearWeaponFpk", "usingDetour":True,},
-    {"name":"LoadDefaultFpksFunc", "usingDetour":True,},
-    {"name":"PreparePlayerVehicleInSortie", "usingDetour":True,},
-    {"name":"PreparePlayerVehicleInGame", "usingDetour":True,},
-    {"name":"LoadDefaultFpkPtrFunc", "usingDetour":True,},
-    {"name":"LoadAllVehicleCamoFpks", "usingDetour":True,},
+	{"name":"LoadDefaultFpksFunc", "usingDetour":True,},
+	{"name":"PreparePlayerVehicleInSortie", "usingDetour":True,},
+	{"name":"PreparePlayerVehicleInGame", "usingDetour":True,},
+	{"name":"LoadDefaultFpkPtrFunc", "usingDetour":True,},
+	{"name":"LoadAllVehicleCamoFpks", "usingDetour":True,},
+	{"name":"CreateInPlace", "usingDetour":True,},  
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 

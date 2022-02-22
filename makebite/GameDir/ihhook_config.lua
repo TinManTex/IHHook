@@ -6,5 +6,6 @@ local this={
 	enableFnvHook=false,
 	logFileLoad=false,
 	forceUsePatterns=false,
+	logFoxStringCreateInPlace=false,
 }--this
 return this
