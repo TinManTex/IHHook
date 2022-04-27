@@ -218,25 +218,23 @@ namespace IHHook {
 			"/Assets/tpp/pack/buddy/quiet/bq_wp_02.fpk",
 		};
 
-		//ZIP: Main buddy FPKs contain head and arm content. These are FPKs are empty but unsure if they can serve a purpose.
-		std::string buddyWalkerGearArmFpksDefault[]{
-			"/Assets/tpp/pack/buddy/walkergear/bw_am_00.fpk",
-			"/Assets/tpp/pack/buddy/walkergear/bw_am_01.fpk",
-		};
-
-		//ZIP: Main buddy FPKs contain head and arm content. These are FPKs are empty but unsure if they can serve a purpose.
-		std::string buddyWalkerGearHeadFpksDefault[]{
-			"/Assets/tpp/pack/buddy/walkergear/bw_hd_00.fpk",
-			"/Assets/tpp/pack/buddy/walkergear/bw_hd_01.fpk",
-			"/Assets/tpp/pack/buddy/walkergear/bw_hd_02.fpk",
-		};
-
 		std::string buddyWalkerGearWeaponFpksDefault[]{
 			"/Assets/tpp/pack/buddy/walkergear/bw_wp_00.fpk",
 			"/Assets/tpp/pack/buddy/walkergear/bw_wp_01.fpk",
 			"/Assets/tpp/pack/buddy/walkergear/bw_wp_02.fpk",
 			"/Assets/tpp/pack/buddy/walkergear/bw_wp_03.fpk",
 			"/Assets/tpp/pack/buddy/walkergear/bw_wp_04.fpk",
+		};
+
+		//ZIP: Main buddy FPKs contain head and arm content. These FPKs are empty but unsure if they can serve a purpose.
+		std::string buddyWalkerGearArmFpksDefault[]{
+			"/Assets/tpp/pack/buddy/walkergear/bw_am_00.fpk",
+			"/Assets/tpp/pack/buddy/walkergear/bw_am_01.fpk",
+		};
+		std::string buddyWalkerGearHeadFpksDefault[]{
+			"/Assets/tpp/pack/buddy/walkergear/bw_hd_00.fpk",
+			"/Assets/tpp/pack/buddy/walkergear/bw_hd_01.fpk",
+			"/Assets/tpp/pack/buddy/walkergear/bw_hd_02.fpk",
 		};
 		
 		/*
@@ -343,7 +341,6 @@ namespace IHHook {
 		*/
 		ulonglong* LoadBuddyQuietWeaponFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, short param_quietWeaponId) {
 			//ZIP: TODO GetVars for Quiet weapon type
-			//ZIP: No override? Fall back
 			if (!overrideBuddyEquipmentSystem || buddyEqp.quietWeaponFpk == "") {
 				return LoadBuddyQuietWeaponFpk(param_1, fileSlotIndex, param_quietWeaponId);
 			}
@@ -356,41 +353,8 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadBuddyQuietWeaponFpkHook
 
-		//ZIP: Main buddy FPKs contain head and arm content. Leaving this here, just in case.
-		ulonglong* LoadBuddyWalkerGearArmFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
-			//ZIP: TODO GetVars for Walker Gear arm type	
-			//ZIP: No override? Fall back
-			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearArmFpk == "") {
-				return LoadBuddyWalkerGearArmFpk(param_1, fileSlotIndex, param_3, param_4);
-			}
-
-			std::string filePath = buddyEqp.walkerGearArmFpk;
-			spdlog::debug("walkerGearArmFpk: {}", filePath);
-			ulonglong filePath64 = PathCode64(filePath.c_str());
-			LoadFile(fileSlotIndex, filePath64);
-
-			return fileSlotIndex;
-		}//LoadBuddyWalkerGearArmFpkHook
-
-		//ZIP: Main buddy FPKs contain head and arm content. Leaving this here, just in case.
-		ulonglong* LoadBuddyWalkerGearHeadFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
-			//ZIP: TODO GetVars for Walker Gear Head type		
-			//ZIP: No override? Fall back
-			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearHeadFpk == "") {
-				return LoadBuddyWalkerGearHeadFpk(param_1, fileSlotIndex, param_3, param_4);
-			}
-
-			std::string filePath = buddyEqp.walkerGearHeadFpk;
-			spdlog::debug("walkerGearHeadFpk: {}", filePath);
-			ulonglong filePath64 = PathCode64(filePath.c_str());
-			LoadFile(fileSlotIndex, filePath64);
-
-			return fileSlotIndex;
-		}//LoadBuddyWalkerGearHeadFpkHook
-
 		ulonglong* LoadBuddyWalkerGearWeaponFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 			//ZIP: TODO GetVars for Walker Gear weapon type		
-			//ZIP: No override? Fall back
 			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearWeaponFpk == "") {
 				return LoadBuddyWalkerGearWeaponFpk(param_1, fileSlotIndex, param_3, param_4);
 			}
@@ -403,10 +367,35 @@ namespace IHHook {
 			return fileSlotIndex;
 		}//LoadBuddyWalkerGearWeaponFpkHook
 
+		//ZIP: Main buddy FPKs contain head and arm content. Leaving this here, just in case.
+		ulonglong* LoadBuddyWalkerGearArmFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
+			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearArmFpk == "") {
+				return LoadBuddyWalkerGearArmFpk(param_1, fileSlotIndex, param_3, param_4);
+			}
+
+			std::string filePath = buddyEqp.walkerGearArmFpk;
+			spdlog::debug("walkerGearArmFpk: {}", filePath);
+			ulonglong filePath64 = PathCode64(filePath.c_str());
+			LoadFile(fileSlotIndex, filePath64);
+
+			return fileSlotIndex;
+		}//LoadBuddyWalkerGearArmFpkHook
+		ulonglong* LoadBuddyWalkerGearHeadFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
+			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearHeadFpk == "") {
+				return LoadBuddyWalkerGearHeadFpk(param_1, fileSlotIndex, param_3, param_4);
+			}
+
+			std::string filePath = buddyEqp.walkerGearHeadFpk;
+			spdlog::debug("walkerGearHeadFpk: {}", filePath);
+			ulonglong filePath64 = PathCode64(filePath.c_str());
+			LoadFile(fileSlotIndex, filePath64);
+
+			return fileSlotIndex;
+		}//LoadBuddyWalkerGearHeadFpkHook
+
 		/*
 			IHHook setup
 		*/
-
 		void CreateHooks() {
 			spdlog::debug(__func__);
 

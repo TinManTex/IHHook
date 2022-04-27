@@ -16,36 +16,51 @@
 
 namespace IHHook {
 	namespace Hooks_FoxString {
+		/*
+			FoxString Replacements
+		*/
 		bool hasStringReplacements = false;
 		struct foxStringReplace {
 			std::string replaceString = "";
 			std::string newString = "";
+			bool removeAfterReplacement = false;
+			bool subStringReplacement = false;
 		};
 		std::list<foxStringReplace> replaceStrings = {};
 
-		/*
-			FoxString
-		*/
+		int l_ClearAllReplacementFoxStrings(lua_State* L) {
+			replaceStrings.clear();
+			return 0;
+		}//l_ClearAllReplacementFoxString
+
 		int l_AddReplacementFoxString(lua_State* L) {
-			const char* filePathOld = lua_tostring(L, -1);
+			const char* filePathOld = lua_tostring(L, -4);
 			if (filePathOld == NULL) {
 				filePathOld = "";
 			}
-			const char* filePathNew = lua_tostring(L, -2);
+			const char* filePathNew = lua_tostring(L, -3);
 			if (filePathNew == NULL) {
 				filePathNew = "";
 			}
-			AddReplacementToList(filePathOld, filePathNew);
+			bool isRemovedAfter = lua_toboolean(L, -2);
+			if (isRemovedAfter == NULL) {
+				isRemovedAfter = true;
+			}
+			bool isSubString = lua_toboolean(L, -1);
+			if (isSubString == NULL) {
+				isSubString = false;
+			}
+			AddReplacementToList(filePathOld, filePathNew, isRemovedAfter, isSubString);
 
 			return 0;
 		}//l_AddReplacementFoxString
 
-		void AddReplacementToList(std::string filePathOld, std::string filePathNew) {
+		void AddReplacementToList(std::string filePathOld, std::string filePathNew, bool isRemovedAfter = true, bool isSubString = false) {
 			if (filePathOld == "" || filePathNew == "")
 				return;
 
-			spdlog::debug("AddReplacementFoxString: Old: {}, New: {}", filePathOld, filePathNew);
-			foxStringReplace newReplace = { filePathOld, filePathNew };
+			spdlog::debug("AddReplacementFoxString: Old: {}, New: {}, Temp: {}", filePathOld, filePathNew, isRemovedAfter);
+			foxStringReplace newReplace = { filePathOld, filePathNew, isRemovedAfter, isSubString };
 			replaceStrings.push_front(newReplace);
 			hasStringReplacements = true;
 		}
@@ -64,16 +79,33 @@ namespace IHHook {
 				std::list<foxStringReplace>::iterator it;
 				for (it = replaceStrings.begin(); it != replaceStrings.end(); ++it) {
 					std::string oldString = it->replaceString;
-					if (oldString == cString) {
-						std::string newString = it->newString;
-						spdlog::debug("CreateInPlaceHook: Old: {}, New: {}", oldString, newString);
-						/*
-						replaceStrings.erase(it);
-						if (std::size(replaceStrings) <= 0) {
-							spdlog::debug("CreateInPlaceHook: All replacements done.");
-							hasStringReplacements = false; //ZIP: Disables when there are no replacements.
+					std::string scString = cString;
+					bool isMatched = (oldString == scString);
+
+					//Substring				
+					if (it->subStringReplacement) {			
+						size_t subString = scString.find(oldString);
+						if (subString != scString.npos) {
+							scString.erase(subString, scString.length()); //ZIP: Remove what matches.
+							isMatched = true;
 						}
-						*/
+					}
+
+					if (isMatched) {
+						std::string newString = it->newString;
+						if (it->subStringReplacement) {
+							newString = scString + newString; //ZIP: Combine old and new string
+						}
+						spdlog::debug("CreateInPlaceHook: Old: {}, New: {}", oldString, newString);		
+						
+						if (it->removeAfterReplacement == true) {
+							replaceStrings.erase(it);
+							if (std::size(replaceStrings) <= 0) {
+								spdlog::debug("CreateInPlaceHook: All replacements done.");
+								hasStringReplacements = false; //ZIP: Disables when there are no replacements.
+							}
+						}
+
 						return CreateInPlace(outFoxString, newString.c_str());
 					}
 				}
@@ -149,7 +181,7 @@ namespace IHHook {
 				//ZIP: If there are any valid entries, enable override and add entry to list.
 				if (varName != "" && valueStr != "") {
 					spdlog::debug("AddReplacementFoxString: Old:{}, New:{}", varName, valueStr);
-					foxStringReplace newReplace = { varName, valueStr };
+					foxStringReplace newReplace = { varName, valueStr, false, false }; //ZIP: Replacements in infos aren't temporary
 					replaceStrings.push_front(newReplace);
 					hasStringReplacements = true;
 				}
@@ -191,6 +223,7 @@ namespace IHHook {
 
 			luaL_Reg libFuncs[] = {
 				{ "AddReplacementFoxString", l_AddReplacementFoxString },
+				{ "ClearAllReplacementFoxStrings", l_ClearAllReplacementFoxStrings },
 
 				{ NULL, NULL }//GOTCHA: crashes without
 			};
