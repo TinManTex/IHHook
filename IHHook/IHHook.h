@@ -64,7 +64,7 @@ namespace IHHook {
 	extern struct Config config;
 	static const std::string hookConfigName = "ihhook_config.lua";
 
-	static const int Version = 16; //SYNC: fileVersion
+	static const int Version = 17; //SYNC: fileVersion
 	extern int ihVersion;
 	static const DWORD GameVersion[4] = { 1, 0, 15, 3 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
