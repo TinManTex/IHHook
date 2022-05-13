@@ -156,7 +156,8 @@
     </Link>
     <ProjectReference />
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)makebite\GameDir\dinput8.dll"</Command>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)makebite\GameDir\dinput8.dll"
+copy /Y "$(SolutionDir)makebite\GameDir\mod\docs\IHHook-Readme.txt" "$(SolutionDir)makebite\Readme.txt"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
