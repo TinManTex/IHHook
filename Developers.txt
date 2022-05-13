@@ -1,0 +1,13 @@
+# Developing a new IHHook version
+
+Work for a new version should be done on a seperate development branch than main.
+Try and get some Modders Heaven community members to test build builds for you
+https://discord.gg/3rVFWf2vbj
+
+You should edit documents (mainly Changelog and Readme) in makebite/GameDir/mod/Docs directly.
+
+Releases:
+Visual studio post-build step should copy and rename the dll to the makebite folder.
+It also copies makebite/GameDir/mod/docs/IHHook-Readme.txt to makebite/ so makebite updates its metadata.xml with it.
+Make sure it's a release build.
+Simply use makebite on the makebite folder.
