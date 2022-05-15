@@ -796,14 +796,17 @@ namespace IHHook {
 				continue;
 			}
 
-			//tex trim to before comment
+			//tex deal with comments
 			std::size_t found = line.find("--");
+			//tex line is only comment
 			if (found == 0) {
 				continue;
 			}
+			//tex line has comment, trim to before comment
 			if (found != std::string::npos) {
 				line = line.substr(0, found - 1);
 			}
+
 			if (line.size() == 0) {
 				continue;
 			}
