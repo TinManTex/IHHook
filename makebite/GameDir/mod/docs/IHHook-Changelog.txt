@@ -1,5 +1,13 @@
 IHHook changelog 
-- just the changes that are most likely to be added to IH readme, otherwise just look at the github commits.
+- just broad sweep changes, otherwise just look at the github commits.
+
+r17 - 2022-05-15
+FoxString hook.
+Bunch of character, buddy, vehicle change hooks.
+ihhook_config.lua (next to ihhook/dinput8 dll) - allows some startup settings of ihhook to be set.
+FNV Hash logging.
+Ghidra scripts to export addresses, func defs, and a refactor and reduction of required steps to get hooks running.
+
 r16 - 2021-08-04
 InfCamHook/FOV module moved from IH.
 Settings line combined InputText plus Combobox.
