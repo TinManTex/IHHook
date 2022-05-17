@@ -27,6 +27,7 @@ namespace IHHook {
 			uint playerPartsType = 255;
 			bool useHead = false;
 			bool useBionicHand = false;
+			bool useCamo = false;
 			std::string playerPartsFpkPath = "";
 			std::string playerPartsPartsPath = "";
 			std::string skinToneFv2Path = "";
@@ -130,6 +131,14 @@ namespace IHHook {
 
 			return 0;
 		}//l_SetUseBionicHandForPlayerParts
+		//lua SetUseCamoForPlayerParts(bool override)
+		int l_SetUseCamoForPlayerParts(lua_State* L) {
+			character.useCamo = lua_toboolean(L, -1);
+
+			spdlog::debug("l_SetUseCamoForPlayerParts useCamo:{}, ", character.useCamo);
+
+			return 0;
+		}//l_SetUseCamoForPlayerParts
 
 
 		int l_SetPlayerPartsFpkPath(lua_State* L) {
@@ -606,11 +615,40 @@ namespace IHHook {
 		//	LoadFile(fileSlotIndex, fpkPath);
 		//	return fileSlotIndex;
 		//}//LoadPlayerCamoFpkORIG
+		bool IsValidPlayerCamo() {
+			if (character.playerCamoFpkPath == "" || character.playerCamoFv2Path == "")
+				return false;
+
+			return true;
+		}
+
+		bool UseVanillaPlayerCamo(uint playerType, uint playerPartsType, uint playerCamoType) {
+			if (playerCamoType == 0xff) {
+				return false;
+			}
+			if ((playerType == 0) || (playerType == 3)) {
+				if ((0x14 < playerPartsType - 2) && (playerPartsType < 0x1a)) {
+					return true;
+				}
+				if (playerPartsType == 7) {
+					return true;
+				}
+			}
+			else {
+				if (playerType == 1) {
+					return true;
+				}
+				if (playerType == 2) {
+					return true;
+				}
+			}
+			return false;
+		}
 
 		ulonglong* LoadPlayerCamoFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
-			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}, playerCamoType:{}", playerType, playerPartsType, playerCamoType);
 
-			if (!overrideCharacterSystem) {
+			if (!IsValidPlayerCamo()) {
 				return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 			}
 
@@ -624,19 +662,25 @@ namespace IHHook {
 				return fileSlotIndex;
 			}
 
-			ulonglong filePath64 = 0;
-			if (character.playerCamoFpkPath != "") {
-				filePath64 = PathCode64(character.playerCamoFpkPath.c_str());
+			bool useCamo = UseVanillaPlayerCamo(playerType, playerPartsType, playerCamoType);
+			if (overrideCharacterSystem) {
+				if (IsPlayerPartsTypeValid(playerPartsType)) {
+					useCamo = character.useCamo;
+				}
 			}
 
+			ulonglong filePath64 = 0;
+			if (useCamo) {
+				filePath64 = PathCode64(character.playerCamoFpkPath.c_str());
+			}
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerCamoFpkHook
 
 		ulonglong* LoadPlayerCamoFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
-			spdlog::debug("LoadPlayerCamoFv2Hook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
+			spdlog::debug("LoadPlayerCamoFv2Hook playerType:{}, playerPartsType:{}, playerCamoType:{}", playerType, playerPartsType, playerCamoType);
 			
-			if (!overrideCharacterSystem) {
+			if (!IsValidPlayerCamo()) {
 				return LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 			}
 
@@ -650,11 +694,17 @@ namespace IHHook {
 				return fileSlotIndex;
 			}
 
-			ulonglong filePath64 = 0;
-			if (character.playerCamoFv2Path != "") {
-				filePath64 = PathCode64(character.playerCamoFv2Path.c_str());
+			bool useCamo = UseVanillaPlayerCamo(playerType, playerPartsType, playerCamoType);
+			if (overrideCharacterSystem) {
+				if (IsPlayerPartsTypeValid(playerPartsType)) {
+					useCamo = character.useCamo;
+				}
 			}
 
+			ulonglong filePath64 = 0;
+			if (useCamo) {
+				filePath64 = PathCode64(character.playerCamoFv2Path.c_str());
+			}
 			LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerCamoFv2Hook
@@ -1303,6 +1353,7 @@ namespace IHHook {
 				{ "SetPlayerPartsTypeForPartsType", l_SetPlayerPartsTypeForPartsType },
 				{ "SetUseHeadForPlayerParts", l_SetUseHeadForPlayerParts },
 				{ "SetUseBionicHandForPlayerParts", l_SetUseBionicHandForPlayerParts },
+				{ "SetUseCamoForPlayerParts", l_SetUseCamoForPlayerParts },
 				{ "SetPlayerPartsFpkPath", l_SetPlayerPartsFpkPath },
 				{ "SetPlayerPartsPartsPath", l_SetPlayerPartsPartsPath },
 				{ "SetSkinToneFv2Path", l_SetSkinToneFv2Path },
