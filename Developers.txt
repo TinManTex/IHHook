@@ -7,7 +7,11 @@ https://discord.gg/3rVFWf2vbj
 You should edit documents (mainly Changelog and Readme) in makebite/GameDir/mod/Docs directly.
 
 Releases:
+Make sure VS is set to release build.
 Visual studio post-build step should copy and rename the dll to the makebite folder.
 It also copies makebite/GameDir/mod/docs/IHHook-Readme.txt to makebite/ so makebite updates its metadata.xml with it.
-Make sure it's a release build.
 Simply use makebite on the makebite folder.
+And zip the .mgsv
+
+Compare the .mgsv vs a previous build
+and test installation for good measure.
