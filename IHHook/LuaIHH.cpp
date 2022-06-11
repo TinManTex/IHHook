@@ -1,3 +1,5 @@
+//lua lib IHH
+//TODO: should probably be IhkCore or something to keep in line with rest of the lua libs
 #include "LuaIHH.h"
 
 #include "spdlog/spdlog.h"
@@ -6,22 +8,13 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-#include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
 #include "OS.h"
 #include "PipeServer.h" // QueueMessageOut, messagesIn
 #include <filesystem>
-#include <string>
-#include <optional>
-#include <map>
 
+#include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
 #include "IHMenu.h" // MenuMessage, messagesIn
-#include "Hooks_TPP.h"
-#include "Hooks_FOV.h"
-#include "Hooks_Character.h"
-#include "Hooks_Buddy.h" //ZIP: For buddies
-#include "Hooks_Vehicle.h" //ZIP: For vehicles
-#include "Hooks_FoxString.h" //ZIP: FoxString hook
-#include "hooks/mgsvtpp_func_typedefs.h"//StrCode64
+#include "Hooks_FOV.h" // l_SetCamHook, l_UpdateCamHook
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;
@@ -257,7 +250,7 @@ namespace IHHook {
 				{ "InitMain", Hooks_Lua::l_FoxLua_InitMain},
 				{ "OnUpdate", Hooks_Lua::l_FoxLua_OnUpdate},
 				{ "UpdateChangeLocationMenu", l_UpdateChangeLocationMenu},
-				{ "SetCamHook", Hooks_FOV::l_SetCamHook },
+				{ "SetCamHook", Hooks_FOV::l_SetCamHook },//TODO: move to own lib
 				{ "UpdateCamHook", Hooks_FOV::l_UpdateCamHook },
 				{ "TestCallToIHHook", l_TestCallToIHHook},
 				{ NULL, NULL }

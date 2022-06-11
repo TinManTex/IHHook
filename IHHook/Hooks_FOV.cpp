@@ -1,6 +1,7 @@
 // adapted from //mons fork of AltimoorTADSKs fov Modifier dll https://github.com/mon/MGSV-TPP-FoV
 // supported by IH InfCamHook.lua
 
+#include "Hooks_FOV.h"
 #include <stdexcept>
 #include <cmath>
 #include <cstdint>
