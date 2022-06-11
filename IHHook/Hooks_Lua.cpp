@@ -115,7 +115,7 @@ namespace IHHook {
 				TestHooks_Lua(L);
 			}
 			lua_pushinteger(L, Version);
-			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
+			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");//tex LEGACY, now in IHH.version
 
 			CreateLibs(L);
 
@@ -321,6 +321,12 @@ namespace IHHook {
 		//TODO: document/make more discoverable
 		void CreateLibs(lua_State* L) {
 			LuaIHH::luaopen_ihh(L);
+			//tex: luaI_openlib leaves the lib table on the stack
+			//should do it in luaopen_ihh, but don't want to add IHHook.h to it
+			lua_pushinteger(L, Version);
+			lua_setfield(L, -1, "version");
+
+
 			Hooks_Character::CreateLibs(L);
 			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
 			Hooks_Vehicle::CreateLibs(L); //ZIP: For vehicles
