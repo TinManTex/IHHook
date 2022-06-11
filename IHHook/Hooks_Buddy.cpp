@@ -437,7 +437,7 @@ namespace IHHook {
 
 				{ NULL, NULL }//GOTCHA: crashes without
 			};
-			luaI_openlib(L, "IHH", libFuncs, 0);
+			luaI_openlib(L, "IhkBuddy", libFuncs, 0);
 			return 1;
 		}//CreateLibs
 	}//Hooks_Buddy

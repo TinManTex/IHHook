@@ -1370,7 +1370,7 @@ namespace IHHook {
 				//{ "SetPlayerPartsPart", l_SetPlayerPartsPart },//UNUSED
 				{ NULL, NULL }//GOTCHA: crashes without
 			};
-			luaI_openlib(L, "IHH", libFuncs, 0);
+			luaI_openlib(L, "IhkCharacter", libFuncs, 0);
 			return 1;
 		}//CreateLibs
 	}//Hooks_Character

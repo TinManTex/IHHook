@@ -64,7 +64,8 @@ namespace IHHook {
 			replaceStrings.push_front(newReplace);
 			hasStringReplacements = true;
 		}
-
+		//GOTCHA: as this is called most frames at mission runtime (turn on logging to see, seems to be repeated foxstring creations that you would have expected kjp to have optimized out)
+		//best use case of replacement is during mission load/before mission runtime to avoid potential performance hit of string matches.
 		fox::String * CreateInPlaceHook(fox::String *outFoxString, char *cString) {
 			if (config.logFoxStringCreateInPlace) {
 				spdlog::debug("CreateInPlaceHook: {}", cString);
@@ -227,7 +228,7 @@ namespace IHHook {
 
 				{ NULL, NULL }//GOTCHA: crashes without
 			};
-			luaI_openlib(L, "IHH", libFuncs, 0);
+			luaI_openlib(L, "IhkFoxString", libFuncs, 0);
 			return 1;
 		}//CreateLibs
 	}//Hooks_Fox
