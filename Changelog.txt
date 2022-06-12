@@ -1,7 +1,7 @@
 IHHook changelog 
 - just broad sweep changes, otherwise just look at the github commits.
 
-r17 - 2022-05-15
+Version r17 - 2022-06-12 (see github for full changes)
 FoxString hook.
 Bunch of character, buddy, vehicle change hooks.
 ihhook_config.lua (next to ihhook/dinput8 dll) - allows some startup settings of ihhook to be set.
