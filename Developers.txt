@@ -1,17 +1,27 @@
 # Developing a new IHHook version
 
 Work for a new version should be done on a seperate development branch than main.
+
+Bump the Version in IHHook.h and FileVersion in Resource Files/IHHook.rc
+
 Try and get some Modders Heaven community members to test build builds for you
 https://discord.gg/3rVFWf2vbj
 
 You should edit documents (mainly Changelog and Readme) in makebite/GameDir/mod/Docs directly.
 
+Using IHHook lua functions:
+Lua code can check for the global _IHHook to see if IHHook is running. It will be nil if not, or the IHHook version number if so.
+Which you can also use to guard against user running versions before the IHHook functions you're using.
+IH menus and Ivars can set a .requiresIHH bool to exclude themselves if IHH is not running.
+
 Releases:
 Make sure VS is set to release build.
-Visual studio post-build step should copy and rename the dll to the makebite folder.
+Visual Studio post-build step should copy and rename the dll to the makebite folder.
 It also copies makebite/GameDir/mod/docs/IHHook-Readme.txt to makebite/ so makebite updates its metadata.xml with it.
 Simply use makebite on the makebite folder.
 And zip the .mgsv
 
-Compare the .mgsv vs a previous build
+Compare the .mgsv against a previous build
 and test installation for good measure.
+
+When you're sure of a release make a pull of the development branch to main.
