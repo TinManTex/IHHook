@@ -1,4 +1,7 @@
-# Developing a new IHHook version
+# Notes for developers
+Further notes at top of IHHook.h
+
+## Developing a new IHHook version:
 
 Work for a new version should be done on a seperate development branch than main.
 
@@ -7,18 +10,13 @@ Bump the Version in IHHook.h and FileVersion in Resource Files/IHHook.rc
 Try and get some Modders Heaven community members to test build builds for you
 https://discord.gg/3rVFWf2vbj
 
-Using IHHook lua functions:
-Lua code can check for the global _IHHook to see if IHHook is running. It will be nil if not, or the IHHook version number if so.
-Which you can also use to guard against user running versions before the IHHook functions you're using.
-IH menus and Ivars can set a .requiresIHH bool to exclude themselves if IHH is not running.
-
-Documentation:
+## Documentation:
 Make sure Changelog.txt has a synopsis of major changes.
 Copy the latest changelog on to the top of the ReadMe.md
 As Readme.md is coppied to txt (since most users wont have the filetype associated to open it) remember to add two spaces at the end of lines you want to linebreak in .md rather than double breaking which will space out txt weird.
 The readme should be directly copied into into the nexusmods description page on release.
 
-Releases:
+## Releases:
 Make sure VS is set to release build.
 Visual Studio post-build step should copy and rename the dll to the makebite folder.
 It also copies ReadMe.md and Changelog.md to makebite/GameDir/mod/docs
@@ -29,4 +27,21 @@ Compare the .mgsv against a previous build
 and test installation for good measure.
 
 When you're sure of a release make a pull of the development branch to main.
+
+## Exporting functions to hook
+IHHook has a ghidra script to export function signatures/addresses for IHHook.
+Get access to the mgsv ghidra project by asking at the Modders Heaven discord.
+Read the notes in IHHook\ghidra\ExportInfo.py
+Specifically about committing the function parameter types in ghidra for the function you want.
+Add an entry to ExportInfo.py (again follow the notes)
+Run IHHook\ghidra\ExportHooksToHeader.py in ghidra via
+window menu > script manager, 
+find the manage script directories and point it to IHHook/ghidra folder, 
+then find the script in scripts\IHHook (or type in the name in filter).
+Any functions you're hooking need to be found in the jp exe too before the actual IHHook release, where ExportHooksToHeader needs to be run on the jp exe first, then on the eng exe.
+
+## Using IHHook lua functions:
+Lua code can check for the global _IHHook to see if IHHook is running. It will be nil if not, or the IHHook version number if so.
+Which you can also use to guard against user running versions before the IHHook functions you're using.
+IH menus and Ivars can set a .requiresIHHook bool to exclude themselves if IHH is not running.
 
