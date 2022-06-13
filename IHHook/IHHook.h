@@ -1,4 +1,5 @@
 //IHHook: A Dll proxy to extend MGSV for modding
+//See Developers.txt for more notes.
 //tex: can run without Infinite Heaven, but IH will use it.
 
 //Based on the bones of CityHook: https://github.com/emoose/MGSV-QAR-Dictionary-Project/tree/master/CityHook
