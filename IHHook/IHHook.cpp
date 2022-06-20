@@ -273,6 +273,7 @@ namespace IHHook {
 
 			MH_Initialize();
 
+			//GAMEVERSION
 			//DEBUGNOW TODO: an adresset map too I guess
 			if (lang == "en") {
 				addressSet = mgsvtpp_adresses_1_0_15_3_en;
