@@ -288,46 +288,7 @@ namespace IHHook {
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 
-			//tex Rebase adresses //DEBUGNOW
-			bool foundAllAddresses = true;
-			for (auto const& entry : addressSet) {
-				std::string name = entry.first;
-				if (isTargetExe) {
-					spdlog::info("isTargetExe, rebasing addr {}", name);
-					int64_t addr = entry.second;
-					int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
-					addressSet[name] = rebasedAddr;
-				}
-				else {
-					//spdlog::info("!isTargetExe, sig scanning");
-					addressSet[name] = 0;
-					auto it = mgsvtpp_patterns.find(name);
-					if (it != mgsvtpp_patterns.end()) {
-						//found
-						//const char* sig = it->second;
-						//const char* mask = mgsvtpp_masks[name];//ASSUMPTION: if sig exists then mask does
-						//uintptr_t addr = MemoryUtils::sigscan(name.c_str(), sig, mask);//tex returns null if not found
-
-						const char* pattern = it->second.c_str();
-						auto tstart = std::chrono::high_resolution_clock::now();
-						uintptr_t addr = (uintptr_t)MemoryUtils::PatternScan(pattern);//tex returns null if not found
-						auto tend = std::chrono::high_resolution_clock::now();
-						auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-						if (addr == NULL) {
-							spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
-							foundAllAddresses = false;
-						}
-						else {
-							spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
-						}
-
-						addressSet[name] = addr;
-					}
-					else {
-						spdlog::warn("Could not find sig for {}", name);
-					}
-				}//if isTargetExe
-			}//for addressSet
+			bool foundAllAddresses = RebaseAddresses(isTargetExe);
 
 			if (!foundAllAddresses) {
 				spdlog::warn("Could not find all addresses");
@@ -337,16 +298,7 @@ namespace IHHook {
 				//DEBUGNOW CreateHooks();
 			}
 
-			Hooks_CityHash::CreateHooks(RealBaseAddr);
-			Hooks_FNVHash::CreateHooks();
-			Hooks_Lua::CreateHooks();
-			Hooks_TPP::CreateHooks();
-			Hooks_FOV::CreateHooks();
-			Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
-			Hooks_Character::CreateHooks();
-			Hooks_Buddy::CreateHooks(); //ZIP: For buddies
-			Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
-			Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
+			CreateAllHooks();
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
@@ -864,5 +816,66 @@ namespace IHHook {
 		}//while line
 
 		return true;
-	}//ParseConfig
+	}//
+
+	//IN: BaseAddr, RealBaseAddr
+	//IN: mgsvtpp_patterns
+	//SIDE: addressSet
+	//rebases the static addresses or sig scans for them
+	bool IHH::RebaseAddresses(bool isTargetExe)	{
+		bool foundAllAddresses = true;
+		for (auto const& entry : addressSet) {
+			std::string name = entry.first;
+			if (isTargetExe) {
+				spdlog::info("isTargetExe, rebasing addr {}", name);
+				int64_t addr = entry.second;
+				int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+				addressSet[name] = rebasedAddr;
+			}
+			else {
+				//tex fall back to sig scan
+				spdlog::info("!isTargetExe, sig scanning");
+				addressSet[name] = 0;
+				auto it = mgsvtpp_patterns.find(name);
+				if (it != mgsvtpp_patterns.end()) {
+					//found
+					//const char* sig = it->second;
+					//const char* mask = mgsvtpp_masks[name];//ASSUMPTION: if sig exists then mask does
+					//uintptr_t addr = MemoryUtils::sigscan(name.c_str(), sig, mask);//tex returns null if not found
+
+					const char* pattern = it->second.c_str();
+					auto tstart = std::chrono::high_resolution_clock::now();
+					uintptr_t addr = (uintptr_t)MemoryUtils::PatternScan(pattern);//tex returns null if not found
+					auto tend = std::chrono::high_resolution_clock::now();
+					auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+					if (addr == NULL) {
+						spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
+						foundAllAddresses = false;
+					}
+					else {
+						spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
+					}
+
+					addressSet[name] = addr;
+				}
+				else {
+					spdlog::warn("Could not find sig for {}", name);
+				}
+			}//if isTargetExe
+		}//for addressSet
+		return foundAllAddresses;
+	}//RebaseAddresses
+
+	void IHH::CreateAllHooks() {
+		Hooks_CityHash::CreateHooks(RealBaseAddr);//TODO: rebase/convert to same style as rest, so don't have to pass in realbaseaddr
+		Hooks_FNVHash::CreateHooks();
+		Hooks_Lua::CreateHooks();
+		Hooks_TPP::CreateHooks();
+		Hooks_FOV::CreateHooks();
+		Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
+		Hooks_Character::CreateHooks();
+		Hooks_Buddy::CreateHooks(); //ZIP: For buddies
+		Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
+		Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
+	}//CreateAllHooks
 }//namespace IHHook

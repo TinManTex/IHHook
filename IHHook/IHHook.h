@@ -180,6 +180,10 @@ namespace IHHook {
 		std::string errorString{ "" };
 
 		ID3D11RenderTargetView* mainRenderTargetView{ nullptr };
+
+		//
+		bool RebaseAddresses(bool isTargetExe);
+		void CreateAllHooks();
 	};
 }//namespace IHHook
 
