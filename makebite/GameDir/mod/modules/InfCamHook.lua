@@ -28,7 +28,7 @@ this.registerMenus={
 
 this.camhookMenu={
   parentRefs={"InfMenuDefs.safeSpaceMenu","InfMenuDefs.inMissionMenu","InfMenuDefs.inDemoMenu"},--DEBUGNOW
-  usesIHH=true,
+  requiresIHHook=true,
   options={
     "Ivars.camhook_enable",
     "Ivars.camhook_focalLength_NORMAL",
@@ -49,6 +49,7 @@ this.registerIvars={
 }
 
 this.camhook_enable={
+  requiresIHHook=true,
   save=IvarProc.CATEGORY_EXTERNAL,
   range=Ivars.switchRange,
   settingNames="set_switch",
@@ -85,6 +86,7 @@ end
 
 local focalLengthRange={max=3500,min=0.01,increment=1}--tex only reason max is silly high is so very low fov wont trigger out of range warnings
 this.camhook_focalLength_NORMAL={
+  requiresIHHook=true,
   save=IvarProc.CATEGORY_EXTERNAL,
   camMode=this.camModesEnum.NORMAL,
   default=21,
@@ -92,6 +94,7 @@ this.camhook_focalLength_NORMAL={
   OnChange=this.UpdateCamHook,
 }
 this.camhook_focalLength_AIMING={
+  requiresIHHook=true,
   save=IvarProc.CATEGORY_EXTERNAL,
   camMode=this.camModesEnum.AIMING,
   default=22,
@@ -99,6 +102,7 @@ this.camhook_focalLength_AIMING={
   OnChange=this.UpdateCamHook,
 }
 this.camhook_focalLength_HIDING={
+  requiresIHHook=true,
   save=IvarProc.CATEGORY_EXTERNAL,
   camMode=this.camModesEnum.HIDING,
   default=26,
@@ -106,6 +110,7 @@ this.camhook_focalLength_HIDING={
   OnChange=this.UpdateCamHook,
 }
 this.camhook_focalLength_CQC={
+  requiresIHHook=true,
   save=IvarProc.CATEGORY_EXTERNAL,
   camMode=this.camModesEnum.CQC,
   default=32,
@@ -113,6 +118,7 @@ this.camhook_focalLength_CQC={
   OnChange=this.UpdateCamHook,
 }
 this.camhook_ApplyFOV={
+  requiresIHHook=true,
   save=IvarProc.CATEGORY_EXTERNAL,
   camMode=this.camModesEnum.CQC,
   default=81,
