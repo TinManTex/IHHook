@@ -9,15 +9,9 @@
 #include <string>
 #include <iostream>
 #include <sstream>   
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
-	//DEBUGNOW push this into somewhere more accessable
-	FUNC_DECL_ADDR(StrCode64)
-	FUNC_DECL_SIG(StrCode64, 
-		"\x48\x89\x00\x00\x00\x56\x48\x83\xEC\x00\x80\x3C\x0A", 
-		"xx???xxxx?xxx")
-	FUNC_DECL_PATTERN(StrCode64, "48 89 ? ? ? 56 48 83 EC ? 80 3C 0A")
-
 	std::map<int, long long> locationLangIds{
 		{10,0x1b094033d45d},//afgh,tpp_loc_afghan
 		{20,0x7114b69e71e7},//mafr,tpp_loc_africa
@@ -45,47 +39,27 @@ namespace IHHook {
 		//.So, main is in there, some place.– Damon Apr 8 '14 at 11:03"
 		//tex so you can find actual main from this
 		//not much point hooking it or actual main (lets call it FoxMain to be clearer) at the moment since IHHook is currently a dinput8 proxy which is obviously well past the _crtMain/FoxMain execute point
-		FUNCPTRDEF(long long, _mainCRTStartup, void)
-		FUNC_DECL_ADDR(_mainCRTStartup)
-		FUNC_DECL_SIG(_mainCRTStartup,
-			"\x48\x89\x00\x00\x00\x48\x89\x00\x00\x00\x57\x48\x83\xEC\x00\x83\x64\x24\x20",
-			"xx???xx???xxxx?xxxx")
+
 
 		uintptr_t missionCode_Addr = 0x142A58A00;
 		//uint32_t* missionCode;//tex in header
 
-		FUNCPTRDEF(void, UnkSomePlayerUpdateFunc, uintptr_t unkPlayerClass, uintptr_t playerIndex)
-		FUNC_DECL_ADDR(UnkSomePlayerUpdateFunc)//DEBUGNOW re-find, export in cvs and dump sig - 0x146e3a620 what ver was this from? 15.1,  0x146900690 = 15.3 DEBUGNOW
-		FUNC_DECL_SIG(UnkSomePlayerUpdateFunc,
-			"\x55\x53\x57\x41\x00\x41\x00\x41\x00\x48\x8D\x00\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x31\x00\x48\x89\x00\x00\x00\x00\x00\x48\x8B", 
-			"xxxx?x?x?xx??????xxx????xx?????xx?xx?????xx")
-		FUNC_DECL_PATTERN(UnkSomePlayerUpdateFunc, "55 53 57 41 ? 41 ? 41 ? 48 8D ? ? ? ? ? ? 48 81 EC ? ? ? ? 48 8B ? ? ? ? ? 48 31 ? 48 89 ? ? ? ? ? 48 8B")
+		//TODO: move to exploration
+		//void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
+		//	spdlog::trace(__func__);
+		//	UnkSomePlayerUpdateFunc(unkPlayerClass, playerIndex);
 
-		void UnkSomePlayerUpdateFuncHook(intptr_t unkPlayerClass, uintptr_t playerIndex) {
-			spdlog::trace(__func__);
-			UnkSomePlayerUpdateFunc(unkPlayerClass, playerIndex);
+		//	intptr_t playerClass = unkPlayerClass;
+		//	
+		//}//UnkSomePlayerUpdateFuncHook
 
-			intptr_t playerClass = unkPlayerClass;
-			
-		}//UnkSomePlayerUpdateFuncHook
-
-		//Address of signature = mgsvtpp_1_0_15_1_en.exe + 0x012C7570//15.1
-		FUNCPTRDEF(void, UnkAnotherPlayerUpdateFuncButHuge, long long unkP1)
-		FUNC_DECL_ADDR(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
-		FUNC_DECL_SIG(UnkAnotherPlayerUpdateFuncButHuge,
-			"\x48\x8B\x00\x48\x89\x00\x00\x48\x89\x00\x00\x48\x89\x00\x00\x55\x41\x00\x41\x00\x41\x00\x41\x00\x48\x8D\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x0F\x29\x00\x00\x0F\x29\x00\x00\x44\x0F\x00\x00\x00\x44\x0F\x00\x00\x00\x44\x0F\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x44\x0F\x00\x00\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x33\x00\x48\x89\x00\x00\x00\x00\x00\x48\x8B", 
-			"xx?xx??xx??xx??xx?x?x?x?xx?????xxx????xx??xx??xx???xx???xx???xx??????xx??????xx??????xx??????xx??????xx?????xx?xx?????xx")
-		FUNC_DECL_PATTERN(UnkAnotherPlayerUpdateFuncButHuge, "48 8B ? 48 89 ? ? 48 89 ? ? 48 89 ? ? 55 41 ? 41 ? 41 ? 41 ? 48 8D ? ? ? ? ? 48 81 EC ? ? ? ? 0F 29 ? ? 0F 29 ? ? 44 0F ? ? ? 44 0F ? ? ? 44 0F ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 44 0F ? ? ? ? ? ? 48 8B ? ? ? ? ? 48 33 ? 48 89 ? ? ? ? ? 48 8B")
+		////Address of signature = mgsvtpp_1_0_15_1_en.exe + 0x012C7570//15.1
+		//(UnkAnotherPlayerUpdateFuncButHuge)// 0x1412cf110 = 15.3 DEBUGNOW
 
 		
 			
+	
 
-		FUNCPTRDEF(long long*, GetFreeRoamLangId, long long* langId, short locationCode, short missionCode);
-		FUNC_DECL_ADDR(GetFreeRoamLangId)
-		FUNC_DECL_SIG(GetFreeRoamLangId,
-			"\x0F\xB7\x00\x83\xF8\x00\x74\x00\x83\xF8\x00\x74\x00\x83\xF8\x00\x74\x00\x48\xB8",
-			"xx?xx?x?xx?x?xx?x?xx")
-		FUNC_DECL_PATTERN(GetFreeRoamLangId,"0F B7 ? 83 F8 ? 74 ? 83 F8 ? 74 ? 83 F8 ? 74 ? 48 B8")
 
 		//tex the idroid free roam mission tab had an issue where it wouldn't show the name of custom free roam missions
 		//despite there being a map_location_parameter - locationNameLangId = "tpp_loc_<whatever> (that matches tpp_common lng for vanilla free)
@@ -134,13 +108,8 @@ namespace IHHook {
 			return langId;
 		}//GetFreeRoamLangIdHook
 
-	
-
-		FUNCPTRDEF(void, UnkSomePrintFunction, char* fmt, ...)
-		FUNC_DECL_ADDR(UnkSomePrintFunction)
-
 		//DEBUGNOW not really tpp only Hooks_Fox?
-		static void UnkSomePrintFunctionHook(char* fmt, ...) {
+		static void UnkPrintFuncStubbedOutHook(const char* fmt, ...) {
 			spdlog::trace(__func__);
 			va_list args;
 			va_start(args, fmt);
@@ -167,11 +136,9 @@ namespace IHHook {
 
 
 			spdlog::debug(message);
-		}//UnkSomePrintFunctionHook
+		}//UnkPrintFuncStubbedOutHook
 
-		FUNCPTRDEF(void, nullsub_2, char* unkSomeIdStr, unsigned long long unkSomeIdNum)
-		FUNC_DECL_ADDR(nullsub_2)
-		void nullsub_2Hook(char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
+		void nullsub_2Hook(const char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
 			//spdlog::trace(__func__);
 			if (unkSomeIdStr != NULL) {
 				try {
@@ -185,7 +152,7 @@ namespace IHHook {
 			}
 		}//nullsub_2Hook
 
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			spdlog::trace(__func__);
 			//DEBUGNOW hitting some kind of exception on caps machine
 			//missionCode = NULL;
@@ -203,25 +170,16 @@ namespace IHHook {
 			//DEBUGNOW
 
 			//DEBUGNOW
-			//GET_SIG_ADDR(_mainCRTStartup)
 			//if (_mainCRTStartupAddr == NULL) {
 			//	bool bleh = true;
 			//}
 
-			if (isTargetExe) {
-				GET_REBASED_ADDR(StrCode64)
+			if (addressSet["StrCode64"] == NULL) {
+				spdlog::warn("addr fail: addressSet[\"StrCode64\"] == NULL");
 			}
-			else {
-				GET_SIG_ADDR(StrCode64)
-			}
-			if (StrCode64Addr == NULL) {
-				spdlog::warn("addr fail: StrCode64Addr == NULL");
-			}
-			else {
-				CREATE_FUNCPTR(StrCode64)			
-					
+			else {					
 				//DEBUGNOW TEST
-				const char* langId = "tpp_loc_afghan";
+				char* langId = "tpp_loc_afghan";
 				long long tpp_loc_afghanS64 = StrCode64(langId, strlen(langId));
 
 				std::stringstream stream;
@@ -236,32 +194,20 @@ namespace IHHook {
 					//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 			}
 
-
-	
-			if (isTargetExe) {
-				GET_REBASED_ADDR(GetFreeRoamLangId)
-				GET_REBASED_ADDR(UnkSomePrintFunction)
-				GET_REBASED_ADDR(nullsub_2)
-			}
-			else {
-				GET_SIG_ADDR(GetFreeRoamLangId)
-				//DEBUGNOW GET_SIG_ADDR(UnkSomePrintFunction)
-				//GET_SIG_ADDR(nullsub_2)
-			}
-			if (GetFreeRoamLangIdAddr == NULL
-				|| UnkSomePrintFunctionAddr == NULL
-				|| nullsub_2Addr == NULL
+			if (addressSet["GetFreeRoamLangId"] == NULL
+				|| addressSet["UnkPrintFuncStubbedOut"] == NULL
+				|| addressSet["nullsub_2"] == NULL
 			) {
 				spdlog::warn("addr == NULL");
 			}
 			else {
 				CREATE_HOOK(GetFreeRoamLangId)
-				CREATE_HOOK(UnkSomePrintFunction)
+				CREATE_HOOK(UnkPrintFuncStubbedOut)
 				CREATE_HOOK(nullsub_2)
 
 				ENABLEHOOK(GetFreeRoamLangId)
 
-				ENABLEHOOK(UnkSomePrintFunction)//DEBUGNOW
+				ENABLEHOOK(UnkPrintFuncStubbedOut)//DEBUGNOW
 #ifdef _DEBUG
 				//ENABLEHOOK(nullsub_2)//DEBUGNOW
 #endif // DEBUG

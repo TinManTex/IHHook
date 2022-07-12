@@ -226,9 +226,9 @@ LUALIB_API lua_Number luaL_optnumber (lua_State *L, int narg, lua_Number def) {
 //}
 
 
-LUALIB_API void (luaL_register) (lua_State *L, const char *libname,
-const luaL_Reg *l) {
-  luaI_openlib(L, libname, l, 0);
+LUALIB_API void (luaL_register)(lua_State* L, const char* libname,
+    const luaL_Reg* l) {
+    luaI_openlib(L, libname, l, 0);
 }
 
 

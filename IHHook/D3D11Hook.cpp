@@ -38,13 +38,13 @@ bool D3D11Hook::hook() {
     swap_chain_desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     swap_chain_desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
+    spdlog::info("Creating dummy D3D11 device.");
     HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_NULL, nullptr, 0, &feature_level, 1, D3D11_SDK_VERSION, &swap_chain_desc, &swap_chain, &device, &device_max_feature_level, &context);
     if (FAILED(hr)) {  
         spdlog::error("Failed to create dummy D3D11 device. HRESULT={0:x} max_feature={1:x}", hr, device_max_feature_level);
         return false;
     }
-    //spdlog::info("Created dummy D3D11 device. HRESULT={0:x} max_feature={1:x}", hr, device_max_feature_level);
+    spdlog::info("Created dummy D3D11 device. HRESULT={0:x} max_feature={1:x}", hr, device_max_feature_level);
 
     auto present_fn = (*(uintptr_t**)swap_chain)[8];
     auto resize_buffers_fn = (*(uintptr_t**)swap_chain)[13];
@@ -54,7 +54,7 @@ bool D3D11Hook::hook() {
     device->Release();
     context->Release();
     swap_chain->Release();
-    //spdlog::info("Released dummy D3D11 device");
+    spdlog::info("Released dummy D3D11 device");
 
     m_hooked = m_present_hook->create() && m_resize_buffers_hook->create();
 

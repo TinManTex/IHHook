@@ -8,9 +8,15 @@
 #include <signal.h>
 
 #include "Hooks_CityHash.h"
+#include "Hooks_FnvHash.h"
 #include "Hooks_Lua.h"
 #include "Hooks_TPP.h"
 #include "Hooks_FOV.h"
+#include "Hooks_LoadFile.h"
+#include "Hooks_Character.h"
+#include "Hooks_Buddy.h" //ZIP: For buddies
+#include "Hooks_Vehicle.h" //ZIP: For vehicles
+#include "Hooks_FoxString.h" //ZIP: FoxString hook
 
 #include "RawInput.h"
 
@@ -28,8 +34,11 @@
 #include "IHMenu.h"
 #include "StyleEditor.h"
 
-#include "mgsvtpp_adresses_1_0_15_3_en.h"
-#include "mgsvtpp_adresses_1_0_15_3_jp.h"
+#include "Util.h"//config 
+
+#include "hooks/mgsvtpp_adresses_1_0_15_3_en.h"
+#include "hooks/mgsvtpp_adresses_1_0_15_3_jp.h"
+#include "hooks/mgsvtpp_patterns.h"
 
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//tex see note in imgui_impl_win32.h
@@ -37,7 +46,15 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 std::unique_ptr<IHHook::IHH> g_ihhook{};
 
 
+
 namespace IHHook {
+	//mgsvtpp_funcptr_set.cpp
+	extern void SetFuncPtrs();
+	extern void CreateHooks();
+
+	struct Config config;
+	bool ParseConfig(std::string fileName);
+
 	std::atomic<bool> doShutDown = false;
 
 	std::vector<std::string> errorMessages{};
@@ -45,6 +62,7 @@ namespace IHHook {
 	size_t RealBaseAddr;
 	bool isTargetExe = false;
 	std::map<std::string, int64_t> addressSet{};
+	std::map<std::string, char*> patterns{};
 
 	terminate_function terminate_Original;
 
@@ -140,7 +158,7 @@ namespace IHHook {
 		//MH_EnableHook(SetUnhandledExceptionFilter);
 
 
-		if (openConsole) {
+		if (config.openConsole) {
 			AllocConsole();
 			SetConsoleTitle(L"IHHook");
 			freopen("CONOUT$", "w", stdout);
@@ -157,7 +175,9 @@ namespace IHHook {
 		std::wstring gameDir = OS::GetGameDir();
 		SetCurrentDirectory(gameDir.c_str());//tex so this dll and lua can use reletive paths
 
+		config.debugMode = true;//DEBUGNOW -v
 		SetupLog();
+		ParseConfig(hookConfigName);//TODO: set log level via config.debugMode
 
 		//tex DEBUGNOW mgo is a seperate exe in the same dir, so bail out on exe name
 		HMODULE hExe = GetModuleHandle(NULL);
@@ -234,23 +254,27 @@ namespace IHHook {
 				SetCursor(true);//tex DEBUGNOW imgui window currently wont auto dismiss, so give user cursor
 			}
 			else {
-				//tex for using listed address vs sigscan
+				//tex for using listed address vs sigscan (but not actually currently doing so, see doHooks comment)
 				isTargetExe = true;
 			}//
 		}// ChecKVersion
 
-		//isTargetExe = false;//DEBUGNOW if you want to test signature scanning force isTargetExe false (or actually use a non 1.0.15.3 eng exe) and set doHooks=true -v-
-		//bool doHooks = true;
-
-		bool doHooks = isTargetExe;//tex in theory could fall back to signature scanning, however it takes a litteral minute for 100+ signatures to be found 
+		bool doHooks = isTargetExe;//tex not actually doing hooks if not target exe. in theory could fall back to signature scanning, however it takes a litteral minute for 100+ signatures to be found 
 		//plus if you did go that route you'd have to put it at an earlier blocking point (like off dllmain itself)
 		//since this function we're in is run by a thread so the exe will continue past the point we need our hooks up and running
+		//But heres a config option to test
+		if (config.forceUsePatterns) {
+			isTargetExe = false;//tex use sig scanning instead
+			doHooks = true;
+		}
+
 		if (doHooks) {//tex hook em up boys
 			Hooks_Lua::SetupLog();
 
 			MH_Initialize();
 
-			//DEBUGNOW TODO: an addresset map too I guess
+			//GAMEVERSION
+			//DEBUGNOW TODO: an adresset map too I guess
 			if (lang == "en") {
 				addressSet = mgsvtpp_adresses_1_0_15_3_en;
 			}
@@ -265,15 +289,22 @@ namespace IHHook {
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 
-			Hooks_CityHash::CreateHooks(RealBaseAddr);
-			Hooks_Lua::CreateHooks(RealBaseAddr);
-			Hooks_TPP::CreateHooks(RealBaseAddr);
-			Hooks_FOV::CreateHooks(RealBaseAddr);
+			bool foundAllAddresses = RebaseAddresses(isTargetExe);
+
+			if (!foundAllAddresses) {
+				spdlog::warn("Could not find all addresses");
+			}
+			else {
+				SetFuncPtrs();
+				//DEBUGNOW CreateHooks();
+			}
+
+			CreateAllHooks();
 
 			auto tend = std::chrono::high_resolution_clock::now();
 			auto durationShort = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
 			spdlog::debug("IHHook::CreateHooks total time(microseconds): {}µs", durationShort);
-		}
+		}//if doHooks
 
 		PipeServer::StartPipeServer();
 
@@ -305,7 +336,7 @@ namespace IHHook {
 		log->flush();
 
 		spdlog::set_default_logger(log);
-		if (debugMode) {
+		if (config.debugMode) {
 			spdlog::set_level(spdlog::level::trace);
 			spdlog::flush_on(spdlog::level::trace);
 		}
@@ -691,5 +722,161 @@ namespace IHHook {
 		//ImGui::End();
 	}//DrawUI
 
+	//TODO: move to own file
+	//tex: even though it's saved as valid lua, we'll just parse it as text on IHHook side rather than dealing with back and forth through lua, and so IHHook can use it before lua is stood up
+	bool ParseConfig(std::string fileName) {
+		spdlog::debug("ParseConfig {}", fileName);
+		std::ifstream infile(fileName);
+		if (infile.fail()) {
+			spdlog::warn("ParseConfig ifstream.fail for {}", fileName);
+			return false;
+		}
 
+		config.debugMode = true;//TODO debug level instead
+		config.openConsole = false;
+		config.enableCityHook = false;
+		config.enableFnvHook = false;
+		config.logFileLoad = false;
+		config.forceUsePatterns = false;
+		config.logFoxStringCreateInPlace = false; //ZIP: Fox hooks
+
+		std::string line;
+		while (std::getline(infile, line)) {
+			std::istringstream iss(line);
+			//tex trim leading/trailing whitespace
+			line = trim(line);
+			if (line.size() == 0) {
+				continue;
+			}
+
+			//tex deal with comments
+			std::size_t found = line.find("--");
+			//tex line is only comment
+			if (found == 0) {
+				continue;
+			}
+			//tex line has comment, trim to before comment
+			if (found != std::string::npos) {
+				line = line.substr(0, found - 1);
+			}
+
+			if (line.size() == 0) {
+				continue;
+			}
+
+			//tex just skip the specific cases outright
+			found = line.find("local this");
+			if (found != std::string::npos) {
+				continue;
+			}
+			found = line.find("return this");
+			if (found != std::string::npos) {
+				continue;
+			}
+			if (line == "}") {
+				continue;
+			}
+
+			//tex trim trailing comma
+			if (line[line.size() - 1] == ',') {
+				line = line.substr(0, line.size() - 1);
+			}
+
+			found = line.find("=");
+			if (found == std::string::npos) {
+				continue;
+			}
+
+			std::string varName = line.substr(0, found);
+			std::string valueStr = line.substr(found + 1);
+			varName = trim(varName);
+			valueStr = trim(valueStr);
+
+			//tex ugh
+			if (varName == "debugMode") {
+				config.debugMode = valueStr == "true";
+			}
+			else if (varName == "openConsole") {
+				config.openConsole = valueStr == "true";
+			}
+			else if (varName == "enableCityHook") {
+				config.enableCityHook = valueStr == "true";
+			}
+			else if (varName == "enableFnvHook") {
+				config.enableFnvHook = valueStr == "true";
+			}
+			else if (varName == "logFileLoad") {
+				config.logFileLoad = valueStr == "true";
+			}
+			else if (varName == "forceUsePatterns") {
+				config.forceUsePatterns = valueStr == "true";
+			}
+			else if (varName == "logFoxStringCreateInPlace") { //ZIP: Fox hooks
+				config.logFoxStringCreateInPlace = valueStr == "true";
+			}
+		}//while line
+
+		return true;
+	}//
+
+	//IN: BaseAddr, RealBaseAddr
+	//IN: mgsvtpp_patterns
+	//SIDE: addressSet
+	//rebases the static addresses or sig scans for them
+	bool IHH::RebaseAddresses(bool isTargetExe)	{
+		bool foundAllAddresses = true;
+		for (auto const& entry : addressSet) {
+			std::string name = entry.first;
+			if (isTargetExe) {
+				spdlog::info("isTargetExe, rebasing addr {}", name);
+				int64_t addr = entry.second;
+				int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+				addressSet[name] = rebasedAddr;
+			}
+			else {
+				//tex fall back to sig scan
+				spdlog::info("!isTargetExe, sig scanning");
+				addressSet[name] = 0;
+				auto it = mgsvtpp_patterns.find(name);
+				if (it != mgsvtpp_patterns.end()) {
+					//found
+					//const char* sig = it->second;
+					//const char* mask = mgsvtpp_masks[name];//ASSUMPTION: if sig exists then mask does
+					//uintptr_t addr = MemoryUtils::sigscan(name.c_str(), sig, mask);//tex returns null if not found
+
+					const char* pattern = it->second.c_str();
+					auto tstart = std::chrono::high_resolution_clock::now();
+					uintptr_t addr = (uintptr_t)MemoryUtils::PatternScan(pattern);//tex returns null if not found
+					auto tend = std::chrono::high_resolution_clock::now();
+					auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+					if (addr == NULL) {
+						spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
+						foundAllAddresses = false;
+					}
+					else {
+						spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
+					}
+
+					addressSet[name] = addr;
+				}
+				else {
+					spdlog::warn("Could not find sig for {}", name);
+				}
+			}//if isTargetExe
+		}//for addressSet
+		return foundAllAddresses;
+	}//RebaseAddresses
+
+	void IHH::CreateAllHooks() {
+		Hooks_CityHash::CreateHooks(RealBaseAddr);//TODO: rebase/convert to same style as rest, so don't have to pass in realbaseaddr
+		Hooks_FNVHash::CreateHooks();
+		Hooks_Lua::CreateHooks();
+		Hooks_TPP::CreateHooks();
+		Hooks_FOV::CreateHooks();
+		Hooks_LoadFile::CreateHooks();//DEBUGNOW exploring
+		Hooks_Character::CreateHooks();
+		Hooks_Buddy::CreateHooks(); //ZIP: For buddies
+		Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
+		Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
+	}//CreateAllHooks
 }//namespace IHHook

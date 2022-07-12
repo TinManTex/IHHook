@@ -1,7 +1,7 @@
 /*
 	tex: msgvtpp has lua 5.1.5 statically linked
 	IHHook hooks lua by function addresses (defined in lua/*_Addresses.h), using (macros wrapping) MH_Hook initialised in CreateHooks() below
-	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it.
+	it also replaces the lua function declarations in the lua distro (using the FUNCPTRDEF macros) so other code can build against it. TODO: this is no longer true, they currently in func_typedefs
 	In some cases uses actual lua lib implementation.
 	See comments on CREATE_FUNCPTR entries in *_Creathooks.cpp.
 
@@ -19,22 +19,21 @@
 #include "OS.h"
 #include "RawInput.h"
 #include "MinHook/MinHook.h"
-
-#include "lua/lua_AddressesGEN.h"
-#include "lua/lua_Signatures.h"
+#include "Hooks_Character.h"//CreateLibs //TODO: don't like this in here
+#include "Hooks_Buddy.h" //ZIP: For buddies
+#include "Hooks_Vehicle.h" //ZIP: For vehicles
+#include "Hooks_FoxString.h" //ZIP: FoxString hook
 
 #include <string>
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 extern void LoadImguiBindings(lua_State* lState);
 
 namespace IHHook {
-	extern void CreateHooks_Lua(size_t BaseAddr, size_t RealBaseAddr);
-	extern void CreateHooks_Lauxlib(size_t BaseAddr, size_t RealBaseAddr);
-	extern void CreateHooks_Lualib(size_t BaseAddr, size_t RealBaseAddr);
 	//Hooks_Lua_Test
 	extern void TestHooks_Lua(lua_State* L);
 	extern void TestHooks_Lua_PostLibs(lua_State* L);
-
+	
 	//tex CULL lua C module (well C++ because I converted so it would play nice with my mixed hooks and definitions version of the lua api)
 	//extern int luaopen_winapi(lua_State* L);
 
@@ -43,6 +42,8 @@ namespace IHHook {
 	std::shared_ptr<spdlog::logger> luaLog;
 
 	namespace Hooks_Lua {
+		void CreateLibs(lua_State* L);
+
 		lua_State* luaState = NULL;
 		lua_CFunction foxPanic;
 		bool firstUpdate = false;
@@ -54,9 +55,6 @@ namespace IHHook {
 		void ReplaceStubedOutFox(lua_State* L);
 		static int OnPanic(lua_State* L);
 		void SetLuaVarMenuInitialized(lua_State* L);
-
-		FUNCPTRDEF(int, l_StubbedOut, lua_State* L)
-		FUNC_DECL_ADDR(l_StubbedOut)
 
 		//http://www.lua.org/manual/5.1/manual.html#lua_pcall (also see the other functions that call HandleLuaError)
 		void HandleLuaError(lua_State* L, int errcode, int errfunc) {
@@ -113,17 +111,17 @@ namespace IHHook {
 			spdlog::debug(__func__);
 			luaL_openlibs(L);
 
-			if (debugMode) {
+			if (config.debugMode) {
 				TestHooks_Lua(L);
 			}
 			lua_pushinteger(L, Version);
 			lua_setfield(L, LUA_GLOBALSINDEX, "_IHHook");
 
-			LuaIHH::luaopen_ihh(L);
+			CreateLibs(L);
 
 			//OFF luaopen_winapi(L);
 			LoadImguiBindings(L);
-			if (debugMode) {
+			if (config.debugMode) {
 				TestHooks_Lua_PostLibs(L);
 			}
 
@@ -267,7 +265,7 @@ namespace IHHook {
 			luaLog = spdlog::basic_logger_st("lua", luaLogName);//tex st/single threaded since we want to preserver order, it's better performance, and we wont be logging from different threads
 			luaLog->set_pattern("|%H:%M:%S:%e|%l: %v");
 
-			if (debugMode) {
+			if (config.debugMode) {
 				luaLog->set_level(spdlog::level::trace);
 				luaLog->flush_on(spdlog::level::trace);
 			}
@@ -279,48 +277,19 @@ namespace IHHook {
 
 		//tex: caller DLLMain
 		//IN/SIDE: IHHook::BaseAddr
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			spdlog::debug(__func__);
-
-			CreateHooks_Lua(BaseAddr, RealBaseAddr);
-			CreateHooks_Lauxlib(BaseAddr, RealBaseAddr);
-			CreateHooks_Lualib(BaseAddr, RealBaseAddr);
 			
-			if (isTargetExe) {
-				GET_REBASED_ADDR(luaL_openlibs)
-				GET_REBASED_ADDR(lua_newstate)
-				GET_REBASED_ADDR(lua_newthread)
-				GET_REBASED_ADDR(lua_load)
-				GET_REBASED_ADDR(luaL_loadbuffer)
-				GET_REBASED_ADDR(lua_atpanic)
-				GET_REBASED_ADDR(lua_error)
-				GET_REBASED_ADDR(lua_pcall)
-				GET_REBASED_ADDR(lua_cpcall)
-				GET_REBASED_ADDR(l_StubbedOut)
-			}
-			else {
-				GET_SIG_ADDR(luaL_openlibs)
-				GET_SIG_ADDR(lua_newstate)
-				GET_SIG_ADDR(lua_newthread)
-				GET_SIG_ADDR(lua_load)
-				GET_SIG_ADDR(luaL_loadbuffer)
-				GET_SIG_ADDR(lua_atpanic)
-				GET_SIG_ADDR(lua_error)
-				GET_SIG_ADDR(lua_pcall)
-				GET_SIG_ADDR(lua_cpcall)
-				//DEBUGNOW GET_SIG_ADDR(l_StubbedOut)
-			}
-
-			if (luaL_openlibsAddr == NULL 
-				|| lua_newstateAddr == NULL 
-				|| lua_newthreadAddr == NULL
-				|| lua_loadAddr == NULL
-				|| luaL_loadbufferAddr == NULL 
-				|| lua_atpanicAddr == NULL
-				|| lua_errorAddr == NULL
-				|| lua_pcallAddr == NULL
-				|| lua_cpcallAddr == NULL
-				|| l_StubbedOutAddr == NULL
+			if (addressSet["luaL_openlibs"] == NULL
+				|| addressSet["lua_newstate"] == NULL
+				|| addressSet["lua_newthread"] == NULL
+				|| addressSet["lua_load"] == NULL
+				|| addressSet["luaL_loadbuffer"] == NULL
+				|| addressSet["lua_atpanic"] == NULL
+				|| addressSet["lua_error"] == NULL
+				|| addressSet["lua_pcall"] == NULL
+				|| addressSet["lua_cpcall"] == NULL
+				|| addressSet["l_StubbedOut"] == NULL
 				) {//DEBUGNOW 
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}
@@ -348,6 +317,15 @@ namespace IHHook {
 				//ENABLEHOOK(l_StubbedOut)//DEBUGNOW enabling after lua is init in openlibs see l_StubbedOutHook
 			}//if name##Addr != NULL
 		}//CreateHooks
+
+		//TODO: document/make more discoverable
+		void CreateLibs(lua_State* L) {
+			LuaIHH::luaopen_ihh(L);
+			Hooks_Character::CreateLibs(L);
+			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
+			Hooks_Vehicle::CreateLibs(L); //ZIP: For vehicles
+			Hooks_FoxString::CreateLibs(L); //ZIP: FoxString hook
+		}//CreateLibs
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c
 		static int luaB_print(lua_State* L) {

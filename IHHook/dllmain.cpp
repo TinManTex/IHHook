@@ -1,5 +1,6 @@
 //dllmain.cpp
 //dll entry
+//See IHHook.h for comments on rough layout of parts of the project
 
 #include "windowsapi.h"
 #include "IHHook.h"

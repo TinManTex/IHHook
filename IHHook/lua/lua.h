@@ -6,6 +6,7 @@
 */
 //tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF
 #include "../HookMacros.h" //tex
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 #ifndef lua_h
 #define lua_h
@@ -117,7 +118,7 @@ FUNCPTRDEF(lua_CFunction, lua_atpanic, lua_State *L, lua_CFunction panicf);
 /*
 ** basic stack manipulation
 */
-LUA_API int   (lua_gettop)(lua_State* L);//FUNCPTRDEF(int, lua_gettop, lua_State *L);
+LUA_API int   (lua_gettop)(lua_State* L);
 FUNCPTRDEF(void, lua_settop, lua_State *L, int index);
 FUNCPTRDEF(void, lua_pushvalue, lua_State *L, int index);
 FUNCPTRDEF(void, lua_remove, lua_State *L, int index);
@@ -127,18 +128,19 @@ FUNCPTRDEF(int, lua_checkstack, lua_State *L, int size);
 
 FUNCPTRDEF(void, lua_xmove, lua_State *from, lua_State *to, int n);
 
-//*
-/** access functions (stack -> C)
-/*/
+
+/*
+** access functions (stack -> C)
+*/
 
 FUNCPTRDEF(int, lua_isnumber, lua_State *L, int index);
 FUNCPTRDEF(int, lua_isstring, lua_State *L, int index);
 FUNCPTRDEF(int, lua_iscfunction, lua_State *L, int index);
-LUA_API int (lua_isuserdata)(lua_State *L, int idx);//FUNCPTRDEF(int, lua_isuserdata, lua_State *L, int idx);
+LUA_API int (lua_isuserdata)(lua_State *L, int idx);
 FUNCPTRDEF(int, lua_type, lua_State *L, int index);
-LUA_API const char* (lua_typename)(lua_State* L, int tp);//FUNCPTRDEF(const char*, lua_typename, lua_State *L, int tp);
+LUA_API const char* (lua_typename)(lua_State* L, int tp);
 
-//OFF LUA_API int (lua_equal)(lua_State *L, int idx1, int idx2);
+//NOT_FOUND LUA_API int (lua_equal)(lua_State *L, int idx1, int idx2);
 FUNCPTRDEF(int, lua_rawequal, lua_State *L, int idx1, int idx2);
 FUNCPTRDEF(int, lua_lessthan, lua_State *L, int idx1, int idx2);
 
@@ -205,9 +207,9 @@ FUNCPTRDEF(int, lua_dump, lua_State *L, lua_Writer writer, void *data);
 /*
 ** coroutine functions
 */
-LUA_API int  (lua_yield)(lua_State *L, int nresults);//FUNCPTRDEF(int, lua_yield, lua_State *L, int nresults);
+LUA_API int  (lua_yield)(lua_State *L, int nresults);
 FUNCPTRDEF(int, lua_resume, lua_State *L, int narg);
-LUA_API int  (lua_status)(lua_State* L);//FUNCPTRDEF(int, lua_status, lua_State *L);
+LUA_API int  (lua_status)(lua_State* L);
 
 /*
 ** garbage-collection function and options
@@ -235,8 +237,8 @@ FUNCPTRDEF(int, lua_next, lua_State *L, int idx);
 
 FUNCPTRDEF(void, lua_concat, lua_State *L, int n);
 
-//OFF LUA_API  lua_Alloc(lua_getallocf, lua_State *L, void **ud);
-//FUNCPTRDEF(void, lua_setallocf, lua_State *L, lua_Alloc f, void *ud);
+//NO_USE LUA_API lua_Alloc (lua_getallocf) (lua_State *L, void **ud);
+//NO_USE LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 
 
 
@@ -290,7 +292,7 @@ FUNCPTRDEF(void, lua_concat, lua_State *L, int n);
 
 
 /* hack */
-//FUNCPTRDEF(void, lua_setlevel, lua_State *from, lua_State *to);
+//NO_USE LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 
 
 /*
@@ -335,9 +337,9 @@ FUNCPTRDEF(const char *, lua_setupvalue, lua_State *L, int funcindex, int n);
 
 FUNCPTRDEF(int, lua_sethook, lua_State *L, lua_Hook func, int mask, int count);
 
-LUA_API lua_Hook lua_gethook(lua_State* L);//FUNCPTRDEF(lua_Hook, lua_gethook, lua_State *L);
-LUA_API int lua_gethookmask(lua_State* L);//FUNCPTRDEF(int, lua_gethookmask, lua_State *L);
-LUA_API int lua_gethookcount(lua_State* L);//FUNCPTRDEF(int, lua_gethookcount, lua_State *L);
+LUA_API lua_Hook lua_gethook(lua_State* L);
+LUA_API int lua_gethookmask(lua_State* L);
+LUA_API int lua_gethookcount(lua_State* L);
 
 
 struct lua_Debug {

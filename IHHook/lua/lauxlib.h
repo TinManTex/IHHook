@@ -5,6 +5,7 @@
 */
 //tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF, mix of original declarations and hook replacements, search LUALIB_API vs FUNCPTRDEF
 #include "../HookMacros.h" //tex
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 #ifndef lauxlib_h
 #define lauxlib_h
@@ -41,7 +42,8 @@ typedef struct luaL_Reg {
 
 
 FUNCPTRDEF(void, luaI_openlib, lua_State *L, const char *libname, const luaL_Reg *l, int nup);
-LUALIB_API void (luaL_register)(lua_State *L, const char *libname, const luaL_Reg *l);//FUNCPTRDEF(void, luaL_register, lua_State *L, const char *libname, const luaL_Reg *l);
+LUALIB_API void (luaL_register) (lua_State *L, const char *libname,
+                                const luaL_Reg *l);
 FUNCPTRDEF(int, luaL_getmetafield, lua_State *L, int obj, const char *e);
 FUNCPTRDEF(int, luaL_callmeta, lua_State *L, int obj, const char *event);
 FUNCPTRDEF(int, luaL_typerror, lua_State *L, int narg, const char *tname);
@@ -49,7 +51,7 @@ FUNCPTRDEF(int, luaL_argerror, lua_State *L, int numarg, const char *extramsg);
 FUNCPTRDEF(const char *, luaL_checklstring, lua_State *L, int numArg, size_t *l);
 FUNCPTRDEF(const char *, luaL_optlstring, lua_State *L, int numArg, const char *def, size_t *l);
 FUNCPTRDEF(lua_Number, luaL_checknumber, lua_State *L, int numArg);
-LUALIB_API lua_Number(luaL_optnumber) (lua_State *L, int nArg, lua_Number def);//FUNCPTRDEF(lua_Number, luaL_optnumber, lua_State *L, int nArg, lua_Number def);
+LUALIB_API lua_Number(luaL_optnumber) (lua_State *L, int nArg, lua_Number def);
 
 FUNCPTRDEF(lua_Integer, luaL_checkinteger, lua_State *L, int numArg);
 FUNCPTRDEF(lua_Integer, luaL_optinteger, lua_State *L, int nArg, lua_Integer def);
@@ -66,12 +68,12 @@ FUNCPTRDEF(int, luaL_error, lua_State *L, const char *fmt, ...);
 
 FUNCPTRDEF(int, luaL_checkoption, lua_State *L, int narg, const char *def, const char *const lst[]);
 
-LUALIB_API int (luaL_ref)(lua_State *L, int t); //FUNCPTRDEF(int, luaL_ref, lua_State *L, int t);
-LUALIB_API void (luaL_unref)(lua_State *L, int t, int ref); //FUNCPTRDEF(void, luaL_unref, lua_State *L, int t, int ref);
+LUALIB_API int (luaL_ref)(lua_State *L, int t);
+LUALIB_API void (luaL_unref)(lua_State *L, int t, int ref);
 
 FUNCPTRDEF(int, luaL_loadfile, lua_State *L, const char *filename);
 FUNCPTRDEF(int, luaL_loadbuffer, lua_State *L, const char *buff, size_t sz, const char *name);
-LUALIB_API int (luaL_loadstring)(lua_State *L, const char *s); //FUNCPTRDEF(int, luaL_loadstring, lua_State *L, const char *s);
+LUALIB_API int (luaL_loadstring)(lua_State *L, const char *s);
 
 FUNCPTRDEF(lua_State *, luaL_newstate, void);
 
@@ -133,10 +135,10 @@ typedef struct luaL_Buffer {
 
 #define luaL_addsize(B,n)	((B)->p += (n))
 
-LUALIB_API void (luaL_buffinit)(lua_State* L, luaL_Buffer* B);//FUNCPTRDEF(void, luaL_buffinit, lua_State *L, luaL_Buffer *B);
+LUALIB_API void (luaL_buffinit)(lua_State* L, luaL_Buffer* B);
 FUNCPTRDEF(char *, luaL_prepbuffer, luaL_Buffer *B);
 FUNCPTRDEF(void, luaL_addlstring, luaL_Buffer *B, const char *s, size_t l);
-LUALIB_API void (luaL_addstring)(luaL_Buffer *B, const char *s);// FUNCPTRDEF(void, luaL_addstring, luaL_Buffer *B, const char *s);
+LUALIB_API void (luaL_addstring)(luaL_Buffer *B, const char *s);
 FUNCPTRDEF(void, luaL_addvalue, luaL_Buffer *B);
 FUNCPTRDEF(void, luaL_pushresult, luaL_Buffer *B);
 

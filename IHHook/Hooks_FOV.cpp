@@ -1,6 +1,7 @@
 // adapted from //mons fork of AltimoorTADSKs fov Modifier dll https://github.com/mon/MGSV-TPP-FoV
 // supported by IH InfCamHook.lua
 
+#include "Hooks_FOV.h"
 #include <stdexcept>
 #include <cmath>
 #include <cstdint>
@@ -17,27 +18,10 @@
 #include <MemoryUtils.h>
 
 #include "IHHook.h"//DEBUGNOW
+#include "hooks/mgsvtpp_func_typedefs.h"
 
 namespace IHHook {
-
-
 	namespace Hooks_FOV {
-		FUNCPTRDEF(void, UpdateFOVLerp, const uintptr_t thisptr)
-		//typedef void(__fastcall UpdateFOVLerpFunc) (const uintptr_t thisptr); 
-		//	extern UpdateFOVLerpFunc* UpdateFOVLerp;
-		//	extern UpdateFOVLerpFunc* UpdateFOVLerpBaseAddr;
-		//	extern void* UpdateFOVLerpAddr;
-		FUNC_DECL_ADDR(UpdateFOVLerp)
-
-		FUNC_DECL_SIG(UpdateFOVLerp,
-			"\x4C\x8B\x00\x49\x89\x00\x00\x55\x56\x57\x41\x00\x41\x00\x49\x8D\x00\x00\x00\x00\x00\x48\x81\xEC\x00\x00\x00\x00\x48\x8B\x00\x00\x00\x00\x00\x48\x33\x00\x48\x89\x00\x00\x00\x00\x00\xF3\x0F",
-			 "xx?xx??xxxx?x?xx?????xxx????xx?????xx?xx?????xx")
-		FUNC_DECL_PATTERN(UpdateFOVLerp, "4C 8B ? 49 89 ? ? 55 56 57 41 ? 41 ? 49 8D ? ? ? ? ? 48 81 EC ? ? ? ? 48 8B ? ? ? ? ? 48 33 ? 48 89 ? ? ? ? ? F3 0F")
-
-		//intptr_t UpdateFOVLerpAddr;
-
-
-
 		enum class gametype { mgsv, mgo };
 
 		gametype game = gametype::mgsv;
@@ -105,7 +89,7 @@ namespace IHHook {
 			return newFocalLength;
 		}//CalculateFocalLength
 
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			HMODULE hExe = GetModuleHandle(NULL);
 			WCHAR fullPath[MAX_PATH]{ 0 };
 			GetModuleFileNameW(hExe, fullPath, MAX_PATH);
@@ -152,16 +136,7 @@ namespace IHHook {
 			//then add the dereferenced rel32
 			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
 
-			if (isTargetExe) {
-				GET_REBASED_ADDR(UpdateFOVLerp)
-				//UpdateFOVLerpAddr = (void*)(((size_t)UpdateFOVLerpBaseAddr - BaseAddr) + RealBaseAddr);//DEBUGNOW
-			}
-			else {
-				GET_SIG_ADDR(UpdateFOVLerp)
-				//DEBUGNOW UpdateFOVLerpAddr = (intptr_t*)MemoryUtils::PatternScan("UpdateFOVLerp", UpdateFOVLerpPattern);
-			}
-
-			if (UpdateFOVLerpAddr == NULL) {
+			if (addressSet["UpdateFOVLerp"] == NULL) {
 				spdlog::warn("FOV addr fail: UpdateFOVLerpAddr == NULL");
 				return;
 			}

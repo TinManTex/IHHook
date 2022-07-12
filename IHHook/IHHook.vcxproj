@@ -156,17 +156,31 @@
     </Link>
     <ProjectReference />
     <PostBuildEvent>
-      <Command>$(SolutionDir)copytogame.bat "$(TargetDir)" "$(TargetFileName)"</Command>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)makebite\GameDir\dinput8.dll"
+copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\GameDir\mod\docs\IHHook\Readme.txt"
+copy /Y "$(SolutionDir)Changelog.txt" "$(SolutionDir)makebite\GameDir\mod\docs\IHHook\Changelog.txt"
+copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Hook.hpp" />
     <ClInclude Include="Hooking.Patterns\Hooking.Patterns.h" />
     <ClInclude Include="HookMacros.h" />
+    <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_en.h" />
+    <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_jp.h" />
+    <ClInclude Include="hooks\mgsvtpp_func_typedefs.h" />
+    <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h" />
+    <ClInclude Include="hooks\mgsvtpp_patterns.h" />
+    <ClInclude Include="Hooks_Buddy.h" />
+    <ClInclude Include="Hooks_Character.h" />
     <ClInclude Include="Hooks_CityHash.h" />
+    <ClInclude Include="Hooks_FNVHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
+    <ClInclude Include="Hooks_FoxString.h" />
+    <ClInclude Include="Hooks_LoadFile.h" />
     <ClInclude Include="Hooks_Lua.h" />
     <ClInclude Include="Hooks_TPP.h" />
+    <ClInclude Include="Hooks_Vehicle.h" />
     <ClInclude Include="IHHook.h" />
     <ClInclude Include="IHMenu.h" />
     <ClInclude Include="imguiimpl\imgui_impl_dx11.h" />
@@ -181,11 +195,7 @@
     <ClInclude Include="lua\lua.h" />
     <ClInclude Include="lua\luaconf.h" />
     <ClInclude Include="lua\lualib.h" />
-    <ClInclude Include="lua\lua_AddressesGEN.h" />
-    <ClInclude Include="lua\lua_Signatures.h" />
     <ClInclude Include="MemoryUtils.h" />
-    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_en.h" />
-    <ClInclude Include="mgsvtpp_adresses_1_0_15_3_jp.h" />
     <ClInclude Include="MinHook\buffer.h" />
     <ClInclude Include="MinHook\hde\hde32.h" />
     <ClInclude Include="MinHook\hde\hde64.h" />
@@ -214,6 +224,10 @@
     <ClCompile Include="D3D11Hook.cpp" />
     <ClCompile Include="DInputProxy.cpp" />
     <ClCompile Include="Hooking.Patterns\Hooking.Patterns.cpp" />
+    <ClCompile Include="hooks\mgsvtpp_funcptr_defs.cpp" />
+    <ClCompile Include="hooks\mgsvtpp_funcptr_set.cpp" />
+    <ClCompile Include="Hooks_Buddy.cpp" />
+    <ClCompile Include="Hooks_Character.cpp" />
     <ClCompile Include="Hooks_CityHash.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -229,9 +243,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Hooks_FNVHash.cpp" />
     <ClCompile Include="Hooks_FOV.cpp" />
+    <ClCompile Include="Hooks_FoxString.cpp" />
+    <ClCompile Include="Hooks_LoadFile.cpp" />
     <ClCompile Include="Hooks_Lua.cpp" />
     <ClCompile Include="Hooks_Lua_Test.cpp" />
+    <ClCompile Include="Hooks_Vehicle.cpp" />
     <ClCompile Include="IHHook.cpp" />
     <ClCompile Include="IHMenu.cpp" />
     <ClCompile Include="imguiimpl\imgui_impl_dx11.cpp" />
@@ -244,13 +262,10 @@
     <ClCompile Include="LuaIHH.cpp" />
     <ClCompile Include="lua\lapi.cpp" />
     <ClCompile Include="lua\lauxlib.cpp" />
-    <ClCompile Include="lua\lauxlib_CreateHooks.cpp" />
     <ClCompile Include="lua\ldebug.cpp" />
     <ClCompile Include="lua\ldo.cpp" />
     <ClCompile Include="lua\lobject.cpp" />
     <ClCompile Include="lua\ltm.cpp" />
-    <ClCompile Include="lua\lualib_CreateHooks.cpp" />
-    <ClCompile Include="lua\lua_CreateHooks.cpp" />
     <ClCompile Include="MemoryUtils.cpp" />
     <ClCompile Include="MinHook\buffer.c" />
     <ClCompile Include="MinHook\hde\hde32.c" />

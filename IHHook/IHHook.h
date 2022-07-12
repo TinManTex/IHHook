@@ -1,23 +1,47 @@
 //IHHook: A Dll proxy to extend MGSV for modding
+//See Developers.txt for more notes.
 //tex: can run without Infinite Heaven, but IH will use it.
 
 //Based on the bones of CityHook: https://github.com/emoose/MGSV-QAR-Dictionary-Project/tree/master/CityHook
 //and RE2 Mod Framework: https://github.com/praydog/RE2-Mod-Framework
 
-//Trying to get coverage of whole LUALIB_API functions so that lua c modules can be compiled in
-//The resulting method seems like a huge hack, and there's probably a smarter way to do it. But it works.
-
 //Entry point in dllmain.cpp
 //Hooking using MinHook: https://github.com/TsudaKageyu/minhook 
 //Logging via spdlog: https://github.com/gabime/spdlog , header only implementation in IHHook\spdlog, but not included in the project/solution explorer just for clarity
 
+//Trying to get coverage of whole LUALIB_API functions so that lua c modules can be compiled in
+//The resulting method seems like a huge hack, and there's probably a smarter way to do it. But it works.
 //Lua 5.1.5 implementation a mix of hooks and the normal definitions, entire distro files are in IHHook\lua, but as above only modified files included in project/solution explorer for clarity.
+
+//Most mgsvtpp.exe function hooks via includes to Hooks_Lua > Hooks_*, function addresses and defs exported from ghidra via IHHook\ghidra\ExportHooksToHeader.py ghidra script.
 //using hooking via addresses, which is fragile to new exe updates
-//but haven't got a sigscanning workflow yet to not kill myself with the large number functions I'm hooking
+//but also has support for sig scanning, but the performance with the denuvo bloat or whatever hulk that is the current mgsvtpp.exe makes it not viable for actual use.
 
 //Encoding is a mess having pulled in so much code from other projects, and then, should probably try to standardise to utf8 at some point.
 
 //Another GOTCHA might be if you ever export any functions not to break DinputProxy ordinals.
+
+//Dear-imgui based menu for IH via IHMenu.*. Main issue with expanding use of imgui is performance of processing command que between whatever update thread and the d3d present.
+
+//pipe server for commands via PipeServer.*
+
+//RawInput interception/blocking via RawInput.*
+
+//Config: load time options for ihhook (mostly for debug/logging stuff) are controlled by creating ihhook_config.lua in game root (alongside the ihhook dll)
+//this is via a manually parsed/fragile system rather than an actual lua file loader.
+//example config
+/*
+--ihhook_config.lua
+local this = {
+	debugMode = true,
+	openConsole = false,
+	enableCityHook = false,
+	enableFnvHook = false,
+	logFileLoad = false,
+	forceUsePatterns = false,
+}--this
+return this
+*/
 
 #pragma once
 #include <string>
@@ -29,11 +53,19 @@
 #include "WindowsMessageHook.hpp"
 
 namespace IHHook {
-	static const bool debugMode = true;//DEBUGNOW //DEBUG CONFIG //TODO debug level instead
-	static const bool openConsole = false;//DEBUG CONFIG
-	static const bool enableCityHook = false;//DEBUG CONFIG
+	struct Config {
+		bool debugMode{ true };//TODO debug level instead
+		bool openConsole{ false };
+		bool enableCityHook{ false };
+		bool enableFnvHook{ false };
+		bool logFileLoad{ false };
+		bool forceUsePatterns{ false };
+		bool logFoxStringCreateInPlace{ false }; //ZIP: Fox hooks
+	};
+	extern struct Config config;
+	static const std::string hookConfigName = "ihhook_config.lua";
 
-	static const int Version = 16; //SYNC: fileVersion
+	static const int Version = 17; //SYNC: fileVersion
 	extern int ihVersion;
 	static const DWORD GameVersion[4] = { 1, 0, 15, 3 }; //tex: version checking game exe
 	//static const std::wstring exeName = L"mgsvtpp.exe"; //tex use GetModuleFileName instead
@@ -148,6 +180,10 @@ namespace IHHook {
 		std::string errorString{ "" };
 
 		ID3D11RenderTargetView* mainRenderTargetView{ nullptr };
+
+		//
+		bool RebaseAddresses(bool isTargetExe);
+		void CreateAllHooks();
 	};
 }//namespace IHHook
 
