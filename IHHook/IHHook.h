@@ -56,11 +56,12 @@ namespace IHHook {
 	struct Config {
 		bool debugMode{ true };//TODO debug level instead
 		bool openConsole{ false };
-		bool enableCityHook{ false };
-		bool enableFnvHook{ false };
+		bool enableCityHook{ false }; //log cityhash calls, which underly strcode functions
+		bool enableFnvHook{ false }; //log fnvhash
 		bool logFileLoad{ false };
 		bool forceUsePatterns{ false };
 		bool logFoxStringCreateInPlace{ false }; //ZIP: Fox hooks
+		bool logTime{ false };//prefix |time| before log (used to be default) time is good for figuring out how long between steps, but makes it harder to compare similar logs. TODO: might be better to have a SetPattern lua call for more control?
 	};
 	extern struct Config config;
 	static const std::string hookConfigName = "ihhook_config.lua";

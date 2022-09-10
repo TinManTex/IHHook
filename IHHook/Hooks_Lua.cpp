@@ -263,7 +263,12 @@ namespace IHHook {
 			DeleteFile(luaLogName.c_str());
 
 			luaLog = spdlog::basic_logger_st("lua", luaLogName);//tex st/single threaded since we want to preserver order, it's better performance, and we wont be logging from different threads
-			luaLog->set_pattern("|%H:%M:%S:%e|%l: %v");
+			if (config.logTime) {
+				luaLog->set_pattern("|%H:%M:%S:%e|%l: %v");
+			}
+			else {
+				luaLog->set_pattern("%l: %v");
+			}
 
 			if (config.debugMode) {
 				luaLog->set_level(spdlog::level::trace);

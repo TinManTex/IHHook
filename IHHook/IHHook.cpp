@@ -331,7 +331,12 @@ namespace IHHook {
 
 		log = spdlog::basic_logger_mt("ihhook", IHHook::hookLogName);//DEBUGNOW st vs mt
 
-		log->set_pattern("|%H:%M:%S:%e|%l: %v");
+		if (config.logTime) {
+			log->set_pattern("|%H:%M:%S:%e|%l: %v");
+		}
+		else {
+			log->set_pattern("%l: %v");
+		}
 		log->info("IHHook r{}", IHHook::Version);
 		log->flush();
 
@@ -813,6 +818,9 @@ namespace IHHook {
 			}
 			else if (varName == "logFoxStringCreateInPlace") { //ZIP: Fox hooks
 				config.logFoxStringCreateInPlace = valueStr == "true";
+			}
+			else if (varName == "logTime") {
+				config.logTime = valueStr == "true";
 			}
 		}//while line
 
