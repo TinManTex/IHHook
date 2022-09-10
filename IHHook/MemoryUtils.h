@@ -2,6 +2,7 @@
 #include "windowsapi.h"
 #include <Psapi.h>// ModuleInfo, DEBUGNOW
 #include <vector>
+#include <string>
 
 namespace IHHook {
 	namespace MemoryUtils {
