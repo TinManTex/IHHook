@@ -164,6 +164,9 @@ namespace IHHook {
 		bool menuOpen = true;//tex start open, as it's used as a intro and error window during startup
 		bool menuOpenPrev = true;
 
+		// HWL ImGui should only be initialized once, even if the game sets up D3D11 twice
+		bool ImGuiInitialized = false;
+
 		bool showStyleEditor = false;
 		bool showStyleEditorPrev = false;
 
