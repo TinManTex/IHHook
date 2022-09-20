@@ -881,7 +881,7 @@ namespace IHHook {
 	}//RebaseAddresses
 
 	void IHH::CreateAllHooks() {
-		Hooks_CityHash::CreateHooks(RealBaseAddr);//TODO: rebase/convert to same style as rest, so don't have to pass in realbaseaddr
+		Hooks_CityHash::CreateHooks();
 		Hooks_FNVHash::CreateHooks();
 		Hooks_Lua::CreateHooks();
 		Hooks_TPP::CreateHooks();
