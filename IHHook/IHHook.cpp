@@ -69,7 +69,7 @@ namespace IHHook {
 	void AbortHandler(int signal_number) {
 		auto log = spdlog::get("ihhook");
 		if (log != NULL) {
-			log->error("abort was called");
+			log->error("abort was called, signal_number: {}", signal_number);
 			log->flush();
 		}
 	}//AbortHandler
