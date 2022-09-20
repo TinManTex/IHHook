@@ -169,7 +169,7 @@ namespace IHHook {
 
 		//tex DEBUG, logged below 
 		TCHAR Buffer[MAX_PATH];
-		DWORD dwRet = GetCurrentDirectory(MAX_PATH, Buffer);
+		GetCurrentDirectory(MAX_PATH, Buffer);
 		std::wstring currentDir(Buffer);
 
 		std::wstring gameDir = OS::GetGameDir();

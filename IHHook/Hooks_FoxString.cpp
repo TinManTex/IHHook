@@ -205,7 +205,7 @@ namespace IHHook {
 			spdlog::debug("FoxString: Looking for replacement infos");
 			std::vector<std::string> fullFileNames;
 			std::string modDir = OS::GetGameDirA() + "mod\\ihhook";
-			//bool success = OS::ListFiles(modDir, "*", fullFileNames);
+			bool success = OS::ListFiles(modDir, "*", fullFileNames);
 			unsigned int numNames = static_cast<unsigned int>(fullFileNames.size());
 			if (numNames > 0) {
 				for (int i = 0; i < fullFileNames.size(); i++) {
