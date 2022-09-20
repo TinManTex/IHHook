@@ -16,7 +16,7 @@ namespace IHHook {
 		USHORT currFlags[vKeyMax];//tex: indexed by Virtual Keycode
 		bool ignore[vKeyMax] = { false };//tex: don't process key, set up in InitIgnoreKeys
 		bool blockGameKeys[vKeyMax] = { false };//tex: block game from recieving message
-		std::list<ButtonAction>* buttonActions[vKeyMax] = { NULL };
+		std::list<ButtonAction>* buttonActions[vKeyMax] = { nullptr };
 
 		void BlockMouseClick() {
 			blockGameKeys[VK_LBUTTON] = true;
@@ -128,7 +128,7 @@ namespace IHHook {
 
 		//tex helper to process usButtonFlags
 		struct {
-			UINT vk;		UINT downflag;					UINT upflag;
+			USHORT vk;		UINT downflag;					UINT upflag;
 		} const k[] = {
 			{ VK_LBUTTON,   RI_MOUSE_LEFT_BUTTON_DOWN,		RI_MOUSE_LEFT_BUTTON_UP },
 			{ VK_RBUTTON,   RI_MOUSE_RIGHT_BUTTON_DOWN,		RI_MOUSE_RIGHT_BUTTON_UP },
@@ -210,7 +210,7 @@ namespace IHHook {
 		//IN/SIDE: buttonActions
 		void DoActions(USHORT vKey, RawInput::BUTTONEVENT buttonEvent) {
 			std::list<ButtonAction>* actions = buttonActions[vKey];
-			if (actions != NULL) {
+			if (actions != nullptr) {
 				spdlog::debug("RawInput DoActions for vKey:{}", vKey);
 				for (std::list<ButtonAction>::iterator it = actions->begin(); it != actions->end(); ++it) {
 					ButtonAction Action = *it;
@@ -223,17 +223,21 @@ namespace IHHook {
 		void RegisterAction(USHORT vKey, ButtonAction action) {
 			assert(vKey > 0 && vKey < vKeyMax);
 			spdlog::debug("RawInput RegisterAction for vKey:{}", vKey);
-			if (buttonActions[vKey] == NULL) {
+			if (buttonActions[vKey] == nullptr) {
 				buttonActions[vKey] = new std::list<ButtonAction>();
 			}
 
 			buttonActions[vKey]->push_back(action);
 		}//RegisterAction
 
-		void UnRegisterAction(USHORT vKey, ButtonAction buttonAction) {
-			if (buttonActions[vKey] == NULL) {
+		void UnRegisterAction(USHORT vKey) {
+			if (buttonActions[vKey] == nullptr) {
 				spdlog::warn("RawInput UnRegisterAction: No actions for vKey {}", vKey);
 				return;
+			}
+			else { // HWL TODO: haven't checked if this works properly
+				delete buttonActions[vKey];
+				buttonActions[vKey] = nullptr;
 			}
 
 			//for vkey actions
@@ -391,7 +395,7 @@ namespace IHHook {
 		void InitializeInput() {
 			spdlog::debug("Rawinput InitializeInput");
 
-			std::fill_n(currFlags, vKeyMax, RI_KEY_BREAK);
+			std::fill_n(currFlags, vKeyMax, static_cast<USHORT>(RI_KEY_BREAK));
 
 			InitIgnoreKeys();
 
