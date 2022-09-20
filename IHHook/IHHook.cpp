@@ -289,7 +289,7 @@ namespace IHHook {
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 
-			bool foundAllAddresses = RebaseAddresses(isTargetExe);
+			bool foundAllAddresses = RebaseAddresses();
 
 			if (!foundAllAddresses) {
 				spdlog::warn("Could not find all addresses");
@@ -836,7 +836,7 @@ namespace IHHook {
 	//IN: mgsvtpp_patterns
 	//SIDE: addressSet
 	//rebases the static addresses or sig scans for them
-	bool IHH::RebaseAddresses(bool isTargetExe)	{
+	bool IHH::RebaseAddresses()	{
 		bool foundAllAddresses = true;
 		for (auto const& entry : addressSet) {
 			std::string name = entry.first;
