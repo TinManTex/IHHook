@@ -110,7 +110,7 @@ namespace IHHook {
 
 		//DEBUGNOW not really tpp only Hooks_Fox?
 		static void UnkPrintFuncStubbedOutHook(const char* fmt, ...) {
-			spdlog::trace(__func__);
+			//spdlog::trace(__func__);
 			va_list args;
 			va_start(args, fmt);
 
@@ -134,8 +134,7 @@ namespace IHHook {
 					size *= 2;
 			}//while(1)
 
-
-			spdlog::debug(message);
+			spdlog::debug("UnkPrintFuncStubbedOutHook: {}", message);
 		}//UnkPrintFuncStubbedOutHook
 
 		void nullsub_2Hook(const char* unkSomeIdStr, unsigned long long unkSomeIdNum) {
