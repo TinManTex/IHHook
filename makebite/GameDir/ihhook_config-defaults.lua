@@ -9,10 +9,11 @@
 local this={
 	debugMode=true,
 	openConsole=false,
-	enableCityHook=false,
-	enableFnvHook=false,
+	enableCityHook=false,--log cityhash calls, which underly strcode functions
+	enableFnvHook=false,--log fnvhash
 	logFileLoad=false,
 	forceUsePatterns=false,
 	logFoxStringCreateInPlace=false,
+	logTime=false,--prefix |time| before log. time is good for figuring out how long between steps, but makes it harder to compare similar logs.
 }--this
 return this
