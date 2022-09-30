@@ -33,11 +33,12 @@ namespace IHHook {
 			uint64_t hash = PathCode64(path);
 			return hash;
 		}*/
-
+		//tex LoadFile Actual, the other LoadFile* functions call this, so it's the only one I'm logging at the moment
 		void LoadFileSubHook(ulonglong filePath64, ulonglong filePath64_01) {
 			if (config.logFileLoad) {
 				log->info(filePath64);
 				log->info(filePath64_01);
+				log->info("");
 			}
 
 			return LoadFileSub(filePath64, filePath64_01);
