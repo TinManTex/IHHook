@@ -93,7 +93,7 @@ namespace IHHook {
 		savedStyle.push_back("AntiAliasedLinesUseTex=" + BoolToString(style->AntiAliasedLinesUseTex));
 		savedStyle.push_back("AntiAliasedFill=" + BoolToString(style->AntiAliasedFill));
 		savedStyle.push_back("CurveTessellationTol=" + std::to_string(style->CurveTessellationTol));
-		savedStyle.push_back("CircleSegmentMaxError=" + std::to_string(style->CircleSegmentMaxError));
+		savedStyle.push_back("CircleTessellationMaxError=" + std::to_string(style->CircleTessellationMaxError));
 
 		//ImVec4      Colors[ImGuiCol_COUNT];
 	}//GetStyle
@@ -453,8 +453,8 @@ namespace IHHook {
 			else if (varName == "CurveTessellationTol") {
 				ref->CurveTessellationTol = std::stof(valueStr);
 			}
-			else if (varName == "CircleSegmentMaxError") {
-				ref->CircleSegmentMaxError = std::stof(valueStr);
+			else if (varName == "CircleTessellationMaxError") {
+				ref->CircleTessellationMaxError = std::stof(valueStr);
 			}
 			else if (varName == "Font") {
 				fontName = ParseString(valueStr);//DEBUGNOW
@@ -1191,7 +1191,7 @@ namespace IHHook {
 				if (style.CurveTessellationTol < 0.10f) style.CurveTessellationTol = 0.10f;
 
 				// When editing the "Circle Segment Max Error" value, draw a preview of its effect on auto-tessellated circles.
-				ImGui::DragFloat("Circle Segment Max Error", &style.CircleSegmentMaxError, 0.01f, 0.10f, 10.0f, "%.2f");
+				ImGui::DragFloat("Circle Tessellation Max Error", &style.CircleTessellationMaxError, 0.01f, 0.10f, 10.0f, "%.2f");
 				if (ImGui::IsItemActive()) {
 					ImGui::SetNextWindowPos(ImGui::GetCursorScreenPos());
 					ImGui::BeginTooltip();

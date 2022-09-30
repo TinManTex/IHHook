@@ -576,26 +576,31 @@ namespace IHHook {
 		CreateRenderTarget();
 
 		spdlog::info("Window Handle: {0:x}", (uintptr_t)hwnd);
-		spdlog::info("Initializing ImGui");
 
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		if (!ImGuiInitialized)
+		{
+			spdlog::info("Initializing ImGui");
 
-		spdlog::info("Initializing ImGui Win32");
+			IMGUI_CHECKVERSION();
+			ImGui::CreateContext();
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+			//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-		if (!ImGui_ImplWin32_Init(hwnd)) {
-			spdlog::error("Failed to initialize ImGui.");
-			return false;
-		}
+			spdlog::info("Initializing ImGui Win32");
 
-		spdlog::info("Initializing ImGui D3D11");
+			if (!ImGui_ImplWin32_Init(hwnd)) {
+				spdlog::error("Failed to initialize ImGui.");
+				return false;
+			}
 
-		if (!ImGui_ImplDX11_Init(device, context)) {
-			spdlog::error("Failed to initialize ImGui.");
-			return false;
+			spdlog::info("Initializing ImGui D3D11");
+
+			if (!ImGui_ImplDX11_Init(device, context)) {
+				spdlog::error("Failed to initialize ImGui.");
+				return false;
+			}
+			ImGuiInitialized = true;
 		}
 
 		ImGui::StyleColorsDark();
@@ -687,7 +692,7 @@ namespace IHHook {
 
 		//tex disable mouse input to game
 		if (unlockCursor) {
-			ImGui::CaptureMouseFromApp(true);
+			ImGui::SetNextFrameWantCaptureMouse(true);
 		}
 
 		if (io.WantCaptureMouse) {

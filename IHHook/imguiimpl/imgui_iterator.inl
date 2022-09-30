@@ -2115,9 +2115,11 @@ MAKE_ENUM(ImGuiInputTextFlags_CallbackResize,CallbackResize)
 //    ImGuiInputTextFlags_CallbackEdit        = 1 << 19,  // Callback on any edit (note that InputText() already returns true on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)
 MAKE_ENUM(ImGuiInputTextFlags_CallbackEdit,CallbackEdit)
 //    ImGuiInputTextFlags_Multiline           = 1 << 20,  // For internal use by InputTextMultiline()
-MAKE_ENUM(ImGuiInputTextFlags_Multiline,Multiline)
+
+// HWL these two have been made private in ImGui, so for now lua won't be able to access them
+//MAKE_ENUM(ImGuiInputTextFlags_Multiline,Multiline)
 //    ImGuiInputTextFlags_NoMarkEdited        = 1 << 21   // For internal use by functions using InputText() before reformatting data
-MAKE_ENUM(ImGuiInputTextFlags_NoMarkEdited,NoMarkEdited)
+//MAKE_ENUM(ImGuiInputTextFlags_NoMarkEdited,NoMarkEdited)
 END_ENUM(InputTextFlags)
 //enum ImGuiTreeNodeFlags_
 
@@ -2970,8 +2972,8 @@ END_IMGUI_FUNC
 // Unsupported arg type const ImVec2* points
 //    IMGUI_API void  AddConvexPolyFilled(const ImVec2* points, int num_points, ImU32 col); // Note: Anti-aliased filling requires points to be in clockwise order.
 // Unsupported arg type const ImVec2* points
-//    IMGUI_API void  AddBezierCurve(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments = 0);
-IMGUI_FUNCTION_DRAW_LIST(AddBezierCurve)
+//    IMGUI_API void  AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments = 0); // Cubic Bezier (4 control points)
+IMGUI_FUNCTION_DRAW_LIST(AddBezierCubic)
 IM_VEC_2_ARG(p1)
 IM_VEC_2_ARG(p2)
 IM_VEC_2_ARG(p3)
@@ -2979,7 +2981,7 @@ IM_VEC_2_ARG(p4)
 UINT_ARG(col)
 NUMBER_ARG(thickness)
 OPTIONAL_INT_ARG(num_segments, 0)
-DRAW_LIST_CALL_FUNCTION_NO_RET(AddBezierCurve, p1, p2, p3, p4, col, thickness, num_segments)
+DRAW_LIST_CALL_FUNCTION_NO_RET(AddBezierCubic, p1, p2, p3, p4, col, thickness, num_segments)
 END_IMGUI_FUNC
 //    IMGUI_API void  AddImage(ImTextureID user_texture_id, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min = ImVec2 0  0, const ImVec2& uv_max = ImVec2 1  1, ImU32 col = IM_COL32_WHITE);
 IMGUI_FUNCTION_DRAW_LIST(AddImage)
@@ -3050,13 +3052,13 @@ INT_ARG(a_min_of_12)
 INT_ARG(a_max_of_12)
 DRAW_LIST_CALL_FUNCTION_NO_RET(PathArcToFast, center, radius, a_min_of_12, a_max_of_12)
 END_IMGUI_FUNC
-//    IMGUI_API void  PathBezierCurveTo(const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, int num_segments = 0);
-IMGUI_FUNCTION_DRAW_LIST(PathBezierCurveTo)
+//    IMGUI_API void  PathBezierCubicCurveTo(const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, int num_segments = 0); // Cubic Bezier (4 control points)
+IMGUI_FUNCTION_DRAW_LIST(PathBezierCubicCurveTo)
 IM_VEC_2_ARG(p2)
 IM_VEC_2_ARG(p3)
 IM_VEC_2_ARG(p4)
 OPTIONAL_INT_ARG(num_segments, 0)
-DRAW_LIST_CALL_FUNCTION_NO_RET(PathBezierCurveTo, p2, p3, p4, num_segments)
+DRAW_LIST_CALL_FUNCTION_NO_RET(PathBezierCubicCurveTo, p2, p3, p4, num_segments)
 END_IMGUI_FUNC
 //    IMGUI_API void  PathRect(const ImVec2& rect_min, const ImVec2& rect_max, float rounding = 0.0f, ImDrawCornerFlags rounding_corners = ImDrawCornerFlags_All);
 // Unsupported arg type  ImDrawCornerFlags rounding_corners = ImDrawCornerFlags_All
