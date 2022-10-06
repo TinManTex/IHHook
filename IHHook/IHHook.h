@@ -185,8 +185,7 @@ namespace IHHook {
 
 		ID3D11RenderTargetView* mainRenderTargetView{ nullptr };
 
-		//
-		bool RebaseAddresses(bool isTargetExe);
+		bool RebaseAddresses();
 		void CreateAllHooks();
 	};
 }//namespace IHHook

@@ -69,7 +69,7 @@ namespace IHHook {
 	void AbortHandler(int signal_number) {
 		auto log = spdlog::get("ihhook");
 		if (log != NULL) {
-			log->error("abort was called");
+			log->error("abort was called, signal_number: {}", signal_number);
 			log->flush();
 		}
 	}//AbortHandler
@@ -169,7 +169,7 @@ namespace IHHook {
 
 		//tex DEBUG, logged below 
 		TCHAR Buffer[MAX_PATH];
-		DWORD dwRet = GetCurrentDirectory(MAX_PATH, Buffer);
+		GetCurrentDirectory(MAX_PATH, Buffer);
 		std::wstring currentDir(Buffer);
 
 		std::wstring gameDir = OS::GetGameDir();
@@ -289,7 +289,7 @@ namespace IHHook {
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 
-			bool foundAllAddresses = RebaseAddresses(isTargetExe);
+			bool foundAllAddresses = RebaseAddresses();
 
 			if (!foundAllAddresses) {
 				spdlog::warn("Could not find all addresses");
@@ -836,7 +836,7 @@ namespace IHHook {
 	//IN: mgsvtpp_patterns
 	//SIDE: addressSet
 	//rebases the static addresses or sig scans for them
-	bool IHH::RebaseAddresses(bool isTargetExe)	{
+	bool IHH::RebaseAddresses()	{
 		bool foundAllAddresses = true;
 		for (auto const& entry : addressSet) {
 			std::string name = entry.first;
@@ -881,7 +881,7 @@ namespace IHHook {
 	}//RebaseAddresses
 
 	void IHH::CreateAllHooks() {
-		Hooks_CityHash::CreateHooks(RealBaseAddr);//TODO: rebase/convert to same style as rest, so don't have to pass in realbaseaddr
+		Hooks_CityHash::CreateHooks();
 		Hooks_FNVHash::CreateHooks();
 		Hooks_Lua::CreateHooks();
 		Hooks_TPP::CreateHooks();

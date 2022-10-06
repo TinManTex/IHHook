@@ -46,7 +46,7 @@ namespace IHHook {
 		char settingInputBuffer[bufferSize] = "";
 
 		void DrawList(float contentHeight, int helpHeightInItems);
-		bool TextInputComboBox(const char* id, char* buffer, size_t maxInputSize, std::vector<std::string> items, short showMaxItems);
+		bool TextInputComboBox(const char* id, char* buffer, size_t maxInputSize, std::vector<std::string> items, size_t showMaxItems);
 
 		//IH/Lua > IHMenu
 		//DEBUGNOW tex: this is pretty trash, it's really just getting the IHExt api (which was also trash but atleas more flexible so since pushing through WPF) satisfied with the least fuss.
@@ -349,6 +349,7 @@ namespace IHHook {
 			menuHelp = "";
 		}//SetInitialText
 
+		// HWL NOTE: should we get rid of openPrev?
 		void DrawMenu(bool* p_open, bool openPrev) {
 			ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_::ImGuiCond_FirstUseEver);
 			ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_::ImGuiCond_FirstUseEver);
@@ -449,7 +450,7 @@ namespace IHHook {
 			//}//menuSetting
 
 			//DEBUGNOW
-			int maxItemsShown = 7;//0 == show all, but you don't get a scroll bar so it's unusable and will be off screen for large lists anyhoo
+			size_t maxItemsShown = 7;//0 == show all, but you don't get a scroll bar so it's unusable and will be off screen for large lists anyhoo
 			if (TextInputComboBox("##menuSettings", settingInputBuffer, bufferSize, menuSettings, maxItemsShown)) {
 				if (menuSettings.size() == 1) {
 					menuSettings[0] = settingInputBuffer;
@@ -608,7 +609,7 @@ namespace IHHook {
 		// Pass your items via items
 		// maxItemsShown determines how many items are shown, when the dropdown is open; if 0 is passed the complete list will be shown; you will want normaly a value of 8
 		// tex adapted from https://github.com/ocornut/imgui/issues/2057 to be kinda ihmenu specific
-		bool TextInputComboBox(const char* id, char* buffer, size_t maxInputSize, std::vector<std::string> items, short showMaxItems) {
+		bool TextInputComboBox(const char* id, char* buffer, size_t maxInputSize, std::vector<std::string> items, size_t showMaxItems) {
 			//Check if both strings matches
 			if (showMaxItems == 0)
 				showMaxItems = items.size();
@@ -624,9 +625,7 @@ namespace IHHook {
 			inputFlags |= ImGuiInputTextFlags_EnterReturnsTrue;
 			inputFlags |= ImGuiInputTextFlags_CallbackAlways;
 			bool ret = ImGui::InputText("##in", buffer, maxInputSize, inputFlags, propose, static_cast<void*>(&items));
-			if (ret) {//DEBUGNOW
-				bool blurg = true;
-			}
+
 			ImGui::OpenPopupOnItemClick("combobox"); //Enable right-click
 			ImVec2 pos = ImGui::GetItemRectMin();
 			ImVec2 size = ImGui::GetItemRectSize();
@@ -659,11 +658,12 @@ namespace IHHook {
 			if (ImGui::BeginPopup("combobox", ImGuiWindowFlags_::ImGuiWindowFlags_NoMove)) {
 				//ImGui::Text("Select one item or type");
 				//ImGui::Separator();
-				for (int i = 0; i < items.size(); i++) {
-					ImGui::PushID(i);//tex in theory shouldnt be a problem as menu items have a number prefixed
+				for (size_t i = 0; i < items.size(); i++) {
+					int si = static_cast<int>(i);
+					ImGui::PushID(si);//tex in theory shouldnt be a problem as menu items have a number prefixed
 					bool selected = (selectedSetting == i);
 					if (ImGui::Selectable(items[i].c_str(), selected)) {
-						selectedSetting = i;//tex IHMenu
+						selectedSetting = si; //tex IHMenu
 						strcpy_s(buffer, bufferSize, items[selectedSetting].c_str());//DEBUGNOW
 						QueueMessageIn("selectedcombo|menuSetting|" + std::to_string(selectedSetting));//tex IHMenu
 					}

@@ -240,7 +240,7 @@ namespace IHHook {
 		/*
 			Buddy hooks
 		*/
-		bool IsBuddyTypeValid(int buddyType) {
+		bool IsBuddyTypeValid(unsigned int buddyType) {
 			//ZIP: No buddy set
 			if (buddyType == 0) {
 				return false;
@@ -261,7 +261,7 @@ namespace IHHook {
 			return true;
 		}//IsBuddyTypeValid
 
-		ulonglong* LoadBuddyMainFileHook(ulonglong param_1, ulonglong* fileSlotIndex, int buddyType, ulonglong param_4) {
+		ulonglong* LoadBuddyMainFileHook(ulonglong param_1, ulonglong* fileSlotIndex, unsigned int buddyType, ulonglong param_4) {
 			spdlog::debug("LoadBuddyMainFileHook buddyType:{}", buddyType);
 
 			if (!IsBuddyTypeValid(buddyType)) {

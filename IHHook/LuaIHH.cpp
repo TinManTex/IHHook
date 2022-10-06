@@ -224,7 +224,7 @@ namespace IHHook {
 			spdlog::trace(__func__);
 
 			//DEBUGNOW
-			void* data = lua_touserdata(L, -1);
+			//void* data = lua_touserdata(L, -1);
 			
 			return 1;
 		}//l_TestCallToIHHook

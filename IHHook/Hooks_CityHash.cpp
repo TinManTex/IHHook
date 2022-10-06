@@ -148,7 +148,7 @@ namespace IHHook {
 			return origCityHash2(str, len);
 		}
 
-		void CreateHooks(size_t RealBaseAddr) {
+		void CreateHooks() {
 			spdlog::debug(__func__);
 
 			if (!config.enableCityHook) {

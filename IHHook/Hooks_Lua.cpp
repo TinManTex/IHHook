@@ -76,9 +76,6 @@ namespace IHHook {
 						spdlog::error(errormsg);
 						luaLog->error(errormsg);
 					}
-					else {
-						bool bleh = true;//DEBUGNOW
-					}
 					break;
 				}
 			}//switch errcode
