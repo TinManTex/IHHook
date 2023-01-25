@@ -16,7 +16,8 @@
 #include "Hooks_Character.h"
 #include "Hooks_Buddy.h" //ZIP: For buddies
 #include "Hooks_Vehicle.h" //ZIP: For vehicles
-#include "Hooks_FoxString.h" //ZIP: FoxString hook
+//#include "Hooks_FoxString.h" //ZIP: FoxString hook
+#include "Hooks_CallMenu.h" //ZIP: For Call Menu
 
 #include "RawInput.h"
 
@@ -880,6 +881,7 @@ namespace IHHook {
 		return foundAllAddresses;
 	}//RebaseAddresses
 
+	typedef DWORD(WINAPI* CREATEHOOKS)();
 	void IHH::CreateAllHooks() {
 		Hooks_CityHash::CreateHooks();
 		Hooks_FNVHash::CreateHooks();
@@ -890,6 +892,7 @@ namespace IHHook {
 		Hooks_Character::CreateHooks();
 		Hooks_Buddy::CreateHooks(); //ZIP: For buddies
 		Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
-		Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
+		//Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
+		Hooks_CallMenu::CreateHooks(); //ZIP: Call Menu
 	}//CreateAllHooks
 }//namespace IHHook

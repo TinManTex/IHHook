@@ -14,20 +14,20 @@
 #include "lua/lua.h"
 #include "lua/lauxlib.h"
 
-typedef ulonglong (__fastcall StrCode64Func)(const char * buf, longlong len);
-typedef ulonglong (__fastcall PathCode64Func)(const char * strToHash);
+// StrCode64 NOT_FOUND
+typedef ulonglong (__fastcall PathCode64Func)(const char * inString);
 typedef uint (__fastcall FNVHash32Func)(const char * strToHash);
 typedef ulonglong * (__fastcall GetFreeRoamLangIdFunc)(ulonglong * langId, short locationCode, short missionCode);
 typedef void (__fastcall UpdateFOVLerpFunc)(ulonglong param_1);
-typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, ...);
+typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, void * param_2, void * param_3, void * param_4);
 // l_StubbedOut EXPORT_FUNC_FALSE
 // nullsub_2 EXPORT_FUNC_FALSE
-typedef void (__fastcall LoadFileSubFunc)(ulonglong filePath64, ulonglong filePath64_01);
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
-typedef ulonglong * (__fastcall LoadFile_01Func)(ulonglong * param_1, ulonglong * param_2);
-typedef void (__fastcall LoadFile_02Func)(uint64_t * pathCode64HashPtr);
-typedef ulonglong * (__fastcall LoadFile_03Func)();
-typedef ulonglong * (__fastcall LoadFile_05Func)(ulonglong * param_1, ulonglong * param_2);
+// LoadFileSub EXPORT_FUNC_FALSE
+// Path_Copy EXPORT_FUNC_FALSE
+// GetEmptyPath EXPORT_FUNC_FALSE
+// GetStrCodeWithLength EXPORT_FUNC_FALSE
+// GetStrCode32 EXPORT_FUNC_FALSE
 typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerCamoFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
@@ -46,6 +46,8 @@ typedef ulonglong * (__fastcall LoadAvatarOgreHornFpkFunc)(ulonglong * fileSlotI
 typedef ulonglong * (__fastcall LoadAvatarOgreHornFv2Func)(ulonglong * fileSlotIndex, uint ogreLevel);
 typedef ulonglong * (__fastcall LoadBuddyMainFileFunc)(ulonglong param_1, ulonglong * fileSlotIndex, uint buddyType, ulonglong param_4);
 typedef ulonglong * (__fastcall LoadBuddyQuietWeaponFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, short param_quietWeaponId);
+typedef void (__fastcall LoadBuddyDogCommonFPKFunc)(longlong param_1, ulonglong * fileSlotIndex);
+typedef void (__fastcall LoadBuddyHorseCommonFPKFunc)(longlong param_1, ulonglong * fileSlotIndex);
 typedef ulonglong * (__fastcall LoadBuddyWalkerGearArmFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4);
 typedef ulonglong * (__fastcall LoadBuddyWalkerGearHeadFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4);
 typedef ulonglong * (__fastcall LoadBuddyWalkerGearWeaponFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4);
@@ -54,7 +56,8 @@ typedef char (__fastcall PreparePlayerVehicleInSortieFunc)(longlong param_1);
 typedef char (__fastcall PreparePlayerVehicleInGameFunc)(longlong param_1, ulonglong param_2);
 typedef longlong (__fastcall LoadDefaultFpkPtrFuncFunc)(longlong param_1, uint param_2);
 typedef ulonglong * (__fastcall LoadAllVehicleCamoFpksFunc)();
-typedef fox::String * (__fastcall CreateInPlaceFunc)(fox::String * outFoxString, const char * cString);
+typedef longlong * (__fastcall BuddyCommandGetNameLangIdFunc)(longlong * langId, uint commandType);
+typedef longlong * (__fastcall BuddyCommandGetDescriptionLangIdFunc)(longlong * langId, uint commandType);
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
 typedef void (__fastcall lua_closeFunc)(lua_State * L);
 typedef lua_State * (__fastcall lua_newthreadFunc)(lua_State * L);
@@ -180,7 +183,7 @@ typedef int (__fastcall luaopen_packageFunc)(lua_State * L);
 typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 
 //tex the (extern of the) function pointers
-extern StrCode64Func* StrCode64;
+//extern StrCode64Func* StrCode64;//NOT_FOUND
 extern PathCode64Func* PathCode64;
 extern FNVHash32Func* FNVHash32;
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
@@ -188,12 +191,12 @@ extern UpdateFOVLerpFunc* UpdateFOVLerp;
 extern UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 extern l_StubbedOutFunc* l_StubbedOut;
 extern nullsub_2Func* nullsub_2;
-extern LoadFileSubFunc* LoadFileSub;
 extern LoadFileFunc* LoadFile;
-extern LoadFile_01Func* LoadFile_01;
-extern LoadFile_02Func* LoadFile_02;
-extern LoadFile_03Func* LoadFile_03;
-extern LoadFile_05Func* LoadFile_05;
+extern LoadFileSubFunc* LoadFileSub;
+extern Path_CopyFunc* Path_Copy;
+extern GetEmptyPathFunc* GetEmptyPath;
+extern GetStrCodeWithLengthFunc* GetStrCodeWithLength;
+extern GetStrCode32Func* GetStrCode32;
 extern LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
 extern LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
 extern LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
@@ -212,6 +215,8 @@ extern LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
 extern LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
 extern LoadBuddyMainFileFunc* LoadBuddyMainFile;
 extern LoadBuddyQuietWeaponFpkFunc* LoadBuddyQuietWeaponFpk;
+extern LoadBuddyDogCommonFPKFunc* LoadBuddyDogCommonFPK;
+extern LoadBuddyHorseCommonFPKFunc* LoadBuddyHorseCommonFPK;
 extern LoadBuddyWalkerGearArmFpkFunc* LoadBuddyWalkerGearArmFpk;
 extern LoadBuddyWalkerGearHeadFpkFunc* LoadBuddyWalkerGearHeadFpk;
 extern LoadBuddyWalkerGearWeaponFpkFunc* LoadBuddyWalkerGearWeaponFpk;
@@ -220,7 +225,8 @@ extern PreparePlayerVehicleInSortieFunc* PreparePlayerVehicleInSortie;
 extern PreparePlayerVehicleInGameFunc* PreparePlayerVehicleInGame;
 extern LoadDefaultFpkPtrFuncFunc* LoadDefaultFpkPtrFunc;
 extern LoadAllVehicleCamoFpksFunc* LoadAllVehicleCamoFpks;
-extern CreateInPlaceFunc* CreateInPlace;
+extern BuddyCommandGetNameLangIdFunc* BuddyCommandGetNameLangId;
+extern BuddyCommandGetDescriptionLangIdFunc* BuddyCommandGetDescriptionLangId;
 extern lua_newstateFunc* lua_newstate;
 extern lua_closeFunc* lua_close;
 extern lua_newthreadFunc* lua_newthread;

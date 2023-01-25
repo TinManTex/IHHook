@@ -10,7 +10,7 @@
 
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
-		{"StrCode64", 0x14c1bd730},
+		//{"StrCode64", NOT_FOUND},
 		{"PathCode64", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64
 		{"FNVHash32", 0x143f33a20},
 		{"GetFreeRoamLangId", 0x145e60f40},
@@ -18,12 +18,12 @@ namespace IHHook {
 		{"UnkPrintFuncStubbedOut", 0x142ef2bf0},//tex: Some info printing function that has been stubbed out
 		{"l_StubbedOut", 0x14024a8e0},//tex: another retail stubb out to wrangle
 		{"nullsub_2", 0x1409c8f90},//tex: another retail stubb out to wrangle
-		{"LoadFileSub", 0x142f784a0},
 		{"LoadFile", 0x14319ea20},
-		{"LoadFile_01", 0x14319d620},
-		{"LoadFile_02", 0x14319eb70},
-		{"LoadFile_03", 0x1431a0130},
-		{"LoadFile_05", 0x14319ee10},
+		{"LoadFileSub", 0x142f784a0},
+		{"Path_Copy", 0x14319d620},
+		{"GetEmptyPath", 0x1431a0130},
+		{"GetStrCodeWithLength", 0x14c1bd730},
+		{"GetStrCode32", 0x142ece7f0},
 		{"LoadPlayerPartsFpk", 0x146866c80},
 		{"LoadPlayerPartsParts", 0x146865f80},
 		{"LoadPlayerCamoFpk", 0x146864180},
@@ -42,6 +42,8 @@ namespace IHHook {
 		{"LoadAvatarOgreHornFv2", 0x14685da20},
 		{"LoadBuddyMainFile", 0x140a461d0},
 		{"LoadBuddyQuietWeaponFpk", 0x1464d5dc0},
+		{"LoadBuddyDogCommonFPK", 0x140a466aa},
+		{"LoadBuddyHorseCommonFPK", 0x140a466b3},
 		{"LoadBuddyWalkerGearArmFpk", 0x1464d3fc0},
 		{"LoadBuddyWalkerGearHeadFpk", 0x1464d44a0},
 		{"LoadBuddyWalkerGearWeaponFpk", 0x1464d47f0},
@@ -50,7 +52,8 @@ namespace IHHook {
 		{"PreparePlayerVehicleInGame", 0x146a95380},
 		{"LoadDefaultFpkPtrFunc", 0x14314bda0},
 		{"LoadAllVehicleCamoFpks", 0x145006860},
-		{"CreateInPlace", 0x142e8a5d0},
+		{"BuddyCommandGetNameLangId", 0x14110dc60},
+		{"BuddyCommandGetDescriptionLangId", 0x14110da10},
 		{"lua_newstate", 0x14c1fc960},//tex could use default implementation, but may want to hook if we want to see what the engine is up to
 		{"lua_close", 0x14c1fc380},
 		{"lua_newthread", 0x14c1d9d90},

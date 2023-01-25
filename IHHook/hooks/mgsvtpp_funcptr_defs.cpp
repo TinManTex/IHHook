@@ -8,7 +8,7 @@
 
 #include "mgsvtpp_func_typedefs.h"
 
-StrCode64Func* StrCode64;
+//StrCode64Func* StrCode64;//NOT_FOUND
 PathCode64Func* PathCode64;
 FNVHash32Func* FNVHash32;
 GetFreeRoamLangIdFunc* GetFreeRoamLangId;
@@ -16,12 +16,12 @@ UpdateFOVLerpFunc* UpdateFOVLerp;
 UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 l_StubbedOutFunc* l_StubbedOut;
 nullsub_2Func* nullsub_2;
-LoadFileSubFunc* LoadFileSub;
 LoadFileFunc* LoadFile;
-LoadFile_01Func* LoadFile_01;
-LoadFile_02Func* LoadFile_02;
-LoadFile_03Func* LoadFile_03;
-LoadFile_05Func* LoadFile_05;
+LoadFileSubFunc* LoadFileSub;
+Path_CopyFunc* Path_Copy;
+GetEmptyPathFunc* GetEmptyPath;
+GetStrCodeWithLengthFunc* GetStrCodeWithLength;
+GetStrCode32Func* GetStrCode32;
 LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
 LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
 LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
@@ -40,6 +40,8 @@ LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
 LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
 LoadBuddyMainFileFunc* LoadBuddyMainFile;
 LoadBuddyQuietWeaponFpkFunc* LoadBuddyQuietWeaponFpk;
+LoadBuddyDogCommonFPKFunc* LoadBuddyDogCommonFPK;
+LoadBuddyHorseCommonFPKFunc* LoadBuddyHorseCommonFPK;
 LoadBuddyWalkerGearArmFpkFunc* LoadBuddyWalkerGearArmFpk;
 LoadBuddyWalkerGearHeadFpkFunc* LoadBuddyWalkerGearHeadFpk;
 LoadBuddyWalkerGearWeaponFpkFunc* LoadBuddyWalkerGearWeaponFpk;
@@ -48,7 +50,8 @@ PreparePlayerVehicleInSortieFunc* PreparePlayerVehicleInSortie;
 PreparePlayerVehicleInGameFunc* PreparePlayerVehicleInGame;
 LoadDefaultFpkPtrFuncFunc* LoadDefaultFpkPtrFunc;
 LoadAllVehicleCamoFpksFunc* LoadAllVehicleCamoFpks;
-CreateInPlaceFunc* CreateInPlace;
+BuddyCommandGetNameLangIdFunc* BuddyCommandGetNameLangId;
+BuddyCommandGetDescriptionLangIdFunc* BuddyCommandGetDescriptionLangId;
 lua_newstateFunc* lua_newstate;
 lua_closeFunc* lua_close;
 lua_newthreadFunc* lua_newthread;
