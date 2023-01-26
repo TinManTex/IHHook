@@ -25,9 +25,9 @@ typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, void * pa
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
 // LoadFileSub EXPORT_FUNC_FALSE
 // Path_Copy EXPORT_FUNC_FALSE
-// GetEmptyPath EXPORT_FUNC_FALSE
-// GetStrCodeWithLength EXPORT_FUNC_FALSE
-// GetStrCode32 EXPORT_FUNC_FALSE
+typedef Path * (__fastcall GetEmptyPathFunc)();
+typedef StrCode (__fastcall GetStrCodeWithLengthFunc)(const char * buf, longlong len);
+typedef StrCode32 (__fastcall GetStrCode32Func)(const char * str);
 typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerCamoFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);

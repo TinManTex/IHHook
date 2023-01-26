@@ -240,7 +240,7 @@ namespace IHHook {
 				case 1: //For D-Horse
 					if (buddy.horseFpkPath == "") return false;
 					break;
-				case 2: //For D-Horse
+				case 2: //For D-Dog
 					if (buddy.dogFpkPath == "") return false;
 					break;
 				case 3: //For Quiet
@@ -269,7 +269,7 @@ namespace IHHook {
 				case 1: //For D-Horse
 					if (buddy.horseFpkPath != "") return GetFPKFromFilePath(buddy.horseFpkPath, "horseFpkPath", fileSlotIndex);
 					break;
-				case 2: //For D-Horse
+				case 2: //For D-Dog
 					if (buddy.dogFpkPath != "") return GetFPKFromFilePath(buddy.dogFpkPath, "dogFpkPath", fileSlotIndex);
 					break;
 				case 3: //For Quiet
@@ -277,10 +277,10 @@ namespace IHHook {
 						std::string filePath = buddy.quietFpkPath;
 						spdlog::debug("quietFpkPath: {}", filePath);
 						ulonglong filePath64 = PathCode64(filePath.c_str());
-						fox::Path fileSlotIndex_02;
+						Path fileSlotIndex_02;
 						LoadFile(&fileSlotIndex_02.Hash, filePath64);
 						//ZIP: TODO UnkLoadBuddyFileInHeliSpace
-						fox::Path* fileSlotIndex_01 = Path_Copy((fox::Path*)fileSlotIndex, &fileSlotIndex_02);
+						Path* fileSlotIndex_01 = Path_Copy((Path*)fileSlotIndex, &fileSlotIndex_02);
 						return &fileSlotIndex_01->Hash;
 					}
 					break;
@@ -288,8 +288,8 @@ namespace IHHook {
 					if (buddy.walkerGearFpkPath != "") return GetFPKFromFilePath(buddy.walkerGearFpkPath, "walkerGearFpkPath", fileSlotIndex);
 					break;
 				default: //Isn't a buddy, but is loaded anyways.
-					fox::Path* fileSlotIndex_01 = GetEmptyPath();
-					fileSlotIndex_01 = Path_Copy((fox::Path*)fileSlotIndex, fileSlotIndex_01);
+					Path* fileSlotIndex_01 = GetEmptyPath();
+					fileSlotIndex_01 = Path_Copy((Path*)fileSlotIndex, fileSlotIndex_01);
 					return &fileSlotIndex_01->Hash;
 					break;
 			}
