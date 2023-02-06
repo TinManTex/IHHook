@@ -9,7 +9,7 @@
 #include "mgsvtpp_func_typedefs.h"
 
 //StrCode64Func* StrCode64;//NOT_FOUND
-PathCode64Func* PathCode64;
+PathCode64ExtFunc* PathCode64Ext;
 FNVHash32Func* FNVHash32;
 GetFreeRoamLangIdFunc* GetFreeRoamLangId;
 UpdateFOVLerpFunc* UpdateFOVLerp;

@@ -13,7 +13,7 @@ extern std::map<std::string, int64_t> addressSet;
 namespace IHHook {
 	void SetFuncPtrs() {
 		//StrCode64 = (StrCode64Func*)addressSet["StrCode64"];//NOT_FOUND
-		PathCode64 = (PathCode64Func*)addressSet["PathCode64"];
+		PathCode64Ext = (PathCode64ExtFunc*)addressSet["PathCode64Ext"];
 		FNVHash32 = (FNVHash32Func*)addressSet["FNVHash32"];
 		GetFreeRoamLangId = (GetFreeRoamLangIdFunc*)addressSet["GetFreeRoamLangId"];
 		UpdateFOVLerp = (UpdateFOVLerpFunc*)addressSet["UpdateFOVLerp"];

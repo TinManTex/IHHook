@@ -9,11 +9,12 @@ typedef int (__fastcall l_StubbedOutFunc)(lua_State * L);
 typedef void (__fastcall nullsub_2Func)(const char * unkSomeIdStr, longlong unkSomeIdNum);
 
 //ZIP: Ghidra repo defines
+#define PathCode64(str) PathCode64Ext(str)
+typedef ulonglong PathCode64;
 typedef uint64_t StrCode;
 typedef uint StrCode32;
-typedef ulonglong PathCode64s;
 struct Path {
-	PathCode64s Hash;
+	PathCode64 Hash;
 };
 namespace fox {
 	struct String {
@@ -23,8 +24,6 @@ namespace fox {
 		void* unknown;
 	};
 };
-typedef void(__fastcall LoadFileSubFunc)(PathCode64s pathA, PathCode64s pathB); //ZIP: Workaround for Function/Enum name conflict
-typedef Path* (__fastcall Path_CopyFunc)(Path* This, Path* rhs);
 
 //CULL, handled in generated version
 //tex the (extern of the) function pointers

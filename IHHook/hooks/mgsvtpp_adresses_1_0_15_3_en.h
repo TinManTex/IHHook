@@ -11,7 +11,7 @@
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
 		//{"StrCode64", NOT_FOUND},
-		{"PathCode64", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64
+		{"PathCode64Ext", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64
 		{"FNVHash32", 0x143f33a20},
 		{"GetFreeRoamLangId", 0x145e60f40},
 		{"UpdateFOVLerp", 0x141116800},//tex: TODO: verify the return AL>RAX

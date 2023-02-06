@@ -27,7 +27,7 @@ namespace IHHook {
 			return hash;
 		}*/
 		//tex LoadFile Actual, the other LoadFile* functions call this, so it's the only one I'm logging at the moment
-		void LoadFileSubHook(PathCode64s filePath64, PathCode64s filePath64_01) {
+		void LoadFileSubHook(PathCode64 filePath64, PathCode64 filePath64_01) {
 			if (config.logFileLoad) {
 				log->info(filePath64);
 				log->info(filePath64_01);
