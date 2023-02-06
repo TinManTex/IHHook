@@ -14,7 +14,8 @@
 #include "lua/lua.h"
 #include "lua/lauxlib.h"
 
-// StrCode64 NOT_FOUND
+typedef StrCode (__fastcall GetStrCodeWithLengthFunc)(const char * buf, longlong len);
+typedef StrCode32 (__fastcall GetStrCode32Func)(const char * str);
 typedef ulonglong (__fastcall PathCode64ExtFunc)(const char * inString);
 typedef uint (__fastcall FNVHash32Func)(const char * strToHash);
 typedef ulonglong * (__fastcall GetFreeRoamLangIdFunc)(ulonglong * langId, short locationCode, short missionCode);
@@ -26,8 +27,6 @@ typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglo
 typedef void (__fastcall LoadFileSubFunc)(PathCode64 pathA, PathCode64 pathB);
 typedef Path * (__thiscall Path_CopyFunc)(Path * This, Path * rhs);
 typedef Path * (__fastcall GetEmptyPathFunc)();
-typedef StrCode (__fastcall GetStrCodeWithLengthFunc)(const char * buf, longlong len);
-typedef StrCode32 (__fastcall GetStrCode32Func)(const char * str);
 typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
 typedef ulonglong * (__fastcall LoadPlayerCamoFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
@@ -163,7 +162,7 @@ typedef int (__fastcall luaL_checkoptionFunc)(lua_State * L, int narg, const cha
 typedef int (__fastcall luaL_loadfileFunc)(lua_State * L, const char * filename);
 typedef int (__fastcall luaL_loadbufferFunc)(lua_State * L, const char * buff, size_t sz, const char * name);
 // luaL_loadstring USING_CODE
-typedef lua_State * ( luaL_newstateFunc)();
+typedef lua_State * (__fastcall luaL_newstateFunc)();
 typedef char * (__fastcall luaL_gsubFunc)(lua_State * L, const char * s, const char * p, const char * r);
 typedef char * (__fastcall luaL_findtableFunc)(lua_State * L, int idx, const char * fname, int szhint);
 // luaL_buffinit USING_CODE
@@ -183,7 +182,8 @@ typedef int (__fastcall luaopen_packageFunc)(lua_State * L);
 typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 
 //tex the (extern of the) function pointers
-//extern StrCode64Func* StrCode64;//NOT_FOUND
+extern GetStrCodeWithLengthFunc* GetStrCodeWithLength;
+extern GetStrCode32Func* GetStrCode32;
 extern PathCode64ExtFunc* PathCode64Ext;
 extern FNVHash32Func* FNVHash32;
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
@@ -195,8 +195,6 @@ extern LoadFileFunc* LoadFile;
 extern LoadFileSubFunc* LoadFileSub;
 extern Path_CopyFunc* Path_Copy;
 extern GetEmptyPathFunc* GetEmptyPath;
-extern GetStrCodeWithLengthFunc* GetStrCodeWithLength;
-extern GetStrCode32Func* GetStrCode32;
 extern LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
 extern LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
 extern LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;

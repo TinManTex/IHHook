@@ -12,7 +12,8 @@ extern std::map<std::string, int64_t> addressSet;
 
 namespace IHHook {
 	void SetFuncPtrs() {
-		//StrCode64 = (StrCode64Func*)addressSet["StrCode64"];//NOT_FOUND
+		GetStrCodeWithLength = (GetStrCodeWithLengthFunc*)addressSet["GetStrCodeWithLength"];
+		GetStrCode32 = (GetStrCode32Func*)addressSet["GetStrCode32"];
 		PathCode64Ext = (PathCode64ExtFunc*)addressSet["PathCode64Ext"];
 		FNVHash32 = (FNVHash32Func*)addressSet["FNVHash32"];
 		GetFreeRoamLangId = (GetFreeRoamLangIdFunc*)addressSet["GetFreeRoamLangId"];
@@ -24,8 +25,6 @@ namespace IHHook {
 		LoadFileSub = (LoadFileSubFunc*)addressSet["LoadFileSub"];
 		Path_Copy = (Path_CopyFunc*)addressSet["Path_Copy"];
 		GetEmptyPath = (GetEmptyPathFunc*)addressSet["GetEmptyPath"];
-		GetStrCodeWithLength = (GetStrCodeWithLengthFunc*)addressSet["GetStrCodeWithLength"];
-		GetStrCode32 = (GetStrCode32Func*)addressSet["GetStrCode32"];
 		LoadPlayerPartsFpk = (LoadPlayerPartsFpkFunc*)addressSet["LoadPlayerPartsFpk"];
 		LoadPlayerPartsParts = (LoadPlayerPartsPartsFunc*)addressSet["LoadPlayerPartsParts"];
 		LoadPlayerCamoFpk = (LoadPlayerCamoFpkFunc*)addressSet["LoadPlayerCamoFpk"];

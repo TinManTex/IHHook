@@ -78,9 +78,11 @@ def BuildSignatures():
 				#print(signature.getPrototypeString())
 				ret=signature.getReturnType().getName()
 				arguments=signature.getArguments()
-				callConvention=signature.getGenericCallingConvention().getDeclarationName()
 				signatureLine=ret+" "+name
-				typedefLine="typedef "+ret+" ("+callConvention+" "+name+"Func)("#ZIP: Added calling convention support
+				callConvention=signature.getGenericCallingConvention().getDeclarationName() #ZIP: Added calling convention support
+				if callConvention=="":
+						callConvention="__fastcall"
+				typedefLine="typedef "+ret+" ("+callConvention+" "+name+"Func)("
 				#WORKAROUND: tex ghidra signature doesnt have const keyword
 				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
 				constParams=entry.get("constParams")#WORKAROUND: per param const declaration

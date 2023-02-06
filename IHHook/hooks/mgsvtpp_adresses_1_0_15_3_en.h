@@ -10,7 +10,8 @@
 
 namespace IHHook {
 	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
-		//{"StrCode64", NOT_FOUND},
+		{"GetStrCodeWithLength", 0x14c1bd730},
+		{"GetStrCode32", 0x142ece7f0},
 		{"PathCode64Ext", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64
 		{"FNVHash32", 0x143f33a20},
 		{"GetFreeRoamLangId", 0x145e60f40},
@@ -22,8 +23,6 @@ namespace IHHook {
 		{"LoadFileSub", 0x142f784a0},
 		{"Path_Copy", 0x14319d620},
 		{"GetEmptyPath", 0x1431a0130},
-		{"GetStrCodeWithLength", 0x14c1bd730},
-		{"GetStrCode32", 0x142ece7f0},
 		{"LoadPlayerPartsFpk", 0x146866c80},
 		{"LoadPlayerPartsParts", 0x146865f80},
 		{"LoadPlayerCamoFpk", 0x146864180},
