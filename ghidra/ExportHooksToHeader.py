@@ -308,7 +308,9 @@ def BuildHookFuncStubs():
 						callConvention="__fastcall"
 
 				#REF foxlua::module* NewModuleFuncHook(undefined8 param_1, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
-				signatureLine=callConvention + " " + returnType+" "+name+"Hook"+"("				
+				#tex TODO: probably don't need to worry about matching call convention for our own functions, let the compiler do what its supposed to, maybe thiscalls though?
+				#signatureLine=callConvention + " " + returnType+" "+name+"Hook"+"("	
+				signatureLine=returnType+" "+name+"Hook"+"("	
 				#WORKAROUND: tex ghidra signature doesnt have const keyword
 				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
 				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
@@ -337,7 +339,10 @@ def BuildHookFuncStubs():
 				signatureLines.append(signatureLine)#line
 				signatureLines.append("")#line
 				#REF	return NewModule(param_1, moduleName, param_3, param_4, param_5);
-				returnLine="\t"+"return "+name+"("
+				if returnType=="void":
+					returnLine="\t"+name+"("
+				else:
+					returnLine="\t"+"return "+name+"("
 				for idx,parameter in enumerate(arguments):
 					paramName=parameter.getName()
 					returnLine=returnLine+paramName
