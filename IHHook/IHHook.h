@@ -53,8 +53,9 @@ return this
 #include "WindowsMessageHook.hpp"
 
 namespace IHHook {
+	//tex SYNC: with ihhook_config-defaults.lua in makebite\GameDir
 	struct Config {
-		bool debugMode{ true };//TODO debug level instead
+		bool debugMode{ true };//TODO debug level instead, or split out logLevel?
 		bool openConsole{ false };
 		bool enableCityHook{ false }; //log cityhash calls, which underly strcode functions
 		bool enableFnvHook{ false }; //log fnvhash

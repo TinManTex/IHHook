@@ -113,11 +113,16 @@ namespace IHHook {
 			}
 
 			spdlog::flush_on(static_cast<spdlog::level::level_enum>(level));
+			luaLog->flush_on(static_cast<spdlog::level::level_enum>(level));
 			return 1;
 		}//l_Log_SetFlushLevel
 
 		static int l_Log_Flush(lua_State* L) {
 			spdlog::trace(__func__);
+			auto log = spdlog::get("ihhook");
+			if (log != NULL) {
+				log->flush();
+			}
 			luaLog->flush();
 			return 1;
 		}//l_Log_Flush

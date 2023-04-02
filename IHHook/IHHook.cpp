@@ -412,7 +412,7 @@ namespace IHHook {
 		std::string lang = "";
 		while (std::getline(infile, line)) {
 			std::istringstream iss(line);
-
+			spdlog::info("version_info line: {}", line);
 			if (line.length() < std::string("Tpp_steam_mst_en").length()) {
 				spdlog::warn("Unexpected version string, string shorter than expected");
 				break;
@@ -743,14 +743,6 @@ namespace IHHook {
 			spdlog::warn("ParseConfig ifstream.fail for {}", fileName);
 			return false;
 		}
-
-		config.debugMode = true;//TODO debug level instead
-		config.openConsole = false;
-		config.enableCityHook = false;
-		config.enableFnvHook = false;
-		config.logFileLoad = false;
-		config.forceUsePatterns = false;
-		config.logFoxStringCreateInPlace = false; //ZIP: Fox hooks
 
 		std::string line;
 		while (std::getline(infile, line)) {
