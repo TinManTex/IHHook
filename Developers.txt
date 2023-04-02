@@ -38,7 +38,21 @@ Run IHHook\ghidra\ExportHooksToHeader.py in ghidra via
 window menu > script manager, 
 find the manage script directories and point it to IHHook/ghidra folder, 
 then find the script in scripts\IHHook (or type in the name in filter).
-Any functions you're hooking need to be found in the jp exe too before the actual IHHook release, where ExportHooksToHeader needs to be run on the jp exe first, then on the eng exe.
+
+## Community NOTE: 
+IHHook developers, on Ghidra server please set a Plate Comment of "IHHook Export" on the function you want to export: 
+(on the actual function, not its thunk)
+Select the function name in ghidra and press semicolon (;), or right click > comments > plate comment.
+and also bookmark (select the start of function address in listing and ctrl D) with the category of IHHook. 
+This is just to make it clearer in case someone is reworking the function that it will impact the IHHook project.
+
+General community working on ghidra server: If you change the name or signature of an IHHook export please mention it on the MH discord.
+
+## Fixing ghidra server function changes
+It's possible that another community member may rename/rework a function that IHHook exports.
+(Though hopefully with the above commenting and and awareness of the issue it won't happen unanounced).
+In this case you'll want to keep the previous version of IHHook\hooks\mgsv_tpp_address_*.h (or rely on github diff) and compare against what is labelled missing after running ExportHooksToHeader again. 
+Then you can use the previous versions addresses to locate the functions again and find their new names and update ExportInfo and run again. And diff again to see if the function signatures have also changed (though errors on your hooked functions will usually be a tip off).
 
 ## Using IHHook lua functions:
 Lua code can check for the global _IHHook to see if IHHook is running. It will be nil if not, or the IHHook version number if so.
