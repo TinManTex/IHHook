@@ -23,7 +23,7 @@
 #include "Hooks_Buddy.h" //ZIP: For buddies
 #include "Hooks_Vehicle.h" //ZIP: For vehicles
 //#include "Hooks_FoxString.h" //ZIP: FoxString hook
-#include "Hooks_CallMenu.h" //ZIP: For Call Menu
+//#include "Hooks_CallMenu.h" //ZIP: For Call Menu //tex not in zips current pushed fork
 
 #include <string>
 #include "hooks/mgsvtpp_func_typedefs.h"
@@ -328,7 +328,7 @@ namespace IHHook {
 			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
 			Hooks_Vehicle::CreateLibs(L); //ZIP: For vehicles
 			//Hooks_FoxString::CreateLibs(L); //ZIP: FoxString hook
-			Hooks_CallMenu::CreateLibs(L); //ZIP: For Call Menu
+			//Hooks_CallMenu::CreateLibs(L); //ZIP: For Call Menu  //tex not in zips current pushed fork
 		}//CreateLibs
 
 		//tex: replacement for MGSVs stubbed out "print", original lua implementation in lbaselib.c

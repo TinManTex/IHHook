@@ -17,7 +17,7 @@
 #include "Hooks_Buddy.h" //ZIP: For buddies
 #include "Hooks_Vehicle.h" //ZIP: For vehicles
 //#include "Hooks_FoxString.h" //ZIP: FoxString hook
-#include "Hooks_CallMenu.h" //ZIP: For Call Menu
+//#include "Hooks_CallMenu.h" //ZIP: For Call Menu  //tex not in zips current pushed fork
 
 #include "RawInput.h"
 
@@ -893,6 +893,6 @@ namespace IHHook {
 		Hooks_Buddy::CreateHooks(); //ZIP: For buddies
 		Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
 		//Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
-		Hooks_CallMenu::CreateHooks(); //ZIP: Call Menu
+		// Hooks_CallMenu::CreateHooks(); //ZIP: Call Menu  //tex not in zips current pushed fork
 	}//CreateAllHooks
 }//namespace IHHook
