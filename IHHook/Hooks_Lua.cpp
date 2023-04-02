@@ -61,22 +61,29 @@ namespace IHHook {
 		void HandleLuaError(lua_State* L, int errcode, int errfunc) {
 			switch (errcode) {
 				case LUA_ERRMEM: {
-					spdlog::error("LUA_ERRMEM: not enough memory");
-					luaLog->error("LUA_ERRMEM: not enough memory");
+					spdlog::error("lua_(c)pcall: LUA_ERRMEM: not enough memory");
+					luaLog->error("lua_(c)pcall: LUA_ERRMEM: not enough memory");
 					break;
 				}
 				case LUA_ERRERR: {
-					spdlog::error("LUA_ERRERR: error in error handling");
-					luaLog->error("LUA_ERRERR: error in error handling");
+					spdlog::error("lua_(c)pcall: LUA_ERRERR: error in error handling");
+					luaLog->error("lua_(c)pcall: LUA_ERRERR: error in error handling");
 					break;
 				}
-				case LUA_ERRSYNTAX:
-				case LUA_ERRRUN: {
-					if (errfunc == 0) {
+				case LUA_ERRSYNTAX: {
+					//if (errfunc == 0) {
 						std::string errormsg = lua_tostring(L, -1);
-						spdlog::error(errormsg);
-						luaLog->error(errormsg);
-					}
+						spdlog::error("lua_(c)pcall: LUA_ERRSYNTAX: {}", errormsg);
+						luaLog->error("lua_(c)pcall: LUA_ERRSYNTAX: {}", errormsg);
+					//}
+					break;
+				}
+				case LUA_ERRRUN: {
+					//if (errfunc == 0) {
+						std::string errormsg = lua_tostring(L, -1);
+						spdlog::error("lua_(c)pcall: LUA_ERRRUN: {}", errormsg);
+						luaLog->error("lua_(c)pcall: LUA_ERRRUN: {}", errormsg);
+					//}
 					break;
 				}
 			}//switch errcode
@@ -136,8 +143,9 @@ namespace IHHook {
 			spdlog::trace("lua_loadHook {}", chunkname);
 			int errcode = lua_load(L, reader, data, chunkname);
 			if (errcode != 0) {
-				spdlog::error(__func__);
-				HandleLuaError(L, errcode, 0);
+				//tex OFF hooking lua_error is enough, but keeping the hook because I want to load calls to lua_load -^-
+				//spdlog::error(__func__);
+				//HandleLuaError(L, errcode, 0);
 			}//if errcode != 0
 			return errcode;
 		}//lua_loadHook
@@ -154,23 +162,42 @@ namespace IHHook {
 
 		//tex: divert to use our panic, which wraps the requested panic 
 		lua_CFunction lua_atpanicHook(lua_State* L, lua_CFunction panicf) {
-			foxPanic = panicf;
+			spdlog::debug(__func__);
+			foxPanic = panicf;//tex TODO: see if this is actually a custom panic function/not the lua default
 			lua_CFunction oldPanicFunc = lua_atpanic(L, OnPanic);
 			return oldPanicFunc;
 		}//lua_atpanicDetour
 
-		//DEBUGNOW
+		static int traceback(lua_State* L) {
+			lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+			lua_getfield(L, -1, "traceback");
+			lua_pushvalue(L, 1);
+			lua_pushinteger(L, 2);
+			lua_call(L, 2, 1);
+			std::string tracebackmsg = lua_tostring(L, -1);
+			spdlog::error(tracebackmsg);
+			luaLog->error(tracebackmsg);
+			//tex DEBUGNOW should I be popping off all I added?
+			return 1;
+		}//traceback
+
+		//tex TODO: hook luaG_errormsg instead since it also catches luaG_runerror (and lua_error also calls)
 		int lua_errorHook(lua_State* L) {
 			std::string errormsg = lua_tostring(L, -1);
 			spdlog::error("lua_error: {}", errormsg);
 			luaLog->error("lua_error: {}", errormsg);
+			//tex uhh, is this ok calling in the error itself? the usual use is via xpcall error func callback (or failing that on pcall return)
+			//lua_pushcfunction(L, traceback);//DEBUGNOW not sure why this isnt working
 			return lua_error(L);
 		}//lua_errorHook
 
 		int lua_pcallHook(lua_State* L, int nargs, int nresults, int errfunc) {
 			int errcode = lua_pcall(L, nargs, nresults, errfunc);
 			if (errcode != 0) {
-				spdlog::error(__func__);
+				//tex pcall doesn't call lua_error (because the point of it is you're handling things), 
+				//but some stuff like require/loading (see loaderror) that I tend to wrap in pcall in IH 
+				//(simply from non IHHook not being able to log it otherwise, and to catch success/fail) 
+				//so you'll get doubling of errors up in the logs
 				HandleLuaError(L, errcode, errfunc);
 			}//errcode != 0
 			return errcode;
@@ -179,7 +206,6 @@ namespace IHHook {
 		int lua_cpcallHook(lua_State* L, lua_CFunction func, void* ud) {
 			int errcode = lua_cpcall(L, func, ud);
 			if (errcode != 0) {
-				spdlog::error(__func__);
 				HandleLuaError(L, errcode, 0);
 			}
 			return errcode;
@@ -267,14 +293,15 @@ namespace IHHook {
 			else {
 				luaLog->set_pattern("%l: %v");
 			}
-
+			//tex TODO: should default to trace anyway? following IH style of being verbose during start and switching down if IH debug mode not on, 
+			//mostly because otherwise getting user to add ihhook_config with debugMode, rather than just turning on IH debug mode is a bigger ask
 			if (config.debugMode) {
 				luaLog->set_level(spdlog::level::trace);
 				luaLog->flush_on(spdlog::level::trace);
 			}
 			else {
 				luaLog->set_level(spdlog::level::info);
-				luaLog->flush_on(spdlog::level::err);
+				luaLog->flush_on(spdlog::level::warn);
 			}
 		}//SetupLog
 

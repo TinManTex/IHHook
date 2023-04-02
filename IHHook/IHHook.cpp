@@ -342,13 +342,14 @@ namespace IHHook {
 		log->flush();
 
 		spdlog::set_default_logger(log);
+		//tex see TODO in Hooks_Lua luaLog->set_level
 		if (config.debugMode) {
 			spdlog::set_level(spdlog::level::trace);
 			spdlog::flush_on(spdlog::level::trace);
 		}
 		else {
 			spdlog::set_level(spdlog::level::info);		
-			spdlog::flush_on(spdlog::level::err);
+			spdlog::flush_on(spdlog::level::warn);
 		}
 
 		std::time_t currentTime = time(0);
