@@ -12,20 +12,19 @@ extern std::map<std::string, int64_t> addressSet;
 
 namespace IHHook {
 	void SetFuncPtrs() {
-		StrCode64 = (StrCode64Func*)addressSet["StrCode64"];
-		PathCode64 = (PathCode64Func*)addressSet["PathCode64"];
+		GetStrCodeWithLength = (GetStrCodeWithLengthFunc*)addressSet["GetStrCodeWithLength"];
+		GetStrCode32 = (GetStrCode32Func*)addressSet["GetStrCode32"];
+		PathCode64Ext = (PathCode64ExtFunc*)addressSet["PathCode64Ext"];
 		FNVHash32 = (FNVHash32Func*)addressSet["FNVHash32"];
 		GetFreeRoamLangId = (GetFreeRoamLangIdFunc*)addressSet["GetFreeRoamLangId"];
 		UpdateFOVLerp = (UpdateFOVLerpFunc*)addressSet["UpdateFOVLerp"];
 		UnkPrintFuncStubbedOut = (UnkPrintFuncStubbedOutFunc*)addressSet["UnkPrintFuncStubbedOut"];
 		l_StubbedOut = (l_StubbedOutFunc*)addressSet["l_StubbedOut"];
 		nullsub_2 = (nullsub_2Func*)addressSet["nullsub_2"];
-		LoadFileSub = (LoadFileSubFunc*)addressSet["LoadFileSub"];
 		LoadFile = (LoadFileFunc*)addressSet["LoadFile"];
-		LoadFile_01 = (LoadFile_01Func*)addressSet["LoadFile_01"];
-		LoadFile_02 = (LoadFile_02Func*)addressSet["LoadFile_02"];
-		LoadFile_03 = (LoadFile_03Func*)addressSet["LoadFile_03"];
-		LoadFile_05 = (LoadFile_05Func*)addressSet["LoadFile_05"];
+		LoadFileSub = (LoadFileSubFunc*)addressSet["LoadFileSub"];
+		Path_Copy = (Path_CopyFunc*)addressSet["Path_Copy"];
+		GetEmptyPath = (GetEmptyPathFunc*)addressSet["GetEmptyPath"];
 		LoadPlayerPartsFpk = (LoadPlayerPartsFpkFunc*)addressSet["LoadPlayerPartsFpk"];
 		LoadPlayerPartsParts = (LoadPlayerPartsPartsFunc*)addressSet["LoadPlayerPartsParts"];
 		LoadPlayerCamoFpk = (LoadPlayerCamoFpkFunc*)addressSet["LoadPlayerCamoFpk"];
@@ -44,6 +43,8 @@ namespace IHHook {
 		LoadAvatarOgreHornFv2 = (LoadAvatarOgreHornFv2Func*)addressSet["LoadAvatarOgreHornFv2"];
 		LoadBuddyMainFile = (LoadBuddyMainFileFunc*)addressSet["LoadBuddyMainFile"];
 		LoadBuddyQuietWeaponFpk = (LoadBuddyQuietWeaponFpkFunc*)addressSet["LoadBuddyQuietWeaponFpk"];
+		LoadBuddyDogCommonFPK = (LoadBuddyDogCommonFPKFunc*)addressSet["LoadBuddyDogCommonFPK"];
+		LoadBuddyHorseCommonFPK = (LoadBuddyHorseCommonFPKFunc*)addressSet["LoadBuddyHorseCommonFPK"];
 		LoadBuddyWalkerGearArmFpk = (LoadBuddyWalkerGearArmFpkFunc*)addressSet["LoadBuddyWalkerGearArmFpk"];
 		LoadBuddyWalkerGearHeadFpk = (LoadBuddyWalkerGearHeadFpkFunc*)addressSet["LoadBuddyWalkerGearHeadFpk"];
 		LoadBuddyWalkerGearWeaponFpk = (LoadBuddyWalkerGearWeaponFpkFunc*)addressSet["LoadBuddyWalkerGearWeaponFpk"];
@@ -52,7 +53,8 @@ namespace IHHook {
 		PreparePlayerVehicleInGame = (PreparePlayerVehicleInGameFunc*)addressSet["PreparePlayerVehicleInGame"];
 		LoadDefaultFpkPtrFunc = (LoadDefaultFpkPtrFuncFunc*)addressSet["LoadDefaultFpkPtrFunc"];
 		LoadAllVehicleCamoFpks = (LoadAllVehicleCamoFpksFunc*)addressSet["LoadAllVehicleCamoFpks"];
-		CreateInPlace = (CreateInPlaceFunc*)addressSet["CreateInPlace"];
+		BuddyCommandGetNameLangId = (BuddyCommandGetNameLangIdFunc*)addressSet["BuddyCommandGetNameLangId"];
+		BuddyCommandGetDescriptionLangId = (BuddyCommandGetDescriptionLangIdFunc*)addressSet["BuddyCommandGetDescriptionLangId"];
 		lua_newstate = (lua_newstateFunc*)addressSet["lua_newstate"];
 		lua_close = (lua_closeFunc*)addressSet["lua_close"];
 		lua_newthread = (lua_newthreadFunc*)addressSet["lua_newthread"];

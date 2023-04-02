@@ -1174,6 +1174,23 @@ namespace IHHook {
 			"/Assets/tpp/fova/chara/sna/sna0_face5_v00.fv2",
 			"/Assets/tpp/fova/chara/sna/sna0_face6_v00.fv2",
 		};
+		//ZIP: Gold/Silver head fix
+		std::string snakeFaceFpksGoldSilver[]{
+			//Gold
+			"/Assets/tpp/pack/player/fova/plfova_sna9_face2_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna9_face0_v00.fpk",
+			//Silver
+			"/Assets/tpp/pack/player/fova/plfova_sna9_face3_v00.fpk",
+			"/Assets/tpp/pack/player/fova/plfova_sna9_face1_v00.fpk",
+		};
+		std::string snakeFaceFv2sGoldSilver[]{
+			//Gold
+			"/Assets/tpp/fova/chara/sna/sna9_face2_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna9_face0_v00.fv2",
+			//Silver
+			"/Assets/tpp/fova/chara/sna/sna9_face3_v00.fv2",
+			"/Assets/tpp/fova/chara/sna/sna9_face1_v00.fv2",
+		};
 
 		//tex broken out from LoadPlayerSnakeFace
 		//essentially IsHeadNeededForPartsTypeAndSnake
@@ -1228,10 +1245,14 @@ namespace IHHook {
 				std::string filePath = character.snakeFaceFpkPath;
 				if (filePath == "") {
 					bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
-					if (isBandana) {
-						hornLevel = hornLevel + MAX_SNAKE_FACEID;//tex not really right descriptive wise, but we've only got two 'heads', normal/bandana (* 3 horn levels)
+					if (playerPartsType == 12) filePath = (isBandana ? snakeFaceFpksGoldSilver[1] : snakeFaceFpksGoldSilver[2] ); //Gold
+					else if (playerPartsType == 13) filePath = (isBandana ? snakeFaceFpksGoldSilver[3] : snakeFaceFpksGoldSilver[4] ); //Silver
+					else {
+						if (isBandana) {
+							hornLevel = hornLevel + MAX_SNAKE_FACEID;//tex not really right descriptive wise, but we've only got two 'heads', normal/bandana (* 3 horn levels)
+						}
+						filePath = snakeFaceFpksDefault[hornLevel];
 					}
-					filePath  = snakeFaceFpksDefault[hornLevel];
 				}
 				spdlog::debug("snakeFaceFpkPath: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());
@@ -1258,10 +1279,14 @@ namespace IHHook {
 				std::string filePath = character.snakeFaceFv2Path;
 				if (filePath == "") {
 					bool isBandana = playerFaceEquipId == 1 || playerFaceEquipId == 2;
-					if (isBandana) {
-						hornLevel = hornLevel + MAX_SNAKE_FACEID;
+					if (playerPartsType == 12) filePath = (isBandana ? snakeFaceFv2sGoldSilver[1] : snakeFaceFv2sGoldSilver[2]); //Gold
+					else if (playerPartsType == 13) filePath = (isBandana ? snakeFaceFv2sGoldSilver[3] : snakeFaceFv2sGoldSilver[4]); //Silver
+					else {
+						if (isBandana) {
+							hornLevel = hornLevel + MAX_SNAKE_FACEID;
+						}
+						filePath = snakeFaceFv2sDefault[hornLevel];
 					}
-					filePath = snakeFaceFv2sDefault[hornLevel];			
 				}
 				spdlog::debug("snakeFaceFv2Path: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());

@@ -24,7 +24,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>IHHook</RootNamespace>
     <ProjectName>IHHook</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -172,11 +172,11 @@ copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
     <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h" />
     <ClInclude Include="hooks\mgsvtpp_patterns.h" />
     <ClInclude Include="Hooks_Buddy.h" />
+    <ClInclude Include="Hooks_CallMenu.h" />
     <ClInclude Include="Hooks_Character.h" />
     <ClInclude Include="Hooks_CityHash.h" />
     <ClInclude Include="Hooks_FNVHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
-    <ClInclude Include="Hooks_FoxString.h" />
     <ClInclude Include="Hooks_LoadFile.h" />
     <ClInclude Include="Hooks_Lua.h" />
     <ClInclude Include="Hooks_TPP.h" />
@@ -227,6 +227,7 @@ copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
     <ClCompile Include="hooks\mgsvtpp_funcptr_defs.cpp" />
     <ClCompile Include="hooks\mgsvtpp_funcptr_set.cpp" />
     <ClCompile Include="Hooks_Buddy.cpp" />
+    <ClCompile Include="Hooks_CallMenu.cpp" />
     <ClCompile Include="Hooks_Character.cpp" />
     <ClCompile Include="Hooks_CityHash.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -245,7 +246,6 @@ copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
     </ClCompile>
     <ClCompile Include="Hooks_FNVHash.cpp" />
     <ClCompile Include="Hooks_FOV.cpp" />
-    <ClCompile Include="Hooks_FoxString.cpp" />
     <ClCompile Include="Hooks_LoadFile.cpp" />
     <ClCompile Include="Hooks_Lua.cpp" />
     <ClCompile Include="Hooks_Lua_Test.cpp" />

@@ -8,7 +8,14 @@
 typedef int (__fastcall l_StubbedOutFunc)(lua_State * L);
 typedef void (__fastcall nullsub_2Func)(const char * unkSomeIdStr, longlong unkSomeIdNum);
 
-//ZIP: FoxString hook
+//ZIP: Ghidra repo defines
+#define PathCode64(str) PathCode64Ext(str)
+typedef ulonglong PathCode64;
+typedef uint64_t StrCode;
+typedef uint StrCode32;
+struct Path {
+	PathCode64 Hash;
+};
 namespace fox {
 	struct String {
 		char* cString;
@@ -16,7 +23,7 @@ namespace fox {
 		uint64_t hash;
 		void* unknown;
 	};
-}
+};
 
 //CULL, handled in generated version
 //tex the (extern of the) function pointers

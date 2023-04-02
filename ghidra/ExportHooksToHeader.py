@@ -12,7 +12,7 @@
 from java.io import PrintWriter
 from ExportInfo import * #ExportInfo.py for exportInfo list
 
-hDestPath="D:/GitHub/IHHook/IHHook/hooks/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
+hDestPath="D:/Projects/Github/IHHook/IHHook/hooks/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
 
 version="1_0_15_3"
 exeName="mgsvtpp"
@@ -79,7 +79,10 @@ def BuildSignatures():
 				ret=signature.getReturnType().getName()
 				arguments=signature.getArguments()
 				signatureLine=ret+" "+name
-				typedefLine="typedef "+ret+" (__fastcall "+name+"Func)("#TODO: pull calling convention too?
+				callConvention=signature.getGenericCallingConvention().getDeclarationName() #ZIP: Added calling convention support
+				if callConvention=="":
+						callConvention="__fastcall"
+				typedefLine="typedef "+ret+" ("+callConvention+" "+name+"Func)("
 				#WORKAROUND: tex ghidra signature doesnt have const keyword
 				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
 				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
@@ -88,6 +91,8 @@ def BuildSignatures():
 					dataTypeName=parameter.getDataType().getName()
 					#print(paramName)
 					#print(dataTypeName)
+					if callConvention=="__thiscall" and paramName=="this":
+						paramName="This"#WORKAROUND ZIP: Fixes "this" param in __thiscall
 					if constCharPtr!=False:
 						if dataTypeName=="char *":
 							dataTypeName="const "+dataTypeName

@@ -219,7 +219,7 @@
     <ClInclude Include="Hooks_Vehicle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks_FoxString.h">
+    <ClInclude Include="Hooks_CallMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -368,10 +368,10 @@
     <ClCompile Include="Hooks_Vehicle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks_FoxString.cpp">
+    <ClCompile Include="imgui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
+    <ClCompile Include="Hooks_CallMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
