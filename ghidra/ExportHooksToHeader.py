@@ -13,21 +13,21 @@ import os
 from java.io import PrintWriter
 from ExportInfo import * #ExportInfo.py for exportInfo list
 
-#tex should be to repo root, 
-# rather than editing this a user should copy ExportPath_User.py to ghidra program folder and edit path.
-hDestPath='D:/GitHub/IHHook/'
+#SYNC these settings with user file ExportSettings_User
+#tex rather than editing these a user should copy ExportPath_User.py to ghidra program folder and edit path.
+hDestPath='D:/GitHub/IHHook/'#tex should be to repo root, 
 hDestSubPath='IHHook/hooks/'#tex only should be changed if the ihhook project changes the location
-print('hDestPath: initial ' + hDestPath)
-hUserFile='./ExportPath_User.py'
 
 version="1_0_15_3"
 exeName="mgsvtpp"
 
 debugmode=True #enables debugprints
 
-#except for hUserFile, any of the above can be overridden by ExportPath_User.py
+#except any of the above can be overridden by ExportPath_User.py
 #Don't need to change any settings past here
+hUserFile='./ExportSettings_User.py'
 
+print('hDestPath: initial ' + hDestPath)
 
 cwd = os.getcwd()
 #print("Current working directory: {0}".format(cwd))
@@ -44,6 +44,7 @@ hDestPath = hDestPath + hDestSubPath
 print('using hDestPath: ' + hDestPath)
 
 #only print if debugmode true
+#tex nice idea in theory, but so far it's better to analyse the outputted files than scroll through a log window
 def debugprint(message):
 	if debugprint:
 		print(message)
