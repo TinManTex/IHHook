@@ -2,6 +2,11 @@
 //Not generated, manually managed version of the generated version
 //for wrangling with stuff you skipped via exportFunc:False
 //Typdefs and externs for the function pointers as well as detour function declaration (not func ptrs)
+//good practice could be in ghidra to give complex data types good namespaces, 
+//then using the export C header option in the datatype manager and including that?
+//(though you'll likely have to cull duplicate already included data types)
+
+#include "mgsvtpp_typedefs_ghidra.h" //for ghidra builtin data type names > c++
 
 #include "lua/lua.h"//l_StubbedOutFunc TODO: dont like this
 

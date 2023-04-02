@@ -171,6 +171,7 @@ copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
     <ClInclude Include="hooks\mgsvtpp_func_typedefs.h" />
     <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h" />
     <ClInclude Include="hooks\mgsvtpp_patterns.h" />
+    <ClInclude Include="hooks\mgsvtpp_typedefs_ghidra.h" />
     <ClInclude Include="Hooks_Buddy.h" />
     <ClInclude Include="Hooks_Character.h" />
     <ClInclude Include="Hooks_CityHash.h" />

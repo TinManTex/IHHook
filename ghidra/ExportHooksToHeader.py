@@ -421,20 +421,8 @@ def WriteFuncTypeDefHFile():
 		'#include "lua/lauxlib.h"',
 	]
 
-	macros=[
-		"//macros for ghidra data type names > c++",
-		"#define longlong long long",
-		"#define ulonglong unsigned long long",
-		"#define uint unsigned int",
-	]
-
-
-
 	file = PrintWriter(headerFilePath);
 	for line in header:
-		file.println(line)
-	file.println("")
-	for line in macros:
 		file.println(line)
 	file.println("")
 	for line in includes:

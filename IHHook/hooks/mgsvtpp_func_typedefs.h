@@ -3,11 +3,6 @@
 //via WriteFuncTypeDefHFile
 //Typdefs and externs for the function pointers as well as detour function declaration (not func ptrs)
 
-//macros for ghidra data type names > c++
-#define longlong long long
-#define ulonglong unsigned long long
-#define uint unsigned int
-
 #include "mgsvtpp_func_typedefs_manual.h"
 //TODO: this is a per category thing/will likely want to manage includes 
 //as the number of functions being hooked with various data types expands
