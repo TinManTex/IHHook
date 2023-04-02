@@ -268,6 +268,92 @@ def BuildFuncPtrSet():
 		#print(line)
 	return outLines
 
+
+#REF
+#typedef foxlua::module * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
+# REF output
+# foxlua::module* NewModuleFuncHook(undefined8 param_1, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+#
+# 	return NewModule(param_1, moduleName, param_3, param_4, param_5);
+# }
+def BuildHookFuncStubs():
+	print('BuildHookFuncStubs')
+	signatureLines=[]
+
+	for entry in exportInfo:
+		name=entry["name"]
+
+		noAddress=entry.get("noAddress")
+		exportFunc=entry.get("exportFunc")
+		address=""
+		invalidReason=None
+		signatureLine=""
+		if noAddress!=None:
+			invalidReason=noAddress
+		elif exportFunc==False:
+			invalidReason="EXPORT_FUNC_FALSE"
+		else:
+			function=foundFunctions.get(name)
+			if function==None:
+				invalidReason="NOT_FOUND"
+			else:
+				address=""
+				#print(function.getName())
+				signature=function.getSignature()
+				#print(signature.getPrototypeString())
+				returnType=signature.getReturnType().getName()
+				arguments=signature.getArguments()
+				callConvention=signature.getGenericCallingConvention().getDeclarationName() #ZIP: Added calling convention support
+				if callConvention=="":
+						callConvention="__fastcall"
+
+				#REF foxlua::module* NewModuleFuncHook(undefined8 param_1, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+				signatureLine=callConvention + " " + returnType+" "+name+"Hook"+"("				
+				#WORKAROUND: tex ghidra signature doesnt have const keyword
+				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
+				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
+				for idx,parameter in enumerate(arguments):
+					paramName=parameter.getName()
+					dataTypeName=parameter.getDataType().getName()
+					#print(paramName)
+					#print(dataTypeName)
+					if callConvention=="__thiscall" and paramName=="this":
+						paramName="This"#WORKAROUND ZIP: Fixes "this" param in __thiscall
+					if constCharPtr!=False:
+						if dataTypeName=="char *":
+							dataTypeName="const "+dataTypeName
+					if constParams!=None:
+						for constParam in constParams:
+							#print(constParam)
+							if constParam==paramName:
+								dataTypeName="const "+dataTypeName
+								break
+					signatureLine=signatureLine+dataTypeName+" "+paramName
+					if idx!=len(arguments)-1:
+						signatureLine=signatureLine+", "
+				if function.hasVarArgs()==True:
+					signatureLine=signatureLine+", ..."
+				signatureLine=signatureLine+") {"
+				signatureLines.append(signatureLine)#line
+				signatureLines.append("")#line
+				#REF	return NewModule(param_1, moduleName, param_3, param_4, param_5);
+				returnLine="\t"+"return "+name+"("
+				for idx,parameter in enumerate(arguments):
+					paramName=parameter.getName()
+					returnLine=returnLine+paramName
+					if idx!=len(arguments)-1:
+						returnLine=returnLine+", "	
+				returnLine=returnLine+");"
+				signatureLines.append(returnLine)#line
+				signatureLines.append("}//"+name+"Hook")#line
+				signatureLines.append("")#line
+		if invalidReason!=None:
+			signatureLine="// "+name+" "+invalidReason
+			signatureLines.append(signatureLine)
+
+		#debugprint('signatureLine:'+signatureLine)
+	return signatureLines
+
 def WriteAddressHFile():
 	fileName=exeName+"_adresses_"+version+"_"+lang
 	headerFilePath=hDestPath+fileName+".h"
@@ -453,6 +539,45 @@ def WriteFuncPtrSetFile():
 	file.flush()
 	file.close()
 
+def WriteHookStubsFile():
+	fileName=exeName+"_hook_stubs"+".cpp"
+	headerFilePath=hDestPath+fileName
+
+	stubLines=BuildHookFuncStubs()
+
+	header=[
+		"//" + fileName,
+		"//GENERATED: by ghidra script ExportHooksToHeader.py",
+		"//via WriteHookStubsFile",
+		"//Not intended to be compiled, this is just stub/examples of hook functions", 
+		"//so you can quickly just copy and paste them to get started.",
+	]
+
+	hLines=[]
+
+	for line in header:
+		hLines.append(line)
+	hLines.append("")
+
+	hLines.append("namespace IHHook {")
+	indent="\t"
+
+	for line in stubLines:
+		hLines.append(indent+line)
+
+	hLines.append("")
+
+	indent=""
+	hLines.append(indent+"}//namespace IHHook")
+
+	file = PrintWriter(headerFilePath);
+	for line in hLines:
+		file.println(indent+line)
+		print(line)
+
+	file.flush()
+	file.close()
+
 #exec
 lang = askChoice("ExportHooksToHeader", "Select lang of this exe:", ["en","jp"], "en")
 
@@ -464,4 +589,6 @@ print("----")
 WriteFuncPtrDefsFile()
 print("----")
 WriteFuncPtrSetFile()
+print("----")
+WriteHookStubsFile()
 
