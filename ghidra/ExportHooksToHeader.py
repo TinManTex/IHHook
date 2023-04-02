@@ -9,15 +9,44 @@
 
 #TODO: this has a lot of redundancy in the build/write functions
 
+import os
 from java.io import PrintWriter
 from ExportInfo import * #ExportInfo.py for exportInfo list
 
-hDestPath="D:/Projects/Github/IHHook/IHHook/hooks/"#tex TODO: filechooser? but I dont like the extra step it would take for something thats static (and ghidra doesnt remember per-script last-chosen)
+#tex should be to repo root, 
+# rather than editing this a user should copy ExportPath_User.py to ghidra program folder and edit path.
+hDestPath='D:/GitHub/IHHook/'
+hDestSubPath='IHHook/hooks/'#tex only should be changed if the ihhook project changes the location
+print('hDestPath: initial ' + hDestPath)
+hUserFile='./ExportPath_User.py'
 
 version="1_0_15_3"
 exeName="mgsvtpp"
 
-#Don't need to change anything past here
+debugmode=True #enables debugprints
+
+#except for hUserFile, any of the above can be overridden by ExportPath_User.py
+#Don't need to change any settings past here
+
+
+cwd = os.getcwd()
+#print("Current working directory: {0}".format(cwd))
+
+if os.path.isfile(hUserFile):
+	with open(hUserFile) as f:
+		all = f.read()
+		exec(all)
+else:
+	print(hUserFile + " not found in " + cwd + " using hDestPath: " + hDestPath)
+
+hDestPath = hDestPath + hDestSubPath
+
+print('using hDestPath: ' + hDestPath)
+
+#only print if debugmode true
+def debugprint(message):
+	if debugprint:
+		print(message)
 
 #tex using exportInfo to give order
 infoLookup={}
