@@ -13,6 +13,7 @@
 #include "Hooks_TPP.h"
 #include "Hooks_FOV.h"
 #include "Hooks_LoadFile.h"
+#include "Hooks_CreateModule.h"
 #include "Hooks_Character.h"
 #include "Hooks_Buddy.h" //ZIP: For buddies
 #include "Hooks_Vehicle.h" //ZIP: For vehicles
@@ -821,6 +822,9 @@ namespace IHHook {
 			else if (varName == "logTime") {
 				config.logTime = valueStr == "true";
 			}
+			else if (varName == "enableCreateModuleHook") {
+				config.enableCreateModuleHook = valueStr == "true";
+			}
 		}//while line
 
 		return true;
@@ -876,6 +880,7 @@ namespace IHHook {
 
 	typedef DWORD(WINAPI* CREATEHOOKS)();//tex NMC what this for?
 	void IHH::CreateAllHooks() {
+		std::string lang = GetLangVersion();
 		Hooks_CityHash::CreateHooks();
 		Hooks_FNVHash::CreateHooks();
 		Hooks_Lua::CreateHooks();
@@ -887,5 +892,9 @@ namespace IHHook {
 		Hooks_Vehicle::CreateHooks(); //ZIP: For vehicles
 		//TODO: see ghidra/ExportInfo.py CreateInPlace//Hooks_FoxString::CreateHooks(); //ZIP: FoxString hook
 		// Hooks_CallMenu::CreateHooks(); //ZIP: Call Menu  //tex not in zips current pushed fork
+		//tex since this is just debug dev stuff I havent tracked down jpn functions
+		if (lang == "en") {
+			Hooks_CreateModule::CreateHooks();
+		}
 	}//CreateAllHooks
 }//namespace IHHook

@@ -212,6 +212,81 @@ namespace IHHook {
 		return BuddyCommandGetDescriptionLangId(langId, commandType);
 	}//BuddyCommandGetDescriptionLangIdHook
 	
+	foxlua::module * NewModuleHook(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+	
+		return NewModule(param_1, moduleName, param_3, param_4, param_5);
+	}//NewModuleHook
+	
+	foxlua::module * NewSubModuleHook(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+	
+		return NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
+	}//NewSubModuleHook
+	
+	int AddCFuncToModuleHook(foxlua::module * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6) {
+	
+		return AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
+	}//AddCFuncToModuleHook
+	
+	int AddCFuncToModule2Hook(foxlua::module * module, const char * funcName, void * param_3) {
+	
+		return AddCFuncToModule2(module, funcName, param_3);
+	}//AddCFuncToModule2Hook
+	
+	undefined8 AddCFuncToModule3Hook(foxlua::module * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5) {
+	
+		return AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
+	}//AddCFuncToModule3Hook
+	
+	void AddEnumToModuleHook(foxlua::module * foxModule, const char * enumName, int enumValue) {
+	
+		AddEnumToModule(foxModule, enumName, enumValue);
+	}//AddEnumToModuleHook
+	
+	bool AddEnumToModule2Hook(foxlua::module * module, const char * enumName, int * enumValue) {
+	
+		return AddEnumToModule2(module, enumName, enumValue);
+	}//AddEnumToModule2Hook
+	
+	void AddEnumToModule3Hook(foxlua::module * module, const char * enumName, undefined8 enumValue) {
+	
+		AddEnumToModule3(module, enumName, enumValue);
+	}//AddEnumToModule3Hook
+	
+	undefined AddEnumToModule4Hook(undefined8 module, undefined8 enumName, undefined8 enumValue) {
+	
+		return AddEnumToModule4(module, enumName, enumValue);
+	}//AddEnumToModule4Hook
+	
+	undefined RegisterVarHook(undefined8 foxLua, const char * varName, undefined8 varAddress, lua_CFunction * luaCFunc) {
+	
+		return RegisterVar(foxLua, varName, varAddress, luaCFunc);
+	}//RegisterVarHook
+	
+	void RegisterVar_01Hook(longlong param_1, const char * varName, undefined4 param_3, undefined8 param_4, undefined2 param_5, undefined param_6) {
+	
+		RegisterVar_01(param_1, varName, param_3, param_4, param_5, param_6);
+	}//RegisterVar_01Hook
+	
+	void RegisterVar_02Hook(undefined8 param_1, const char * varName, undefined8 param_3, char param_4) {
+	
+		RegisterVar_02(param_1, varName, param_3, param_4);
+	}//RegisterVar_02Hook
+	
+	int RegisterVar_03Hook(foxlua::module * param_1, const char * varName, void * varAddress, lua_CFunction unkLuaCFunc) {
+	
+		return RegisterVar_03(param_1, varName, varAddress, unkLuaCFunc);
+	}//RegisterVar_03Hook
+	
+	bool RegisterVarArrayHook(foxlua::module * module, const char * varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined * param_6, undefined * param_7, undefined8 arraySize) {
+	
+		return RegisterVarArray(module, varName, param_3, param_4, param_5, param_6, param_7, arraySize);
+	}//RegisterVarArrayHook
+	
+	undefined4 * DeclareEntityClassHook(undefined4 * param_1, const char * className, longlong entityInfo) {
+	
+		return DeclareEntityClass(param_1, className, entityInfo);
+	}//DeclareEntityClassHook
+	
 	lua_State * lua_newstateHook(lua_Alloc f, void * ud) {
 	
 		return lua_newstate(f, ud);

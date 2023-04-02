@@ -170,11 +170,14 @@ copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
     <ClInclude Include="hooks\mgsvtpp_adresses_1_0_15_3_jp.h" />
     <ClInclude Include="hooks\mgsvtpp_func_typedefs.h" />
     <ClInclude Include="hooks\mgsvtpp_func_typedefs_manual.h" />
+    <ClInclude Include="hooks\mgsvtpp_typedefs_fox.h" />
     <ClInclude Include="hooks\mgsvtpp_patterns.h" />
     <ClInclude Include="hooks\mgsvtpp_typedefs_ghidra.h" />
+    <ClInclude Include="hooks\mgsvtpp_typedefs_foxlua.h" />
     <ClInclude Include="Hooks_Buddy.h" />
     <ClInclude Include="Hooks_Character.h" />
     <ClInclude Include="Hooks_CityHash.h" />
+    <ClInclude Include="Hooks_CreateModule.h" />
     <ClInclude Include="Hooks_FNVHash.h" />
     <ClInclude Include="Hooks_FOV.h" />
     <ClInclude Include="Hooks_LoadFile.h" />
@@ -243,6 +246,7 @@ copy /Y "$(SolutionDir)Readme.md" "$(SolutionDir)makebite\Readme.txt"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Hooks_CreateModule.cpp" />
     <ClCompile Include="Hooks_FNVHash.cpp" />
     <ClCompile Include="Hooks_FOV.cpp" />
     <ClCompile Include="Hooks_LoadFile.cpp" />

@@ -7,6 +7,7 @@
 //(though you'll likely have to cull duplicate already included data types)
 
 #include "mgsvtpp_typedefs_ghidra.h" //for ghidra builtin data type names > c++
+#include "mgsvtpp_typedefs_foxlua.h"
 
 #include "lua/lua.h"//l_StubbedOutFunc TODO: dont like this
 

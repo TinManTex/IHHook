@@ -60,6 +60,7 @@ namespace IHHook {
 		bool enableCityHook{ false }; //log cityhash calls, which underly strcode functions
 		bool enableFnvHook{ false }; //log fnvhash
 		bool logFileLoad{ false };
+		bool enableCreateModuleHook{ false };
 		bool forceUsePatterns{ false };
 		bool logFoxStringCreateInPlace{ false }; //ZIP: Fox hooks
 		bool logTime{ false };//prefix |time| before log (used to be default) time is good for figuring out how long between steps, but makes it harder to compare similar logs. TODO: might be better to have a SetPattern lua call for more control?

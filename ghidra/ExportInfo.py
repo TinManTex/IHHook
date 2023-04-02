@@ -89,7 +89,25 @@ exportInfo=[
 	{"name":"BuddyCommandGetNameLangId", "usingDetour":True,},
 	{"name":"BuddyCommandGetDescriptionLangId", "usingDetour":True,},
 	#{"name":"CreateInPlace", "usingDetour":True,},##TODO: 0x142e8a5d0 uhh so this was actually std::string?   
-	#<
+	
+	
+	#tex logging some stuff, probably not for release build
+	{"name":"NewModule", "debugOnly":True,},
+	{"name":"NewSubModule", "debugOnly":True,},
+	{"name":"AddCFuncToModule", "debugOnly":True,},
+	{"name":"AddCFuncToModule2", "debugOnly":True,},
+	{"name":"AddCFuncToModule3", "debugOnly":True,},
+	{"name":"AddEnumToModule", "debugOnly":True,},
+	{"name":"AddEnumToModule2", "debugOnly":True,},
+	{"name":"AddEnumToModule3", "debugOnly":True,},
+	{"name":"AddEnumToModule4", "debugOnly":True,},
+	{"name":"RegisterVar", "debugOnly":True,},
+	{"name":"RegisterVar_01", "debugOnly":True,},
+	{"name":"RegisterVar_02", "debugOnly":True,},
+	{"name":"RegisterVar_03", "debugOnly":True,},
+	{"name":"RegisterVarArray", "debugOnly":True,},
+	{"name":"DeclareEntityClass", "debugOnly":True,},
+	#######################<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 
 		"note":"tex could use default implementation, but may want to hook if we want to see what the engine is up to"},
