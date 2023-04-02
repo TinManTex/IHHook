@@ -22,7 +22,7 @@
 #include "Hooks_Character.h"//CreateLibs //TODO: don't like this in here
 #include "Hooks_Buddy.h" //ZIP: For buddies
 #include "Hooks_Vehicle.h" //ZIP: For vehicles
-//#include "Hooks_FoxString.h" //ZIP: FoxString hook
+//TODO: see ghidra/ExportInfo.py CreateInPlace//#include "Hooks_FoxString.h" //ZIP: FoxString hook
 //#include "Hooks_CallMenu.h" //ZIP: For Call Menu //tex not in zips current pushed fork
 
 #include <string>
@@ -327,7 +327,7 @@ namespace IHHook {
 			Hooks_Character::CreateLibs(L);
 			Hooks_Buddy::CreateLibs(L); //ZIP: For buddies
 			Hooks_Vehicle::CreateLibs(L); //ZIP: For vehicles
-			//Hooks_FoxString::CreateLibs(L); //ZIP: FoxString hook
+			//TODO: see ghidra/ExportInfo.py CreateInPlace//Hooks_FoxString::CreateLibs(L); //ZIP: FoxString hook
 			//Hooks_CallMenu::CreateLibs(L); //ZIP: For Call Menu  //tex not in zips current pushed fork
 		}//CreateLibs
 

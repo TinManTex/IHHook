@@ -88,7 +88,7 @@ exportInfo=[
 	{"name":"LoadAllVehicleCamoFpks", "usingDetour":True,},
 	{"name":"BuddyCommandGetNameLangId", "usingDetour":True,},
 	{"name":"BuddyCommandGetDescriptionLangId", "usingDetour":True,},
-	#{"name":"CreateInPlace", "usingDetour":True,},  
+	#{"name":"CreateInPlace", "usingDetour":True,},##TODO: 0x142e8a5d0 uhh so this was actually std::string?   
 	#<
 	#lua>
 	{"name":"lua_newstate", "usingDetour":True, 
