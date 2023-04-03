@@ -53,7 +53,7 @@ namespace IHHook {
 		{"LoadAllVehicleCamoFpks", 0x145006860},
 		{"BuddyCommandGetNameLangId", 0x14110dc60},
 		{"BuddyCommandGetDescriptionLangId", 0x14110da10},
-		{"NewModule", 0x14c1f9150},
+		{"foxlua::NewModule", 0x14c1f9150},
 		{"NewSubModule", 0x14c1f9b40},
 		{"AddCFuncToModule", 0x14c1f7400},
 		{"AddCFuncToModule2", 0x14c1f87c0},

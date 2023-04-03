@@ -92,7 +92,7 @@ exportInfo=[
 	
 	
 	#tex logging some stuff, probably not for release build
-	{"name":"NewModule", "debugOnly":True,},
+	{"name":"foxlua::NewModule", "debugOnly":True,},
 	{"name":"NewSubModule", "debugOnly":True,},
 	{"name":"AddCFuncToModule", "debugOnly":True,},
 	{"name":"AddCFuncToModule2", "debugOnly":True,},

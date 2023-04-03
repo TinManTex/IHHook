@@ -52,7 +52,9 @@ typedef longlong (__fastcall LoadDefaultFpkPtrFuncFunc)(longlong param_1, uint p
 typedef ulonglong * (__fastcall LoadAllVehicleCamoFpksFunc)();
 typedef longlong * (__fastcall BuddyCommandGetNameLangIdFunc)(longlong * langId, uint commandType);
 typedef longlong * (__fastcall BuddyCommandGetDescriptionLangIdFunc)(longlong * langId, uint commandType);
+namespace foxlua{
 typedef foxlua::module * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
+}
 typedef foxlua::module * (__fastcall NewSubModuleFunc)(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
 typedef int (__fastcall AddCFuncToModuleFunc)(foxlua::module * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6);
 typedef int (__fastcall AddCFuncToModule2Func)(foxlua::module * module, const char * funcName, void * param_3);
@@ -235,7 +237,9 @@ extern LoadDefaultFpkPtrFuncFunc* LoadDefaultFpkPtrFunc;
 extern LoadAllVehicleCamoFpksFunc* LoadAllVehicleCamoFpks;
 extern BuddyCommandGetNameLangIdFunc* BuddyCommandGetNameLangId;
 extern BuddyCommandGetDescriptionLangIdFunc* BuddyCommandGetDescriptionLangId;
+namespace foxlua{
 extern NewModuleFunc* NewModule;
+}
 extern NewSubModuleFunc* NewSubModule;
 extern AddCFuncToModuleFunc* AddCFuncToModule;
 extern AddCFuncToModule2Func* AddCFuncToModule2;

@@ -51,7 +51,7 @@ LoadDefaultFpkPtrFuncFunc* LoadDefaultFpkPtrFunc;
 LoadAllVehicleCamoFpksFunc* LoadAllVehicleCamoFpks;
 BuddyCommandGetNameLangIdFunc* BuddyCommandGetNameLangId;
 BuddyCommandGetDescriptionLangIdFunc* BuddyCommandGetDescriptionLangId;
-NewModuleFunc* NewModule;
+foxlua::NewModuleFunc* foxlua::NewModule;
 NewSubModuleFunc* NewSubModule;
 AddCFuncToModuleFunc* AddCFuncToModule;
 AddCFuncToModule2Func* AddCFuncToModule2;

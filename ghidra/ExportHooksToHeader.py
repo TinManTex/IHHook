@@ -21,7 +21,7 @@ hDestSubPath='IHHook/hooks/'#tex only should be changed if the ihhook project ch
 version="1_0_15_3"
 exeName="mgsvtpp"
 
-debugmode=True #enables debugprints
+debugmode=False #enables debugprints
 
 #except any of the above can be overridden by ExportPath_User.py
 #Don't need to change any settings past here
@@ -49,7 +49,41 @@ def debugprint(message):
 	if debugprint:
 		print(message)
 
-#tex using exportInfo to give order
+#tex there's bound to be this functionailty somewhere in ghidra api, probably somewhere with SymbolPaths
+def GetNameSpacePathFromSymbol(symbol):
+	namespacePath=''
+	parent=symbol.getParentNamespace()
+	while parent.getName()!='Global':
+		if namespacePath=='':
+			namespacePath=parent.getName()
+		else:
+			namespacePath=parent.getName()+'::'+namespacePath
+		
+		parent=parent.getParentNamespace()
+	return namespacePath
+
+def GetNamespaceListFromName(name):
+	namespacesList=name.split('::')
+	functionName=namespacesList.pop()#tex just want the namespaces, not func name
+	isNamespaced=len(namespacesList)>0
+	return namespacesList,functionName,isNamespaced
+
+def GetFunctionName(name):
+	return name.split('::').pop()#tex a split of string with no matches is a list of string. pop will get last in list, which in either case will be function name
+
+def GetNameSpacePathFromName(name):
+	functionName=name
+	nameSpaces=''
+	pos=name.rfind('::')#tex find last
+	if pos!=-1:
+		nameSpaces=name[0:pos]
+		functionName=name[pos+2:]#tex +2 for '::'.
+	return nameSpaces,functionName
+	
+
+#tex using exportInfo to give order,
+# while list[{dict of name:name, other info}] is a bit of a pain rather than dict{name:{dict of info}} 
+# i didnt want to dic(t) around with OrderedDict (and ghidra uses jython/python 2.7 which dicts dont have insertion order)
 infoLookup={}
 for idx, entry in enumerate(exportInfo):
 	infoLookup[entry["name"]]=idx
@@ -58,25 +92,81 @@ for idx, entry in enumerate(exportInfo):
 	#print(name)
 
 def getinfo(name):
-	idx=infoLookup[name]
-	return exportInfo[idx]
+	idx=infoLookup.get(name)
+	if idx==None:
+		return None
+	else:
+		return exportInfo[idx]
 
 #test#print(getinfo("luaopen_string"))
 
 numFound=0
 listing = currentProgram.getListing();
 
-#tex would be a lot easier if I could get
-#functions=listing.getFunctions(None,entry["name"])
-#to return matches
+#tex old/fallback if not giving namespace in ExportInfo
+print("building foundFunctions")
+foundFunctions={
+	#[exportInfo name]=function
+}
+#CULL old
+# for function in listing.getFunctions(True):
+# 	if not function.isThunk():
+# 		if getinfo(function.getName())!=None:
+# 			#test#print("found " + function.getName())			
+# 			#print("parent nameSpace:" + function.getParentNamespace().getName())
+# 			foundFunctions[function.getName()]=function
 
-foundFunctions={}
-for function in listing.getFunctions(True):
-	if not function.isThunk():
-		idx=infoLookup.get(function.getName())
-		if idx!=None:
-			#test#print("found " + function.getName())
-			foundFunctions[function.getName()]=function
+
+#tex find by namespace (or Global)
+#overwrites previous
+for idx,entry in enumerate(exportInfo):
+	nameSpaces='Global'
+	name=entry['name']#tex qualified name (assuming its namespaced)
+	nameSpaces,functionName=GetNameSpacePathFromName(name)
+
+	print('GetNameSpacePathFromName('+name+')='+nameSpaces+','+functionName)
+
+	#print(""+entry['name']+" namespaces:'"+nameSpaces+"' name:'"+name+"'")
+	nameSpaceFunctions=listing.getFunctions(nameSpaces,functionName)
+	#print('nameSpaceFunctions:',nameSpaceFunctions)
+
+	if len(nameSpaceFunctions)==0:		
+		#tex fallback to finding in whole listing
+		#a lot slower than old method of just iterating listing once, but this will warn if theres multiple of same name
+		#but this exec path shouldnt even be hit, once exportInfo names are properly namespaced
+		#and functions in ghidra not yet namespaced will have bypassed this due to being in Global
+		#print(entry['name'] + ': no functions of that name found for namespace ' + nameSpaces)
+		nameSpaceFunctions=[]
+		nameSpaces="UNKNOWN"
+		for function in listing.getFunctions(True):
+			if not function.isThunk():
+				if function.getName()==functionName:
+					print("fallback found " + function.getName())			
+					#print("parent nameSpace:" + function.getParentNamespace().getName())
+					nameSpaces=GetNameSpacePathFromSymbol(function)
+					print("namespaces:'"+nameSpaces+"'")#DEBUG
+					nameSpaceFunctions.append(function)
+
+	numFunctions=len(nameSpaceFunctions)
+	if numFunctions==0:
+		print(entry['name']+': no functions of that name found for namespace '+nameSpaces)
+	elif numFunctions > 1:
+		print('WARNING:'+entry['name']+': multiple functions found for namespace '+nameSpaces)
+		function=nameSpaceFunctions[0]
+		foundFunctions[entry['name']]=function
+	else:
+		function=nameSpaceFunctions[0]
+		foundFunctions[entry['name']]=function
+
+	print(entry['name']+" namespaces:'"+nameSpaces+"' name:'"+functionName+"'")
+	print('nameSpaceFunctions:',nameSpaceFunctions)
+
+#tex DEBUG
+print("foundFunctions:")
+for key in foundFunctions:
+	print(key, '->', foundFunctions[key])
+
+
 
 #Build function typdef from ghidra function signature
 #TODO: fill out typedefs for noAddress that have found functions anyway? (but still have them commented them out)
@@ -106,13 +196,24 @@ def BuildSignatures():
 				#print(function.getName())
 				signature=function.getSignature()
 				#print(signature.getPrototypeString())
-				ret=signature.getReturnType().getName()
+				returnType=signature.getReturnType().getName()
 				arguments=signature.getArguments()
-				signatureLine=ret+" "+name
+
+				namespacesList,functionName,isNamespaced=GetNamespaceListFromName(name)
+
+				namespaceOpenLine=''
+				namespaceCloseLine=''
+				for namespace in namespacesList:
+					namespaceOpenLine='namespace '+namespace+'{'+namespaceOpenLine #tex just jam them on one line, this is a generated file
+					namespaceCloseLine='}'+namespaceCloseLine
+				
+				signatureLine=returnType+" "+name
+				#REF typeDefLine: 
+				# typedef foxlua::module * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
 				callConvention=signature.getGenericCallingConvention().getDeclarationName() #ZIP: Added calling convention support
 				if callConvention=="":
 						callConvention="__fastcall"
-				typedefLine="typedef "+ret+" ("+callConvention+" "+name+"Func)("
+				typedefLine="typedef "+returnType+" ("+callConvention+" "+GetFunctionName(name)+"Func)("
 				#WORKAROUND: tex ghidra signature doesnt have const keyword
 				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
 				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
@@ -142,8 +243,14 @@ def BuildSignatures():
 					typedefLine=typedefLine+", ..."
 				signatureLine=signatureLine+");"
 				typedefLine=typedefLine+");"
+
 				signatureLines.append(signatureLines)
+
+				if isNamespaced:
+					typedefLines.append(namespaceOpenLine)
 				typedefLines.append(typedefLine)
+				if isNamespaced:
+					typedefLines.append(namespaceCloseLine)
 		if invalidReason!=None:
 			signatureLine="// "+name+" "+invalidReason
 			typedefLine=signatureLine
@@ -170,15 +277,28 @@ def BuildExternPointers():
 			function=foundFunctions.get(name)
 			if function==None:
 				reason="NOT_FOUND"
+		
+		namespacesList,functionName,isNamespaced=GetNamespaceListFromName(name)
+		namespaceOpenLine=''
+		namespaceCloseLine=''
+		for namespace in namespacesList:
+			namespaceOpenLine='namespace '+namespace+'{'+namespaceOpenLine #tex just jam them on one line, this is a generated file
+			namespaceCloseLine='}'+namespaceCloseLine	
+
+		if isNamespaced:
+			outLines.append(namespaceOpenLine)
 
 		#REF output
 		#extern StrCode64Func* StrCode64;
-		line="extern "+name+"Func* "+name+";"
+		line="extern "+GetFunctionName(name)+"Func* "+GetFunctionName(name)+";"
 
 		if reason!=None:
 			line='//'+line+'//'+reason#tex commented out			
 
 		outLines.append(line)
+
+		if isNamespaced:
+			outLines.append(namespaceCloseLine)
 		#print(line)		
 	return outLines
 
@@ -311,7 +431,7 @@ def BuildHookFuncStubs():
 				#REF foxlua::module* NewModuleFuncHook(undefined8 param_1, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 				#tex TODO: probably don't need to worry about matching call convention for our own functions, let the compiler do what its supposed to, maybe thiscalls though?
 				#signatureLine=callConvention + " " + returnType+" "+name+"Hook"+"("	
-				signatureLine=returnType+" "+name+"Hook"+"("	
+				signatureLine=returnType+" "+GetFunctionName(name)+"Hook"+"("	
 				#WORKAROUND: tex ghidra signature doesnt have const keyword
 				constCharPtr=entry.get("constCharPtr")#tex currently will apply const to char * by default, or constCharPtr:False to skip TODO: don't know which is the most common/to have as default. in general you use const char* for string literals and char* for buffers/actual mutable strings
 				constParams=entry.get("constParams")#WORKAROUND: per param const declaration
@@ -351,7 +471,7 @@ def BuildHookFuncStubs():
 						returnLine=returnLine+", "	
 				returnLine=returnLine+");"
 				signatureLines.append(returnLine)#line
-				signatureLines.append("}//"+name+"Hook")#line
+				signatureLines.append("}//"+GetFunctionName(name)+"Hook")#line
 				signatureLines.append("")#line
 		if invalidReason!=None:
 			signatureLine="// "+name+" "+invalidReason
@@ -361,6 +481,7 @@ def BuildHookFuncStubs():
 	return signatureLines
 
 def WriteAddressHFile():
+	print(__name__)
 	fileName=exeName+"_adresses_"+version+"_"+lang
 	headerFilePath=hDestPath+fileName+".h"
 
@@ -400,12 +521,13 @@ def WriteAddressHFile():
 	file = PrintWriter(headerFilePath);
 	for line in hLines:
 		file.println(line)
-		print(line)
+		debugprint(line)
 
 	file.flush()
 	file.close()
 
 def WriteFuncTypeDefHFile():
+	print(__name__)
 	fileName=exeName+"_func_typedefs"
 	headerFilePath=hDestPath+fileName+".h"
 
@@ -436,18 +558,19 @@ def WriteFuncTypeDefHFile():
 	file.println("")
 	for line in signatures:
 		file.println(line)
-		print(line)
+		debugprint(line)
 	file.println("")
 	file.println("//tex the (extern of the) function pointers")
 	for line in externPointersLines:
 		file.println(line)
-		print(line)
+		debugprint(line)
 	file.println("")
 
 	file.flush()
 	file.close()
 
 def WriteFuncPtrDefsFile():
+	print(__name__)
 	fileName=exeName+"_funcptr_defs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -478,12 +601,13 @@ def WriteFuncPtrDefsFile():
 	file = PrintWriter(headerFilePath);
 	for line in hLines:
 		file.println(indent+line)
-		print(line)
+		debugprint(line)
 
 	file.flush()
 	file.close()
 
 def WriteFuncPtrSetFile():
+	print(__name__)
 	fileName=exeName+"_funcptr_set"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -528,12 +652,13 @@ def WriteFuncPtrSetFile():
 	file = PrintWriter(headerFilePath);
 	for line in hLines:
 		file.println(indent+line)
-		print(line)
+		debugprint(line)
 
 	file.flush()
 	file.close()
 
 def WriteHookStubsFile():
+	print(__name__)
 	fileName=exeName+"_hook_stubs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -567,7 +692,7 @@ def WriteHookStubsFile():
 	file = PrintWriter(headerFilePath);
 	for line in hLines:
 		file.println(indent+line)
-		print(line)
+		debugprint(line)
 
 	file.flush()
 	file.close()

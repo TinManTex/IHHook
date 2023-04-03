@@ -61,6 +61,7 @@ namespace IHHook {
 //original function is at the <name> function ptr (just like createptr)
 //while the hook/detour is at <name>Hook function pointer.
 //TODO: rethink, could iterate over a map if I have a lookup of name to detour function (name##Hook)
+//DEBUGNOW rename CREATE_HOOK_NS to replace this
 #define CREATE_HOOK(name)\
 if (addressSet[#name]==NULL) {\
 	spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
@@ -73,12 +74,34 @@ if (addressSet[#name]==NULL) {\
 	}\
 }
 //Example use:
-//CREATE_HOOK(lua_newstate);
-//Expands to:
-//MH_STATUS lua_newstateCreateStatus = MH_CreateHook((LPVOID*)addressSet["lua_newstate"], lua_newstateHook, (LPVOID*)&lua_newstate);
-//if (lua_newstateCreateStatus != MH_OK) {
-//	spdlog::error("MH_CreateHook failed for {} with code {}", "lua_newstate", lua_newstateCreateStatus);\
-//}
+//CREATE_HOOK_NS(lua::lua_newstate,lua_newstateHook);
+//_NS aka NameSpaced (though it can handle non namespaced), or maybe its NewStyle, or is it NinjaShinobi? You decide
+#define CREATE_HOOK_NS(name,hookName)\
+if (addressSet[#name]==NULL) {\
+	spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
+} else {\
+	if (MH_CreateHook((LPVOID*)addressSet[#name], hookName, (LPVOID*)&name) != MH_OK) {\
+		spdlog::error("MH_CreateHook failed, not MH_OK for {}", #name);\
+	} else {\
+		spdlog::debug("MH_CreateHook MH_OK for {}", #hookName);\
+	}\
+}
+//
+
+//tex shouldn't really need this, old style where we output MH_STATUS on error, but complicated by namespacing, so just use CREATE_HOOK
+//Example use:
+//CREATE_HOOK_RETURNSTATUS(lua::lua_newstate,lua_newstateHook,lua_newstateCreateStatus);
+#define CREATE_HOOK_RETURNSTATUS(name,hookName,createStatusName)\
+if (addressSet[#name]==NULL) {\
+	spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
+} else {\
+	MH_STATUS createStatusName##CreateStatus = MH_CreateHook((LPVOID*)addressSet[#name], hookName, (LPVOID*)&name);\
+	if (createStatusName##CreateStatus != MH_OK) {\
+		spdlog::error("MH_CreateHook failed for {} with code {}", #name, createStatusName##CreateStatus);\
+	} else {\
+		spdlog::debug("MH_CreateHook MH_OK for {}", #createStatusName);\
+	}\
+}
 
 //ASSUMPTION name##Addr of runtime memory address has been defined
 #define ENABLEHOOK(name)\

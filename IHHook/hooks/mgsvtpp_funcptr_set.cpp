@@ -55,7 +55,7 @@ namespace IHHook {
 		LoadAllVehicleCamoFpks = (LoadAllVehicleCamoFpksFunc*)addressSet["LoadAllVehicleCamoFpks"];
 		BuddyCommandGetNameLangId = (BuddyCommandGetNameLangIdFunc*)addressSet["BuddyCommandGetNameLangId"];
 		BuddyCommandGetDescriptionLangId = (BuddyCommandGetDescriptionLangIdFunc*)addressSet["BuddyCommandGetDescriptionLangId"];
-		NewModule = (NewModuleFunc*)addressSet["NewModule"];
+		foxlua::NewModule = (foxlua::NewModuleFunc*)addressSet["foxlua::NewModule"];
 		NewSubModule = (NewSubModuleFunc*)addressSet["NewSubModule"];
 		AddCFuncToModule = (AddCFuncToModuleFunc*)addressSet["AddCFuncToModule"];
 		AddCFuncToModule2 = (AddCFuncToModule2Func*)addressSet["AddCFuncToModule2"];

@@ -214,7 +214,7 @@ namespace IHHook {
 	
 	foxlua::module * NewModuleHook(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 	
-		return NewModule(param_1, moduleName, param_3, param_4, param_5);
+		return foxlua::NewModule(param_1, moduleName, param_3, param_4, param_5);
 	}//NewModuleHook
 	
 	foxlua::module * NewSubModuleHook(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {

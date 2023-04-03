@@ -19,7 +19,7 @@ namespace IHHook {
 			if (config.enableCreateModuleHook) {
 				log->info("module:{}", moduleName);
 			}
-			return NewModule(param_1, moduleName, param_3, param_4, param_5);
+			return foxlua::NewModule(param_1, moduleName, param_3, param_4, param_5);
 		}//NewModuleHook
 
 		foxlua::module* NewSubModuleHook(foxlua::module* parentModule, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
@@ -130,8 +130,8 @@ namespace IHHook {
 				log = spdlog::basic_logger_st("loadfile", logName);
 				log->set_pattern("%v");//tex raw logging
 										
-				CREATE_HOOK(NewModule)
-				CREATE_HOOK(NewSubModule)
+				CREATE_HOOK_NS(foxlua::NewModule,NewModuleHook)
+				CREATE_HOOK_NS(NewSubModule,NewSubModuleHook)
 				CREATE_HOOK(AddCFuncToModule)
 				CREATE_HOOK(AddCFuncToModule2)
 				CREATE_HOOK(AddCFuncToModule3)
