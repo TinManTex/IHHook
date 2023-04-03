@@ -63,7 +63,7 @@ namespace IHHook {
 
 	size_t RealBaseAddr;
 	bool isTargetExe = false;
-	std::map<std::string, int64_t> addressSet{};
+	std::map<std::string, uint64_t> addressSet{};
 	std::map<std::string, char*> patterns{};
 
 	terminate_function terminate_Original;

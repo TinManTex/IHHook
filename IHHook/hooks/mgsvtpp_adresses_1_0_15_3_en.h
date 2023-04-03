@@ -9,7 +9,7 @@
 #include <map>
 
 namespace IHHook {
-	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
+	std::map<std::string, uint64_t> mgsvtpp_adresses_1_0_15_3_en{
 		{"GetStrCodeWithLength", 0x14c1bd730},
 		{"GetStrCode32", 0x142ece7f0},
 		{"PathCode64Ext", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64

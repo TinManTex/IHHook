@@ -515,7 +515,7 @@ def WriteAddressHFile():
 
 	hLines.append("namespace IHHook {")
 	indent="\t"
-	hLines.append(indent+"std::map<std::string, int64_t> "+fileName+"{")
+	hLines.append(indent+"std::map<std::string, uint64_t> "+fileName+"{")
 
 	indent="\t\t"
 	for line in addressLines:

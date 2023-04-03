@@ -9,7 +9,7 @@
 #include "spdlog/spdlog.h"
 
 namespace IHHook {
-	extern std::map<std::string, int64_t> addressSet;
+	extern std::map<std::string, uint64_t> addressSet;
 }
 
 //DEBUGNOW put this somewhere or CULL
