@@ -73,12 +73,12 @@ def GetFunctionName(name):
 
 def GetNameSpacePathFromName(name):
 	functionName=name
-	nameSpaces=''
+	namespaces=''
 	pos=name.rfind('::')#tex find last
 	if pos!=-1:
-		nameSpaces=name[0:pos]
+		namespaces=name[0:pos]
 		functionName=name[pos+2:]#tex +2 for '::'.
-	return nameSpaces,functionName
+	return namespaces,functionName
 	
 
 #tex using exportInfo to give order,
@@ -101,7 +101,7 @@ def getinfo(name):
 #test#print(getinfo("luaopen_string"))
 
 numFound=0
-listing = currentProgram.getListing();
+listing = currentProgram.getListing()
 
 #tex old/fallback if not giving namespace in ExportInfo
 print("building foundFunctions")
@@ -113,58 +113,58 @@ foundFunctions={
 # 	if not function.isThunk():
 # 		if getinfo(function.getName())!=None:
 # 			#test#print("found " + function.getName())			
-# 			#print("parent nameSpace:" + function.getParentNamespace().getName())
+# 			#print("parent namespace:" + function.getParentNamespace().getName())
 # 			foundFunctions[function.getName()]=function
 
 
 #tex find by namespace (or Global)
 #overwrites previous
 for idx,entry in enumerate(exportInfo):
-	nameSpaces='Global'
+	namespaces='Global'
 	name=entry['name']#tex qualified name (assuming its namespaced)
-	nameSpaces,functionName=GetNameSpacePathFromName(name)
-	#debugprint('GetNameSpacePathFromName('+name+')="'+nameSpaces+'","'+functionName+'"')
-	nameSpaceFunctions=listing.getFunctions(nameSpaces,functionName)
-	#print('nameSpaceFunctions:',nameSpaceFunctions)
+	namespaces,functionName=GetNameSpacePathFromName(name)
+	#debugprint('GetNameSpacePathFromName('+name+')="'+namespaces+'","'+functionName+'"')
+	namespaceFunctions=listing.getFunctions(namespaces,functionName)
+	#print('namespaceFunctions:',namespaceFunctions)
 
-	if len(nameSpaceFunctions)==0:
-		print('WARNING:'+entry['name']+': no functions found for namespace "'+nameSpaces+'"')
+	if len(namespaceFunctions)==0:
+		print('WARNING:'+entry['name']+': no functions found for namespace "'+namespaces+'"')
 		print('Using much slower fallback to find functions. please add or correct namespaces on ExportInfo name entry')
 		#tex fallback to finding in whole listing
 		#a lot slower than old method of just iterating listing once, but this will warn if theres multiple of same name
 		#but this exec path shouldnt even be hit, once exportInfo names are properly namespaced
 		#and functions in ghidra not yet namespaced will have bypassed this due to being in Global
-		#print(entry['name'] + ': no functions of that name found for namespace ' + nameSpaces)
-		nameSpaceFunctions=[]
-		nameSpaces="UNKNOWN"
+		#print(entry['name'] + ': no functions of that name found for namespace ' + namespaces)
+		namespaceFunctions=[]
+		namespaces="UNKNOWN"
 		for function in listing.getFunctions(True):
 			if not function.isThunk():
 				if function.getName()==functionName:
 					print("fallback found " + function.getName())			
-					#print("parent nameSpace:" + function.getParentNamespace().getName())
-					nameSpaces=GetNameSpacePathFromSymbol(function)
-					print("namespaces on found function:'"+nameSpaces+"'")#DEBUG
-					nameSpaceFunctions.append(function)
+					#print("parent namespace:" + function.getParentNamespace().getName())
+					namespaces=GetNameSpacePathFromSymbol(function)
+					print("namespaces on found function:'"+namespaces+"'")#DEBUG
+					namespaceFunctions.append(function)
 	
-	nameSpaceFunctions = [func for func in nameSpaceFunctions if not func.isThunk()]#tex new list without thunks
+	namespaceFunctions = [func for func in namespaceFunctions if not func.isThunk()]#tex new list without thunks
 
-	numFunctions=len(nameSpaceFunctions)
+	numFunctions=len(namespaceFunctions)
 	if numFunctions==0:
-		print(entry['name']+': no functions of that name found for namespace '+nameSpaces)
+		print(entry['name']+': no functions of that name found for namespace '+namespaces)
 	elif numFunctions > 1:
-		print('WARNING:'+entry['name']+': multiple functions found for namespace '+nameSpaces)
-		for func in nameSpaceFunctions:
+		print('WARNING:'+entry['name']+': multiple functions found for namespace '+namespaces)
+		for func in namespaceFunctions:
 			address="0x"+str(function.getEntryPoint())
 			print(address)
 
-		function=nameSpaceFunctions[0]
+		function=namespaceFunctions[0]
 		foundFunctions[entry['name']]=function
 	else:
-		function=nameSpaceFunctions[0]
+		function=namespaceFunctions[0]
 		foundFunctions[entry['name']]=function
 
-	debugprint(entry['name']+" namespaces:'"+nameSpaces+"' name:'"+functionName+"'")
-	debugprint('nameSpaceFunctions:',nameSpaceFunctions)
+	debugprint(entry['name']+" namespaces:'"+namespaces+"' name:'"+functionName+"'")
+	debugprint('namespaceFunctions:',namespaceFunctions)
 
 #tex DEBUG
 debugprint("foundFunctions:")
@@ -523,7 +523,7 @@ def WriteAddressHFile():
 	hLines.append(indent+"};//map "+fileName)
 	hLines.append("}//namespace IHHook")
 
-	file = PrintWriter(headerFilePath);
+	file = PrintWriter(headerFilePath)
 	for line in hLines:
 		file.println(line)
 		debugprint(line)
@@ -554,7 +554,7 @@ def WriteFuncTypeDefHFile():
 		'#include "lua/lauxlib.h"',
 	]
 
-	file = PrintWriter(headerFilePath);
+	file = PrintWriter(headerFilePath)
 	for line in header:
 		file.println(line)
 	file.println("")
@@ -603,7 +603,7 @@ def WriteFuncPtrDefsFile():
 	for line in funcPtrLines:
 		hLines.append(indent+line)
 
-	file = PrintWriter(headerFilePath);
+	file = PrintWriter(headerFilePath)
 	for line in hLines:
 		file.println(indent+line)
 		debugprint(line)
@@ -654,7 +654,7 @@ def WriteFuncPtrSetFile():
 	indent=""
 	hLines.append(indent+"}//namespace IHHook")
 
-	file = PrintWriter(headerFilePath);
+	file = PrintWriter(headerFilePath)
 	for line in hLines:
 		file.println(indent+line)
 		debugprint(line)
@@ -694,7 +694,7 @@ def WriteHookStubsFile():
 	indent=""
 	hLines.append(indent+"}//namespace IHHook")
 
-	file = PrintWriter(headerFilePath);
+	file = PrintWriter(headerFilePath)
 	for line in hLines:
 		file.println(indent+line)
 		debugprint(line)
