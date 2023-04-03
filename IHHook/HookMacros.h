@@ -95,29 +95,33 @@ if (addressSet[#name]==NULL) {\
 if (addressSet[#name]==NULL) {\
 	spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
 } else {\
-	MH_STATUS createStatusName##CreateStatus = MH_CreateHook((LPVOID*)addressSet[#name], hookName, (LPVOID*)&name);\
-	if (createStatusName##CreateStatus != MH_OK) {\
-		spdlog::error("MH_CreateHook failed for {} with code {}", #name, createStatusName##CreateStatus);\
+	MH_STATUS #createStatusName = MH_CreateHook((LPVOID*)addressSet[#name], hookName, (LPVOID*)&name);\
+	if (#createStatusName != MH_OK) {\
+		spdlog::error("MH_CreateHook failed for {} with code {}", #name, #createStatusName);\
 	} else {\
 		spdlog::debug("MH_CreateHook MH_OK for {}", #createStatusName);\
 	}\
 }
 
+
 //ASSUMPTION name##Addr of runtime memory address has been defined
+//Example use:
+//ENABLEHOOK(lua::lua_newstate);
 #define ENABLEHOOK(name)\
-MH_STATUS name##EnableStatus = MH_EnableHook((LPVOID*)addressSet[#name]);\
-if (name##EnableStatus != MH_OK) {\
-	spdlog::error("MH_EnableHook failed for {} with code {}", #name, name##EnableStatus);\
+if (MH_EnableHook((LPVOID*)addressSet[#name]) != MH_OK) {\
+	spdlog::error("MH_EnableHook failed for {}, not MH_OK", #name);\
 } else {\
 	spdlog::debug("MH_EnableHook MH_OK for {}", #name);\
 }
-//Example use:
-//ENABLEHOOK(lua_newstate);
-//Expands to:
-//MH_STATUS lua_newstateEnableStatus = MH_EnableHook((LPVOID*)addressSet["lua_newstate"]);
-//if (lua_newstateEnableStatus != MH_OK) {
-//	spdlog::error("MH_EnableHook failed for {} with code {}", "lua_newstate", lua_newstateEnableStatus);\
-//}
+
+//tex same deal as CREATE_HOOK_RETURNSTATUS
+#define ENABLEHOOK_RETURNSTATUS(name,createStatusName)\
+MH_STATUS #createStatusName = MH_EnableHook((LPVOID*)addressSet[#name]);\
+if (#createStatusName != MH_OK) {\
+	spdlog::error("MH_EnableHook failed for {} with code {}", #name, #createStatusName);\
+} else {\
+	spdlog::debug("MH_EnableHook MH_OK for {}", #name);\
+}
 
 //ASSUMES CREATEDETOUR has defined name##Addr
 #define DISABLEHOOK(name)\
