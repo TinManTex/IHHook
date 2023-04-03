@@ -45,9 +45,9 @@ print('using hDestPath: ' + hDestPath)
 
 #only print if debugmode true
 #tex nice idea in theory, but so far it's better to analyse the outputted files than scroll through a log window
-def debugprint(message):
+def debugprint(*args):
 	if debugprint:
-		print(message)
+		print(args)
 
 #tex there's bound to be this functionailty somewhere in ghidra api, probably somewhere with SymbolPaths
 def GetNameSpacePathFromSymbol(symbol):
@@ -123,14 +123,13 @@ for idx,entry in enumerate(exportInfo):
 	nameSpaces='Global'
 	name=entry['name']#tex qualified name (assuming its namespaced)
 	nameSpaces,functionName=GetNameSpacePathFromName(name)
-
-	print('GetNameSpacePathFromName('+name+')='+nameSpaces+','+functionName)
-
-	#print(""+entry['name']+" namespaces:'"+nameSpaces+"' name:'"+name+"'")
+	#debugprint('GetNameSpacePathFromName('+name+')="'+nameSpaces+'","'+functionName+'"')
 	nameSpaceFunctions=listing.getFunctions(nameSpaces,functionName)
 	#print('nameSpaceFunctions:',nameSpaceFunctions)
 
-	if len(nameSpaceFunctions)==0:		
+	if len(nameSpaceFunctions)==0:
+		print('WARNING:'+entry['name']+': no functions found for namespace "'+nameSpaces+'"')
+		print('Using much slower fallback to find functions. please add or correct namespaces on ExportInfo name entry')
 		#tex fallback to finding in whole listing
 		#a lot slower than old method of just iterating listing once, but this will warn if theres multiple of same name
 		#but this exec path shouldnt even be hit, once exportInfo names are properly namespaced
@@ -144,7 +143,7 @@ for idx,entry in enumerate(exportInfo):
 					print("fallback found " + function.getName())			
 					#print("parent nameSpace:" + function.getParentNamespace().getName())
 					nameSpaces=GetNameSpacePathFromSymbol(function)
-					print("namespaces:'"+nameSpaces+"'")#DEBUG
+					print("namespaces on found function:'"+nameSpaces+"'")#DEBUG
 					nameSpaceFunctions.append(function)
 
 	numFunctions=len(nameSpaceFunctions)
@@ -152,19 +151,23 @@ for idx,entry in enumerate(exportInfo):
 		print(entry['name']+': no functions of that name found for namespace '+nameSpaces)
 	elif numFunctions > 1:
 		print('WARNING:'+entry['name']+': multiple functions found for namespace '+nameSpaces)
+		for func in nameSpaceFunctions:
+			address="0x"+str(function.getEntryPoint())
+			print(address)
+
 		function=nameSpaceFunctions[0]
 		foundFunctions[entry['name']]=function
 	else:
 		function=nameSpaceFunctions[0]
 		foundFunctions[entry['name']]=function
 
-	print(entry['name']+" namespaces:'"+nameSpaces+"' name:'"+functionName+"'")
-	print('nameSpaceFunctions:',nameSpaceFunctions)
+	debugprint(entry['name']+" namespaces:'"+nameSpaces+"' name:'"+functionName+"'")
+	debugprint('nameSpaceFunctions:',nameSpaceFunctions)
 
 #tex DEBUG
-print("foundFunctions:")
+debugprint("foundFunctions:")
 for key in foundFunctions:
-	print(key, '->', foundFunctions[key])
+	debugprint(key, '->', foundFunctions[key])
 
 
 
