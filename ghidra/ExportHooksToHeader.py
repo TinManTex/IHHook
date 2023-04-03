@@ -120,10 +120,11 @@ foundFunctions={
 #tex find by namespace (or Global)
 #overwrites previous
 for idx,entry in enumerate(exportInfo):
-	namespaces='Global'
 	name=entry['name']#tex qualified name (assuming its namespaced)
 	namespaces,functionName=GetNameSpacePathFromName(name)
 	#debugprint('GetNameSpacePathFromName('+name+')="'+namespaces+'","'+functionName+'"')
+	if namespaces=='':#tex fallback, will only hit if not actually in a namespace
+		namespaces='Global'
 	namespaceFunctions=listing.getFunctions(namespaces,functionName)
 	#print('namespaceFunctions:',namespaceFunctions)
 
