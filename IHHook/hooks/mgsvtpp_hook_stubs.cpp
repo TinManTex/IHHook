@@ -219,42 +219,42 @@ namespace IHHook {
 	
 	foxlua::module * NewSubModuleHook(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 	
-		return NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
+		return foxlua::NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
 	}//NewSubModuleHook
 	
 	int AddCFuncToModuleHook(foxlua::module * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6) {
 	
-		return AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
+		return foxlua::AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
 	}//AddCFuncToModuleHook
 	
 	int AddCFuncToModule2Hook(foxlua::module * module, const char * funcName, void * param_3) {
 	
-		return AddCFuncToModule2(module, funcName, param_3);
+		return foxlua::AddCFuncToModule2(module, funcName, param_3);
 	}//AddCFuncToModule2Hook
 	
 	undefined8 AddCFuncToModule3Hook(foxlua::module * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5) {
 	
-		return AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
+		return foxlua::AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
 	}//AddCFuncToModule3Hook
 	
 	void AddEnumToModuleHook(foxlua::module * foxModule, const char * enumName, int enumValue) {
 	
-		AddEnumToModule(foxModule, enumName, enumValue);
+		foxlua::AddEnumToModule(foxModule, enumName, enumValue);
 	}//AddEnumToModuleHook
 	
 	bool AddEnumToModule2Hook(foxlua::module * module, const char * enumName, int * enumValue) {
 	
-		return AddEnumToModule2(module, enumName, enumValue);
+		return foxlua::AddEnumToModule2(module, enumName, enumValue);
 	}//AddEnumToModule2Hook
 	
 	void AddEnumToModule3Hook(foxlua::module * module, const char * enumName, undefined8 enumValue) {
 	
-		AddEnumToModule3(module, enumName, enumValue);
+		foxlua::AddEnumToModule3(module, enumName, enumValue);
 	}//AddEnumToModule3Hook
 	
 	undefined AddEnumToModule4Hook(undefined8 module, undefined8 enumName, undefined8 enumValue) {
 	
-		return AddEnumToModule4(module, enumName, enumValue);
+		return foxlua::AddEnumToModule4(module, enumName, enumValue);
 	}//AddEnumToModule4Hook
 	
 	undefined RegisterVarHook(undefined8 foxLua, const char * varName, undefined8 varAddress, lua_CFunction * luaCFunc) {

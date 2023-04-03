@@ -55,14 +55,30 @@ typedef longlong * (__fastcall BuddyCommandGetDescriptionLangIdFunc)(longlong * 
 namespace foxlua{
 typedef foxlua::module * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
 }
+namespace foxlua{
 typedef foxlua::module * (__fastcall NewSubModuleFunc)(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
+}
+namespace foxlua{
 typedef int (__fastcall AddCFuncToModuleFunc)(foxlua::module * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6);
+}
+namespace foxlua{
 typedef int (__fastcall AddCFuncToModule2Func)(foxlua::module * module, const char * funcName, void * param_3);
+}
+namespace foxlua{
 typedef undefined8 (__fastcall AddCFuncToModule3Func)(foxlua::module * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5);
+}
+namespace foxlua{
 typedef void (__fastcall AddEnumToModuleFunc)(foxlua::module * foxModule, const char * enumName, int enumValue);
+}
+namespace foxlua{
 typedef bool (__fastcall AddEnumToModule2Func)(foxlua::module * module, const char * enumName, int * enumValue);
+}
+namespace foxlua{
 typedef void (__fastcall AddEnumToModule3Func)(foxlua::module * module, const char * enumName, undefined8 enumValue);
+}
+namespace foxlua{
 typedef undefined (__fastcall AddEnumToModule4Func)(undefined8 module, undefined8 enumName, undefined8 enumValue);
+}
 typedef undefined (__fastcall RegisterVarFunc)(undefined8 foxLua, const char * varName, undefined8 varAddress, lua_CFunction * luaCFunc);
 typedef void (__fastcall RegisterVar_01Func)(longlong param_1, const char * varName, undefined4 param_3, undefined8 param_4, undefined2 param_5, undefined param_6);
 typedef void (__fastcall RegisterVar_02Func)(undefined8 param_1, const char * varName, undefined8 param_3, char param_4);
@@ -240,14 +256,30 @@ extern BuddyCommandGetDescriptionLangIdFunc* BuddyCommandGetDescriptionLangId;
 namespace foxlua{
 extern NewModuleFunc* NewModule;
 }
+namespace foxlua{
 extern NewSubModuleFunc* NewSubModule;
+}
+namespace foxlua{
 extern AddCFuncToModuleFunc* AddCFuncToModule;
+}
+namespace foxlua{
 extern AddCFuncToModule2Func* AddCFuncToModule2;
+}
+namespace foxlua{
 extern AddCFuncToModule3Func* AddCFuncToModule3;
+}
+namespace foxlua{
 extern AddEnumToModuleFunc* AddEnumToModule;
+}
+namespace foxlua{
 extern AddEnumToModule2Func* AddEnumToModule2;
+}
+namespace foxlua{
 extern AddEnumToModule3Func* AddEnumToModule3;
+}
+namespace foxlua{
 extern AddEnumToModule4Func* AddEnumToModule4;
+}
 extern RegisterVarFunc* RegisterVar;
 extern RegisterVar_01Func* RegisterVar_01;
 extern RegisterVar_02Func* RegisterVar_02;

@@ -26,35 +26,35 @@ namespace IHHook {
 			if (config.enableCreateModuleHook) {
 				log->info("submodule:{}", moduleName);
 			}
-			return NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
+			return foxlua::NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
 		}//NewSubModuleHook
 
 		int AddCFuncToModuleHook(foxlua::module* module, const char* funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void* param_6) {
 			if (config.enableCreateModuleHook) {
 				log->info("function:{}", funcName);
 			}
-			return AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
+			return foxlua::AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
 		}//AddCFuncToModuleHook
 
 		int AddCFuncToModule2Hook(foxlua::module* module, const char* funcName, void* param_3) {
 			if (config.enableCreateModuleHook) {
 				log->info("function2:{}", funcName);
 			}
-			return AddCFuncToModule2(module, funcName, param_3);
+			return foxlua::AddCFuncToModule2(module, funcName, param_3);
 		}//AddCFuncToModule2Hook
 
 		undefined8 AddCFuncToModule3Hook(foxlua::module* moduleName, const char* funcName, lua_CFunction param_3, int param_4, void* param_5) {
 			if (config.enableCreateModuleHook) {
 		//		log->info("function3:{}", funcName); //tex seems to be just a sub of AddCFuncToModule
 			}
-			return AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
+			return foxlua::AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
 		}//AddCFuncToModule3Hook
 
 		void AddEnumToModuleHook(foxlua::module* foxModule, const char* enumName, int enumValue) {
 			if (config.enableCreateModuleHook) {
 				log->info("enum:{}={}", enumName, enumValue);
 			}
-			return AddEnumToModule(foxModule, enumName, enumValue);
+			return foxlua::AddEnumToModule(foxModule, enumName, enumValue);
 		}//AddEnumToModuleHook
 
 		bool AddEnumToModule2Hook(foxlua::module* module, const char* enumName, int* enumValue) {
@@ -62,21 +62,21 @@ namespace IHHook {
 			if (config.enableCreateModuleHook) {
 				//log->info("enum2:{}={}", enumName, value); //tex seems to be just a sub of AddEnumToModule
 			}
-			return AddEnumToModule2(module, enumName, enumValue);
+			return foxlua::AddEnumToModule2(module, enumName, enumValue);
 		}//AddEnumToModule2Hook
 
 		void AddEnumToModule3Hook(foxlua::module* module, const char* enumName, undefined8 enumValue) {
 			if (config.enableCreateModuleHook) {
 				log->info("enum3:{}={}", enumName, enumValue);
 			}
-			return AddEnumToModule3(module, enumName, enumValue);
+			return foxlua::AddEnumToModule3(module, enumName, enumValue);
 		}//AddEnumToModule3Hook
 
 		undefined AddEnumToModule4Hook(undefined8 module, undefined8 enumName, undefined8 enumValue) {
 			if (config.enableCreateModuleHook) {
 			//	log->info("enum4:{}={}", enumName, enumValue); //tex dont know whats going on with this at a glance
 			}
-			return AddEnumToModule4(module, enumName, enumValue);
+			return foxlua::AddEnumToModule4(module, enumName, enumValue);
 		}//AddEnumToModule4Hook
 
 		undefined RegisterVarHook(undefined8 foxLua, const char* varName, undefined8 varAddress, lua_CFunction* luaCFunc) {
@@ -131,14 +131,14 @@ namespace IHHook {
 				log->set_pattern("%v");//tex raw logging
 										
 				CREATE_HOOK_NS(foxlua::NewModule,NewModuleHook)
-				CREATE_HOOK_NS(NewSubModule,NewSubModuleHook)
-				CREATE_HOOK(AddCFuncToModule)
-				CREATE_HOOK(AddCFuncToModule2)
-				CREATE_HOOK(AddCFuncToModule3)
-				CREATE_HOOK(AddEnumToModule)
-				CREATE_HOOK(AddEnumToModule2)
-				CREATE_HOOK(AddEnumToModule3)
-				CREATE_HOOK(AddEnumToModule4)
+				CREATE_HOOK_NS(foxlua::NewSubModule,NewSubModuleHook)
+				CREATE_HOOK_NS(foxlua::AddCFuncToModule, AddCFuncToModuleHook)
+				CREATE_HOOK_NS(foxlua::AddCFuncToModule2, AddCFuncToModule2Hook)
+				CREATE_HOOK_NS(foxlua::AddCFuncToModule3, AddCFuncToModule3Hook)
+				CREATE_HOOK_NS(foxlua::AddEnumToModule, AddEnumToModuleHook)
+				CREATE_HOOK_NS(foxlua::AddEnumToModule2, AddEnumToModule2Hook)
+				CREATE_HOOK_NS(foxlua::AddEnumToModule3, AddEnumToModule3Hook)
+				CREATE_HOOK_NS(foxlua::AddEnumToModule4, AddEnumToModule4Hook)
 				CREATE_HOOK(RegisterVar)
 				CREATE_HOOK(RegisterVar_01)
 				CREATE_HOOK(RegisterVar_02)
