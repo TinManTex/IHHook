@@ -145,6 +145,8 @@ for idx,entry in enumerate(exportInfo):
 					nameSpaces=GetNameSpacePathFromSymbol(function)
 					print("namespaces on found function:'"+nameSpaces+"'")#DEBUG
 					nameSpaceFunctions.append(function)
+	
+	nameSpaceFunctions = [func for func in nameSpaceFunctions if not func.isThunk()]#tex new list without thunks
 
 	numFunctions=len(nameSpaceFunctions)
 	if numFunctions==0:
