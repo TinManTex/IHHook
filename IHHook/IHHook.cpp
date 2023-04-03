@@ -52,7 +52,6 @@ std::unique_ptr<IHHook::IHH> g_ihhook{};
 namespace IHHook {
 	//mgsvtpp_funcptr_set.cpp
 	extern void SetFuncPtrs();
-	extern void CreateHooks();
 
 	struct Config config;
 	bool ParseConfig(std::string fileName);
@@ -63,9 +62,15 @@ namespace IHHook {
 
 	size_t RealBaseAddr;
 	bool isTargetExe = false;
+	//tex all of these use the same 'original function name' (with namespaces), which is the qualified function name in ghidra, as referenced in ExportInfo name parameter.
+	
+	//tex function addresses exported by ghidra script ExportHooksToHeader, is swapped for mgsvtpp_addresses_1_0_15_3_ en/jp .h depending on lang string
+	//are rebased on load to point to live addresses
 	std::map<std::string, uint64_t> addressSet{};
-	std::map<std::string, char*> patterns{};
+	std::map<std::string, char*> patterns{};//tex alternate to above, but not really used/maintained
 
+	std::map<std::string, uint64_t> hookFuncs{};//tex the specific detoured/hooked function (ie your {funcName}Hook function. only added to on HookMacros CreateHook
+	//
 	terminate_function terminate_Original;
 
 	void AbortHandler(int signal_number) {
@@ -840,8 +845,8 @@ namespace IHHook {
 			std::string name = entry.first;
 			if (isTargetExe) {
 				spdlog::info("isTargetExe, rebasing addr {}", name);
-				int64_t addr = entry.second;
-				int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+				uint64_t addr = entry.second;
+				uint64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
 				addressSet[name] = rebasedAddr;
 			}
 			else {

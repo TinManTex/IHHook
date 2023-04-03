@@ -10,6 +10,7 @@
 
 namespace IHHook {
 	extern std::map<std::string, uint64_t> addressSet;
+	extern std::map<std::string, uint64_t> hookFuncs;
 }
 
 //DEBUGNOW put this somewhere or CULL
@@ -57,6 +58,65 @@ namespace IHHook {
 #define FUNCPTRDEF(ret, name, ...)\
 //
 
+//targetName: name of original function (as exported by ExportInfo) (namespaced as original)
+//hookFunc: pointer to your hook function
+//static MH_STATUS CreateHook(const char* targetName, LPVOID hookFunc) {
+//	uint64_t address = IHHook::addressSet[targetName];
+//	if (address == NULL) {
+//		spdlog::error("CreateHook: could not fine addressSet[{}]", targetName);
+//		return MH_UNKNOWN;
+//	}
+//
+//	MH_STATUS createStatus = MH_CreateHook((LPVOID*)address, hookFunc, (LPVOID*)&name);
+//	if (createStatus != MH_OK) {
+//		spdlog::error("MH_CreateHook failed, not MH_OK for {}", "foxlua::NewModule");
+//	}
+//	else {
+//		IHHook::hookFuncs[targetName] = (uint64_t)&hookFunc;
+//		spdlog::debug("MH_CreateHook MH_OK for {}", "NewModuleHook");
+//	}
+//	return createStatus;
+//}//CreateHook
+
+//targetName: name of original function (as exported by ExportInfo name) (namespaced as original)
+//Example use:
+//EnableHook("lua::lua_newstate");
+static MH_STATUS EnableHook(const char* targetName) {
+	uint64_t address = IHHook::addressSet[targetName];
+	if (address == NULL) {
+		spdlog::error("IHEnableHook: Could not find addressSet[{}]", targetName);
+		return MH_UNKNOWN;
+	}
+
+	MH_STATUS enableStatus = MH_EnableHook((LPVOID*)address);
+
+	if (enableStatus != MH_OK) {
+		spdlog::error("MH EnableHook failed for {} with code {}", targetName, enableStatus);
+	}
+	else {
+		spdlog::debug("MH EnableHook MH_OK for {}", targetName);
+	}
+	return enableStatus;
+}//EnableHook
+
+static MH_STATUS DisableHook(const char* targetName) {
+	uint64_t address = IHHook::addressSet[targetName];
+	if (address == NULL) {
+		spdlog::error("IHEnableHook: Could not find addressSet[{}]", targetName);
+		return MH_UNKNOWN;
+	}
+
+	MH_STATUS enableStatus = MH_DisableHook((LPVOID*)address);
+
+	if (enableStatus != MH_OK) {
+		spdlog::error("MH DisableHook failed for {} with code {}", targetName, enableStatus);
+	}
+	else {
+		spdlog::debug("MH DisableHook MH_OK for {}", targetName);
+	}
+	return enableStatus;
+}//DisableHook
+
 //detour and trampoline via MH_CreateHook,
 //original function is at the <name> function ptr (just like createptr)
 //while the hook/detour is at <name>Hook function pointer.
@@ -73,6 +133,10 @@ if (addressSet[#name]==NULL) {\
 		spdlog::debug("MH_CreateHook MH_OK for {}", #name);\
 	}\
 }
+
+//macros still usefull because you can reference the function pointers rather than strings
+//and vs intellisense is great these days if you want to know what is actually happening
+
 //Example use:
 //CREATE_HOOK_NS(lua::lua_newstate,lua_newstateHook);
 //_NS aka NameSpaced (though it can handle non namespaced), or maybe its NewStyle, or is it NinjaShinobi? You decide
@@ -86,56 +150,9 @@ if (addressSet[#name]==NULL) {\
 		spdlog::debug("MH_CreateHook MH_OK for {}", #hookName);\
 	}\
 }
-//
 
-//tex shouldn't really need this, old style where we output MH_STATUS on error, but complicated by namespacing, so just use CREATE_HOOK
-//Example use:
-//CREATE_HOOK_RETURNSTATUS(lua::lua_newstate,lua_newstateHook,lua_newstateCreateStatus);
-#define CREATE_HOOK_RETURNSTATUS(name,hookName,createStatusName)\
-if (addressSet[#name]==NULL) {\
-	spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
-} else {\
-	MH_STATUS #createStatusName = MH_CreateHook((LPVOID*)addressSet[#name], hookName, (LPVOID*)&name);\
-	if (#createStatusName != MH_OK) {\
-		spdlog::error("MH_CreateHook failed for {} with code {}", #name, #createStatusName);\
-	} else {\
-		spdlog::debug("MH_CreateHook MH_OK for {}", #createStatusName);\
-	}\
-}
+//see EnableHook
+#define ENABLEHOOK(name) EnableHook(#name);
 
-
-//ASSUMPTION name##Addr of runtime memory address has been defined
-//Example use:
-//ENABLEHOOK(lua::lua_newstate);
-#define ENABLEHOOK(name)\
-if (MH_EnableHook((LPVOID*)addressSet[#name]) != MH_OK) {\
-	spdlog::error("MH_EnableHook failed for {}, not MH_OK", #name);\
-} else {\
-	spdlog::debug("MH_EnableHook MH_OK for {}", #name);\
-}
-
-//tex same deal as CREATE_HOOK_RETURNSTATUS
-#define ENABLEHOOK_RETURNSTATUS(name,createStatusName)\
-MH_STATUS #createStatusName = MH_EnableHook((LPVOID*)addressSet[#name]);\
-if (#createStatusName != MH_OK) {\
-	spdlog::error("MH_EnableHook failed for {} with code {}", #name, #createStatusName);\
-} else {\
-	spdlog::debug("MH_EnableHook MH_OK for {}", #name);\
-}
-
-//ASSUMES CREATEDETOUR has defined name##Addr
-#define DISABLEHOOK(name)\
-MH_STATUS name##DisableStatus = MH_DisableHook((LPVOID*)addressSet[#name]);\
-if (name##DisableStatus != MH_OK) {\
-	spdlog::error("MH_DisableHook failed for {} with code {}", #name, name##DisableStatus);\
-} else {\
-	spdlog::debug("MH_DisableHook MH_OK for {}", #name);\
-}
-//Example use:
-//ENABLEHOOK(lua_newstate);
-//Expands to:
-//MH_STATUS lua_newstateDisableStatus = MH_DisableHook((LPVOID*)addressSet["lua_newstate"]);
-//if (DisableStatus != MH_OK) {
-//	spdlog::error("MH_DisableHook failed for {} with code {}", "lua_newstate", lua_newstateDisableStatus);\
-//}
+#define DISABLEHOOK(name) DisableHook(#name);
 

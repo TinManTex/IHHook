@@ -8,7 +8,7 @@
 
 #include "mgsvtpp_func_typedefs.h"
 
-extern std::map<std::string, int64_t> addressSet;
+extern std::map<std::string, uint64_t> addressSet;
 
 namespace IHHook {
 	void SetFuncPtrs() {
