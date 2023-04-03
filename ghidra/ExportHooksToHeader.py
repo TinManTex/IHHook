@@ -46,7 +46,7 @@ print('using hDestPath: ' + hDestPath)
 #only print if debugmode true
 #tex nice idea in theory, but so far it's better to analyse the outputted files than scroll through a log window
 def debugprint(*args):
-	if debugprint:
+	if debugmode:
 		print(args)
 
 #tex there's bound to be this functionailty somewhere in ghidra api, probably somewhere with SymbolPaths
