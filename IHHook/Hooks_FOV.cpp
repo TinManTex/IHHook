@@ -136,7 +136,7 @@ namespace IHHook {
 			//then add the dereferenced rel32
 			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
 
-			if (addressSet["UpdateFOVLerp"] == NULL) {
+			if (!HasFunctionAddress("UpdateFOVLerp")) {
 				spdlog::warn("FOV addr fail: UpdateFOVLerpAddr == NULL");
 				return;
 			}

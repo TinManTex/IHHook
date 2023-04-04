@@ -5,7 +5,6 @@
 #include "MinHook/MinHook.h"
 #include "HookMacros.h"
 
-#include <map>
 #include <string>
 #include <iostream>
 #include <sstream>   
@@ -173,7 +172,7 @@ namespace IHHook {
 			//	bool bleh = true;
 			//}
 
-			if (addressSet["GetStrCodeWithLength"] == NULL) {
+			if (!HasFunctionAddress("GetStrCodeWithLength")) {
 				spdlog::warn("addr fail: addressSet[\"GetStrCodeWithLength\"] == NULL");
 			}
 			else {					
@@ -193,9 +192,9 @@ namespace IHHook {
 					//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 			}
 
-			if (addressSet["GetFreeRoamLangId"] == NULL
-				|| addressSet["UnkPrintFuncStubbedOut"] == NULL
-				|| addressSet["nullsub_2"] == NULL
+			if (!HasFunctionAddress("GetFreeRoamLangId")
+				|| !HasFunctionAddress("UnkPrintFuncStubbedOut")
+				|| !HasFunctionAddress("nullsub_2")
 			) {
 				spdlog::warn("addr == NULL");
 			}

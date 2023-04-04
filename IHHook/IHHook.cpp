@@ -26,6 +26,7 @@
 #include "imguiimpl/imgui_impl_win32.h"
 #include "imguiimpl/imgui_impl_dx11.h"
 
+#include <map>
 #include <string>
 #include <filesystem>
 // version_info parse
@@ -145,6 +146,76 @@ namespace IHHook {
 		PipeServer::ShutDownPipeServer();
 		spdlog::shutdown();
 	}//Shutdown
+
+	bool HasFunctionAddress(char* functionName) {
+		return addressSet[functionName] != NULL;
+	}//HasFunctionAddress
+
+	//IN/OUT: addressSet
+	std::map<std::string, uint64_t> SelectAddressSet(std::string& lang) {
+		//GAMEVERSION
+		//DEBUGNOW TODO: an adresset map too I guess
+		if (lang == "en") {
+			addressSet = mgsvtpp_adresses_1_0_15_3_en;
+		}
+		else {
+			if (lang == "jp") {
+				addressSet = mgsvtpp_adresses_1_0_15_3_jp;
+			}
+			else {
+				//tex unknown exe lang, should already be handled by isTargetExe
+			}
+		}//if lang
+		return addressSet;
+	}//SelectAddressSet
+
+	//IN: BaseAddr, RealBaseAddr
+	//IN: mgsvtpp_patterns
+	//SIDE: addressSet
+	//rebases the static addresses or sig scans for them
+	bool RebaseAddresses() {
+		bool foundAllAddresses = true;
+		for (auto const& entry : addressSet) {
+			std::string name = entry.first;
+			if (isTargetExe) {
+				spdlog::info("isTargetExe, rebasing addr {}", name);
+				uint64_t addr = entry.second;
+				uint64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+				addressSet[name] = rebasedAddr;
+			}
+			else {
+				//tex fall back to sig scan
+				spdlog::info("!isTargetExe, sig scanning");
+				addressSet[name] = 0;
+				auto it = mgsvtpp_patterns.find(name);
+				if (it != mgsvtpp_patterns.end()) {
+					//found
+					//const char* sig = it->second;
+					//const char* mask = mgsvtpp_masks[name];//ASSUMPTION: if sig exists then mask does
+					//uintptr_t addr = MemoryUtils::sigscan(name.c_str(), sig, mask);//tex returns null if not found
+
+					const char* pattern = it->second.c_str();
+					auto tstart = std::chrono::high_resolution_clock::now();
+					uintptr_t addr = (uintptr_t)MemoryUtils::PatternScan(pattern);//tex returns null if not found
+					auto tend = std::chrono::high_resolution_clock::now();
+					auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
+					if (addr == NULL) {
+						spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
+						foundAllAddresses = false;
+					}
+					else {
+						spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
+					}
+
+					addressSet[name] = addr;
+				}
+				else {
+					spdlog::warn("Could not find sig for {}", name);
+				}
+			}//if isTargetExe
+		}//for addressSet
+		return foundAllAddresses;
+	}//RebaseAddresses
 
 	//GOTCHA: only set up stuff that can be done in this point of fox engine execution (when it's loading this dinput8.dll proxy)
 	//see Initialize for stuff after
@@ -281,19 +352,7 @@ namespace IHHook {
 
 			MH_Initialize();
 
-			//GAMEVERSION
-			//DEBUGNOW TODO: an adresset map too I guess
-			if (lang == "en") {
-				addressSet = mgsvtpp_adresses_1_0_15_3_en;
-			}
-			else {
-				if (lang == "jp") {
-					addressSet = mgsvtpp_adresses_1_0_15_3_jp;
-				}
-				else {
-					//tex unknown exe lang, should already be handled by isTargetExe
-				}
-			}//if lang
+			SelectAddressSet(lang);
 
 			auto tstart = std::chrono::high_resolution_clock::now();
 
@@ -835,54 +894,6 @@ namespace IHHook {
 
 		return true;
 	}//
-
-	//IN: BaseAddr, RealBaseAddr
-	//IN: mgsvtpp_patterns
-	//SIDE: addressSet
-	//rebases the static addresses or sig scans for them
-	bool IHH::RebaseAddresses()	{
-		bool foundAllAddresses = true;
-		for (auto const& entry : addressSet) {
-			std::string name = entry.first;
-			if (isTargetExe) {
-				spdlog::info("isTargetExe, rebasing addr {}", name);
-				uint64_t addr = entry.second;
-				uint64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
-				addressSet[name] = rebasedAddr;
-			}
-			else {
-				//tex fall back to sig scan
-				spdlog::info("!isTargetExe, sig scanning");
-				addressSet[name] = 0;
-				auto it = mgsvtpp_patterns.find(name);
-				if (it != mgsvtpp_patterns.end()) {
-					//found
-					//const char* sig = it->second;
-					//const char* mask = mgsvtpp_masks[name];//ASSUMPTION: if sig exists then mask does
-					//uintptr_t addr = MemoryUtils::sigscan(name.c_str(), sig, mask);//tex returns null if not found
-
-					const char* pattern = it->second.c_str();
-					auto tstart = std::chrono::high_resolution_clock::now();
-					uintptr_t addr = (uintptr_t)MemoryUtils::PatternScan(pattern);//tex returns null if not found
-					auto tend = std::chrono::high_resolution_clock::now();
-					auto duration = std::chrono::duration_cast<std::chrono::microseconds>(tend - tstart).count();
-					if (addr == NULL) {
-						spdlog::debug("sigscan not found {} in(microseconds): {}", name, duration);
-						foundAllAddresses = false;
-					}
-					else {
-						spdlog::debug("sigscan found {} at 0x{:x} in(microseconds): {}", name, addr, duration);//DEBUGNOW dump addr
-					}
-
-					addressSet[name] = addr;
-				}
-				else {
-					spdlog::warn("Could not find sig for {}", name);
-				}
-			}//if isTargetExe
-		}//for addressSet
-		return foundAllAddresses;
-	}//RebaseAddresses
 
 	typedef DWORD(WINAPI* CREATEHOOKS)();//tex NMC what this for?
 	void IHH::CreateAllHooks() {

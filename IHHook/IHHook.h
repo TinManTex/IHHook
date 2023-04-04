@@ -89,6 +89,8 @@ namespace IHHook {
 	extern std::atomic<bool> doShutDown;
 	void Shutdown();
 
+	bool HasFunctionAddress(char* functionName);
+
 	class IHH {
 	public:
 		IHH();
@@ -187,9 +189,8 @@ namespace IHHook {
 
 		ID3D11RenderTargetView* mainRenderTargetView{ nullptr };
 
-		bool RebaseAddresses();
 		void CreateAllHooks();
-	};
+	};//IHH
 }//namespace IHHook
 
 extern std::unique_ptr<IHHook::IHH> g_ihhook;

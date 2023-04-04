@@ -311,16 +311,16 @@ namespace IHHook {
 		void CreateHooks() {
 			spdlog::debug(__func__);
 			
-			if (addressSet["lua::luaL_openlibs"] == NULL
-				|| addressSet["lua::lua_newstate"] == NULL
-				|| addressSet["lua::lua_newthread"] == NULL
-				|| addressSet["lua::lua_load"] == NULL
-				|| addressSet["lua::luaL_loadbuffer"] == NULL
-				|| addressSet["lua::lua_atpanic"] == NULL
-				|| addressSet["lua::lua_error"] == NULL
-				|| addressSet["lua::lua_pcall"] == NULL
-				|| addressSet["lua::lua_cpcall"] == NULL
-				|| addressSet["l_StubbedOut"] == NULL
+			if (!HasFunctionAddress("lua::luaL_openlibs")
+				|| !HasFunctionAddress("lua::lua_newstate")
+				|| !HasFunctionAddress("lua::lua_newthread")
+				|| !HasFunctionAddress("lua::lua_load")
+				|| !HasFunctionAddress("lua::luaL_loadbuffer")
+				|| !HasFunctionAddress("lua::lua_atpanic")
+				|| !HasFunctionAddress("lua::lua_error")
+				|| !HasFunctionAddress("lua::lua_pcall")
+				|| !HasFunctionAddress("lua::lua_cpcall")
+				|| !HasFunctionAddress("l_StubbedOut")
 				) {//DEBUGNOW 
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}
