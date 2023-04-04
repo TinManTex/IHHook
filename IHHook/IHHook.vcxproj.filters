@@ -219,7 +219,16 @@
     <ClInclude Include="Hooks_Vehicle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks_CallMenu.h">
+    <ClInclude Include="hooks\mgsvtpp_typedefs_fox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\mgsvtpp_typedefs_ghidra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\mgsvtpp_typedefs_foxlua.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_CreateModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -371,7 +380,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks_CallMenu.cpp">
+    <ClCompile Include="Hooks_CreateModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
