@@ -14,14 +14,11 @@ namespace IHHook {
 	extern std::map<std::string, uint64_t> hookFuncs;
 }
 
-//DEBUGNOW put this somewhere or CULL
-	//DEBUGNOW signatures are more robust to game updates/different game versions than straight addresses, but take a long time to search
-	//since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.
-	//an alternative would be to do a hook to an early execution point of the game and init  ihhook there,
-	//but given the low rate of updates of the game it's better to stick with direct addresses, but have signatures documented as a backup
-
-
-//tex macros to declare the various accoutrement required for MH_Hook and straight hooks
+//DEBUGNOW put this somewhere or CULL>
+//DEBUGNOW signatures are more robust to game updates/different game versions than straight addresses, but take a long time to search
+//since IHHook is started on it's own thread game initialisation will continue, and IHHook wont be ready in time to start up IH properly.
+//an alternative would be to do a hook to an early execution point of the game and init  ihhook there,
+//but given the low rate of updates of the game it's better to stick with direct addresses, but have signatures documented as a backup
 
 // Function addresses are from IDA/Ghidra, which uses the ImageBase field in the exe as the base address (usually 0x140000000)
 // the real base address changes every time the game is run though, so we have to remove that base address and add the real one
@@ -34,26 +31,7 @@ namespace IHHook {
 
 //DEBUGNOW update this
 //also document isTargetExe
-
-//for all hooks need:
-//FUNCPTRDEF
-//FUNC_DECL_ADDR
-
-//then in runtime:
-//just want to use original function
-//CREATE_FUNCPTR
-
-//or want to modify the function
-//GET_REBASED_ADDR, or define name#Addr to the runtime address of the function gained from some other method
-//CREATE_HOOK -- DEBUGNOW was CREATEDETOUR
-//ENABLE_HOOK
-
-//NOTE: You can just CREATE_FUNCPTR as a matter of course
-//and CREATE_HOOK/ENABLE_HOOK after if you want a detour instead
-
-#define STRINGIFY(x) #x
-#define TOKENPASTE(x, y) STRINGIFY(x ## y)
-
+//<
 
 //TODO CULL still in the lua headers, which I can revert/comment out the hooked
 #define FUNCPTRDEF(ret, name, ...)\
