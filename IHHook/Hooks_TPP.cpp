@@ -173,8 +173,8 @@ namespace IHHook {
 			//	bool bleh = true;
 			//}
 
-			if (addressSet["StrCode64"] == NULL) {
-				spdlog::warn("addr fail: addressSet[\"StrCode64\"] == NULL");
+			if (addressSet["GetStrCodeWithLength"] == NULL) {
+				spdlog::warn("addr fail: addressSet[\"GetStrCodeWithLength\"] == NULL");
 			}
 			else {					
 				//DEBUGNOW TEST
@@ -201,14 +201,16 @@ namespace IHHook {
 			}
 			else {
 				CREATE_HOOK(GetFreeRoamLangId)
-				CREATE_HOOK(UnkPrintFuncStubbedOut)
-				CREATE_HOOK(nullsub_2)
 
 				ENABLEHOOK(GetFreeRoamLangId)
 
-				ENABLEHOOK(UnkPrintFuncStubbedOut)//DEBUGNOW
 #ifdef _DEBUG
-				//ENABLEHOOK(nullsub_2)//DEBUGNOW
+				CREATE_HOOK(UnkPrintFuncStubbedOut)
+ 
+				ENABLEHOOK(UnkPrintFuncStubbedOut)
+
+				//CREATE_HOOK(nullsub_2)
+				//ENABLEHOOK(nullsub_2)
 #endif // DEBUG
 			}//if addr
 
