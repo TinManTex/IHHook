@@ -387,13 +387,21 @@ def BuildFuncPtrSet():
 				reason="NOT_FOUND"
 
 		#REF output
-		#StrCode64 = (StrCode64Func*)addressSet["StrCode64"];
+		#GetStrCodeWithLengthFunc = (GetStrCodeWithLengthFunc*)addressSet["GetStrCodeWithLengthFunc"];
 		line=name+' = ('+name+'Func*)addressSet["'+name+'"];'
 		if reason!=None:
 			line='//'+line+'//'+reason
-
 		outLines.append(line)
 		#print(line)
+
+		#REF
+		#funcPtrPtrs["GetStrCodeWithLength"] = &GetStrCodeWithLength;
+		line='funcPtrPtrs["'+name+'"] = &'+name+';'
+		if reason!=None:
+			line='//'+line+'//'+reason
+		outLines.append(line)
+		#print(line)
+
 	return outLines
 
 
@@ -633,12 +641,14 @@ def WriteFuncPtrSetFile():
 		"//GENERATED: by ghidra script ExportHooksToHeader.py",
 		"//via WriteFuncPtrSetFile",
 		"//function for setting function pointers of exported functions.",
-		"//addresses in addressset should be rebased or found by sig scan before this is called"
+		"//addresses in addressSet should be rebased or found by sig scan before this is called"
 		"",
 		"// NOT_FOUND - default for a lapi we want to use, and should actually have found the address in prior exes, but aren't in the current exported address list",
 		"// NO_USE - something we dont really want to use for whatever reason",
 		"// USING_CODE - using the default lapi code implementation instead of hooking",
 	]
+
+	functionComment="//tex addresses in addressSet should be rebased or found by sig scan before this is called"
 
 	hLines=[]
 
@@ -648,11 +658,13 @@ def WriteFuncPtrSetFile():
 	hLines.append('#include "mgsvtpp_func_typedefs.h"',)
 
 	hLines.append("")
-	hLines.append("extern std::map<std::string, int64_t> addressSet;")
+	hLines.append("extern std::map<std::string, uint64_t> addressSet;")
+	hLines.append("extern std::map<std::string, void*> funcPtrPtrs;")
 	hLines.append("")
 	hLines.append("namespace IHHook {")
 	indent="\t"
 
+	hLines.append(indent+functionComment)
 	hLines.append(indent+"void SetFuncPtrs() {")
 	indent="\t\t"
 	for line in funcPtrLines:

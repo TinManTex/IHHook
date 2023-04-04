@@ -324,15 +324,15 @@ namespace IHHook {
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}
 			else {
-				CREATE_HOOK_NS(lua::luaL_openlibs, luaL_openlibsHook)
-				CREATE_HOOK_NS(lua::lua_newstate, lua_newstateHook)
-				CREATE_HOOK_NS(lua::lua_newthread, lua_newthreadHook)
-				CREATE_HOOK_NS(lua::lua_load, lua_loadHook)
-				CREATE_HOOK_NS(lua::luaL_loadbuffer, luaL_loadbufferHook)
-				CREATE_HOOK_NS(lua::lua_atpanic, lua_atpanicHook)
-				CREATE_HOOK_NS(lua::lua_error, lua_errorHook)
-				CREATE_HOOK_NS(lua::lua_pcall, lua_pcallHook)
-				CREATE_HOOK_NS(lua::lua_cpcall, lua_cpcallHook)
+				CREATEHOOK(lua::luaL_openlibs, luaL_openlibsHook)
+				CREATEHOOK(lua::lua_newstate, lua_newstateHook)
+				CREATEHOOK(lua::lua_newthread, lua_newthreadHook)
+				CREATEHOOK(lua::lua_load, lua_loadHook)
+				CREATEHOOK(lua::luaL_loadbuffer, luaL_loadbufferHook)
+				CREATEHOOK(lua::lua_atpanic, lua_atpanicHook)
+				CREATEHOOK(lua::lua_error, lua_errorHook)
+				CREATEHOOK(lua::lua_pcall, lua_pcallHook)
+				CREATEHOOK(lua::lua_cpcall, lua_cpcallHook)
 
 				ENABLEHOOK(lua::luaL_openlibs)
 				ENABLEHOOK(lua::lua_newstate)
