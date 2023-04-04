@@ -27,6 +27,7 @@
 
 #include <string>
 #include "hooks/mgsvtpp_func_typedefs.h"
+#include "HookMacros.h"
 
 extern void LoadImguiBindings(lua_State* lState);
 

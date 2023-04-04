@@ -11,6 +11,8 @@
 
 #include "lua/lua.h"//l_StubbedOutFunc TODO: dont like this
 
+#include <stdint.h>
+
 typedef int (__fastcall l_StubbedOutFunc)(lua_State * L);
 typedef void (__fastcall nullsub_2Func)(const char * unkSomeIdStr, longlong unkSomeIdNum);
 

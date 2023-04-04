@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lua/lua.h"
+#include <lua.h>
 
 namespace IHHook {
 	namespace Hooks_FOV {

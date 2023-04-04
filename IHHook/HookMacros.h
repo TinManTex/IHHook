@@ -3,6 +3,8 @@
 #include "MinHook.h"
 #include "MemoryUtils.h"
 #include <map>
+#include <string>
+#include <stdint.h>
 
 #include "Hooking.Patterns/Hooking.Patterns.h"//DEBUGNOW
 
@@ -32,10 +34,6 @@ namespace IHHook {
 //DEBUGNOW update this
 //also document isTargetExe
 //<
-
-//TODO CULL still in the lua headers, which I can revert/comment out the hooked
-#define FUNCPTRDEF(ret, name, ...)\
-//
 
 //tex macros still usefull because you can reference the function pointers rather than strings
 //and vs intellisense is great these days if you want to know what is actually happening

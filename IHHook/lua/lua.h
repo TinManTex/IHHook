@@ -1,12 +1,14 @@
+//tex the standard lua api header, but declarations commented out with //FUNCPTRDEF// for those we are using exe ptrs instead
+//or some //NO_USE//, see ExportInfo for more on those
+//#include "../HookMacros.h" //tex
+#include "hooks/mgsvtpp_func_typedefs.h"//tex to cover the stuff we commented out
 /*
 ** $Id: lua.h,v 1.218.1.7 2012/01/13 20:36:20 roberto Exp $
 ** Lua - An Extensible Extension Language
 ** Lua.org, PUC-Rio, Brazil (http://www.lua.org)
 ** See Copyright Notice at the end of this file
 */
-//tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF
-#include "../HookMacros.h" //tex
-#include "hooks/mgsvtpp_func_typedefs.h"
+
 
 #ifndef lua_h
 #define lua_h
@@ -109,106 +111,111 @@ typedef LUA_INTEGER lua_Integer;
 /*
 ** state manipulation
 */
-FUNCPTRDEF(lua_State*, lua_newstate, lua_Alloc f, void *ud);
-FUNCPTRDEF(void, lua_close, lua_State *L);
-FUNCPTRDEF(lua_State*, lua_newthread, lua_State* L);
+//FUNCPTRDEF//LUA_API lua_State *(lua_newstate) (lua_Alloc f, void *ud);
+//FUNCPTRDEF//LUA_API void       (lua_close) (lua_State *L);
+//FUNCPTRDEF//LUA_API lua_State *(lua_newthread) (lua_State *L);
 
-FUNCPTRDEF(lua_CFunction, lua_atpanic, lua_State *L, lua_CFunction panicf);
+//FUNCPTRDEF//LUA_API lua_CFunction (lua_atpanic) (lua_State *L, lua_CFunction panicf);
+
 
 /*
 ** basic stack manipulation
 */
 LUA_API int   (lua_gettop)(lua_State* L);
-FUNCPTRDEF(void, lua_settop, lua_State *L, int index);
-FUNCPTRDEF(void, lua_pushvalue, lua_State *L, int index);
-FUNCPTRDEF(void, lua_remove, lua_State *L, int index);
-FUNCPTRDEF(void, lua_insert, lua_State *L, int index);
-FUNCPTRDEF(void, lua_replace, lua_State *L, int index);
-FUNCPTRDEF(int, lua_checkstack, lua_State *L, int size);
+//FUNCPTRDEF//LUA_API void  (lua_settop) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API void  (lua_pushvalue) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API void  (lua_remove) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API void  (lua_insert) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API void  (lua_replace) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API int   (lua_checkstack) (lua_State *L, int sz);
 
-FUNCPTRDEF(void, lua_xmove, lua_State *from, lua_State *to, int n);
+//FUNCPTRDEF//LUA_API void  (lua_xmove) (lua_State *from, lua_State *to, int n);
 
 
 /*
 ** access functions (stack -> C)
 */
 
-FUNCPTRDEF(int, lua_isnumber, lua_State *L, int index);
-FUNCPTRDEF(int, lua_isstring, lua_State *L, int index);
-FUNCPTRDEF(int, lua_iscfunction, lua_State *L, int index);
+//FUNCPTRDEF//LUA_API int             (lua_isnumber) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API int             (lua_isstring) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API int             (lua_iscfunction) (lua_State *L, int idx);
 LUA_API int (lua_isuserdata)(lua_State *L, int idx);
-FUNCPTRDEF(int, lua_type, lua_State *L, int index);
+//FUNCPTRDEF//LUA_API int             (lua_type) (lua_State *L, int idx);
 LUA_API const char* (lua_typename)(lua_State* L, int tp);
 
-//NOT_FOUND LUA_API int (lua_equal)(lua_State *L, int idx1, int idx2);
-FUNCPTRDEF(int, lua_rawequal, lua_State *L, int idx1, int idx2);
-FUNCPTRDEF(int, lua_lessthan, lua_State *L, int idx1, int idx2);
+//FUNCPTRDEF//LUA_API int            (lua_equal) (lua_State *L, int idx1, int idx2);
+//FUNCPTRDEF//LUA_API int            (lua_rawequal) (lua_State *L, int idx1, int idx2);
+//FUNCPTRDEF//LUA_API int            (lua_lessthan) (lua_State *L, int idx1, int idx2);
 
-FUNCPTRDEF(double, lua_tonumber, lua_State *L, int index);
-FUNCPTRDEF(lua_Integer, lua_tointeger, lua_State *L, int index);
-FUNCPTRDEF(int, lua_toboolean, lua_State *L, int index);
-FUNCPTRDEF(const char*, lua_tolstring, lua_State *L, int index, size_t *len);
-FUNCPTRDEF(size_t, lua_objlen, lua_State *L, int idx);
-FUNCPTRDEF(lua_CFunction, lua_tocfunction, lua_State *L, int idx);
-FUNCPTRDEF(void*, lua_touserdata, lua_State *L, int idx);
-FUNCPTRDEF(lua_State*, lua_tothread, lua_State *L, int idx);
-FUNCPTRDEF(const void*, lua_topointer, lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API lua_Number      (lua_tonumber) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API lua_Integer     (lua_tointeger) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API int             (lua_toboolean) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);
+//FUNCPTRDEF//LUA_API size_t          (lua_objlen) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API lua_CFunction   (lua_tocfunction) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API void	       *(lua_touserdata) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API lua_State      *(lua_tothread) (lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API const void     *(lua_topointer) (lua_State *L, int idx);
 
 
 /*
 ** push functions (C -> stack)
 */
-FUNCPTRDEF(void, lua_pushnil, lua_State *L);
-FUNCPTRDEF(void, lua_pushnumber, lua_State *L, double n);
-FUNCPTRDEF(void, lua_pushinteger, lua_State *L, lua_Integer n);
-FUNCPTRDEF(void, lua_pushlstring, lua_State *L, const char *s, size_t length);
-FUNCPTRDEF(void, lua_pushstring, lua_State *L, const char *s);
-FUNCPTRDEF(const char *, lua_pushvfstring, lua_State *L, const char *fmt, va_list argp);
-FUNCPTRDEF(const char *, lua_pushfstring, lua_State *L, const char *fmt, ...);
-FUNCPTRDEF(void, lua_pushcclosure, lua_State *L, lua_CFunction fn, int n)
-FUNCPTRDEF(void, lua_pushboolean, lua_State *L, int boolean);
-FUNCPTRDEF(void, lua_pushlightuserdata, lua_State *L, void *p);
-FUNCPTRDEF(int, lua_pushthread, lua_State *L);
+//FUNCPTRDEF//LUA_API void  (lua_pushnil) (lua_State *L);
+//FUNCPTRDEF//LUA_API void  (lua_pushnumber) (lua_State *L, lua_Number n);
+//FUNCPTRDEF//LUA_API void  (lua_pushinteger) (lua_State *L, lua_Integer n);
+//FUNCPTRDEF//LUA_API void  (lua_pushlstring) (lua_State *L, const char *s, size_t l);
+//FUNCPTRDEF//LUA_API void  (lua_pushstring) (lua_State *L, const char *s);
+//FUNCPTRDEF//LUA_API const char *(lua_pushvfstring) (lua_State *L, const char *fmt,
+//                                                      va_list argp);
+//FUNCPTRDEF//LUA_API const char *(lua_pushfstring) (lua_State *L, const char *fmt, ...);
+//FUNCPTRDEF//LUA_API void  (lua_pushcclosure) (lua_State *L, lua_CFunction fn, int n);
+//FUNCPTRDEF//LUA_API void  (lua_pushboolean) (lua_State *L, int b);
+//FUNCPTRDEF//LUA_API void  (lua_pushlightuserdata) (lua_State *L, void *p);
+//FUNCPTRDEF//LUA_API int   (lua_pushthread) (lua_State *L);
+
 
 /*
 ** get functions (Lua -> stack)
 */
-FUNCPTRDEF(void, lua_gettable, lua_State *L, int idx);
-FUNCPTRDEF(void, lua_getfield, lua_State *L, int idx, const char *k);
-FUNCPTRDEF(void, lua_rawget, lua_State *L, int idx);
-FUNCPTRDEF(void, lua_rawgeti, lua_State *L, int idx, int n);
-FUNCPTRDEF(void, lua_createtable, lua_State *L, int narray, int nrec);
-FUNCPTRDEF(void *, lua_newuserdata, lua_State *L, size_t sz);
-FUNCPTRDEF(int, lua_getmetatable, lua_State *L, int objindex);
-FUNCPTRDEF(void, lua_getfenv, lua_State *L, int idx);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_gettable, lua_State *L, int idx);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_getfield, lua_State *L, int idx, const char *k);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_rawget, lua_State *L, int idx);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_rawgeti, lua_State *L, int idx, int n);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_createtable, lua_State *L, int narray, int nrec);
+//FUNCPTRDEF//FUNCPTRDEF(void *, lua_newuserdata, lua_State *L, size_t sz);
+//FUNCPTRDEF//FUNCPTRDEF(int, lua_getmetatable, lua_State *L, int objindex);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_getfenv, lua_State *L, int idx);
 
 
 /*
 ** set functions (stack -> Lua)
 */
-FUNCPTRDEF(void, lua_settable, lua_State *L, int idx);
-FUNCPTRDEF(void, lua_setfield, lua_State *L, int idx, const char *k);
-FUNCPTRDEF(void, lua_rawset, lua_State *L, int idx);
-FUNCPTRDEF(void, lua_rawseti, lua_State *L, int idx, int n);
-FUNCPTRDEF(int, lua_setmetatable, lua_State *L, int objindex);
-FUNCPTRDEF(int, lua_setfenv, lua_State *L, int idx);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_settable, lua_State *L, int idx);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_setfield, lua_State *L, int idx, const char *k);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_rawset, lua_State *L, int idx);
+//FUNCPTRDEF//FUNCPTRDEF(void, lua_rawseti, lua_State *L, int idx, int n);
+//FUNCPTRDEF//FUNCPTRDEF(int, lua_setmetatable, lua_State *L, int objindex);
+//FUNCPTRDEF//FUNCPTRDEF(int, lua_setfenv, lua_State *L, int idx);
 
 
 /*
 ** `load' and `call' functions (load and run Lua code)
 */
-FUNCPTRDEF(void, lua_call, lua_State *L, int nargs, int nresults);
-FUNCPTRDEF(int, lua_pcall, lua_State *L, int nargs, int nresults, int errfunc);
-FUNCPTRDEF(int, lua_cpcall, lua_State *L, lua_CFunction func, void *ud);
-FUNCPTRDEF(int, lua_load, lua_State *L, lua_Reader reader, void *dt, const char *chunkname);
+//FUNCPTRDEF//LUA_API void  (lua_call) (lua_State *L, int nargs, int nresults);
+//FUNCPTRDEF//LUA_API int   (lua_pcall) (lua_State *L, int nargs, int nresults, int errfunc);
+//FUNCPTRDEF//LUA_API int   (lua_cpcall) (lua_State *L, lua_CFunction func, void *ud);
+//FUNCPTRDEF//LUA_API int   (lua_load) (lua_State *L, lua_Reader reader, void *dt,
+//                                        const char *chunkname);
 
-FUNCPTRDEF(int, lua_dump, lua_State *L, lua_Writer writer, void *data);
+//FUNCPTRDEF//LUA_API int (lua_dump) (lua_State *L, lua_Writer writer, void *data);
+
 
 /*
 ** coroutine functions
 */
 LUA_API int  (lua_yield)(lua_State *L, int nresults);
-FUNCPTRDEF(int, lua_resume, lua_State *L, int narg);
+//FUNCPTRDEF//LUA_API int  (lua_resume) (lua_State *L, int narg);
 LUA_API int  (lua_status)(lua_State* L);
 
 /*
@@ -224,21 +231,21 @@ LUA_API int  (lua_status)(lua_State* L);
 #define LUA_GCSETPAUSE		6
 #define LUA_GCSETSTEPMUL	7
 
-FUNCPTRDEF(int, lua_gc, lua_State *L, int what, int data);
+//FUNCPTRDEF//LUA_API int (lua_gc) (lua_State *L, int what, int data);
 
 
 /*
 ** miscellaneous functions
 */
 
-FUNCPTRDEF(int, lua_error, lua_State *L);
+//FUNCPTRDEF//LUA_API int   (lua_error) (lua_State *L);
 
-FUNCPTRDEF(int, lua_next, lua_State *L, int idx);
+//FUNCPTRDEF//LUA_API int   (lua_next) (lua_State *L, int idx);
 
-FUNCPTRDEF(void, lua_concat, lua_State *L, int n);
+//FUNCPTRDEF//LUA_API void  (lua_concat) (lua_State *L, int n);
 
-//NO_USE LUA_API lua_Alloc (lua_getallocf) (lua_State *L, void **ud);
-//NO_USE LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
+//NO_USE//LUA_API lua_Alloc (lua_getallocf) (lua_State *L, void **ud);
+//NO_USE//LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 
 
 
@@ -292,7 +299,7 @@ FUNCPTRDEF(void, lua_concat, lua_State *L, int n);
 
 
 /* hack */
-//NO_USE LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
+//NO_USE//LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 
 
 /*
@@ -327,16 +334,14 @@ typedef struct lua_Debug lua_Debug;  /* activation record */
 typedef void (*lua_Hook) (lua_State *L, lua_Debug *ar);
 
 
-FUNCPTRDEF(int, lua_getstack, lua_State *L, int level, lua_Debug *ar);
-FUNCPTRDEF(int, lua_getinfo, lua_State *L, const char *what, lua_Debug *ar);
-FUNCPTRDEF(const char *, lua_getlocal, lua_State *L, const lua_Debug *ar, int n);
-FUNCPTRDEF(const char *, lua_setlocal, lua_State *L, const lua_Debug *ar, int n);
+//FUNCPTRDEF//LUA_API int lua_getstack (lua_State *L, int level, lua_Debug *ar);
+//FUNCPTRDEF//LUA_API int lua_getinfo (lua_State *L, const char *what, lua_Debug *ar);
+//FUNCPTRDEF//LUA_API const char *lua_getlocal (lua_State *L, const lua_Debug *ar, int n);
+//FUNCPTRDEF//LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n);
+//FUNCPTRDEF//LUA_API const char *lua_getupvalue (lua_State *L, int funcindex, int n);
+//FUNCPTRDEF//LUA_API const char *lua_setupvalue (lua_State *L, int funcindex, int n);
 
-FUNCPTRDEF(const char *, lua_getupvalue, lua_State *L, int funcindex, int n);
-FUNCPTRDEF(const char *, lua_setupvalue, lua_State *L, int funcindex, int n);
-
-FUNCPTRDEF(int, lua_sethook, lua_State *L, lua_Hook func, int mask, int count);
-
+//FUNCPTRDEF//LUA_API int lua_sethook (lua_State *L, lua_Hook func, int mask, int count);
 LUA_API lua_Hook lua_gethook(lua_State* L);
 LUA_API int lua_gethookmask(lua_State* L);
 LUA_API int lua_gethookcount(lua_State* L);

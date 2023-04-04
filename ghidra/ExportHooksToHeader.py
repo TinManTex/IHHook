@@ -648,6 +648,13 @@ def WriteFuncPtrSetFile():
 		"// USING_CODE - using the default lapi code implementation instead of hooking",
 	]
 
+	includes=[
+		'#include "mgsvtpp_func_typedefs.h"',
+		'#include <map>',
+		'#include <string>',
+		'#include <stdint.h>',
+	]
+
 	functionComment="//tex addresses in addressSet should be rebased or found by sig scan before this is called"
 
 	hLines=[]
@@ -655,14 +662,16 @@ def WriteFuncPtrSetFile():
 	for line in header:
 		hLines.append(line)
 	hLines.append("")
-	hLines.append('#include "mgsvtpp_func_typedefs.h"',)
 
+	for line in includes:
+		hLines.append(line)
 	hLines.append("")
-	hLines.append("extern std::map<std::string, uint64_t> addressSet;")
-	hLines.append("extern std::map<std::string, void*> funcPtrPtrs;")
-	hLines.append("")
+
 	hLines.append("namespace IHHook {")
 	indent="\t"
+	hLines.append(indent+"extern std::map<std::string, uint64_t> addressSet;")
+	hLines.append(indent+"extern std::map<std::string, void*> funcPtrPtrs;")
+
 
 	hLines.append(indent+functionComment)
 	hLines.append(indent+"void SetFuncPtrs() {")

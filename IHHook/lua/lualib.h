@@ -1,11 +1,10 @@
+//tex the standard lua api header, but declarations commented out with //FUNCPTRDEF// for those we are using exe ptrs instead
 /*
 ** $Id: lualib.h,v 1.36.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Lua standard libraries
 ** See Copyright Notice in lua.h
 */
-//tex: Butchered fwd decls to func pointers. Search //OFF , FUNCPTRDEF
-#include "../HookMacros.h" //tex
-#include "hooks/mgsvtpp_func_typedefs.h"
+
 
 #ifndef lualib_h
 #define lualib_h
@@ -18,32 +17,32 @@
 
 
 #define LUA_COLIBNAME	"coroutine"
-FUNCPTRDEF(int, luaopen_base, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_base) (lua_State *L);
 
 #define LUA_TABLIBNAME	"table"
-FUNCPTRDEF(int, luaopen_table, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_table) (lua_State *L);
 
 #define LUA_IOLIBNAME	"io"
-FUNCPTRDEF(int, luaopen_io, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_io) (lua_State *L);
 
 #define LUA_OSLIBNAME	"os"
-FUNCPTRDEF(int, luaopen_os, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_os) (lua_State *L);
 
 #define LUA_STRLIBNAME	"string"
-FUNCPTRDEF(int, luaopen_string, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_string) (lua_State *L);
 
 #define LUA_MATHLIBNAME	"math"
-FUNCPTRDEF(int, luaopen_math, lua_State *L);
+//FUNCPTRDEF//FUNCPTRDEF(int, luaopen_math, lua_State *L);
 
 #define LUA_DBLIBNAME	"debug"
-FUNCPTRDEF(int, luaopen_debug, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_debug) (lua_State *L);
 
 #define LUA_LOADLIBNAME	"package"
-FUNCPTRDEF(int, luaopen_package, lua_State *L);
+//FUNCPTRDEF//LUALIB_API int (luaopen_package) (lua_State *L);
 
 
 /* open all previous libraries */
-FUNCPTRDEF(void, luaL_openlibs, lua_State *L);
+//FUNCPTRDEF//LUALIB_API void (luaL_openlibs) (lua_State *L); 
 
 
 

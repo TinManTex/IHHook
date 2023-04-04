@@ -8,6 +8,9 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include <map>
+#include <string>
+
 #include "OS.h"
 #include "PipeServer.h" // QueueMessageOut, messagesIn
 #include <filesystem>
@@ -15,6 +18,7 @@
 #include "Hooks_Lua.h"// l_FoxLua_Init, l_FoxLua_OnUpdate
 #include "IHMenu.h" // MenuMessage, messagesIn
 #include "Hooks_FOV.h" // l_SetCamHook, l_UpdateCamHook
+
 
 namespace IHHook {
 	extern std::shared_ptr<spdlog::logger> luaLog;

@@ -7,11 +7,13 @@
 // USING_CODE - using the default lapi code implementation instead of hooking
 
 #include "mgsvtpp_func_typedefs.h"
-
-extern std::map<std::string, uint64_t> addressSet;
-extern std::map<std::string, void*> funcPtrPtrs;
+#include <map>
+#include <string>
+#include <stdint.h>
 
 namespace IHHook {
+	extern std::map<std::string, uint64_t> addressSet;
+	extern std::map<std::string, void*> funcPtrPtrs;
 	//tex addresses in addressSet should be rebased or found by sig scan before this is called
 	void SetFuncPtrs() {
 		GetStrCodeWithLength = (GetStrCodeWithLengthFunc*)addressSet["GetStrCodeWithLength"];
