@@ -412,7 +412,6 @@ def BuildFuncPtrSet():
 # 	return NewModule(param_1, moduleName, param_3, param_4, param_5);
 # }
 def BuildHookFuncStubs():
-	print('BuildHookFuncStubs')
 	signatureLines=[]
 
 	for entry in exportInfo:
@@ -498,7 +497,6 @@ def BuildHookFuncStubs():
 	return signatureLines
 
 def BuildHookCreatHookExamples():
-	print('BuildHookFuncStubs')
 	outputLines=[]
 
 	for entry in exportInfo:
@@ -533,7 +531,7 @@ def BuildHookCreatHookExamples():
 	return outputLines
 
 def WriteAddressHFile():
-	print(__name__)
+	print('WriteAddressHFile')
 	fileName=exeName+"_adresses_"+version+"_"+lang
 	headerFilePath=hDestPath+fileName+".h"
 
@@ -579,7 +577,7 @@ def WriteAddressHFile():
 	file.close()
 
 def WriteFuncTypeDefHFile():
-	print(__name__)
+	print('WriteFuncTypeDefHFile')
 	fileName=exeName+"_func_typedefs"
 	headerFilePath=hDestPath+fileName+".h"
 
@@ -631,7 +629,7 @@ def WriteFuncTypeDefHFile():
 	file.close()
 
 def WriteFuncPtrDefsFile():
-	print(__name__)
+	print('WriteFuncPtrDefsFile')
 	fileName=exeName+"_funcptr_defs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -668,7 +666,7 @@ def WriteFuncPtrDefsFile():
 	file.close()
 
 def WriteFuncPtrSetFile():
-	print(__name__)
+	print('WriteFuncPtrSetFile')
 	fileName=exeName+"_funcptr_set"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -732,7 +730,7 @@ def WriteFuncPtrSetFile():
 	file.close()
 
 def WriteHookStubsFile():
-	print(__name__)
+	print('WriteHookStubsFile')
 	fileName=exeName+"_hook_stubs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
