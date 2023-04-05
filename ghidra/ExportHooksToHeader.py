@@ -207,12 +207,11 @@ def BuildSignatures():
 				arguments=signature.getArguments()
 
 				namespacesList,functionName,isNamespaced=GetNamespaceListFromName(name)
-
 				namespaceOpenLine=''
 				namespaceCloseLine=''
 				for namespace in namespacesList:
-					namespaceOpenLine='namespace '+namespace+'{'+namespaceOpenLine #tex just jam them on one line, this is a generated file
-					namespaceCloseLine='}'+namespaceCloseLine
+					namespaceOpenLine=namespaceOpenLine+'namespace '+namespace+'{' #tex just jam them on one line, this is a generated file
+					namespaceCloseLine='}'+namespaceCloseLine	
 				
 				signatureLine=returnType+" "+name
 				#REF typeDefLine: 
@@ -289,7 +288,7 @@ def BuildExternPointers():
 		namespaceOpenLine=''
 		namespaceCloseLine=''
 		for namespace in namespacesList:
-			namespaceOpenLine='namespace '+namespace+'{'+namespaceOpenLine #tex just jam them on one line, this is a generated file
+			namespaceOpenLine=namespaceOpenLine+'namespace '+namespace+'{' #tex just jam them on one line, this is a generated file
 			namespaceCloseLine='}'+namespaceCloseLine	
 
 		if isNamespaced:
