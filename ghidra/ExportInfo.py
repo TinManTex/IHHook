@@ -1,8 +1,6 @@
 #exportInfo - list with info on what to export to IHHook headers
 #used by other scripts rather than doing anything itself
 
-#GOTCHA: assumes that function names in ghdira for the exe are unique (ignoring thunks)/currently doesnt support namespaces
-
 #Community NOTE: On Ghidra server please set a Plate Comment of "IHHook Export" on the function you want to export: 
 #(on the actual function, not its thunk)
 #Select the function name in ghidra and press semicolon (;), or right click > comments > plate comment.
