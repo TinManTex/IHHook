@@ -417,6 +417,9 @@ def BuildHookFuncStubs():
 	signatureLines=[]
 
 	for entry in exportInfo:
+		if entry.get("usingHook") != True:
+			continue
+
 		name=entry["name"]
 
 		noAddress=entry.get("noAddress")
@@ -494,6 +497,41 @@ def BuildHookFuncStubs():
 
 		#debugprint('signatureLine:'+signatureLine)
 	return signatureLines
+
+def BuildHookCreatHookExamples():
+	print('BuildHookFuncStubs')
+	outputLines=[]
+
+	for entry in exportInfo:
+		if entry.get("usingHook") != True:
+			continue
+
+		name=entry["name"]
+
+		noAddress=entry.get("noAddress")
+		exportFunc=entry.get("exportFunc")
+		invalidReason=None
+		if noAddress!=None:
+			invalidReason=noAddress
+		elif exportFunc==False:
+			invalidReason="EXPORT_FUNC_FALSE"
+		else:
+			function=foundFunctions.get(name)
+			if function==None:
+				invalidReason="NOT_FOUND"
+			else:
+				#REF 				
+				# CREATEHOOK(foxlua::NewModule, NewModuleHook)
+				# ENABLEHOOK(foxlua::NewSubModule)
+				outputLines.append("CREATEHOOK("+name+","+GetFunctionName(name)+"Hook)")
+				outputLines.append("ENABLEHOOK("+name+")")
+				outputLines.append("")
+
+
+		if invalidReason!=None:
+			outputLines.append("// "+name+" "+invalidReason)
+
+	return outputLines
 
 def WriteAddressHFile():
 	print(__name__)
@@ -700,6 +738,7 @@ def WriteHookStubsFile():
 	headerFilePath=hDestPath+fileName
 
 	stubLines=BuildHookFuncStubs()
+	createHookLines=BuildHookCreatHookExamples()
 
 	header=[
 		"//" + fileName,
@@ -707,6 +746,7 @@ def WriteHookStubsFile():
 		"//via WriteHookStubsFile",
 		"//Not intended to be compiled, this is just stub/examples of hook functions", 
 		"//so you can quickly just copy and paste them to get started.",
+		"//only generated for ExportInfo entries that have usingHook True"
 	]
 
 	hLines=[]
@@ -722,6 +762,13 @@ def WriteHookStubsFile():
 		hLines.append(indent+line)
 
 	hLines.append("")
+
+	hLines.append(indent+"void CreateHooks() {")
+	indent=indent+"\t"
+	for line in createHookLines:
+		hLines.append(indent+line)
+
+	hLines.append(indent+"}//CreateHooks")
 
 	indent=""
 	hLines.append(indent+"}//namespace IHHook")
