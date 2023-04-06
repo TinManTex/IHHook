@@ -39,7 +39,7 @@ namespace IHHook {
 
 	//name: original function name as exported from ghidra, including namespace
 	//hookFunc: the hook function you are using for this function
-	//CREATEHOOK(lua::lua_newstate,lua_newstateHook);
+	//CREATE_HOOK(lua::lua_newstate,lua_newstateHook);
 	#define CREATE_HOOK(name,hookFunc) CreateHook(#name,hookFunc)
 
 	#define ENABLE_HOOK(name) EnableHook(#name)
@@ -48,7 +48,7 @@ namespace IHHook {
 
 	#define HAS_ADDRESS(name) HasFunctionAddress(#name)
 
-	//You can use the macro CREATEHOOK instead which tidys away use of string
+	//You can use the macro CREATE_HOOK instead which tidys away use of string
 	//targetName: name of original function (as exported by ExportInfo) (namespaced as original)
 	//hookFunc: pointer to your hook function
 	static MH_STATUS CreateHook(const char* targetName, LPVOID hookFunc) {
@@ -78,7 +78,7 @@ namespace IHHook {
 		return createStatus;
 	}//CreateHook
 
-	//You can use the macro ENABLEHOOK instead which tidys away use of string
+	//You can use the macro ENABLE_HOOK instead which tidys away use of string
 	//targetName: name of original function (as exported by ExportInfo name) (namespaced as original)
 	//Example use:
 	//EnableHook("lua::lua_newstate");
@@ -100,7 +100,7 @@ namespace IHHook {
 		return enableStatus;
 	}//EnableHook
 
-	//You can use the macro DISABLEHOOK instead which tidys away use of string
+	//You can use the macro DISABLE_HOOK instead which tidys away use of string
 	static MH_STATUS DisableHook(const char* targetName) {
 		uint64_t address = addressSet[targetName];
 		if (address == NULL) {
