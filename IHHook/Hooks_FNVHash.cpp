@@ -32,9 +32,9 @@ namespace IHHook {
 				return;
 			}
 
-			CREATE_HOOK(FNVHash32)
+			CREATE_HOOK(FNVHash32, FNVHash32Hook);
 
-			ENABLEHOOK(FNVHash32)
+			ENABLE_HOOK(FNVHash32);
 		}//CreateHooks
 	}//Hooks_FNVHash
 }//namespace IHHook

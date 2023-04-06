@@ -192,21 +192,21 @@ namespace IHHook {
 					//{ 40,0x27376b6e62ff },//tpp_loc_gntn - caplags langid from his gntn addon
 			}
 
-			if (!HasFunctionAddress("GetFreeRoamLangId")
-				|| !HasFunctionAddress("UnkPrintFuncStubbedOut")
-				|| !HasFunctionAddress("nullsub_2")
+			if (!HAS_ADDRESS(ui::lang::GetFreeRoamLangId)
+				|| !HAS_ADDRESS(UnkPrintFuncStubbedOut)
+				|| !HAS_ADDRESS(nullsub_2)
 			) {
 				spdlog::warn("addr == NULL");
 			}
 			else {
-				CREATE_HOOK(GetFreeRoamLangId)
+				CREATE_HOOK(ui::lang::GetFreeRoamLangId, GetFreeRoamLangIdHook);
 
-				ENABLEHOOK(GetFreeRoamLangId)
+				ENABLE_HOOK(ui::lang::GetFreeRoamLangId);
 
 #ifdef _DEBUG
-				CREATE_HOOK(UnkPrintFuncStubbedOut)
+				CREATE_HOOK(UnkPrintFuncStubbedOut, UnkPrintFuncStubbedOutHook);
  
-				ENABLEHOOK(UnkPrintFuncStubbedOut)
+				ENABLE_HOOK(UnkPrintFuncStubbedOut);
 
 				//CREATE_HOOK(nullsub_2)
 				//ENABLEHOOK(nullsub_2)

@@ -130,37 +130,36 @@ namespace IHHook {
 				log = spdlog::basic_logger_st("loadfile", logName);
 				log->set_pattern("%v");//tex raw logging
 
-				CREATEHOOK(foxlua::NewModule, NewModuleHook)
-				CREATEHOOK(foxlua::NewSubModule,NewSubModuleHook)
-				CREATEHOOK(foxlua::AddCFuncToModule, AddCFuncToModuleHook)
-				CREATEHOOK(foxlua::AddCFuncToModule2, AddCFuncToModule2Hook)
-				CREATEHOOK(foxlua::AddCFuncToModule3, AddCFuncToModule3Hook)
-				CREATEHOOK(foxlua::AddEnumToModule, AddEnumToModuleHook)
-				CREATEHOOK(foxlua::AddEnumToModule2, AddEnumToModule2Hook)
-				CREATEHOOK(foxlua::AddEnumToModule3, AddEnumToModule3Hook)
-				CREATEHOOK(foxlua::AddEnumToModule4, AddEnumToModule4Hook)
-				CREATEHOOK(RegisterVar, RegisterVarHook)
-				CREATEHOOK(RegisterVar_01, RegisterVar_01Hook)
-				CREATEHOOK(RegisterVar_02, RegisterVar_02Hook)
-				//CREATEHOOK(RegisterVar_03, RegisterVar_03Hook)
-				CREATEHOOK(RegisterVarArray, RegisterVarArrayHook)
-				CREATEHOOK(DeclareEntityClass, DeclareEntityClassHook)
+				CREATE_HOOK(foxlua::NewModule, NewModuleHook);
+				CREATE_HOOK(foxlua::NewSubModule, NewSubModuleHook);
+				CREATE_HOOK(foxlua::AddCFuncToModule, AddCFuncToModuleHook);
+				CREATE_HOOK(foxlua::AddCFuncToModule2, AddCFuncToModule2Hook);
+				CREATE_HOOK(foxlua::AddCFuncToModule3, AddCFuncToModule3Hook);
+				CREATE_HOOK(foxlua::AddEnumToModule, AddEnumToModuleHook);
+				CREATE_HOOK(foxlua::AddEnumToModule2, AddEnumToModule2Hook);
+				CREATE_HOOK(foxlua::AddEnumToModule3, AddEnumToModule3Hook);
+				CREATE_HOOK(foxlua::AddEnumToModule4, AddEnumToModule4Hook);
+				CREATE_HOOK(RegisterVar, RegisterVarHook);
+				CREATE_HOOK(RegisterVar_01, RegisterVar_01Hook);
+				CREATE_HOOK(RegisterVar_02, RegisterVar_02Hook);
+				//CREATEHOOK(RegisterVar_03, RegisterVar_03Hook);
+				CREATE_HOOK(RegisterVarArray, RegisterVarArrayHook);
+				CREATE_HOOK(DeclareEntityClass, DeclareEntityClassHook);
 
-				//EnableHook("foxlua::NewSubModule");
-				ENABLEHOOK(foxlua::NewSubModule)
-				ENABLEHOOK(foxlua::AddCFuncToModule)
-				ENABLEHOOK(foxlua::AddCFuncToModule2)
-				ENABLEHOOK(foxlua::AddCFuncToModule3)
-				ENABLEHOOK(foxlua::AddEnumToModule)
-				ENABLEHOOK(foxlua::AddEnumToModule2)
-				ENABLEHOOK(foxlua::AddEnumToModule3)
-				ENABLEHOOK(foxlua::AddEnumToModule4)
-				ENABLEHOOK(RegisterVar)
-				ENABLEHOOK(RegisterVar_01)
-				ENABLEHOOK(RegisterVar_02)
-				//ENABLEHOOK(RegisterVar_03)
-				ENABLEHOOK(RegisterVarArray)
-				ENABLEHOOK(DeclareEntityClass)
+				ENABLE_HOOK(foxlua::NewSubModule);
+				ENABLE_HOOK(foxlua::AddCFuncToModule);
+				ENABLE_HOOK(foxlua::AddCFuncToModule2);
+				ENABLE_HOOK(foxlua::AddCFuncToModule3);
+				ENABLE_HOOK(foxlua::AddEnumToModule);
+				ENABLE_HOOK(foxlua::AddEnumToModule2);
+				ENABLE_HOOK(foxlua::AddEnumToModule3);
+				ENABLE_HOOK(foxlua::AddEnumToModule4);
+				ENABLE_HOOK(RegisterVar);
+				ENABLE_HOOK(RegisterVar_01);
+				ENABLE_HOOK(RegisterVar_02);
+				//ENABLE_HOOK(RegisterVar_03);
+				ENABLE_HOOK(RegisterVarArray);
+				ENABLE_HOOK(DeclareEntityClass);
 
 			}//if enableCreateModuleHook
 		}//CreateHooks

@@ -335,6 +335,7 @@ namespace IHHook {
 		}//IsPlayerPartsTypeValid
 
 		uint64_t* LoadPlayerPartsFpkHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+			using namespace player::appearance::parts;
 			spdlog::debug("LoadPlayerPartsFpkHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 
 			if (!IsPlayerTypeValid(playerType) || character.playerPartsFpkPath == "") {
@@ -365,11 +366,12 @@ namespace IHHook {
 			//TODO: if I ever get a 'does file exist' check
 			spdlog::debug("character.playerPartsFpkPath: {}", character.playerPartsFpkPath);
 			uint64_t filePath64 = PathCode64(character.playerPartsFpkPath.c_str());
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerPartsFpkHook
 
 		uint64_t* LoadPlayerPartsPartsHook(uint64_t* fileSlotIndex, uint playerType, uint playerPartsType) {
+			using namespace player::appearance::parts;
 			spdlog::debug("LoadPlayerPartsPartsHook playerType:{}, playerPartsType:{}", playerType, playerPartsType);
 			
 			if (!IsPlayerTypeValid(playerType) || character.playerPartsPartsPath == "") {
@@ -395,7 +397,7 @@ namespace IHHook {
 			//TODO: if I ever get a 'does file exist' check
 			spdlog::debug("character.playerPartsPartsPath: {}", character.playerPartsPartsPath);
 			uint64_t filePath64 = PathCode64(character.playerPartsPartsPath.c_str());
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerPartsPartsHook
 
@@ -528,7 +530,7 @@ namespace IHHook {
 		//			auto filePath = pathsForPlayerType.at(playerPartsType);
 		//			filePath64 = PathCode64(filePath.c_str());
 		//			//filePath64 = 0x522a5fbda65be993;
-		//			LoadFile(fileSlotIndex, filePath64);
+		//			files::LoadFile(fileSlotIndex, filePath64);
 
 		//			return fileSlotIndex;
 		//		}
@@ -559,7 +561,7 @@ namespace IHHook {
 		//		try {
 		//			auto filePath = pathsForPlayerType.at(playerPartsType);
 		//			filePath64 = PathCode64(filePath.c_str());
-		//			LoadFile(fileSlotIndex, filePath64);
+		//			files::LoadFile(fileSlotIndex, filePath64);
 
 		//			return fileSlotIndex;
 		//		}
@@ -612,7 +614,7 @@ namespace IHHook {
 		//		}
 		//	}
 
-		//	LoadFile(fileSlotIndex, fpkPath);
+		//	files::LoadFile(fileSlotIndex, fpkPath);
 		//	return fileSlotIndex;
 		//}//LoadPlayerCamoFpkORIG
 		bool IsValidPlayerCamo() {
@@ -646,6 +648,7 @@ namespace IHHook {
 		}
 
 		ulonglong* LoadPlayerCamoFpkHook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
+			using namespace player::appearance::fova::camo;
 			spdlog::debug("LoadPlayerCamoFpkHook playerType:{}, playerPartsType:{}, playerCamoType:{}", playerType, playerPartsType, playerCamoType);
 
 			if (!IsValidPlayerCamo()) {
@@ -658,7 +661,7 @@ namespace IHHook {
 			}
 
 			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
-				LoadFile(fileSlotIndex, 0);
+				files::LoadFile(fileSlotIndex, 0);
 				return fileSlotIndex;
 			}
 
@@ -673,11 +676,12 @@ namespace IHHook {
 			if (useCamo) {
 				filePath64 = PathCode64(character.playerCamoFpkPath.c_str());
 			}
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerCamoFpkHook
 
 		ulonglong* LoadPlayerCamoFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
+			using namespace player::appearance::fova::camo;
 			spdlog::debug("LoadPlayerCamoFv2Hook playerType:{}, playerPartsType:{}, playerCamoType:{}", playerType, playerPartsType, playerCamoType);
 			
 			if (!IsValidPlayerCamo()) {
@@ -690,7 +694,7 @@ namespace IHHook {
 			}
 
 			if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
-				LoadFile(fileSlotIndex, 0);
+				files::LoadFile(fileSlotIndex, 0);
 				return fileSlotIndex;
 			}
 
@@ -705,7 +709,7 @@ namespace IHHook {
 			if (useCamo) {
 				filePath64 = PathCode64(character.playerCamoFv2Path.c_str());
 			}
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerCamoFv2Hook
 
@@ -715,7 +719,7 @@ namespace IHHook {
 		//	ulonglong fv2Path = 0;
 
 		//	if (playerCamoType == 255) {//tex I guess 255 is NONE/not set.
-		//		LoadFile(fileSlotIndex, 0);
+		//		files::LoadFile(fileSlotIndex, 0);
 		//		return fileSlotIndex;
 		//	}
 		//	if ((playerType == 0) || (playerType == 3)) {//SNAKE,AVATAR
@@ -736,7 +740,7 @@ namespace IHHook {
 		//		}
 		//	}
 
-		//	LoadFile(fileSlotIndex, fv2Path);
+		//	files::LoadFile(fileSlotIndex, fv2Path);
 		//	return fileSlotIndex;
 		//}//LoadPlayerCamoFv2ORIG
 
@@ -744,22 +748,22 @@ namespace IHHook {
 		ulonglong* LoadPlayerFacialMotionFpkHook(ulonglong* fileSlotIndex, uint playerType){
 			spdlog::debug("LoadPlayerFacialMotionFpkHook playerType:{}", playerType);
 			if (playerType == 1) {//DD_MALE
-				LoadFile(fileSlotIndex, 0x522bba0fe696843e);// /Assets/tpp/pack/player/motion/player2_facial_dd_male.fpk
+				files::LoadFile(fileSlotIndex, 0x522bba0fe696843e);// /Assets/tpp/pack/player/motion/player2_facial_dd_male.fpk
 			}
 			else {
 				if (playerType == 2) {//DD_FEMALE
-					LoadFile(fileSlotIndex, 0x5228819af53ce132);// /Assets/tpp/pack/player/motion/player2_facial_dd_female.fpk
+					files::LoadFile(fileSlotIndex, 0x5228819af53ce132);// /Assets/tpp/pack/player/motion/player2_facial_dd_female.fpk
 				}
 				else {
 					if (playerType == 5) {//OCELOT
-						LoadFile(fileSlotIndex, 0x522ad6eb108b656a);// /Assets/tpp/pack/player/motion/player2_facial_ocelot.fpk
+						files::LoadFile(fileSlotIndex, 0x522ad6eb108b656a);// /Assets/tpp/pack/player/motion/player2_facial_ocelot.fpk
 					}
 					else {
 						if (playerType == 6) {//QUIET
-							LoadFile(fileSlotIndex, 0x522ad26ea9839391);// /Assets/tpp/pack/player/motion/player2_facial_quiet.fpk
+							files::LoadFile(fileSlotIndex, 0x522ad26ea9839391);// /Assets/tpp/pack/player/motion/player2_facial_quiet.fpk
 						}
 						else {//SNAKE,AVATAR (default vanilla), LIQUID
-							LoadFile(fileSlotIndex, 0x522a1da4adfd5137);// /Assets/tpp/pack/player/motion/player2_facial_snake.fpk
+							files::LoadFile(fileSlotIndex, 0x522a1da4adfd5137);// /Assets/tpp/pack/player/motion/player2_facial_snake.fpk
 						}
 					}
 				}
@@ -771,22 +775,22 @@ namespace IHHook {
 		ulonglong* LoadPlayerFacialMotionMtarHook(ulonglong* fileSlotIndex, int playerType) {
 			spdlog::debug("LoadPlayerFacialMotionMtarHook playerType:{}", playerType);
 			if (playerType == 1) {
-				LoadFile(fileSlotIndex, 0x67026b0d3dfd05e2);// /Assets/tpp/motion/mtar/player2/player2_ddm_facial.mtar
+				files::LoadFile(fileSlotIndex, 0x67026b0d3dfd05e2);// /Assets/tpp/motion/mtar/player2/player2_ddm_facial.mtar
 			}
 			else {
 				if (playerType == 2) {
-					LoadFile(fileSlotIndex, 0x670245b34a1d710c);// /Assets/tpp/motion/mtar/player2/player2_ddf_facial.mtar
+					files::LoadFile(fileSlotIndex, 0x670245b34a1d710c);// /Assets/tpp/motion/mtar/player2/player2_ddf_facial.mtar
 				}
 				else {
 					if (playerType == 5) {
-						LoadFile(fileSlotIndex, 0x6703e118275df4f2);// /Assets/tpp/motion/mtar/player2/player2_ocelot_facial.mtar
+						files::LoadFile(fileSlotIndex, 0x6703e118275df4f2);// /Assets/tpp/motion/mtar/player2/player2_ocelot_facial.mtar
 					}
 					else {
 						if (playerType == 6) {
-							LoadFile(fileSlotIndex, 0x6701511616076078);// /Assets/tpp/motion/mtar/player2/player2_quiet_facial.mtar
+							files::LoadFile(fileSlotIndex, 0x6701511616076078);// /Assets/tpp/motion/mtar/player2/player2_quiet_facial.mtar
 						}
 						else {
-							LoadFile(fileSlotIndex, 0x67028b3526a03df4);// /Assets/tpp/motion/mtar/player2/TppPlayer2Facial.mtar
+							files::LoadFile(fileSlotIndex, 0x67028b3526a03df4);// /Assets/tpp/motion/mtar/player2/TppPlayer2Facial.mtar
 						}
 					}
 				}
@@ -879,7 +883,7 @@ namespace IHHook {
 				spdlog::debug("bionicHandFpkPath: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());
 			}
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFpkHook
 
@@ -906,14 +910,14 @@ namespace IHHook {
 				filePath64 = PathCode64(filePath.c_str());
 			}
 
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerBionicArmFv2Hook
 
 		//DEBUGNOW see ORIG below
 		bool CheckPlayerPartsIfShouldApplySkinToneFv2Hook(uint playerType, uint playerPartsType) {
 			spdlog::debug("CheckPlayerPartsIfShouldApplySkinToneFv2Hook playerType:{} playerPartsType:{}", playerType, playerPartsType);
-			return CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
+			return player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
 		}
 		//UNUSED REF
 		//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook
@@ -970,7 +974,7 @@ namespace IHHook {
 		ulonglong* LoadPlayerPartsSkinToneFv2Hook(ulonglong* fileSlotIndex, uint playerType, uint playerPartsType) {
 			spdlog::trace(__func__);
 			if (!overrideCharacterSystem) {
-				return LoadPlayerPartsSkinToneFv2(fileSlotIndex, playerType, playerPartsType);
+				return player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2(fileSlotIndex, playerType, playerPartsType);
 			}
 		
 			ulonglong filePath64 = 0;	
@@ -978,7 +982,7 @@ namespace IHHook {
 				spdlog::debug("character.skinToneFv2Path: {}", character.skinToneFv2Path);
 				filePath64 = PathCode64(character.skinToneFv2Path.c_str());
 			}
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerPartsSkinToneFv2Hook
 
@@ -1064,7 +1068,7 @@ namespace IHHook {
 		//		}//shouldApplySkinToneFv2
 		//	}//if playerType
 
-		//	LoadFile(fileSlotIndex, filePath64);
+		//	files::LoadFile(fileSlotIndex, filePath64);
 		//	return fileSlotIndex;
 		//}//LoadPlayerPartsSkinToneFv2Hook
 
@@ -1080,7 +1084,7 @@ namespace IHHook {
 
 			//ZIP: Validate player parts type
 			if (!IsPlayerPartsTypeValid(playerPartsType)) {
-				return IsHeadNeededForPartsType(playerPartsType);
+				return player::appearance::IsHeadNeededForPartsType(playerPartsType);
 			}
 
 			bool headNeeded = false;
@@ -1089,7 +1093,7 @@ namespace IHHook {
 				headNeeded = character.useHead;
 			}
 			else {
-				headNeeded = IsHeadNeededForPartsType(playerPartsType);//tex fall back to original
+				headNeeded = player::appearance::IsHeadNeededForPartsType(playerPartsType);//tex fall back to original
 			}
 
 			//OFF, see GOTCHA spdlog::debug("IsHeadNeededForPartsTypeHook playerPartsType:{} headNeeded:{}", playerPartsType, headNeeded);
@@ -1106,7 +1110,7 @@ namespace IHHook {
 
 			//ZIP: Validate player parts type
 			if (!IsPlayerPartsTypeValid(playerPartsType)) {
-				return IsHeadNeededForPartsTypeAndAvatar(playerPartsType);
+				return player::appearance::IsHeadNeededForPartsTypeAndAvatar(playerPartsType);
 			}
 
 			bool headNeeded = false; 
@@ -1115,7 +1119,7 @@ namespace IHHook {
 				headNeeded = character.useHead;
 			}
 			else {
-				headNeeded = IsHeadNeededForPartsTypeAndAvatar(playerPartsType);//tex fall back to original
+				headNeeded = player::appearance::IsHeadNeededForPartsTypeAndAvatar(playerPartsType);//tex fall back to original
 			}
 
 			spdlog::debug("IsHeadNeededForPartsTypeHook playerPartsType:{} headNeeded:{}", playerPartsType, headNeeded);
@@ -1229,7 +1233,7 @@ namespace IHHook {
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
 
 			if (playerType != 0) {
-				LoadFile(fileSlotIndex, 0);
+				files::LoadFile(fileSlotIndex, 0);
 				return fileSlotIndex;
 			}
 
@@ -1257,7 +1261,7 @@ namespace IHHook {
 				spdlog::debug("snakeFaceFpkPath: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());
 			}				
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}//LoadPlayerSnakeFaceFpkHook
 
@@ -1265,7 +1269,7 @@ namespace IHHook {
 			spdlog::debug("LoadPlayerSnakeFaceFpkHook playerPartsType:{} headNeeded:{}", playerPartsType, character.useHead);
 
 			if (playerType != 0) {
-				LoadFile(fileSlotIndex, 0);
+				files::LoadFile(fileSlotIndex, 0);
 				return fileSlotIndex;
 			}
 
@@ -1291,7 +1295,7 @@ namespace IHHook {
 				spdlog::debug("snakeFaceFv2Path: {}", filePath);
 				filePath64 = PathCode64(filePath.c_str());
 			}
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;	
 		}//LoadPlayerSnakeFaceFv2Hook
 
@@ -1315,7 +1319,7 @@ namespace IHHook {
 			}
 			filePath64 = PathCode64(filePath.c_str());
 
-			LoadFile(fileSlotIndex,filePath64);
+			files::LoadFile(fileSlotIndex,filePath64);
 			return fileSlotIndex;
 		}//LoadAvatarOgreHornFpkHook
 		ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong *fileSlotIndex, uint ogreLevel) {
@@ -1327,46 +1331,46 @@ namespace IHHook {
 			}
 			filePath64 = PathCode64(filePath.c_str());
 
-			LoadFile(fileSlotIndex,filePath64);
+			files::LoadFile(fileSlotIndex,filePath64);
 			return fileSlotIndex;
 		}//LoadAvatarOgreHornFv2Hook
 
 		void CreateHooks() {
 			spdlog::debug(__func__);
 
-			CREATE_HOOK(LoadPlayerPartsFpk)
-			CREATE_HOOK(LoadPlayerPartsParts)
-			CREATE_HOOK(LoadPlayerCamoFpk)
-			CREATE_HOOK(LoadPlayerCamoFv2)
-			CREATE_HOOK(LoadPlayerBionicArmFpk)
-			CREATE_HOOK(LoadPlayerBionicArmFv2)
-			CREATE_HOOK(LoadPlayerFacialMotionFpk)
-			CREATE_HOOK(LoadPlayerFacialMotionMtar)
-			CREATE_HOOK(LoadPlayerPartsSkinToneFv2)
-			CREATE_HOOK(IsHeadNeededForPartsType)
-			CREATE_HOOK(IsHeadNeededForPartsTypeAndAvatar)
-			CREATE_HOOK(LoadPlayerSnakeFaceFpk)
-			CREATE_HOOK(LoadPlayerSnakeFaceFv2)
-			CREATE_HOOK(CheckPlayerPartsIfShouldApplySkinToneFv2)//DEBUGNOW
-			CREATE_HOOK(LoadAvatarOgreHornFpk)
-			CREATE_HOOK(LoadAvatarOgreHornFv2)
+			CREATE_HOOK(player::appearance::parts::LoadPlayerPartsFpk, LoadPlayerPartsFpkHook);
+			CREATE_HOOK(player::appearance::parts::LoadPlayerPartsParts, LoadPlayerPartsPartsHook);
+			CREATE_HOOK(player::appearance::fova::camo::LoadPlayerCamoFpk, LoadPlayerCamoFpkHook);
+			CREATE_HOOK(player::appearance::fova::camo::LoadPlayerCamoFv2, LoadPlayerCamoFpkHook);
+			CREATE_HOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk, LoadPlayerBionicArmFpkHook);
+			CREATE_HOOK(player::appearance::fova::arm::LoadPlayerBionicArmFv2, LoadPlayerBionicArmFv2Hook);
+			CREATE_HOOK(player::motion::facial::LoadPlayerFacialMotionFpk, LoadPlayerFacialMotionFpkHook);
+			CREATE_HOOK(player::facial::motion::LoadPlayerFacialMotionMtar, LoadPlayerFacialMotionMtarHook);
+			CREATE_HOOK(player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2, LoadPlayerPartsSkinToneFv2Hook);
+			CREATE_HOOK(player::appearance::IsHeadNeededForPartsType, IsHeadNeededForPartsTypeHook);
+			CREATE_HOOK(player::appearance::IsHeadNeededForPartsTypeAndAvatar, IsHeadNeededForPartsTypeAndAvatarHook);
+			CREATE_HOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFpk, LoadPlayerSnakeFaceFpkHook);
+			CREATE_HOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFv2, LoadPlayerSnakeFaceFv2Hook);
+			CREATE_HOOK(player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2, CheckPlayerPartsIfShouldApplySkinToneFv2Hook);//DEBUGNOW
+			CREATE_HOOK(player::appearance::avatar::LoadAvatarOgreHornFpk, LoadAvatarOgreHornFpkHook);
+			CREATE_HOOK(player::appearance::avatar::LoadAvatarOgreHornFv2, LoadAvatarOgreHornFv2Hook);
 					
-			ENABLEHOOK(LoadPlayerPartsFpk)
-			ENABLEHOOK(LoadPlayerPartsParts)
-			ENABLEHOOK(LoadPlayerCamoFpk)
-			ENABLEHOOK(LoadPlayerCamoFv2)
-			ENABLEHOOK(LoadPlayerBionicArmFpk)
-			ENABLEHOOK(LoadPlayerBionicArmFv2)
-			//ENABLEHOOK(LoadPlayerFacialMotionFpk)
-			//ENABLEHOOK(LoadPlayerFacialMotionMtar)
-			ENABLEHOOK(LoadPlayerPartsSkinToneFv2)
-			ENABLEHOOK(IsHeadNeededForPartsType)
-			ENABLEHOOK(IsHeadNeededForPartsTypeAndAvatar) 
-			ENABLEHOOK(LoadPlayerSnakeFaceFpk)
-			ENABLEHOOK(LoadPlayerSnakeFaceFv2)
-			ENABLEHOOK(CheckPlayerPartsIfShouldApplySkinToneFv2)//DEBUGNOW
-			ENABLEHOOK(LoadAvatarOgreHornFpk)
-			ENABLEHOOK(LoadAvatarOgreHornFv2)
+			ENABLE_HOOK(player::appearance::parts::LoadPlayerPartsFpk);
+			ENABLE_HOOK(player::appearance::parts::LoadPlayerPartsParts);
+			ENABLE_HOOK(player::appearance::fova::camo::LoadPlayerCamoFpk);
+			ENABLE_HOOK(player::appearance::fova::camo::LoadPlayerCamoFv2);
+			ENABLE_HOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk);
+			ENABLE_HOOK(player::appearance::fova::arm::LoadPlayerBionicArmFv2);
+			//ENABLE_HOOK(player::motion::facial::LoadPlayerFacialMotionFpk);
+			//ENABLE_HOOK(player::motion::facial::LoadPlayerFacialMotionMtar);
+			ENABLE_HOOK(player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2);
+			ENABLE_HOOK(player::appearance::IsHeadNeededForPartsType);
+			ENABLE_HOOK(player::appearance::IsHeadNeededForPartsTypeAndAvatar);
+			ENABLE_HOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFpk);
+			ENABLE_HOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFv2);
+			ENABLE_HOOK(player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2);//DEBUGNOW
+			ENABLE_HOOK(player::appearance::avatar::LoadAvatarOgreHornFpk);
+			ENABLE_HOOK(player::appearance::avatar::LoadAvatarOgreHornFv2);
 		}//CreateHooks
 
 		int CreateLibs(lua_State* L) {

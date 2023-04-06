@@ -40,11 +40,13 @@ namespace IHHook {
 	//name: original function name as exported from ghidra, including namespace
 	//hookFunc: the hook function you are using for this function
 	//CREATEHOOK(lua::lua_newstate,lua_newstateHook);
-	#define CREATEHOOK(name,hookFunc) CreateHook(#name,hookFunc);
+	#define CREATE_HOOK(name,hookFunc) CreateHook(#name,hookFunc)
 
-	#define ENABLEHOOK(name) EnableHook(#name);
+	#define ENABLE_HOOK(name) EnableHook(#name)
 
-	#define DISABLEHOOK(name) DisableHook(#name);
+	#define DISABLE_HOOK(name) DisableHook(#name)
+
+	#define HAS_ADDRESS(name) HasFunctionAddress(#name)
 
 	//You can use the macro CREATEHOOK instead which tidys away use of string
 	//targetName: name of original function (as exported by ExportInfo) (namespaced as original)
@@ -116,18 +118,4 @@ namespace IHHook {
 		}
 		return enableStatus;
 	}//DisableHook
-
-	//DEPREACIATED: does not support namespaced names, use CREATEHOOK instead
-	//TODO: change all existing references from this to CREATEHOOK
-	#define CREATE_HOOK(name)\
-	if (addressSet[#name]==NULL) {\
-		spdlog::error("CREATE_HOOK addressSet[{}]==NULL", #name);\
-	} else {\
-		MH_STATUS name##CreateStatus = MH_CreateHook((LPVOID*)addressSet[#name], name##Hook, (LPVOID*)&name);\
-		if (name##CreateStatus != MH_OK) {\
-			spdlog::error("MH_CreateHook failed for {} with code {}", #name, name##CreateStatus);\
-		} else {\
-			spdlog::debug("MH_CreateHook MH_OK for {}", #name);\
-		}\
-	}
 }//namespace IHHook

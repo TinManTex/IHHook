@@ -28,7 +28,7 @@ namespace IHHook {
 	
 	ulonglong * GetFreeRoamLangIdHook(ulonglong * langId, short locationCode, short missionCode) {
 	
-		return GetFreeRoamLangId(langId, locationCode, missionCode);
+		return ui::lang::GetFreeRoamLangId(langId, locationCode, missionCode);
 	}//GetFreeRoamLangIdHook
 	
 	void UpdateFOVLerpHook(ulonglong param_1) {
@@ -43,173 +43,143 @@ namespace IHHook {
 	
 	ulonglong * LoadFileHook(ulonglong * fileSlotIndex, ulonglong filePath64) {
 	
-		return LoadFile(fileSlotIndex, filePath64);
+		return files::LoadFile(fileSlotIndex, filePath64);
 	}//LoadFileHook
 	
 	void LoadFileSubHook(PathCode64 pathA, PathCode64 pathB) {
 	
-		LoadFileSub(pathA, pathB);
+		files::LoadFileSub(pathA, pathB);
 	}//LoadFileSubHook
-	
-	Path * Path_CopyHook(Path * This, Path * rhs) {
-	
-		return Path_Copy(this, rhs);
-	}//Path_CopyHook
 	
 	Path * GetEmptyPathHook() {
 	
-		return GetEmptyPath();
+		return fox::PathManager::GetEmptyPath();
 	}//GetEmptyPathHook
 	
 	ulonglong * LoadPlayerPartsFpkHook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType) {
 	
-		return LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
+		return player::appearance::parts::LoadPlayerPartsFpk(fileSlotIndex, playerType, playerPartsType);
 	}//LoadPlayerPartsFpkHook
 	
 	ulonglong * LoadPlayerPartsPartsHook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType) {
 	
-		return LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
+		return player::appearance::parts::LoadPlayerPartsParts(fileSlotIndex, playerType, playerPartsType);
 	}//LoadPlayerPartsPartsHook
 	
 	ulonglong * LoadPlayerCamoFpkHook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
 	
-		return LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+		return player::appearance::fova::camo::LoadPlayerCamoFpk(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 	}//LoadPlayerCamoFpkHook
 	
 	ulonglong * LoadPlayerCamoFv2Hook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType) {
 	
-		return LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
+		return player::appearance::fova::camo::LoadPlayerCamoFv2(fileSlotIndex, playerType, playerPartsType, playerCamoType);
 	}//LoadPlayerCamoFv2Hook
 	
 	ulonglong * LoadPlayerFacialMotionFpkHook(ulonglong * fileSlotIndex, uint playerType) {
 	
-		return LoadPlayerFacialMotionFpk(fileSlotIndex, playerType);
+		return player::motion::facial::LoadPlayerFacialMotionFpk(fileSlotIndex, playerType);
 	}//LoadPlayerFacialMotionFpkHook
 	
 	ulonglong * LoadPlayerFacialMotionMtarHook(ulonglong * fileSlotIndex, int playerType) {
 	
-		return LoadPlayerFacialMotionMtar(fileSlotIndex, playerType);
+		return player::facial::motion::LoadPlayerFacialMotionMtar(fileSlotIndex, playerType);
 	}//LoadPlayerFacialMotionMtarHook
 	
 	ulonglong * LoadPlayerBionicArmFpkHook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType) {
 	
-		return LoadPlayerBionicArmFpk(fileSlotIndex, playerType, playerPartsType, playerHandType);
+		return player::appearance::fova::arm::LoadPlayerBionicArmFpk(fileSlotIndex, playerType, playerPartsType, playerHandType);
 	}//LoadPlayerBionicArmFpkHook
 	
 	ulonglong * LoadPlayerBionicArmFv2Hook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType) {
 	
-		return LoadPlayerBionicArmFv2(fileSlotIndex, playerType, playerPartsType, playerHandType);
+		return player::appearance::fova::arm::LoadPlayerBionicArmFv2(fileSlotIndex, playerType, playerPartsType, playerHandType);
 	}//LoadPlayerBionicArmFv2Hook
 	
 	bool CheckPlayerPartsIfShouldApplySkinToneFv2Hook(uint playerType, uint playerPartsType) {
 	
-		return CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
+		return player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2(playerType, playerPartsType);
 	}//CheckPlayerPartsIfShouldApplySkinToneFv2Hook
 	
 	ulonglong * LoadPlayerPartsSkinToneFv2Hook(ulonglong * loadFile, uint playerType, uint playerPartsType) {
 	
-		return LoadPlayerPartsSkinToneFv2(loadFile, playerType, playerPartsType);
+		return player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2(loadFile, playerType, playerPartsType);
 	}//LoadPlayerPartsSkinToneFv2Hook
 	
 	bool IsHeadNeededForPartsTypeHook(uint playerPartsType) {
 	
-		return IsHeadNeededForPartsType(playerPartsType);
+		return player::appearance::IsHeadNeededForPartsType(playerPartsType);
 	}//IsHeadNeededForPartsTypeHook
 	
 	bool IsHeadNeededForPartsTypeAndAvatarHook(uint playerPartsType) {
 	
-		return IsHeadNeededForPartsTypeAndAvatar(playerPartsType);
+		return player::appearance::IsHeadNeededForPartsTypeAndAvatar(playerPartsType);
 	}//IsHeadNeededForPartsTypeAndAvatarHook
 	
 	ulonglong * LoadPlayerSnakeFaceFpkHook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
 	
-		return LoadPlayerSnakeFaceFpk(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
+		return player::appearance::fova::face::LoadPlayerSnakeFaceFpk(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
 	}//LoadPlayerSnakeFaceFpkHook
 	
 	ulonglong * LoadPlayerSnakeFaceFv2Hook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId) {
 	
-		return LoadPlayerSnakeFaceFv2(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
+		return player::appearance::fova::face::LoadPlayerSnakeFaceFv2(fileSlotIndex, playerType, playerPartsType, playerFaceId, playerFaceEquipId);
 	}//LoadPlayerSnakeFaceFv2Hook
 	
 	ulonglong * LoadAvatarOgreHornFpkHook(ulonglong * fileSlotIndex, uint ogreLevel) {
 	
-		return LoadAvatarOgreHornFpk(fileSlotIndex, ogreLevel);
+		return player::appearance::avatar::LoadAvatarOgreHornFpk(fileSlotIndex, ogreLevel);
 	}//LoadAvatarOgreHornFpkHook
 	
 	ulonglong * LoadAvatarOgreHornFv2Hook(ulonglong * fileSlotIndex, uint ogreLevel) {
 	
-		return LoadAvatarOgreHornFv2(fileSlotIndex, ogreLevel);
+		return player::appearance::avatar::LoadAvatarOgreHornFv2(fileSlotIndex, ogreLevel);
 	}//LoadAvatarOgreHornFv2Hook
 	
 	ulonglong * LoadBuddyMainFileHook(ulonglong param_1, ulonglong * fileSlotIndex, uint buddyType, ulonglong param_4) {
 	
-		return LoadBuddyMainFile(param_1, fileSlotIndex, buddyType, param_4);
+		return buddy::system::LoadBuddyMainFile(param_1, fileSlotIndex, buddyType, param_4);
 	}//LoadBuddyMainFileHook
 	
 	ulonglong * LoadBuddyQuietWeaponFpkHook(ulonglong param_1, ulonglong * fileSlotIndex, short param_quietWeaponId) {
 	
-		return LoadBuddyQuietWeaponFpk(param_1, fileSlotIndex, param_quietWeaponId);
+		return buddy::quiet::LoadBuddyQuietWeaponFpk(param_1, fileSlotIndex, param_quietWeaponId);
 	}//LoadBuddyQuietWeaponFpkHook
 	
 	void LoadBuddyDogCommonFPKHook(longlong param_1, ulonglong * fileSlotIndex) {
 	
-		LoadBuddyDogCommonFPK(param_1, fileSlotIndex);
+		buddy::dog::LoadBuddyDogCommonFPK(param_1, fileSlotIndex);
 	}//LoadBuddyDogCommonFPKHook
 	
 	void LoadBuddyHorseCommonFPKHook(longlong param_1, ulonglong * fileSlotIndex) {
 	
-		LoadBuddyHorseCommonFPK(param_1, fileSlotIndex);
+		buddy::horse::LoadBuddyHorseCommonFPK(param_1, fileSlotIndex);
 	}//LoadBuddyHorseCommonFPKHook
 	
 	ulonglong * LoadBuddyWalkerGearArmFpkHook(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 	
-		return LoadBuddyWalkerGearArmFpk(param_1, fileSlotIndex, param_3, param_4);
+		return buddy::walker::LoadBuddyWalkerGearArmFpk(param_1, fileSlotIndex, param_3, param_4);
 	}//LoadBuddyWalkerGearArmFpkHook
 	
 	ulonglong * LoadBuddyWalkerGearHeadFpkHook(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 	
-		return LoadBuddyWalkerGearHeadFpk(param_1, fileSlotIndex, param_3, param_4);
+		return buddy::walker::LoadBuddyWalkerGearHeadFpk(param_1, fileSlotIndex, param_3, param_4);
 	}//LoadBuddyWalkerGearHeadFpkHook
 	
 	ulonglong * LoadBuddyWalkerGearWeaponFpkHook(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 	
-		return LoadBuddyWalkerGearWeaponFpk(param_1, fileSlotIndex, param_3, param_4);
+		return buddy::walker::LoadBuddyWalkerGearWeaponFpk(param_1, fileSlotIndex, param_3, param_4);
 	}//LoadBuddyWalkerGearWeaponFpkHook
-	
-	int * LoadDefaultFpksFuncHook(void * param_1, int * param_2, ulonglong * param_3, uint param_4) {
-	
-		return LoadDefaultFpksFunc(param_1, param_2, param_3, param_4);
-	}//LoadDefaultFpksFuncHook
 	
 	char PreparePlayerVehicleInSortieHook(longlong param_1) {
 	
-		return PreparePlayerVehicleInSortie(param_1);
+		return vehicle::appearance::PreparePlayerVehicleInSortie(param_1);
 	}//PreparePlayerVehicleInSortieHook
 	
 	char PreparePlayerVehicleInGameHook(longlong param_1, ulonglong param_2) {
 	
-		return PreparePlayerVehicleInGame(param_1, param_2);
+		return vehicle::appearance::PreparePlayerVehicleInGame(param_1, param_2);
 	}//PreparePlayerVehicleInGameHook
-	
-	longlong LoadDefaultFpkPtrFuncHook(longlong param_1, uint param_2) {
-	
-		return LoadDefaultFpkPtrFunc(param_1, param_2);
-	}//LoadDefaultFpkPtrFuncHook
-	
-	ulonglong * LoadAllVehicleCamoFpksHook() {
-	
-		return LoadAllVehicleCamoFpks();
-	}//LoadAllVehicleCamoFpksHook
-	
-	longlong * BuddyCommandGetNameLangIdHook(longlong * langId, uint commandType) {
-	
-		return BuddyCommandGetNameLangId(langId, commandType);
-	}//BuddyCommandGetNameLangIdHook
-	
-	longlong * BuddyCommandGetDescriptionLangIdHook(longlong * langId, uint commandType) {
-	
-		return BuddyCommandGetDescriptionLangId(langId, commandType);
-	}//BuddyCommandGetDescriptionLangIdHook
 	
 	foxlua::module * NewModuleHook(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 	
@@ -345,8 +315,8 @@ namespace IHHook {
 		CREATEHOOK(FNVHash32,FNVHash32Hook)
 		ENABLEHOOK(FNVHash32)
 		
-		CREATEHOOK(GetFreeRoamLangId,GetFreeRoamLangIdHook)
-		ENABLEHOOK(GetFreeRoamLangId)
+		CREATEHOOK(ui::lang::GetFreeRoamLangId,GetFreeRoamLangIdHook)
+		ENABLEHOOK(ui::lang::GetFreeRoamLangId)
 		
 		CREATEHOOK(UpdateFOVLerp,UpdateFOVLerpHook)
 		ENABLEHOOK(UpdateFOVLerp)
@@ -354,107 +324,89 @@ namespace IHHook {
 		CREATEHOOK(UnkPrintFuncStubbedOut,UnkPrintFuncStubbedOutHook)
 		ENABLEHOOK(UnkPrintFuncStubbedOut)
 		
-		CREATEHOOK(LoadFile,LoadFileHook)
-		ENABLEHOOK(LoadFile)
+		CREATEHOOK(files::LoadFile,LoadFileHook)
+		ENABLEHOOK(files::LoadFile)
 		
-		CREATEHOOK(LoadFileSub,LoadFileSubHook)
-		ENABLEHOOK(LoadFileSub)
+		CREATEHOOK(files::LoadFileSub,LoadFileSubHook)
+		ENABLEHOOK(files::LoadFileSub)
 		
-		CREATEHOOK(Path_Copy,Path_CopyHook)
-		ENABLEHOOK(Path_Copy)
+		CREATEHOOK(fox::PathManager::GetEmptyPath,GetEmptyPathHook)
+		ENABLEHOOK(fox::PathManager::GetEmptyPath)
 		
-		CREATEHOOK(GetEmptyPath,GetEmptyPathHook)
-		ENABLEHOOK(GetEmptyPath)
+		CREATEHOOK(player::appearance::parts::LoadPlayerPartsFpk,LoadPlayerPartsFpkHook)
+		ENABLEHOOK(player::appearance::parts::LoadPlayerPartsFpk)
 		
-		CREATEHOOK(LoadPlayerPartsFpk,LoadPlayerPartsFpkHook)
-		ENABLEHOOK(LoadPlayerPartsFpk)
+		CREATEHOOK(player::appearance::parts::LoadPlayerPartsParts,LoadPlayerPartsPartsHook)
+		ENABLEHOOK(player::appearance::parts::LoadPlayerPartsParts)
 		
-		CREATEHOOK(LoadPlayerPartsParts,LoadPlayerPartsPartsHook)
-		ENABLEHOOK(LoadPlayerPartsParts)
+		CREATEHOOK(player::appearance::fova::camo::LoadPlayerCamoFpk,LoadPlayerCamoFpkHook)
+		ENABLEHOOK(player::appearance::fova::camo::LoadPlayerCamoFpk)
 		
-		CREATEHOOK(LoadPlayerCamoFpk,LoadPlayerCamoFpkHook)
-		ENABLEHOOK(LoadPlayerCamoFpk)
+		CREATEHOOK(player::appearance::fova::camo::LoadPlayerCamoFv2,LoadPlayerCamoFv2Hook)
+		ENABLEHOOK(player::appearance::fova::camo::LoadPlayerCamoFv2)
 		
-		CREATEHOOK(LoadPlayerCamoFv2,LoadPlayerCamoFv2Hook)
-		ENABLEHOOK(LoadPlayerCamoFv2)
+		CREATEHOOK(player::motion::facial::LoadPlayerFacialMotionFpk,LoadPlayerFacialMotionFpkHook)
+		ENABLEHOOK(player::motion::facial::LoadPlayerFacialMotionFpk)
 		
-		CREATEHOOK(LoadPlayerFacialMotionFpk,LoadPlayerFacialMotionFpkHook)
-		ENABLEHOOK(LoadPlayerFacialMotionFpk)
+		CREATEHOOK(player::facial::motion::LoadPlayerFacialMotionMtar,LoadPlayerFacialMotionMtarHook)
+		ENABLEHOOK(player::facial::motion::LoadPlayerFacialMotionMtar)
 		
-		CREATEHOOK(LoadPlayerFacialMotionMtar,LoadPlayerFacialMotionMtarHook)
-		ENABLEHOOK(LoadPlayerFacialMotionMtar)
+		CREATEHOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk,LoadPlayerBionicArmFpkHook)
+		ENABLEHOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk)
 		
-		CREATEHOOK(LoadPlayerBionicArmFpk,LoadPlayerBionicArmFpkHook)
-		ENABLEHOOK(LoadPlayerBionicArmFpk)
+		CREATEHOOK(player::appearance::fova::arm::LoadPlayerBionicArmFv2,LoadPlayerBionicArmFv2Hook)
+		ENABLEHOOK(player::appearance::fova::arm::LoadPlayerBionicArmFv2)
 		
-		CREATEHOOK(LoadPlayerBionicArmFv2,LoadPlayerBionicArmFv2Hook)
-		ENABLEHOOK(LoadPlayerBionicArmFv2)
+		CREATEHOOK(player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2,CheckPlayerPartsIfShouldApplySkinToneFv2Hook)
+		ENABLEHOOK(player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2)
 		
-		CREATEHOOK(CheckPlayerPartsIfShouldApplySkinToneFv2,CheckPlayerPartsIfShouldApplySkinToneFv2Hook)
-		ENABLEHOOK(CheckPlayerPartsIfShouldApplySkinToneFv2)
+		CREATEHOOK(player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2,LoadPlayerPartsSkinToneFv2Hook)
+		ENABLEHOOK(player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2)
 		
-		CREATEHOOK(LoadPlayerPartsSkinToneFv2,LoadPlayerPartsSkinToneFv2Hook)
-		ENABLEHOOK(LoadPlayerPartsSkinToneFv2)
+		CREATEHOOK(player::appearance::IsHeadNeededForPartsType,IsHeadNeededForPartsTypeHook)
+		ENABLEHOOK(player::appearance::IsHeadNeededForPartsType)
 		
-		CREATEHOOK(IsHeadNeededForPartsType,IsHeadNeededForPartsTypeHook)
-		ENABLEHOOK(IsHeadNeededForPartsType)
+		CREATEHOOK(player::appearance::IsHeadNeededForPartsTypeAndAvatar,IsHeadNeededForPartsTypeAndAvatarHook)
+		ENABLEHOOK(player::appearance::IsHeadNeededForPartsTypeAndAvatar)
 		
-		CREATEHOOK(IsHeadNeededForPartsTypeAndAvatar,IsHeadNeededForPartsTypeAndAvatarHook)
-		ENABLEHOOK(IsHeadNeededForPartsTypeAndAvatar)
+		CREATEHOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFpk,LoadPlayerSnakeFaceFpkHook)
+		ENABLEHOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFpk)
 		
-		CREATEHOOK(LoadPlayerSnakeFaceFpk,LoadPlayerSnakeFaceFpkHook)
-		ENABLEHOOK(LoadPlayerSnakeFaceFpk)
+		CREATEHOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFv2,LoadPlayerSnakeFaceFv2Hook)
+		ENABLEHOOK(player::appearance::fova::face::LoadPlayerSnakeFaceFv2)
 		
-		CREATEHOOK(LoadPlayerSnakeFaceFv2,LoadPlayerSnakeFaceFv2Hook)
-		ENABLEHOOK(LoadPlayerSnakeFaceFv2)
+		CREATEHOOK(player::appearance::avatar::LoadAvatarOgreHornFpk,LoadAvatarOgreHornFpkHook)
+		ENABLEHOOK(player::appearance::avatar::LoadAvatarOgreHornFpk)
 		
-		CREATEHOOK(LoadAvatarOgreHornFpk,LoadAvatarOgreHornFpkHook)
-		ENABLEHOOK(LoadAvatarOgreHornFpk)
+		CREATEHOOK(player::appearance::avatar::LoadAvatarOgreHornFv2,LoadAvatarOgreHornFv2Hook)
+		ENABLEHOOK(player::appearance::avatar::LoadAvatarOgreHornFv2)
 		
-		CREATEHOOK(LoadAvatarOgreHornFv2,LoadAvatarOgreHornFv2Hook)
-		ENABLEHOOK(LoadAvatarOgreHornFv2)
+		CREATEHOOK(buddy::system::LoadBuddyMainFile,LoadBuddyMainFileHook)
+		ENABLEHOOK(buddy::system::LoadBuddyMainFile)
 		
-		CREATEHOOK(LoadBuddyMainFile,LoadBuddyMainFileHook)
-		ENABLEHOOK(LoadBuddyMainFile)
+		CREATEHOOK(buddy::quiet::LoadBuddyQuietWeaponFpk,LoadBuddyQuietWeaponFpkHook)
+		ENABLEHOOK(buddy::quiet::LoadBuddyQuietWeaponFpk)
 		
-		CREATEHOOK(LoadBuddyQuietWeaponFpk,LoadBuddyQuietWeaponFpkHook)
-		ENABLEHOOK(LoadBuddyQuietWeaponFpk)
+		CREATEHOOK(buddy::dog::LoadBuddyDogCommonFPK,LoadBuddyDogCommonFPKHook)
+		ENABLEHOOK(buddy::dog::LoadBuddyDogCommonFPK)
 		
-		CREATEHOOK(LoadBuddyDogCommonFPK,LoadBuddyDogCommonFPKHook)
-		ENABLEHOOK(LoadBuddyDogCommonFPK)
+		CREATEHOOK(buddy::horse::LoadBuddyHorseCommonFPK,LoadBuddyHorseCommonFPKHook)
+		ENABLEHOOK(buddy::horse::LoadBuddyHorseCommonFPK)
 		
-		CREATEHOOK(LoadBuddyHorseCommonFPK,LoadBuddyHorseCommonFPKHook)
-		ENABLEHOOK(LoadBuddyHorseCommonFPK)
+		CREATEHOOK(buddy::walker::LoadBuddyWalkerGearArmFpk,LoadBuddyWalkerGearArmFpkHook)
+		ENABLEHOOK(buddy::walker::LoadBuddyWalkerGearArmFpk)
 		
-		CREATEHOOK(LoadBuddyWalkerGearArmFpk,LoadBuddyWalkerGearArmFpkHook)
-		ENABLEHOOK(LoadBuddyWalkerGearArmFpk)
+		CREATEHOOK(buddy::walker::LoadBuddyWalkerGearHeadFpk,LoadBuddyWalkerGearHeadFpkHook)
+		ENABLEHOOK(buddy::walker::LoadBuddyWalkerGearHeadFpk)
 		
-		CREATEHOOK(LoadBuddyWalkerGearHeadFpk,LoadBuddyWalkerGearHeadFpkHook)
-		ENABLEHOOK(LoadBuddyWalkerGearHeadFpk)
+		CREATEHOOK(buddy::walker::LoadBuddyWalkerGearWeaponFpk,LoadBuddyWalkerGearWeaponFpkHook)
+		ENABLEHOOK(buddy::walker::LoadBuddyWalkerGearWeaponFpk)
 		
-		CREATEHOOK(LoadBuddyWalkerGearWeaponFpk,LoadBuddyWalkerGearWeaponFpkHook)
-		ENABLEHOOK(LoadBuddyWalkerGearWeaponFpk)
+		CREATEHOOK(vehicle::appearance::PreparePlayerVehicleInSortie,PreparePlayerVehicleInSortieHook)
+		ENABLEHOOK(vehicle::appearance::PreparePlayerVehicleInSortie)
 		
-		CREATEHOOK(LoadDefaultFpksFunc,LoadDefaultFpksFuncHook)
-		ENABLEHOOK(LoadDefaultFpksFunc)
-		
-		CREATEHOOK(PreparePlayerVehicleInSortie,PreparePlayerVehicleInSortieHook)
-		ENABLEHOOK(PreparePlayerVehicleInSortie)
-		
-		CREATEHOOK(PreparePlayerVehicleInGame,PreparePlayerVehicleInGameHook)
-		ENABLEHOOK(PreparePlayerVehicleInGame)
-		
-		CREATEHOOK(LoadDefaultFpkPtrFunc,LoadDefaultFpkPtrFuncHook)
-		ENABLEHOOK(LoadDefaultFpkPtrFunc)
-		
-		CREATEHOOK(LoadAllVehicleCamoFpks,LoadAllVehicleCamoFpksHook)
-		ENABLEHOOK(LoadAllVehicleCamoFpks)
-		
-		CREATEHOOK(BuddyCommandGetNameLangId,BuddyCommandGetNameLangIdHook)
-		ENABLEHOOK(BuddyCommandGetNameLangId)
-		
-		CREATEHOOK(BuddyCommandGetDescriptionLangId,BuddyCommandGetDescriptionLangIdHook)
-		ENABLEHOOK(BuddyCommandGetDescriptionLangId)
+		CREATEHOOK(vehicle::appearance::PreparePlayerVehicleInGame,PreparePlayerVehicleInGameHook)
+		ENABLEHOOK(vehicle::appearance::PreparePlayerVehicleInGame)
 		
 		CREATEHOOK(foxlua::NewModule,NewModuleHook)
 		ENABLEHOOK(foxlua::NewModule)

@@ -18,7 +18,7 @@ namespace IHHook {
 			if (config.enableFnvHook) {
 				log->info(filePath64);
 			}
-			return LoadFile(fileSlotIndex, filePath64);
+			return files::LoadFile(fileSlotIndex, filePath64);
 		}//LoadFileHook		
 		//TODO: move somewhere else
 		//UNUSED, only interesting for specific logging, but cityhash hook will catch everything otherwise
@@ -33,7 +33,7 @@ namespace IHHook {
 				log->info(filePath64_01);
 				log->info("");
 			}
-			return LoadFileSub(filePath64, filePath64_01);
+			return files::LoadFileSub(filePath64, filePath64_01);
 		}//LoadFileSubHook
 
 		void CreateHooks() {
@@ -43,16 +43,16 @@ namespace IHHook {
 				log = spdlog::basic_logger_st("loadfile", logName);
 				log->set_pattern("%v");//tex raw logging
 					
-				CREATE_HOOK(LoadFileSub)
-				CREATE_HOOK(LoadFile)
+				CREATE_HOOK(files::LoadFileSub, LoadFileSubHook);
+				CREATE_HOOK(files::LoadFile, LoadFileHook);
 
-				ENABLEHOOK(LoadFileSub)
-				//ENABLEHOOK(LoadFile)
+				ENABLE_HOOK(files::LoadFileSub);
+				//ENABLE_HOOK(files::LoadFile);
 			}
 
-			//CREATE_HOOK(PathCode64)
+			//CREATEHOOK(PathCode64,PathCode64Hook);
 
-			//ENABLEHOOK(PathCode64)
+			//ENABLE_HOOK(PathCode64);
 		}//CreateHooks
 	}//Hooks_FNVHash
 }//namespace IHHook

@@ -242,6 +242,7 @@ namespace IHHook {
 
 		//ZIP: Function that loads the player vehicle and the selected camo for deployment.
 		char PreparePlayerVehicleInGameHook(longlong param_1, ulonglong param_2){
+			using namespace vehicle::appearance;
 			spdlog::debug("PreparePlayerVehicleInGameHook");
 
 			if (!overrideVehicleSystem) {
@@ -265,6 +266,7 @@ namespace IHHook {
 
 		//ZIP: Function that loads the player vehicle and all the camos applicable in sortie.
 		char PreparePlayerVehicleInSortieHook(longlong param_1) {
+			using namespace vehicle::appearance;
 			spdlog::debug("PreparePlayerVehicleInSortieHook");
 
 			if (!overrideVehicleSystem) {
@@ -276,10 +278,10 @@ namespace IHHook {
 			if (vehicleType != 0) {
 				fileIndex[0] = GetVehiclePartsFpk(vehicleType - 1); //ZIP: Load vehicle fpk first
 			}
-			void* loadPtrFunc = (void*)LoadDefaultFpkPtrFunc(*(longlong*)(param_1 + 0x50), 0);
+			void* loadPtrFunc = (void*)FileLoadDefaultCommon::LoadDefaultFpkPtrFunc(*(longlong*)(param_1 + 0x50), 0);
 
 			//ZIP: Loads all camos for the player to choose from.
-			ulonglong* camoDatFpkArray = LoadAllVehicleCamoFpks();
+			ulonglong* camoDatFpkArray = vehicle::appearance::camo::LoadAllVehicleCamoFpks();
 			ulonglong numOfCamos;
 			longlong maxCamoLength = 0x5f; //95
 			ulonglong camoIt = (ulonglong)(vehicleType != 0);
@@ -296,7 +298,7 @@ namespace IHHook {
 
 			//ZIP: Load vehicle FPK and camos fpks
 			int outArray[4];
-			LoadDefaultFpksFunc(loadPtrFunc, outArray, fileIndex, (uint)numOfCamos);
+			FileLoadDefaultCommon::LoadDefaultFpksFunc(loadPtrFunc, outArray, fileIndex, (uint)numOfCamos);
 
 			int *puVar2 = *(int**)(param_1 + 0x58);
 			*(int*)(param_1 + 0x30) = *puVar2;
@@ -336,11 +338,11 @@ namespace IHHook {
 		void CreateHooks() {
 			spdlog::debug(__func__);
 
-			CREATE_HOOK(PreparePlayerVehicleInSortie)
-			CREATE_HOOK(PreparePlayerVehicleInGame)
+			CREATE_HOOK(vehicle::appearance::PreparePlayerVehicleInSortie, PreparePlayerVehicleInSortieHook);
+			CREATE_HOOK(vehicle::appearance::PreparePlayerVehicleInGame, PreparePlayerVehicleInGameHook);
 
-			ENABLEHOOK(PreparePlayerVehicleInSortie)
-			ENABLEHOOK(PreparePlayerVehicleInGame)
+			ENABLE_HOOK(vehicle::appearance::PreparePlayerVehicleInSortie);
+			ENABLE_HOOK(vehicle::appearance::PreparePlayerVehicleInGame);
 		}//CreateHooks
 
 		int CreateLibs(lua_State* L) {

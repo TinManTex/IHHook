@@ -134,7 +134,7 @@ namespace IHHook {
 			//tex: The fox modules wont be up by this point, so they have a seperate ReplaceStubbedOutFox
 			ReplaceStubedOutLua(L);
 #ifdef _DEBUG
-			ENABLEHOOK(l_StubbedOut)//tex: see l_StubbedOutHook
+			ENABLE_HOOK(l_StubbedOut);//tex: see l_StubbedOutHook
 #endif // DEBUG
 
 			spdlog::debug("luaL_openlibsHook complete");
@@ -325,27 +325,27 @@ namespace IHHook {
 				spdlog::warn("Hooks_Lua addr fail: address==NULL");
 			}
 			else {
-				CREATEHOOK(lua::luaL_openlibs, luaL_openlibsHook)
-				CREATEHOOK(lua::lua_newstate, lua_newstateHook)
-				CREATEHOOK(lua::lua_newthread, lua_newthreadHook)
-				CREATEHOOK(lua::lua_load, lua_loadHook)
-				CREATEHOOK(lua::luaL_loadbuffer, luaL_loadbufferHook)
-				CREATEHOOK(lua::lua_atpanic, lua_atpanicHook)
-				CREATEHOOK(lua::lua_error, lua_errorHook)
-				CREATEHOOK(lua::lua_pcall, lua_pcallHook)
-				CREATEHOOK(lua::lua_cpcall, lua_cpcallHook)
+				CREATE_HOOK(lua::luaL_openlibs, luaL_openlibsHook);
+				CREATE_HOOK(lua::lua_newstate, lua_newstateHook);
+				CREATE_HOOK(lua::lua_newthread, lua_newthreadHook);
+				CREATE_HOOK(lua::lua_load, lua_loadHook);
+				CREATE_HOOK(lua::luaL_loadbuffer, luaL_loadbufferHook);
+				CREATE_HOOK(lua::lua_atpanic, lua_atpanicHook);
+				CREATE_HOOK(lua::lua_error, lua_errorHook);
+				CREATE_HOOK(lua::lua_pcall, lua_pcallHook);
+				CREATE_HOOK(lua::lua_cpcall, lua_cpcallHook);
 
-				ENABLEHOOK(lua::luaL_openlibs)
-				ENABLEHOOK(lua::lua_newstate)
-				ENABLEHOOK(lua::lua_newthread)
-				ENABLEHOOK(lua::lua_load)
-				ENABLEHOOK(lua::luaL_loadbuffer)
-				ENABLEHOOK(lua::lua_atpanic) //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
-				ENABLEHOOK(lua::lua_error)
-				ENABLEHOOK(lua::lua_pcall)
-				ENABLEHOOK(lua::lua_cpcall)
+				ENABLE_HOOK(lua::luaL_openlibs);
+				ENABLE_HOOK(lua::lua_newstate);
+				ENABLE_HOOK(lua::lua_newthread);
+				ENABLE_HOOK(lua::lua_load);
+				ENABLE_HOOK(lua::luaL_loadbuffer);
+				ENABLE_HOOK(lua::lua_atpanic); //tex works, but if you want to catch exceptions from this dll itself then it just trips here instead of near the actual problem
+				ENABLE_HOOK(lua::lua_error);
+				ENABLE_HOOK(lua::lua_pcall);
+				ENABLE_HOOK(lua::lua_cpcall);
 
-				CREATE_HOOK(l_StubbedOut)
+				CREATE_HOOK(l_StubbedOut, l_StubbedOutHook);
 				//ENABLEHOOK(l_StubbedOut)//DEBUGNOW enabling after lua is init in openlibs see l_StubbedOutHook
 			}//if name##Addr != NULL
 		}//CreateHooks

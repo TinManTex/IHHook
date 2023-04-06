@@ -263,7 +263,7 @@ namespace IHHook {
 			}
 			//ZIP: No override or valid buddy? Fallback
 			if (!overrideBuddySystem ) {
-				return LoadBuddyMainFile(param_1, fileSlotIndex, buddyType, param_4);
+				return buddy::system::LoadBuddyMainFile(param_1, fileSlotIndex, buddyType, param_4);
 			}
 			switch (buddyType) {
 				case 1: //For D-Horse
@@ -278,7 +278,7 @@ namespace IHHook {
 						spdlog::debug("quietFpkPath: {}", filePath);
 						ulonglong filePath64 = PathCode64(filePath.c_str());
 						Path fileSlotIndex_02;
-						LoadFile(&fileSlotIndex_02.Hash, filePath64);
+						files::LoadFile(&fileSlotIndex_02.Hash, filePath64);
 						//ZIP: TODO UnkLoadBuddyFileInHeliSpace
 						Path* fileSlotIndex_01 = Path_Copy((Path*)fileSlotIndex, &fileSlotIndex_02);
 						return &fileSlotIndex_01->Hash;
@@ -288,7 +288,7 @@ namespace IHHook {
 					if (buddy.walkerGearFpkPath != "") return GetFPKFromFilePath(buddy.walkerGearFpkPath, "walkerGearFpkPath", fileSlotIndex);
 					break;
 				default: //Isn't a buddy, but is loaded anyways.
-					Path* fileSlotIndex_01 = GetEmptyPath();
+					Path* fileSlotIndex_01 = fox::PathManager::GetEmptyPath();
 					fileSlotIndex_01 = Path_Copy((Path*)fileSlotIndex, fileSlotIndex_01);
 					return &fileSlotIndex_01->Hash;
 					break;
@@ -301,39 +301,39 @@ namespace IHHook {
 		ulonglong* LoadBuddyQuietWeaponFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, short param_quietWeaponId) {
 			//ZIP: TODO GetVars for Quiet weapon type
 			if (!overrideBuddyEquipmentSystem || buddyEqp.quietWeaponFpk == "") {
-				return LoadBuddyQuietWeaponFpk(param_1, fileSlotIndex, param_quietWeaponId);
+				return buddy::quiet::LoadBuddyQuietWeaponFpk(param_1, fileSlotIndex, param_quietWeaponId);
 			}
 			return GetFPKFromFilePath(buddyEqp.quietWeaponFpk, "quietWeaponFpk", fileSlotIndex);
 		}//LoadBuddyQuietWeaponFpkHook
 		ulonglong* LoadBuddyWalkerGearWeaponFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 			//ZIP: TODO GetVars for Walker Gear weapon type		
 			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearWeaponFpk == "") {
-				return LoadBuddyWalkerGearWeaponFpk(param_1, fileSlotIndex, param_3, param_4);
+				return buddy::walker::LoadBuddyWalkerGearWeaponFpk(param_1, fileSlotIndex, param_3, param_4);
 			}
 			return GetFPKFromFilePath(buddyEqp.walkerGearWeaponFpk, "walkerGearWeaponFpk", fileSlotIndex);
 		}//LoadBuddyWalkerGearWeaponFpkHook
 		//ZIP: Main buddy FPKs contain head and arm content. Leaving this here, just in case.
 		ulonglong* LoadBuddyWalkerGearArmFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearArmFpk == "") {
-				return LoadBuddyWalkerGearArmFpk(param_1, fileSlotIndex, param_3, param_4);
+				return buddy::walker::LoadBuddyWalkerGearArmFpk(param_1, fileSlotIndex, param_3, param_4);
 			}
 			return GetFPKFromFilePath(buddyEqp.walkerGearArmFpk, "walkerGearArmFpk", fileSlotIndex);
 		}//LoadBuddyWalkerGearArmFpkHook
 		ulonglong* LoadBuddyWalkerGearHeadFpkHook(ulonglong param_1, ulonglong* fileSlotIndex, ulonglong param_3, ulonglong param_4) {
 			if (!overrideBuddyEquipmentSystem || buddyEqp.walkerGearHeadFpk == "") {
-				return LoadBuddyWalkerGearHeadFpk(param_1, fileSlotIndex, param_3, param_4);
+				return buddy::walker::LoadBuddyWalkerGearHeadFpk(param_1, fileSlotIndex, param_3, param_4);
 			}
 			return GetFPKFromFilePath(buddyEqp.walkerGearHeadFpk, "walkerGearHeadFpk", fileSlotIndex);
 		}//LoadBuddyWalkerGearHeadFpkHook
 		void LoadBuddyDogCommonFPKHook(longlong param_1, ulonglong* fileSlotIndex) {
 			if (!overrideBuddyEquipmentSystem || buddyEqp.dogCommonFpk == "") {
-				return LoadBuddyDogCommonFPK(param_1, fileSlotIndex);
+				return buddy::dog::LoadBuddyDogCommonFPK(param_1, fileSlotIndex);
 			}
 			GetFPKFromFilePath(buddyEqp.dogCommonFpk, "dogCommonFpk", fileSlotIndex);
 		}//LoadBuddyDogCommonFPK
 		void LoadBuddyHorseCommonFPKHook(longlong param_1, ulonglong* fileSlotIndex) {
 			if (!overrideBuddyEquipmentSystem || buddyEqp.horseCommonFpk == "") {
-				return LoadBuddyHorseCommonFPK(param_1, fileSlotIndex);
+				return buddy::horse::LoadBuddyHorseCommonFPK(param_1, fileSlotIndex);
 			}
 			GetFPKFromFilePath(buddyEqp.horseCommonFpk, "horseCommonFpk", fileSlotIndex);
 		}//LoadBuddyHorseCommonFPK
@@ -346,7 +346,7 @@ namespace IHHook {
 		ulonglong* GetFPKFromFilePath(std::string filePath, std::string debugMsg, ulonglong* fileSlotIndex) {
 			spdlog::debug(debugMsg+": {}", filePath);
 			ulonglong filePath64 = PathCode64(filePath.c_str());
-			LoadFile(fileSlotIndex, filePath64);
+			files::LoadFile(fileSlotIndex, filePath64);
 			return fileSlotIndex;
 		}
 
@@ -356,23 +356,23 @@ namespace IHHook {
 		void CreateHooks() {
 			spdlog::debug(__func__);
 
-			CREATE_HOOK(LoadBuddyMainFile)
-			CREATE_HOOK(LoadBuddyQuietWeaponFpk)
-			CREATE_HOOK(LoadBuddyWalkerGearArmFpk)
-			CREATE_HOOK(LoadBuddyWalkerGearHeadFpk)
-			CREATE_HOOK(LoadBuddyWalkerGearWeaponFpk)
-			CREATE_HOOK(LoadBuddyDogCommonFPK)
-			CREATE_HOOK(LoadBuddyHorseCommonFPK)
-			//CREATE_HOOK(LoadBuddyWalkerGearCommonFPK)
+			CREATE_HOOK(buddy::system::LoadBuddyMainFile, LoadBuddyMainFileHook);
+			CREATE_HOOK(buddy::quiet::LoadBuddyQuietWeaponFpk, LoadBuddyQuietWeaponFpkHook);
+			CREATE_HOOK(buddy::walker::LoadBuddyWalkerGearArmFpk, LoadBuddyWalkerGearArmFpkHook);
+			CREATE_HOOK(buddy::walker::LoadBuddyWalkerGearHeadFpk, LoadBuddyWalkerGearHeadFpkHook);
+			CREATE_HOOK(buddy::walker::LoadBuddyWalkerGearWeaponFpk, LoadBuddyWalkerGearWeaponFpkHook);
+			CREATE_HOOK(buddy::dog::LoadBuddyDogCommonFPK, LoadBuddyDogCommonFPKHook);
+			CREATE_HOOK(buddy::horse::LoadBuddyHorseCommonFPK, LoadBuddyHorseCommonFPKHook);
+			//CREATEHOOK(buddy::walker::LoadBuddyWalkerGearCommonFPK, LoadBuddyWalkerGearCommonFPKHook);
 
-			ENABLEHOOK(LoadBuddyMainFile)
-			ENABLEHOOK(LoadBuddyQuietWeaponFpk)
-			ENABLEHOOK(LoadBuddyWalkerGearArmFpk)
-			ENABLEHOOK(LoadBuddyWalkerGearHeadFpk)
-			ENABLEHOOK(LoadBuddyWalkerGearWeaponFpk)
-			ENABLEHOOK(LoadBuddyDogCommonFPK)
-			ENABLEHOOK(LoadBuddyHorseCommonFPK)
-			//ENABLEHOOK(LoadBuddyWalkerGearCommonFPK)
+			ENABLE_HOOK(buddy::system::LoadBuddyMainFile);
+			ENABLE_HOOK(buddy::quiet::LoadBuddyQuietWeaponFpk);
+			ENABLE_HOOK(buddy::walker::LoadBuddyWalkerGearArmFpk);
+			ENABLE_HOOK(buddy::walker::LoadBuddyWalkerGearHeadFpk);
+			ENABLE_HOOK(buddy::walker::LoadBuddyWalkerGearWeaponFpk);
+			ENABLE_HOOK(buddy::dog::LoadBuddyDogCommonFPK);
+			ENABLE_HOOK(buddy::horse::LoadBuddyHorseCommonFPK);
+			//ENABLEHOOK(buddy::walker::LoadBuddyWalkerGearCommonFPK)
 		}//CreateHooks
 
 		int CreateLibs(lua_State* L) {

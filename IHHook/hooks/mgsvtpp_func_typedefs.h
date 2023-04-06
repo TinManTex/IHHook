@@ -13,45 +13,113 @@ typedef StrCode (__fastcall GetStrCodeWithLengthFunc)(const char * buf, longlong
 typedef StrCode32 (__fastcall GetStrCode32Func)(const char * str);
 typedef ulonglong (__fastcall PathCode64ExtFunc)(const char * inString);
 typedef uint (__fastcall FNVHash32Func)(const char * strToHash);
+namespace ui{namespace lang{
 typedef ulonglong * (__fastcall GetFreeRoamLangIdFunc)(ulonglong * langId, short locationCode, short missionCode);
+}}
 typedef void (__fastcall UpdateFOVLerpFunc)(ulonglong param_1);
 typedef void (__fastcall UnkPrintFuncStubbedOutFunc)(const char * fmt, void * param_2, void * param_3, void * param_4);
 // l_StubbedOut EXPORT_FUNC_FALSE
 // nullsub_2 EXPORT_FUNC_FALSE
+namespace files{
 typedef ulonglong * (__fastcall LoadFileFunc)(ulonglong * fileSlotIndex, ulonglong filePath64);
+}
+namespace files{
 typedef void (__fastcall LoadFileSubFunc)(PathCode64 pathA, PathCode64 pathB);
+}
 typedef Path * (__thiscall Path_CopyFunc)(Path * This, Path * rhs);
+namespace fox{namespace PathManager{
 typedef Path * (__fastcall GetEmptyPathFunc)();
+}}
+namespace player{namespace appearance{namespace parts{
 typedef ulonglong * (__fastcall LoadPlayerPartsFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
+}}}
+namespace player{namespace appearance{namespace parts{
 typedef ulonglong * (__fastcall LoadPlayerPartsPartsFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType);
+}}}
+namespace player{namespace appearance{namespace fova{namespace camo{
 typedef ulonglong * (__fastcall LoadPlayerCamoFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
+}}}}
+namespace player{namespace appearance{namespace fova{namespace camo{
 typedef ulonglong * (__fastcall LoadPlayerCamoFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerCamoType);
+}}}}
+namespace player{namespace motion{namespace facial{
 typedef ulonglong * (__fastcall LoadPlayerFacialMotionFpkFunc)(ulonglong * fileSlotIndex, uint playerType);
+}}}
+namespace player{namespace facial{namespace motion{
 typedef ulonglong * (__fastcall LoadPlayerFacialMotionMtarFunc)(ulonglong * fileSlotIndex, int playerType);
+}}}
+namespace player{namespace appearance{namespace fova{namespace arm{
 typedef ulonglong * (__fastcall LoadPlayerBionicArmFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType);
+}}}}
+namespace player{namespace appearance{namespace fova{namespace arm{
 typedef ulonglong * (__fastcall LoadPlayerBionicArmFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType);
+}}}}
+namespace player{namespace appearance{namespace fova{namespace skinTone{
 typedef bool (__fastcall CheckPlayerPartsIfShouldApplySkinToneFv2Func)(uint playerType, uint playerPartsType);
+}}}}
+namespace player{namespace appearance{namespace fova{namespace skinTone{
 typedef ulonglong * (__fastcall LoadPlayerPartsSkinToneFv2Func)(ulonglong * loadFile, uint playerType, uint playerPartsType);
+}}}}
+namespace player{namespace appearance{
 typedef bool (__fastcall IsHeadNeededForPartsTypeFunc)(uint playerPartsType);
+}}
+namespace player{namespace appearance{
 typedef bool (__fastcall IsHeadNeededForPartsTypeAndAvatarFunc)(uint playerPartsType);
+}}
+namespace player{namespace appearance{namespace fova{namespace face{
 typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFpkFunc)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
+}}}}
+namespace player{namespace appearance{namespace fova{namespace face{
 typedef ulonglong * (__fastcall LoadPlayerSnakeFaceFv2Func)(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerFaceId, char playerFaceEquipId);
+}}}}
+namespace player{namespace appearance{namespace avatar{
 typedef ulonglong * (__fastcall LoadAvatarOgreHornFpkFunc)(ulonglong * fileSlotIndex, uint ogreLevel);
+}}}
+namespace player{namespace appearance{namespace avatar{
 typedef ulonglong * (__fastcall LoadAvatarOgreHornFv2Func)(ulonglong * fileSlotIndex, uint ogreLevel);
+}}}
+namespace buddy{namespace system{
 typedef ulonglong * (__fastcall LoadBuddyMainFileFunc)(ulonglong param_1, ulonglong * fileSlotIndex, uint buddyType, ulonglong param_4);
+}}
+namespace buddy{namespace quiet{
 typedef ulonglong * (__fastcall LoadBuddyQuietWeaponFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, short param_quietWeaponId);
+}}
+namespace buddy{namespace dog{
 typedef void (__fastcall LoadBuddyDogCommonFPKFunc)(longlong param_1, ulonglong * fileSlotIndex);
+}}
+namespace buddy{namespace horse{
 typedef void (__fastcall LoadBuddyHorseCommonFPKFunc)(longlong param_1, ulonglong * fileSlotIndex);
+}}
+namespace buddy{namespace walker{
 typedef ulonglong * (__fastcall LoadBuddyWalkerGearArmFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4);
+}}
+namespace buddy{namespace walker{
 typedef ulonglong * (__fastcall LoadBuddyWalkerGearHeadFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4);
+}}
+namespace buddy{namespace walker{
 typedef ulonglong * (__fastcall LoadBuddyWalkerGearWeaponFpkFunc)(ulonglong param_1, ulonglong * fileSlotIndex, ulonglong param_3, ulonglong param_4);
+}}
+namespace FileLoadDefaultCommon{
 typedef int * (__fastcall LoadDefaultFpksFuncFunc)(void * param_1, int * param_2, ulonglong * param_3, uint param_4);
+}
+namespace vehicle{namespace appearance{
 typedef char (__fastcall PreparePlayerVehicleInSortieFunc)(longlong param_1);
+}}
+namespace vehicle{namespace appearance{
 typedef char (__fastcall PreparePlayerVehicleInGameFunc)(longlong param_1, ulonglong param_2);
+}}
+namespace FileLoadDefaultCommon{
 typedef longlong (__fastcall LoadDefaultFpkPtrFuncFunc)(longlong param_1, uint param_2);
+}
+namespace vehicle{namespace appearance{namespace camo{
 typedef ulonglong * (__fastcall LoadAllVehicleCamoFpksFunc)();
+}}}
+namespace player{namespace callMenu{
 typedef longlong * (__fastcall BuddyCommandGetNameLangIdFunc)(longlong * langId, uint commandType);
+}}
+namespace player{namespace callMenu{
 typedef longlong * (__fastcall BuddyCommandGetDescriptionLangIdFunc)(longlong * langId, uint commandType);
+}}
 namespace foxlua{
 typedef foxlua::module * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
 }
@@ -424,45 +492,113 @@ extern GetStrCodeWithLengthFunc* GetStrCodeWithLength;
 extern GetStrCode32Func* GetStrCode32;
 extern PathCode64ExtFunc* PathCode64Ext;
 extern FNVHash32Func* FNVHash32;
+namespace ui{namespace lang{
 extern GetFreeRoamLangIdFunc* GetFreeRoamLangId;
+}}
 extern UpdateFOVLerpFunc* UpdateFOVLerp;
 extern UnkPrintFuncStubbedOutFunc* UnkPrintFuncStubbedOut;
 extern l_StubbedOutFunc* l_StubbedOut;
 extern nullsub_2Func* nullsub_2;
+namespace files{
 extern LoadFileFunc* LoadFile;
+}
+namespace files{
 extern LoadFileSubFunc* LoadFileSub;
+}
 extern Path_CopyFunc* Path_Copy;
+namespace fox{namespace PathManager{
 extern GetEmptyPathFunc* GetEmptyPath;
+}}
+namespace player{namespace appearance{namespace parts{
 extern LoadPlayerPartsFpkFunc* LoadPlayerPartsFpk;
+}}}
+namespace player{namespace appearance{namespace parts{
 extern LoadPlayerPartsPartsFunc* LoadPlayerPartsParts;
+}}}
+namespace player{namespace appearance{namespace fova{namespace camo{
 extern LoadPlayerCamoFpkFunc* LoadPlayerCamoFpk;
+}}}}
+namespace player{namespace appearance{namespace fova{namespace camo{
 extern LoadPlayerCamoFv2Func* LoadPlayerCamoFv2;
+}}}}
+namespace player{namespace motion{namespace facial{
 extern LoadPlayerFacialMotionFpkFunc* LoadPlayerFacialMotionFpk;
+}}}
+namespace player{namespace facial{namespace motion{
 extern LoadPlayerFacialMotionMtarFunc* LoadPlayerFacialMotionMtar;
+}}}
+namespace player{namespace appearance{namespace fova{namespace arm{
 extern LoadPlayerBionicArmFpkFunc* LoadPlayerBionicArmFpk;
+}}}}
+namespace player{namespace appearance{namespace fova{namespace arm{
 extern LoadPlayerBionicArmFv2Func* LoadPlayerBionicArmFv2;
+}}}}
+namespace player{namespace appearance{namespace fova{namespace skinTone{
 extern CheckPlayerPartsIfShouldApplySkinToneFv2Func* CheckPlayerPartsIfShouldApplySkinToneFv2;
+}}}}
+namespace player{namespace appearance{namespace fova{namespace skinTone{
 extern LoadPlayerPartsSkinToneFv2Func* LoadPlayerPartsSkinToneFv2;
+}}}}
+namespace player{namespace appearance{
 extern IsHeadNeededForPartsTypeFunc* IsHeadNeededForPartsType;
+}}
+namespace player{namespace appearance{
 extern IsHeadNeededForPartsTypeAndAvatarFunc* IsHeadNeededForPartsTypeAndAvatar;
+}}
+namespace player{namespace appearance{namespace fova{namespace face{
 extern LoadPlayerSnakeFaceFpkFunc* LoadPlayerSnakeFaceFpk;
+}}}}
+namespace player{namespace appearance{namespace fova{namespace face{
 extern LoadPlayerSnakeFaceFv2Func* LoadPlayerSnakeFaceFv2;
+}}}}
+namespace player{namespace appearance{namespace avatar{
 extern LoadAvatarOgreHornFpkFunc* LoadAvatarOgreHornFpk;
+}}}
+namespace player{namespace appearance{namespace avatar{
 extern LoadAvatarOgreHornFv2Func* LoadAvatarOgreHornFv2;
+}}}
+namespace buddy{namespace system{
 extern LoadBuddyMainFileFunc* LoadBuddyMainFile;
+}}
+namespace buddy{namespace quiet{
 extern LoadBuddyQuietWeaponFpkFunc* LoadBuddyQuietWeaponFpk;
+}}
+namespace buddy{namespace dog{
 extern LoadBuddyDogCommonFPKFunc* LoadBuddyDogCommonFPK;
+}}
+namespace buddy{namespace horse{
 extern LoadBuddyHorseCommonFPKFunc* LoadBuddyHorseCommonFPK;
+}}
+namespace buddy{namespace walker{
 extern LoadBuddyWalkerGearArmFpkFunc* LoadBuddyWalkerGearArmFpk;
+}}
+namespace buddy{namespace walker{
 extern LoadBuddyWalkerGearHeadFpkFunc* LoadBuddyWalkerGearHeadFpk;
+}}
+namespace buddy{namespace walker{
 extern LoadBuddyWalkerGearWeaponFpkFunc* LoadBuddyWalkerGearWeaponFpk;
+}}
+namespace FileLoadDefaultCommon{
 extern LoadDefaultFpksFuncFunc* LoadDefaultFpksFunc;
+}
+namespace vehicle{namespace appearance{
 extern PreparePlayerVehicleInSortieFunc* PreparePlayerVehicleInSortie;
+}}
+namespace vehicle{namespace appearance{
 extern PreparePlayerVehicleInGameFunc* PreparePlayerVehicleInGame;
+}}
+namespace FileLoadDefaultCommon{
 extern LoadDefaultFpkPtrFuncFunc* LoadDefaultFpkPtrFunc;
+}
+namespace vehicle{namespace appearance{namespace camo{
 extern LoadAllVehicleCamoFpksFunc* LoadAllVehicleCamoFpks;
+}}}
+namespace player{namespace callMenu{
 extern BuddyCommandGetNameLangIdFunc* BuddyCommandGetNameLangId;
+}}
+namespace player{namespace callMenu{
 extern BuddyCommandGetDescriptionLangIdFunc* BuddyCommandGetDescriptionLangId;
+}}
 namespace foxlua{
 extern NewModuleFunc* NewModule;
 }

@@ -136,13 +136,13 @@ namespace IHHook {
 			//then add the dereferenced rel32
 			//UpdateFOVLerpAddr = ((intptr_t)(updateFOVLerpRef)+ptrdiff_t(4)) + *updateFOVLerpRef;
 
-			if (!HasFunctionAddress("UpdateFOVLerp")) {
+			if (!HAS_ADDRESS(UpdateFOVLerp)) {
 				spdlog::warn("FOV addr fail: UpdateFOVLerpAddr == NULL");
 				return;
 			}
 
-			CREATE_HOOK(UpdateFOVLerp)
-			//DEBUGNOW ENABLEHOOK(UpdateFOVLerp)
+			CREATE_HOOK(UpdateFOVLerp, UpdateFOVLerpHook);
+			//ENABLE_HOOK(UpdateFOVLerp);//tex toggled at runtime
 		}//CreateHooks
 
 		void SetFocalLength(CamMode camMode, float focalLength) {
@@ -177,10 +177,10 @@ namespace IHHook {
 				new_shoulder_fov = default_shoulder_fov;
 				new_hiding_fov = default_hiding_fov;
 				new_cqc_fov = default_cqc_fov;
-				DISABLEHOOK(UpdateFOVLerp);
+				DISABLE_HOOK(UpdateFOVLerp);
 			}
 			else {
-				ENABLEHOOK(UpdateFOVLerp)
+				ENABLE_HOOK(UpdateFOVLerp);
 			}
 			return 0;
 		}//l_SetCamHook
