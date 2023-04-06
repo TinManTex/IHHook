@@ -60,8 +60,8 @@ exportInfo=[
 	{"name":"player::appearance::parts::LoadPlayerPartsParts", "usingHook":True,},
 	{"name":"player::appearance::fova::camo::LoadPlayerCamoFpk", "usingHook":True,},
 	{"name":"player::appearance::fova::camo::LoadPlayerCamoFv2", "usingHook":True,},
-	{"name":"player::motion::facial::LoadPlayerFacialMotionFpk", "usingHook":True,},#tex TODO: ghidra move to same namespace as below
-	{"name":"player::facial::motion::LoadPlayerFacialMotionMtar", "usingHook":True,},
+	{"name":"player::motion::facial::LoadPlayerFacialMotionFpk", "usingHook":True,},
+	{"name":"player::motion::facial::LoadPlayerFacialMotionMtar", "usingHook":True,},
 	{"name":"player::appearance::fova::arm::LoadPlayerBionicArmFpk", "usingHook":True,},
 	{"name":"player::appearance::fova::arm::LoadPlayerBionicArmFv2", "usingHook":True,},
 	{"name":"player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2", "usingHook":True,},#//GOTCHA: since its only called in LoadPlayerPartsSkinToneFv2, so this isnt a hook, just calling this extended version from LoadPlayerPartsSkinToneFv2Hook

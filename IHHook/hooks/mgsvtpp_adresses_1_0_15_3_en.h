@@ -28,7 +28,7 @@ namespace IHHook {
 		{"player::appearance::fova::camo::LoadPlayerCamoFpk", 0x146864180},
 		{"player::appearance::fova::camo::LoadPlayerCamoFv2", 0x146863f80},
 		{"player::motion::facial::LoadPlayerFacialMotionFpk", 0x1468656c0},
-		{"player::facial::motion::LoadPlayerFacialMotionMtar", 0x146865370},
+		{"player::motion::facial::LoadPlayerFacialMotionMtar", 0x146865370},
 		{"player::appearance::fova::arm::LoadPlayerBionicArmFpk", 0x140ae90f0},
 		{"player::appearance::fova::arm::LoadPlayerBionicArmFv2", 0x140ae9040},
 		{"player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2", 0x140ae9400},

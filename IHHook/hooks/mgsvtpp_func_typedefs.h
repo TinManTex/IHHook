@@ -45,7 +45,7 @@ typedef ulonglong * (__fastcall LoadPlayerCamoFv2Func)(ulonglong * fileSlotIndex
 namespace player{namespace motion{namespace facial{
 typedef ulonglong * (__fastcall LoadPlayerFacialMotionFpkFunc)(ulonglong * fileSlotIndex, uint playerType);
 }}}
-namespace player{namespace facial{namespace motion{
+namespace player{namespace motion{namespace facial{
 typedef ulonglong * (__fastcall LoadPlayerFacialMotionMtarFunc)(ulonglong * fileSlotIndex, int playerType);
 }}}
 namespace player{namespace appearance{namespace fova{namespace arm{
@@ -524,7 +524,7 @@ extern LoadPlayerCamoFv2Func* LoadPlayerCamoFv2;
 namespace player{namespace motion{namespace facial{
 extern LoadPlayerFacialMotionFpkFunc* LoadPlayerFacialMotionFpk;
 }}}
-namespace player{namespace facial{namespace motion{
+namespace player{namespace motion{namespace facial{
 extern LoadPlayerFacialMotionMtarFunc* LoadPlayerFacialMotionMtar;
 }}}
 namespace player{namespace appearance{namespace fova{namespace arm{

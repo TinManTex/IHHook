@@ -26,7 +26,7 @@ player::appearance::parts::LoadPlayerPartsPartsFunc* player::appearance::parts::
 player::appearance::fova::camo::LoadPlayerCamoFpkFunc* player::appearance::fova::camo::LoadPlayerCamoFpk;
 player::appearance::fova::camo::LoadPlayerCamoFv2Func* player::appearance::fova::camo::LoadPlayerCamoFv2;
 player::motion::facial::LoadPlayerFacialMotionFpkFunc* player::motion::facial::LoadPlayerFacialMotionFpk;
-player::facial::motion::LoadPlayerFacialMotionMtarFunc* player::facial::motion::LoadPlayerFacialMotionMtar;
+player::motion::facial::LoadPlayerFacialMotionMtarFunc* player::motion::facial::LoadPlayerFacialMotionMtar;
 player::appearance::fova::arm::LoadPlayerBionicArmFpkFunc* player::appearance::fova::arm::LoadPlayerBionicArmFpk;
 player::appearance::fova::arm::LoadPlayerBionicArmFv2Func* player::appearance::fova::arm::LoadPlayerBionicArmFv2;
 player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2Func* player::appearance::fova::skinTone::CheckPlayerPartsIfShouldApplySkinToneFv2;

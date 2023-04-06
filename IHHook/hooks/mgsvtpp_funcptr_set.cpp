@@ -52,8 +52,8 @@ namespace IHHook {
 		funcPtrPtrs["player::appearance::fova::camo::LoadPlayerCamoFv2"] = &player::appearance::fova::camo::LoadPlayerCamoFv2;
 		player::motion::facial::LoadPlayerFacialMotionFpk = (player::motion::facial::LoadPlayerFacialMotionFpkFunc*)addressSet["player::motion::facial::LoadPlayerFacialMotionFpk"];
 		funcPtrPtrs["player::motion::facial::LoadPlayerFacialMotionFpk"] = &player::motion::facial::LoadPlayerFacialMotionFpk;
-		player::facial::motion::LoadPlayerFacialMotionMtar = (player::facial::motion::LoadPlayerFacialMotionMtarFunc*)addressSet["player::facial::motion::LoadPlayerFacialMotionMtar"];
-		funcPtrPtrs["player::facial::motion::LoadPlayerFacialMotionMtar"] = &player::facial::motion::LoadPlayerFacialMotionMtar;
+		player::motion::facial::LoadPlayerFacialMotionMtar = (player::motion::facial::LoadPlayerFacialMotionMtarFunc*)addressSet["player::motion::facial::LoadPlayerFacialMotionMtar"];
+		funcPtrPtrs["player::motion::facial::LoadPlayerFacialMotionMtar"] = &player::motion::facial::LoadPlayerFacialMotionMtar;
 		player::appearance::fova::arm::LoadPlayerBionicArmFpk = (player::appearance::fova::arm::LoadPlayerBionicArmFpkFunc*)addressSet["player::appearance::fova::arm::LoadPlayerBionicArmFpk"];
 		funcPtrPtrs["player::appearance::fova::arm::LoadPlayerBionicArmFpk"] = &player::appearance::fova::arm::LoadPlayerBionicArmFpk;
 		player::appearance::fova::arm::LoadPlayerBionicArmFv2 = (player::appearance::fova::arm::LoadPlayerBionicArmFv2Func*)addressSet["player::appearance::fova::arm::LoadPlayerBionicArmFv2"];

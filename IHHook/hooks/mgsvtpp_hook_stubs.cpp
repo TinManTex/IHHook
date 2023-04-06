@@ -83,7 +83,7 @@ namespace IHHook {
 	
 	ulonglong * LoadPlayerFacialMotionMtarHook(ulonglong * fileSlotIndex, int playerType) {
 	
-		return player::facial::motion::LoadPlayerFacialMotionMtar(fileSlotIndex, playerType);
+		return player::motion::facial::LoadPlayerFacialMotionMtar(fileSlotIndex, playerType);
 	}//LoadPlayerFacialMotionMtarHook
 	
 	ulonglong * LoadPlayerBionicArmFpkHook(ulonglong * fileSlotIndex, uint playerType, uint playerPartsType, uint playerHandType) {
@@ -348,8 +348,8 @@ namespace IHHook {
 		CREATEHOOK(player::motion::facial::LoadPlayerFacialMotionFpk,LoadPlayerFacialMotionFpkHook)
 		ENABLEHOOK(player::motion::facial::LoadPlayerFacialMotionFpk)
 		
-		CREATEHOOK(player::facial::motion::LoadPlayerFacialMotionMtar,LoadPlayerFacialMotionMtarHook)
-		ENABLEHOOK(player::facial::motion::LoadPlayerFacialMotionMtar)
+		CREATEHOOK(player::motion::facial::LoadPlayerFacialMotionMtar,LoadPlayerFacialMotionMtarHook)
+		ENABLEHOOK(player::motion::facial::LoadPlayerFacialMotionMtar)
 		
 		CREATEHOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk,LoadPlayerBionicArmFpkHook)
 		ENABLEHOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk)

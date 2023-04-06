@@ -1345,7 +1345,7 @@ namespace IHHook {
 			CREATE_HOOK(player::appearance::fova::arm::LoadPlayerBionicArmFpk, LoadPlayerBionicArmFpkHook);
 			CREATE_HOOK(player::appearance::fova::arm::LoadPlayerBionicArmFv2, LoadPlayerBionicArmFv2Hook);
 			CREATE_HOOK(player::motion::facial::LoadPlayerFacialMotionFpk, LoadPlayerFacialMotionFpkHook);
-			CREATE_HOOK(player::facial::motion::LoadPlayerFacialMotionMtar, LoadPlayerFacialMotionMtarHook);
+			CREATE_HOOK(player::motion::facial::LoadPlayerFacialMotionMtar, LoadPlayerFacialMotionMtarHook);
 			CREATE_HOOK(player::appearance::fova::skinTone::LoadPlayerPartsSkinToneFv2, LoadPlayerPartsSkinToneFv2Hook);
 			CREATE_HOOK(player::appearance::IsHeadNeededForPartsType, IsHeadNeededForPartsTypeHook);
 			CREATE_HOOK(player::appearance::IsHeadNeededForPartsTypeAndAvatar, IsHeadNeededForPartsTypeAndAvatarHook);
