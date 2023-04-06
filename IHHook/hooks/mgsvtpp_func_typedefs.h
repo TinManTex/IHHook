@@ -9,8 +9,12 @@
 #include "lua/lua.h"
 #include "lua/lauxlib.h"
 
+namespace fox::StrCode {
 typedef StrCode (__fastcall GetStrCodeWithLengthFunc)(const char * buf, longlong len);
+}
+namespace fox::StrCode32 {
 typedef StrCode32 (__fastcall GetStrCode32Func)(const char * str);
+}
 typedef ulonglong (__fastcall PathCode64ExtFunc)(const char * inString);
 typedef uint (__fastcall FNVHash32Func)(const char * strToHash);
 namespace ui::lang {
@@ -488,8 +492,12 @@ typedef void (__fastcall luaL_openlibsFunc)(lua_State * L);
 }
 
 //tex the (extern of the) function pointers
+namespace fox::StrCode {
 extern GetStrCodeWithLengthFunc* GetStrCodeWithLength;
+}
+namespace fox::StrCode32 {
 extern GetStrCode32Func* GetStrCode32;
+}
 extern PathCode64ExtFunc* PathCode64Ext;
 extern FNVHash32Func* FNVHash32;
 namespace ui::lang {

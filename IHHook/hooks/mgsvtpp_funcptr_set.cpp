@@ -16,10 +16,10 @@ namespace IHHook {
 	extern std::map<std::string, void*> funcPtrPtrs;
 	//tex addresses in addressSet should be rebased or found by sig scan before this is called
 	void SetFuncPtrs() {
-		GetStrCodeWithLength = (GetStrCodeWithLengthFunc*)addressSet["GetStrCodeWithLength"];
-		funcPtrPtrs["GetStrCodeWithLength"] = &GetStrCodeWithLength;
-		GetStrCode32 = (GetStrCode32Func*)addressSet["GetStrCode32"];
-		funcPtrPtrs["GetStrCode32"] = &GetStrCode32;
+		fox::StrCode::GetStrCodeWithLength = (fox::StrCode::GetStrCodeWithLengthFunc*)addressSet["fox::StrCode::GetStrCodeWithLength"];
+		funcPtrPtrs["fox::StrCode::GetStrCodeWithLength"] = &fox::StrCode::GetStrCodeWithLength;
+		fox::StrCode32::GetStrCode32 = (fox::StrCode32::GetStrCode32Func*)addressSet["fox::StrCode32::GetStrCode32"];
+		funcPtrPtrs["fox::StrCode32::GetStrCode32"] = &fox::StrCode32::GetStrCode32;
 		PathCode64Ext = (PathCode64ExtFunc*)addressSet["PathCode64Ext"];
 		funcPtrPtrs["PathCode64Ext"] = &PathCode64Ext;
 		FNVHash32 = (FNVHash32Func*)addressSet["FNVHash32"];

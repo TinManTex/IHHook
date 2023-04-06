@@ -8,12 +8,12 @@
 namespace IHHook {
 	StrCode GetStrCodeWithLengthHook(const char * buf, longlong len) {
 	
-		return GetStrCodeWithLength(buf, len);
+		return fox::StrCode::GetStrCodeWithLength(buf, len);
 	}//GetStrCodeWithLengthHook
 	
 	StrCode32 GetStrCode32Hook(const char * str) {
 	
-		return GetStrCode32(str);
+		return fox::StrCode32::GetStrCode32(str);
 	}//GetStrCode32Hook
 	
 	ulonglong PathCode64ExtHook(const char * inString) {
@@ -303,11 +303,11 @@ namespace IHHook {
 	
 
 	void CreateHooks() {
-		CREATEHOOK(GetStrCodeWithLength,GetStrCodeWithLengthHook)
-		ENABLEHOOK(GetStrCodeWithLength)
+		CREATEHOOK(fox::StrCode::GetStrCodeWithLength,GetStrCodeWithLengthHook)
+		ENABLEHOOK(fox::StrCode::GetStrCodeWithLength)
 		
-		CREATEHOOK(GetStrCode32,GetStrCode32Hook)
-		ENABLEHOOK(GetStrCode32)
+		CREATEHOOK(fox::StrCode32::GetStrCode32,GetStrCode32Hook)
+		ENABLEHOOK(fox::StrCode32::GetStrCode32)
 		
 		CREATEHOOK(PathCode64Ext,PathCode64ExtHook)
 		ENABLEHOOK(PathCode64Ext)

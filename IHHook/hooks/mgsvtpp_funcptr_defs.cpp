@@ -8,8 +8,8 @@
 
 #include "mgsvtpp_func_typedefs.h"
 
-GetStrCodeWithLengthFunc* GetStrCodeWithLength;
-GetStrCode32Func* GetStrCode32;
+fox::StrCode::GetStrCodeWithLengthFunc* fox::StrCode::GetStrCodeWithLength;
+fox::StrCode32::GetStrCode32Func* fox::StrCode32::GetStrCode32;
 PathCode64ExtFunc* PathCode64Ext;
 FNVHash32Func* FNVHash32;
 ui::lang::GetFreeRoamLangIdFunc* ui::lang::GetFreeRoamLangId;

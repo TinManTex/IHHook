@@ -19,8 +19,16 @@ typedef void (__fastcall nullsub_2Func)(const char * unkSomeIdStr, longlong unkS
 //ZIP: Ghidra repo defines
 #define PathCode64(str) PathCode64Ext(str)
 typedef ulonglong PathCode64;
-typedef uint64_t StrCode;
-typedef uint StrCode32;
+//tex namespace WORKAROUND: TODO: in ghidra its actually typedef fox::StrCode, but since theres also fox::StrCode::GetStrCodeWithLengthFunc, and in c++ symbols cant share the same name (ghidra doesnt care)
+//also ExportInfo doesnt currently export namespaces for data types, though since function typedefs are in their namespace data type of same namespace is fine
+//need to decide how to organize them proper and upate ghidra
+namespace fox::StrCode {
+	typedef uint64_t StrCode;
+}
+namespace fox::StrCode32 {//tex WORKAROUND
+	typedef uint StrCode32;
+}
+
 struct Path {
 	PathCode64 Hash;
 };

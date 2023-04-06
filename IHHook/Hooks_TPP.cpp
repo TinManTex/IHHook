@@ -178,7 +178,7 @@ namespace IHHook {
 			else {
 				//DEBUGNOW TEST
 				char* langId = "tpp_loc_afghan";
-				long long tpp_loc_afghanS64 = GetStrCodeWithLength(langId, strlen(langId));
+				long long tpp_loc_afghanS64 = fox::StrCode::GetStrCodeWithLength(langId, strlen(langId));
 
 				std::stringstream stream;
 				stream << std::hex << tpp_loc_afghanS64;
