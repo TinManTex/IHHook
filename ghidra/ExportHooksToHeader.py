@@ -104,7 +104,7 @@ numFound=0
 listing = currentProgram.getListing()
 
 #tex old/fallback if not giving namespace in ExportInfo
-print("building foundFunctions")
+print("Building foundFunctions list")
 foundFunctions={
 	#[exportInfo name]=function
 }
@@ -131,7 +131,7 @@ for idx,entry in enumerate(exportInfo):
 
 		if len(namespaceFunctions)==0:
 			print('WARNING:'+entry['name']+': no functions found for namespace "'+namespaces+'"')
-			print('Using much slower fallback to find functions. please add or correct namespaces on ExportInfo name entry')
+			print('Using much slower fallback to find functions. Please add or correct namespaces on ExportInfo name entry')
 			#tex fallback to finding in whole listing
 			#a lot slower than old method of just iterating listing once, but this will warn if theres multiple of same name
 			#but this exec path shouldnt even be hit, once exportInfo names are properly namespaced
@@ -141,11 +141,10 @@ for idx,entry in enumerate(exportInfo):
 			namespaces="UNKNOWN"
 			for function in listing.getFunctions(True):
 				if not function.isThunk():
-					if function.getName()==functionName:
-						print("fallback found " + function.getName())			
+					if function.getName()==functionName:		
 						#print("parent namespace:" + function.getParentNamespace().getName())
 						namespaces=GetNameSpacePathFromSymbol(function)
-						print("namespaces on found function:'"+namespaces+"'")#DEBUG
+						print("Fallback found "+function.getName()+" with namespace '"+namespaces+"'")
 						namespaceFunctions.append(function)
 		
 		namespaceFunctions = [func for func in namespaceFunctions if not func.isThunk()]#tex new list without thunks
@@ -781,6 +780,7 @@ def WriteHookStubsFile():
 #exec
 lang = askChoice("ExportHooksToHeader", "Select lang of this exe:", ["en","jp"], "en")
 
+print("Writing export files to " + hDestPath)
 debugprint("----")
 WriteAddressHFile()
 debugprint("----")
