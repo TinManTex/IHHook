@@ -35,7 +35,7 @@ exportInfo=[
 	#{"name":"_mainCRTStartup","note: since its the entry point no point trying hooking since it's already done"},
 	#{"name":"FoxMain","note: since its the entry point no point trying hooking since it's already done"},
 	
-	{"name":"GetStrCodeWithLength","usingHook":True,},#TODO: namespace
+	{"name":"GetStrCodeWithLength","usingHook":True,},#TODO: namespace, is currently fox::StrCode, but fox::StrCode is also a data type, ghidra is fine with this but in c++ symbols cant share same name
 	{"name":"GetStrCode32","usingHook":True,},#TODO: namespace
 	{"name":"PathCode64Ext","usingHook":True, #TODO: namespace
 		"note":"tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64"},
