@@ -531,7 +531,7 @@ def BuildHookCreatHookExamples():
 	return outputLines
 
 def WriteAddressHFile():
-	print('WriteAddressHFile')
+	debugprint('WriteAddressHFile')
 	fileName=exeName+"_adresses_"+version+"_"+lang
 	headerFilePath=hDestPath+fileName+".h"
 
@@ -577,7 +577,7 @@ def WriteAddressHFile():
 	file.close()
 
 def WriteFuncTypeDefHFile():
-	print('WriteFuncTypeDefHFile')
+	debugprint('WriteFuncTypeDefHFile')
 	fileName=exeName+"_func_typedefs"
 	headerFilePath=hDestPath+fileName+".h"
 
@@ -629,7 +629,7 @@ def WriteFuncTypeDefHFile():
 	file.close()
 
 def WriteFuncPtrDefsFile():
-	print('WriteFuncPtrDefsFile')
+	debugprint('WriteFuncPtrDefsFile')
 	fileName=exeName+"_funcptr_defs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -666,7 +666,7 @@ def WriteFuncPtrDefsFile():
 	file.close()
 
 def WriteFuncPtrSetFile():
-	print('WriteFuncPtrSetFile')
+	debugprint('WriteFuncPtrSetFile')
 	fileName=exeName+"_funcptr_set"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -730,7 +730,7 @@ def WriteFuncPtrSetFile():
 	file.close()
 
 def WriteHookStubsFile():
-	print('WriteHookStubsFile')
+	debugprint('WriteHookStubsFile')
 	fileName=exeName+"_hook_stubs"+".cpp"
 	headerFilePath=hDestPath+fileName
 
@@ -781,14 +781,14 @@ def WriteHookStubsFile():
 #exec
 lang = askChoice("ExportHooksToHeader", "Select lang of this exe:", ["en","jp"], "en")
 
-print("----")
+debugprint("----")
 WriteAddressHFile()
-print("----")
+debugprint("----")
 WriteFuncTypeDefHFile()
-print("----")
+debugprint("----")
 WriteFuncPtrDefsFile()
-print("----")
+debugprint("----")
 WriteFuncPtrSetFile()
-print("----")
+debugprint("----")
 WriteHookStubsFile()
 
