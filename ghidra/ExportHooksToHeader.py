@@ -177,8 +177,7 @@ for key in foundFunctions:
 #Build function typdef from ghidra function signature
 #TODO: fill out typedefs for noAddress that have found functions anyway? (but still have them commented them out)
 def BuildSignatures():
-	signatureLines=[]#unused
-	typedefLines=[]
+	outLines=[]
 
 	for entry in exportInfo:
 		name=entry["name"]
@@ -187,7 +186,6 @@ def BuildSignatures():
 		exportFunc=entry.get("exportFunc")
 		address=""
 		invalidReason=None
-		signatureLine=""#not actually output, just a pretty-printed/normal declaration of the function
 		typedefLine=""
 		if noAddress!=None:
 			invalidReason=noAddress
@@ -204,13 +202,6 @@ def BuildSignatures():
 				#print(signature.getPrototypeString())
 				returnType=signature.getReturnType().getName()
 				arguments=signature.getArguments()
-
-				namespacesList,functionName,isNamespaced=GetNamespaceListFromName(name)
-				namespaceOpenLine=''
-				namespaceCloseLine=''
-				for namespace in namespacesList:
-					namespaceOpenLine=namespaceOpenLine+'namespace '+namespace+'{' #tex just jam them on one line, this is a generated file
-					namespaceCloseLine='}'+namespaceCloseLine	
 				
 				signatureLine=returnType+" "+name
 				#REF typeDefLine: 
@@ -238,33 +229,26 @@ def BuildSignatures():
 							if constParam==paramName:
 								dataTypeName="const "+dataTypeName
 								break
-					signatureLine=signatureLine+dataTypeName+" "+paramName
 					typedefLine=typedefLine+dataTypeName+" "+paramName
 					if idx!=len(arguments)-1:
-						signatureLine=signatureLine+", "
 						typedefLine=typedefLine+", "
 				if function.hasVarArgs()==True:
-					signatureLine=signatureLine+", ..."
 					typedefLine=typedefLine+", ..."
-				signatureLine=signatureLine+");"
 				typedefLine=typedefLine+");"
 
-				signatureLines.append(signatureLines)
+				namespaces,functionName=GetNameSpacePathFromName(name)
+				if namespaces!='':
+					outLines.append('namespace '+namespaces+' {')
+					outLines.append(typedefLine)
+					outLines.append('}')
+				else:
+					outLines.append(typedefLine)
 
-				if isNamespaced:
-					typedefLines.append(namespaceOpenLine)
-				typedefLines.append(typedefLine)
-				if isNamespaced:
-					typedefLines.append(namespaceCloseLine)
 		if invalidReason!=None:
-			signatureLine="// "+name+" "+invalidReason
-			typedefLine=signatureLine
-			signatureLines.append(signatureLines)
-			typedefLines.append(typedefLine)
+			outLines.append("// "+name+" "+invalidReason)
 
-		#print(signatureLine)
 		#print(typedefLine)
-	return typedefLines
+	return outLines
 
 def BuildExternPointers():
 	outLines=[]
@@ -283,27 +267,20 @@ def BuildExternPointers():
 			if function==None:
 				reason="NOT_FOUND"
 		
-		namespacesList,functionName,isNamespaced=GetNamespaceListFromName(name)
-		namespaceOpenLine=''
-		namespaceCloseLine=''
-		for namespace in namespacesList:
-			namespaceOpenLine=namespaceOpenLine+'namespace '+namespace+'{' #tex just jam them on one line, this is a generated file
-			namespaceCloseLine='}'+namespaceCloseLine	
+		namespaces,functionName=GetNameSpacePathFromName(name)
+		if namespaces!='':
+			outLines.append('namespace '+namespaces+' {')
 
-		if isNamespaced:
-			outLines.append(namespaceOpenLine)
-
-		#REF output
-		#extern StrCode64Func* StrCode64;
+		#REF: extern StrCode64Func* StrCode64;
 		line="extern "+GetFunctionName(name)+"Func* "+GetFunctionName(name)+";"
 
 		if reason!=None:
-			line='//'+line+'//'+reason#tex commented out			
+			line='//'+line+'//'+reason#tex comments out			
 
 		outLines.append(line)
 
-		if isNamespaced:
-			outLines.append(namespaceCloseLine)
+		if namespaces!='':
+			outLines.append('}')
 		#print(line)		
 	return outLines
 
