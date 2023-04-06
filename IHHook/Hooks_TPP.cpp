@@ -172,10 +172,10 @@ namespace IHHook {
 			//	bool bleh = true;
 			//}
 
-			if (!HasFunctionAddress("GetStrCodeWithLength")) {
+			if (!HAS_ADDRESS(GetStrCodeWithLength)) {
 				spdlog::warn("addr fail: addressSet[\"GetStrCodeWithLength\"] == NULL");
 			}
-			else {					
+			else {
 				//DEBUGNOW TEST
 				char* langId = "tpp_loc_afghan";
 				long long tpp_loc_afghanS64 = GetStrCodeWithLength(langId, strlen(langId));

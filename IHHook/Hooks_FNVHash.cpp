@@ -27,7 +27,7 @@ namespace IHHook {
 			log = spdlog::basic_logger_st("fnvhash", logName);
 			log->set_pattern("%v");//tex raw logging
 
-			if (!HasFunctionAddress("FNVHash32")) {
+			if (!HAS_ADDRESS(FNVHash32)) {
 				spdlog::warn("FNVHash32 == NULL");
 				return;
 			}
