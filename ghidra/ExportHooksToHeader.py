@@ -13,6 +13,7 @@ import os
 from java.io import PrintWriter
 from ExportInfo import * #ExportInfo.py for exportInfo list
 
+# config stuff>
 #SYNC these settings with user file ExportSettings_User
 #tex rather than editing these a user should copy ExportPath_User.py to ghidra program folder and edit path.
 hDestPath='D:/GitHub/IHHook/'#tex should be to repo root, 
@@ -42,12 +43,80 @@ else:
 hDestPath = hDestPath + hDestSubPath
 
 print('using hDestPath: ' + hDestPath)
+#config stuff<
+# no more exec till #exec at end of file
 
 #only print if debugmode true
 #tex nice idea in theory, but so far it's better to analyse the outputted files than scroll through a log window
 def debugprint(*args):
 	if debugmode:
 		print(args)
+
+def GetFoundFunctions(exportInfo,listing):
+    #tex old/fallback if not giving namespace in ExportInfo
+    print("Building foundFunctions list")
+    foundFunctions={
+        #[exportInfo name]=function
+    }
+    #CULL old
+    # for function in listing.getFunctions(True):
+    # 	if not function.isThunk():
+    # 		if getinfo(function.getName())!=None:
+    # 			#test#print("found " + function.getName())			
+    # 			#print("parent namespace:" + function.getParentNamespace().getName())
+    # 			foundFunctions[function.getName()]=function
+
+
+    #tex find by namespace (or Global)
+    #overwrites previous
+    for idx,entry in enumerate(exportInfo):
+        if entry.get("noAddress")==None:
+            name=entry['name']#tex qualified name (assuming its namespaced)
+            namespaces,functionName=GetNameSpacePathFromName(name)
+            #debugprint('GetNameSpacePathFromName('+name+')="'+namespaces+'","'+functionName+'"')
+            if namespaces=='':#tex fallback, will only hit if not actually in a namespace
+                namespaces='Global'
+            namespaceFunctions=listing.getFunctions(namespaces,functionName)
+            #print('namespaceFunctions:',namespaceFunctions)
+
+            if len(namespaceFunctions)==0:
+                print('WARNING:'+entry['name']+': no functions found for namespace "'+namespaces+'"')
+                print('Using much slower fallback to find functions. Please add or correct namespaces on ExportInfo name entry')
+                #tex fallback to finding in whole listing
+                #a lot slower than old method of just iterating listing once, but this will warn if theres multiple of same name
+                #but this exec path shouldnt even be hit, once exportInfo names are properly namespaced
+                #and functions in ghidra not yet namespaced will have bypassed this due to being in Global
+                #print(entry['name'] + ': no functions of that name found for namespace ' + namespaces)
+                namespaceFunctions=[]
+                namespaces="UNKNOWN"
+                for function in listing.getFunctions(True):
+                    if not function.isThunk():
+                        if function.getName()==functionName:		
+                            #print("parent namespace:" + function.getParentNamespace().getName())
+                            namespaces=GetNameSpacePathFromSymbol(function)
+                            print("Fallback found "+function.getName()+" with namespace '"+namespaces+"'")
+                            namespaceFunctions.append(function)
+            
+            namespaceFunctions = [func for func in namespaceFunctions if not func.isThunk()]#tex new list without thunks
+
+            numFunctions=len(namespaceFunctions)
+            if numFunctions==0:
+                print(entry['name']+': no functions of that name found for namespace '+namespaces)
+            elif numFunctions > 1:
+                print('WARNING:'+entry['name']+': multiple functions found for namespace '+namespaces)
+                for func in namespaceFunctions:
+                    address="0x"+str(function.getEntryPoint())
+                    print(address)
+
+                function=namespaceFunctions[0]
+                foundFunctions[entry['name']]=function
+            else:
+                function=namespaceFunctions[0]
+                foundFunctions[entry['name']]=function
+
+            #print(entry['name']+" namespaces:'"+namespaces+"' name:'"+functionName+"'")
+            #print('namespaceFunctions:',namespaceFunctions)
+    return foundFunctions
 
 #tex there's bound to be this functionailty somewhere in ghidra api, probably somewhere with SymbolPaths
 def GetNameSpacePathFromSymbol(symbol):
@@ -62,15 +131,6 @@ def GetNameSpacePathFromSymbol(symbol):
 		parent=parent.getParentNamespace()
 	return namespacePath
 
-def GetNamespaceListFromName(name):
-	namespacesList=name.split('::')
-	functionName=namespacesList.pop()#tex just want the namespaces, not func name
-	isNamespaced=len(namespacesList)>0
-	return namespacesList,functionName,isNamespaced
-
-def GetFunctionName(name):
-	return name.split('::').pop()#tex a split of string with no matches is a list of string. pop will get last in list, which in either case will be function name
-
 def GetNameSpacePathFromName(name):
 	functionName=name
 	namespaces=''
@@ -79,7 +139,16 @@ def GetNameSpacePathFromName(name):
 		namespaces=name[0:pos]
 		functionName=name[pos+2:]#tex +2 for '::'.
 	return namespaces,functionName
-	
+
+# def GetNamespaceListFromName(name):
+# 	namespacesList=name.split('::')
+# 	functionName=namespacesList.pop()#tex just want the namespaces, not func name
+# 	isNamespaced=len(namespacesList)>0
+# 	return namespacesList,functionName,isNamespaced
+
+def GetFunctionName(name):
+	return name.split('::').pop()#tex a split of string with no matches is a list of string. pop will get last in list, which in either case will be function name
+
 
 #tex using exportInfo to give order,
 # while list[{dict of name:name, other info}] is a bit of a pain rather than dict{name:{dict of info}} 
@@ -100,77 +169,6 @@ def getinfo(name):
 
 #test#print(getinfo("luaopen_string"))
 
-numFound=0
-listing = currentProgram.getListing()
-
-#tex old/fallback if not giving namespace in ExportInfo
-print("Building foundFunctions list")
-foundFunctions={
-	#[exportInfo name]=function
-}
-#CULL old
-# for function in listing.getFunctions(True):
-# 	if not function.isThunk():
-# 		if getinfo(function.getName())!=None:
-# 			#test#print("found " + function.getName())			
-# 			#print("parent namespace:" + function.getParentNamespace().getName())
-# 			foundFunctions[function.getName()]=function
-
-
-#tex find by namespace (or Global)
-#overwrites previous
-for idx,entry in enumerate(exportInfo):
-	if entry.get("noAddress")==None:
-		name=entry['name']#tex qualified name (assuming its namespaced)
-		namespaces,functionName=GetNameSpacePathFromName(name)
-		#debugprint('GetNameSpacePathFromName('+name+')="'+namespaces+'","'+functionName+'"')
-		if namespaces=='':#tex fallback, will only hit if not actually in a namespace
-			namespaces='Global'
-		namespaceFunctions=listing.getFunctions(namespaces,functionName)
-		#print('namespaceFunctions:',namespaceFunctions)
-
-		if len(namespaceFunctions)==0:
-			print('WARNING:'+entry['name']+': no functions found for namespace "'+namespaces+'"')
-			print('Using much slower fallback to find functions. Please add or correct namespaces on ExportInfo name entry')
-			#tex fallback to finding in whole listing
-			#a lot slower than old method of just iterating listing once, but this will warn if theres multiple of same name
-			#but this exec path shouldnt even be hit, once exportInfo names are properly namespaced
-			#and functions in ghidra not yet namespaced will have bypassed this due to being in Global
-			#print(entry['name'] + ': no functions of that name found for namespace ' + namespaces)
-			namespaceFunctions=[]
-			namespaces="UNKNOWN"
-			for function in listing.getFunctions(True):
-				if not function.isThunk():
-					if function.getName()==functionName:		
-						#print("parent namespace:" + function.getParentNamespace().getName())
-						namespaces=GetNameSpacePathFromSymbol(function)
-						print("Fallback found "+function.getName()+" with namespace '"+namespaces+"'")
-						namespaceFunctions.append(function)
-		
-		namespaceFunctions = [func for func in namespaceFunctions if not func.isThunk()]#tex new list without thunks
-
-		numFunctions=len(namespaceFunctions)
-		if numFunctions==0:
-			print(entry['name']+': no functions of that name found for namespace '+namespaces)
-		elif numFunctions > 1:
-			print('WARNING:'+entry['name']+': multiple functions found for namespace '+namespaces)
-			for func in namespaceFunctions:
-				address="0x"+str(function.getEntryPoint())
-				print(address)
-
-			function=namespaceFunctions[0]
-			foundFunctions[entry['name']]=function
-		else:
-			function=namespaceFunctions[0]
-			foundFunctions[entry['name']]=function
-
-		debugprint(entry['name']+" namespaces:'"+namespaces+"' name:'"+functionName+"'")
-		debugprint('namespaceFunctions:',namespaceFunctions)
-
-#tex DEBUG
-debugprint("foundFunctions:")
-for key in foundFunctions:
-	debugprint(key, '->', foundFunctions[key])
 
 
 
@@ -755,6 +753,15 @@ def WriteHookStubsFile():
 	file.close()
 
 #exec
+listing = currentProgram.getListing()
+foundFunctions=GetFoundFunctions(exportInfo,listing)
+
+
+#tex DEBUG  
+debugprint("foundFunctions:")
+for key in foundFunctions:
+    debugprint(key, '->', foundFunctions[key])
+
 lang = askChoice("ExportHooksToHeader", "Select lang of this exe:", ["en","jp"], "en")
 
 print("Writing export files to " + hDestPath)
