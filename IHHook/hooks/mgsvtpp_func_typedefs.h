@@ -125,28 +125,31 @@ namespace player::callMenu {
 typedef longlong * (__fastcall BuddyCommandGetDescriptionLangIdFunc)(longlong * langId, uint commandType);
 }
 namespace foxlua {
-typedef foxlua::module * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
+typedef FoxLuaModule * (__fastcall NewModuleFunc)(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
 }
 namespace foxlua {
-typedef foxlua::module * (__fastcall NewSubModuleFunc)(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
+typedef FoxLuaModule * (__fastcall NewSubModuleFunc)(FoxLuaModule * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5);
 }
 namespace foxlua {
-typedef int (__fastcall AddCFuncToModuleFunc)(foxlua::module * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6);
+typedef int (__fastcall AddCFuncToModuleFunc)(FoxLuaModule * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6);
 }
 namespace foxlua {
-typedef int (__fastcall AddCFuncToModule2Func)(foxlua::module * module, const char * funcName, void * param_3);
+typedef int (__fastcall AddCFuncToModule2Func)(FoxLuaModule * module, const char * funcName, void * param_3);
 }
 namespace foxlua {
-typedef undefined8 (__fastcall AddCFuncToModule3Func)(foxlua::module * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5);
+typedef undefined8 (__fastcall AddCFuncToModule3Func)(FoxLuaModule * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5);
 }
 namespace foxlua {
-typedef void (__fastcall AddEnumToModuleFunc)(foxlua::module * foxModule, const char * enumName, int enumValue);
+typedef undefined (__fastcall AddCFuncToModule4AsUdataFunc)(undefined8 moduleUnk, undefined8 funcName, undefined8 cFunctionAndSomethingElseMaybe);
 }
 namespace foxlua {
-typedef bool (__fastcall AddEnumToModule2Func)(foxlua::module * module, const char * enumName, int * enumValue);
+typedef void (__fastcall AddEnumToModuleFunc)(FoxLuaModule * foxModule, const char * enumName, int enumValue);
 }
 namespace foxlua {
-typedef void (__fastcall AddEnumToModule3Func)(foxlua::module * module, const char * enumName, undefined8 enumValue);
+typedef bool (__fastcall AddEnumToModule2Func)(FoxLuaModule * module, const char * enumName, int * enumValue);
+}
+namespace foxlua {
+typedef void (__fastcall AddEnumToModule3Func)(FoxLuaModule * module, const char * enumName, undefined8 enumValue);
 }
 namespace foxlua {
 typedef undefined (__fastcall AddEnumToModule4Func)(undefined8 module, undefined8 enumName, undefined8 enumValue);
@@ -154,8 +157,8 @@ typedef undefined (__fastcall AddEnumToModule4Func)(undefined8 module, undefined
 typedef undefined (__fastcall RegisterVarFunc)(undefined8 foxLua, const char * varName, undefined8 varAddress, lua_CFunction * luaCFunc);
 typedef void (__fastcall RegisterVar_01Func)(longlong param_1, const char * varName, undefined4 param_3, undefined8 param_4, undefined2 param_5, undefined param_6);
 typedef void (__fastcall RegisterVar_02Func)(undefined8 param_1, const char * varName, undefined8 param_3, char param_4);
-typedef int (__fastcall RegisterVar_03Func)(foxlua::module * param_1, const char * varName, void * varAddress, lua_CFunction unkLuaCFunc);
-typedef bool (__fastcall RegisterVarArrayFunc)(foxlua::module * module, const char * varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined * param_6, undefined * param_7, undefined8 arraySize);
+typedef int (__fastcall RegisterVar_03Func)(FoxLuaModule * param_1, const char * varName, void * varAddress, lua_CFunction unkLuaCFunc);
+typedef bool (__fastcall RegisterVarArrayFunc)(FoxLuaModule * module, const char * varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined * param_6, undefined * param_7, undefined8 arraySize);
 typedef undefined4 * (__fastcall DeclareEntityClassFunc)(undefined4 * param_1, const char * className, longlong entityInfo);
 namespace lua {
 typedef lua_State * (__fastcall lua_newstateFunc)(lua_Alloc f, void * ud);
@@ -621,6 +624,9 @@ extern AddCFuncToModule2Func* AddCFuncToModule2;
 }
 namespace foxlua {
 extern AddCFuncToModule3Func* AddCFuncToModule3;
+}
+namespace foxlua {
+extern AddCFuncToModule4AsUdataFunc* AddCFuncToModule4AsUdata;
 }
 namespace foxlua {
 extern AddEnumToModuleFunc* AddEnumToModule;

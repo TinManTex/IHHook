@@ -56,6 +56,7 @@ foxlua::NewSubModuleFunc* foxlua::NewSubModule;
 foxlua::AddCFuncToModuleFunc* foxlua::AddCFuncToModule;
 foxlua::AddCFuncToModule2Func* foxlua::AddCFuncToModule2;
 foxlua::AddCFuncToModule3Func* foxlua::AddCFuncToModule3;
+foxlua::AddCFuncToModule4AsUdataFunc* foxlua::AddCFuncToModule4AsUdata;
 foxlua::AddEnumToModuleFunc* foxlua::AddEnumToModule;
 foxlua::AddEnumToModule2Func* foxlua::AddEnumToModule2;
 foxlua::AddEnumToModule3Func* foxlua::AddEnumToModule3;

@@ -15,49 +15,49 @@ namespace IHHook {
 		std::wstring logName = L"log_createmodule.txt";
 		std::shared_ptr<spdlog::logger> log;
 
-		foxlua::module* NewModuleHook(undefined8 param_1, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+		FoxLuaModule* NewModuleHook(undefined8 param_1, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 			if (config.enableCreateModuleHook) {
 				log->info("module:{}", moduleName);
 			}
 			return foxlua::NewModule(param_1, moduleName, param_3, param_4, param_5);
 		}//NewModuleHook
 
-		foxlua::module* NewSubModuleHook(foxlua::module* parentModule, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+		FoxLuaModule* NewSubModuleHook(FoxLuaModule* parentModule, const char* moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 			if (config.enableCreateModuleHook) {
 				log->info("submodule:{}", moduleName);
 			}
 			return foxlua::NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
 		}//NewSubModuleHook
 
-		int AddCFuncToModuleHook(foxlua::module* module, const char* funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void* param_6) {
+		int AddCFuncToModuleHook(FoxLuaModule* module, const char* funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void* param_6) {
 			if (config.enableCreateModuleHook) {
 				log->info("function:{}", funcName);
 			}
 			return foxlua::AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
 		}//AddCFuncToModuleHook
 
-		int AddCFuncToModule2Hook(foxlua::module* module, const char* funcName, void* param_3) {
+		int AddCFuncToModule2Hook(FoxLuaModule* module, const char* funcName, void* param_3) {
 			if (config.enableCreateModuleHook) {
 				log->info("function2:{}", funcName);
 			}
 			return foxlua::AddCFuncToModule2(module, funcName, param_3);
 		}//AddCFuncToModule2Hook
 
-		undefined8 AddCFuncToModule3Hook(foxlua::module* moduleName, const char* funcName, lua_CFunction param_3, int param_4, void* param_5) {
+		undefined8 AddCFuncToModule3Hook(FoxLuaModule* moduleName, const char* funcName, lua_CFunction param_3, int param_4, void* param_5) {
 			if (config.enableCreateModuleHook) {
 		//		log->info("function3:{}", funcName); //tex seems to be just a sub of AddCFuncToModule
 			}
 			return foxlua::AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
 		}//AddCFuncToModule3Hook
 
-		void AddEnumToModuleHook(foxlua::module* foxModule, const char* enumName, int enumValue) {
+		void AddEnumToModuleHook(FoxLuaModule* foxModule, const char* enumName, int enumValue) {
 			if (config.enableCreateModuleHook) {
 				log->info("enum:{}={}", enumName, enumValue);
 			}
 			return foxlua::AddEnumToModule(foxModule, enumName, enumValue);
 		}//AddEnumToModuleHook
 
-		bool AddEnumToModule2Hook(foxlua::module* module, const char* enumName, int* enumValue) {
+		bool AddEnumToModule2Hook(FoxLuaModule* module, const char* enumName, int* enumValue) {
 			int value = *enumValue;
 			if (config.enableCreateModuleHook) {
 				//log->info("enum2:{}={}", enumName, value); //tex seems to be just a sub of AddEnumToModule
@@ -65,7 +65,7 @@ namespace IHHook {
 			return foxlua::AddEnumToModule2(module, enumName, enumValue);
 		}//AddEnumToModule2Hook
 
-		void AddEnumToModule3Hook(foxlua::module* module, const char* enumName, undefined8 enumValue) {
+		void AddEnumToModule3Hook(FoxLuaModule* module, const char* enumName, undefined8 enumValue) {
 			if (config.enableCreateModuleHook) {
 				log->info("enum3:{}={}", enumName, enumValue);
 			}
@@ -100,14 +100,14 @@ namespace IHHook {
 			RegisterVar_02(param_1, varName, param_3, param_4);
 		}//RegisterVar_02Hook
 
-		//int RegisterVar_03Hook(foxlua::module* param_1, const char* varName, void* varAddress, lua_CFunction unkLuaCFunc) {
+		//int RegisterVar_03Hook(FoxLuaModule* param_1, const char* varName, void* varAddress, lua_CFunction unkLuaCFunc) {
 		//	if (config.enableCreateModuleHook) {
 		//		log->info("var3:{}", varName);
 		//	}
 		//	RegisterVar_03(param_1, varName, varAddress, unkLuaCFunc);
 		//}//RegisterVar_03Hook
 
-		bool RegisterVarArrayHook(foxlua::module* module, const char* varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined* param_6, undefined* param_7, undefined8 arraySize) {
+		bool RegisterVarArrayHook(FoxLuaModule* module, const char* varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined* param_6, undefined* param_7, undefined8 arraySize) {
 			if (config.enableCreateModuleHook) {
 				log->info("varArray:{}", varName);
 			}

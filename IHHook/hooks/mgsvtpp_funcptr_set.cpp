@@ -112,6 +112,8 @@ namespace IHHook {
 		funcPtrPtrs["foxlua::AddCFuncToModule2"] = &foxlua::AddCFuncToModule2;
 		foxlua::AddCFuncToModule3 = (foxlua::AddCFuncToModule3Func*)addressSet["foxlua::AddCFuncToModule3"];
 		funcPtrPtrs["foxlua::AddCFuncToModule3"] = &foxlua::AddCFuncToModule3;
+		foxlua::AddCFuncToModule4AsUdata = (foxlua::AddCFuncToModule4AsUdataFunc*)addressSet["foxlua::AddCFuncToModule4AsUdata"];
+		funcPtrPtrs["foxlua::AddCFuncToModule4AsUdata"] = &foxlua::AddCFuncToModule4AsUdata;
 		foxlua::AddEnumToModule = (foxlua::AddEnumToModuleFunc*)addressSet["foxlua::AddEnumToModule"];
 		funcPtrPtrs["foxlua::AddEnumToModule"] = &foxlua::AddEnumToModule;
 		foxlua::AddEnumToModule2 = (foxlua::AddEnumToModule2Func*)addressSet["foxlua::AddEnumToModule2"];

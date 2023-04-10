@@ -100,6 +100,7 @@ exportInfo=[
 	{"name":"foxlua::AddCFuncToModule", "usingHook":True, "debugOnly":True,},
 	{"name":"foxlua::AddCFuncToModule2", "usingHook":True, "debugOnly":True,},
 	{"name":"foxlua::AddCFuncToModule3", "usingHook":True, "debugOnly":True,},
+	{"name":"foxlua::AddCFuncToModule4AsUdata", "usingHook":True, "debugOnly":True,},
 	{"name":"foxlua::AddEnumToModule", "usingHook":True, "debugOnly":True,},
 	{"name":"foxlua::AddEnumToModule2", "usingHook":True, "debugOnly":True,},
 	{"name":"foxlua::AddEnumToModule3", "usingHook":True, "debugOnly":True,},

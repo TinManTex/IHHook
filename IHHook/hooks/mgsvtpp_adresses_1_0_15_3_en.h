@@ -58,6 +58,7 @@ namespace IHHook {
 		{"foxlua::AddCFuncToModule", 0x14c1f7400},
 		{"foxlua::AddCFuncToModule2", 0x14c1f87c0},
 		{"foxlua::AddCFuncToModule3", 0x14c1f4dc0},
+		{"foxlua::AddCFuncToModule4AsUdata", 0x14327a9b0},
 		{"foxlua::AddEnumToModule", 0x14c1f76c0},
 		{"foxlua::AddEnumToModule2", 0x14c1f38e0},
 		{"foxlua::AddEnumToModule3", 0x14c1f79b0},

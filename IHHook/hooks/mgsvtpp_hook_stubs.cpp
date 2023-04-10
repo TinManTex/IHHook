@@ -181,42 +181,47 @@ namespace IHHook {
 		return vehicle::appearance::PreparePlayerVehicleInGame(param_1, param_2);
 	}//PreparePlayerVehicleInGameHook
 	
-	foxlua::module * NewModuleHook(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+	FoxLuaModule * NewModuleHook(undefined8 param_1, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 	
 		return foxlua::NewModule(param_1, moduleName, param_3, param_4, param_5);
 	}//NewModuleHook
 	
-	foxlua::module * NewSubModuleHook(foxlua::module * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
+	FoxLuaModule * NewSubModuleHook(FoxLuaModule * parentModule, const char * moduleName, undefined8 param_3, undefined8 param_4, char param_5) {
 	
 		return foxlua::NewSubModule(parentModule, moduleName, param_3, param_4, param_5);
 	}//NewSubModuleHook
 	
-	int AddCFuncToModuleHook(foxlua::module * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6) {
+	int AddCFuncToModuleHook(FoxLuaModule * module, const char * funcName, lua_CFunction cfunc, undefined8 param_4, int param_5, void * param_6) {
 	
 		return foxlua::AddCFuncToModule(module, funcName, cfunc, param_4, param_5, param_6);
 	}//AddCFuncToModuleHook
 	
-	int AddCFuncToModule2Hook(foxlua::module * module, const char * funcName, void * param_3) {
+	int AddCFuncToModule2Hook(FoxLuaModule * module, const char * funcName, void * param_3) {
 	
 		return foxlua::AddCFuncToModule2(module, funcName, param_3);
 	}//AddCFuncToModule2Hook
 	
-	undefined8 AddCFuncToModule3Hook(foxlua::module * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5) {
+	undefined8 AddCFuncToModule3Hook(FoxLuaModule * moduleName, const char * funcName, lua_CFunction param_3, int param_4, void * param_5) {
 	
 		return foxlua::AddCFuncToModule3(moduleName, funcName, param_3, param_4, param_5);
 	}//AddCFuncToModule3Hook
 	
-	void AddEnumToModuleHook(foxlua::module * foxModule, const char * enumName, int enumValue) {
+	undefined AddCFuncToModule4AsUdataHook(undefined8 moduleUnk, undefined8 funcName, undefined8 cFunctionAndSomethingElseMaybe) {
+	
+		return foxlua::AddCFuncToModule4AsUdata(moduleUnk, funcName, cFunctionAndSomethingElseMaybe);
+	}//AddCFuncToModule4AsUdataHook
+	
+	void AddEnumToModuleHook(FoxLuaModule * foxModule, const char * enumName, int enumValue) {
 	
 		foxlua::AddEnumToModule(foxModule, enumName, enumValue);
 	}//AddEnumToModuleHook
 	
-	bool AddEnumToModule2Hook(foxlua::module * module, const char * enumName, int * enumValue) {
+	bool AddEnumToModule2Hook(FoxLuaModule * module, const char * enumName, int * enumValue) {
 	
 		return foxlua::AddEnumToModule2(module, enumName, enumValue);
 	}//AddEnumToModule2Hook
 	
-	void AddEnumToModule3Hook(foxlua::module * module, const char * enumName, undefined8 enumValue) {
+	void AddEnumToModule3Hook(FoxLuaModule * module, const char * enumName, undefined8 enumValue) {
 	
 		foxlua::AddEnumToModule3(module, enumName, enumValue);
 	}//AddEnumToModule3Hook
@@ -241,12 +246,12 @@ namespace IHHook {
 		RegisterVar_02(param_1, varName, param_3, param_4);
 	}//RegisterVar_02Hook
 	
-	int RegisterVar_03Hook(foxlua::module * param_1, const char * varName, void * varAddress, lua_CFunction unkLuaCFunc) {
+	int RegisterVar_03Hook(FoxLuaModule * param_1, const char * varName, void * varAddress, lua_CFunction unkLuaCFunc) {
 	
 		return RegisterVar_03(param_1, varName, varAddress, unkLuaCFunc);
 	}//RegisterVar_03Hook
 	
-	bool RegisterVarArrayHook(foxlua::module * module, const char * varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined * param_6, undefined * param_7, undefined8 arraySize) {
+	bool RegisterVarArrayHook(FoxLuaModule * module, const char * varName, lua_CFunction param_3, lua_CFunction param_4, undefined8 param_5, undefined * param_6, undefined * param_7, undefined8 arraySize) {
 	
 		return RegisterVarArray(module, varName, param_3, param_4, param_5, param_6, param_7, arraySize);
 	}//RegisterVarArrayHook
@@ -422,6 +427,9 @@ namespace IHHook {
 		
 		CREATEHOOK(foxlua::AddCFuncToModule3,AddCFuncToModule3Hook)
 		ENABLEHOOK(foxlua::AddCFuncToModule3)
+		
+		CREATEHOOK(foxlua::AddCFuncToModule4AsUdata,AddCFuncToModule4AsUdataHook)
+		ENABLEHOOK(foxlua::AddCFuncToModule4AsUdata)
 		
 		CREATEHOOK(foxlua::AddEnumToModule,AddEnumToModuleHook)
 		ENABLEHOOK(foxlua::AddEnumToModule)
