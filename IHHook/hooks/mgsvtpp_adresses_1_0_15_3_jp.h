@@ -9,7 +9,7 @@
 #include <map>
 
 namespace IHHook {
-	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_jp{
+	std::unordered_map<std::string, uint64_t> mgsvtpp_adresses_1_0_15_3_jp{
 		{"StrCode64", 0x14c96c490},
 		{"PathCode64", 0x14c96c160},
 		{"FNVHash32", 0x143f6ee50},

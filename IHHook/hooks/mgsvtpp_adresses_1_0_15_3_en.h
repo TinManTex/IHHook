@@ -6,10 +6,11 @@
 // NO_USE - something we dont really want to use for whatever reason
 // USING_CODE - using the default lapi code implementation instead of hooking
 
+#include <unordered_map>
 #include <map>
 
 namespace IHHook {
-	std::map<std::string, int64_t> mgsvtpp_adresses_1_0_15_3_en{
+	std::unordered_map<std::string, uint64_t> mgsvtpp_adresses_1_0_15_3_en{
 		{"StrCode64", 0x14c1bd730},
 		{"PathCode64", 0x14c1bd5d0},//tex TODO need to verify naming and purpose. technically this is PathFileNameExt64, but given that PathCode - without ext is likely less used than PathCode would have been a better name for PathFileNameExt64
 		{"FNVHash32", 0x143f33a20},
