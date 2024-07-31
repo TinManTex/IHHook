@@ -829,8 +829,8 @@ namespace IHHook {
 			std::string name = entry.first;
 			if (isTargetExe) {
 				spdlog::info("isTargetExe, rebasing addr {}", name);
-				int64_t addr = entry.second;
-				int64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
+				uint64_t addr = entry.second;
+				uint64_t rebasedAddr = (addr - BaseAddr) + RealBaseAddr;
 				addressSet[name] = rebasedAddr;
 			}
 			else {
